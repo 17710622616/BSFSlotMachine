@@ -1,0 +1,119 @@
+package com.bs.john_li.bsfslotmachine.BSSMActivity;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.MineFragment;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.ParkingFragment;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
+import com.bs.john_li.bsfslotmachine.R;
+
+import java.lang.reflect.InvocationTargetException;
+
+/**
+ * Created by John_Li on 27/7/2017.
+ */
+
+public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
+    private RadioButton park_rb,forum_rb,mine_rb;
+    private RadioGroup bottom_group;
+    private FragmentManager fm;
+    private Fragment cacheFragment;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //StatusBarUtil.setColor(this,getResources().getColor(R.drawable.shape_toolbar_bg),0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    Window window = getWindow();
+                    window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                    window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                }
+        initView();
+        setListener();
+        initData();
+    }
+
+    @Override
+    public void initView() {
+        bottom_group = (RadioGroup)findViewById(R.id.bottom_main_group);
+        park_rb = (RadioButton) findViewById(R.id.bottom_main_parking);
+        forum_rb = (RadioButton) findViewById(R.id.bottom_main_forum);
+        mine_rb = (RadioButton) findViewById(R.id.bottom_main_mine);
+    }
+
+    @Override
+    public void setListener() {
+        bottom_group.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void initData() {
+        fm = getSupportFragmentManager();
+        FragmentTransaction traslation = fm.beginTransaction();
+        cacheFragment = new ParkingFragment();
+        traslation.add(R.id.main_containor,cacheFragment,ParkingFragment.TAG);
+        traslation.commit();
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+        switch (i){
+            case R.id.bottom_main_parking:
+                park_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+                forum_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                switchPages(ParkingFragment.class,ParkingFragment.TAG);
+                break;
+            case R.id.bottom_main_forum:
+                park_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                forum_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+                mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                switchPages(ForumFragment.class,ForumFragment.TAG);
+                break;
+            case R.id.bottom_main_mine:
+                park_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                forum_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                mine_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+                switchPages(MineFragment.class,MineFragment.TAG);
+                break;
+        }
+    }
+
+    private void switchPages(Class<?> cls, String tag){
+        FragmentTransaction transaction = fm.beginTransaction();
+        if (cacheFragment != null){
+            transaction.hide(cacheFragment);
+        }
+        cacheFragment = fm.findFragmentByTag(tag);
+        if (cacheFragment != null){
+            transaction.show(cacheFragment);
+        } else {
+            try{
+               cacheFragment = (Fragment) cls.getConstructor().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            transaction.add(R.id.main_containor, cacheFragment, tag);
+        }
+        transaction.commit();
+    }
+}

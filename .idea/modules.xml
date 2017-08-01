@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BSFSlotMachine.iml" filepath="$PROJECT_DIR$/BSFSlotMachine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gmaptest/gmaptest.iml" filepath="$PROJECT_DIR$/gmaptest/gmaptest.iml" />
+    </modules>
+  </component>
+</project>
