@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cocacola.john_li.gmaptest.BSSMModel.GMapReturnModel;
 import com.cocacola.john_li.gmaptest.BSSMUtils.Configtor;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -28,6 +29,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -47,7 +53,8 @@ public class MapsTestActivity extends AppCompatActivity implements OnMapReadyCal
         public void onLocationChanged(Location location) {
             if (location != null) {
                 Log.d("地图", String.format("%f, %f", location.getLatitude(), location.getLongitude()));
-                drawMarker(location);
+                //drawMarker(location);
+                callGoogleMapApiGetSite(location);
                 mLocationManager.removeUpdates(mLocationListener);
             } else {
                 Log.d("地图", "Location is null");
@@ -196,16 +203,16 @@ public class MapsTestActivity extends AppCompatActivity implements OnMapReadyCal
             Log.d("地图",String.format("getCurrentLocation(%f, %f)", location.getLatitude(),
                     location.getLongitude()));
 
-            drawMarker(location);
+            //drawMarker(location);
+            callGoogleMapApiGetSite(location);
         }
     }
 
-    private void drawMarker(Location location) {
-        String site = callGoogleMapApiGetSite(location);
+    private void drawMarker(Location location, String address) {
         if (mGoogleMap != null) {
             mGoogleMap.clear();
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
-            String longitudeAndLatitude = "經緯度：(" + gps.latitude + "," + gps.longitude + ")";
+            String longitudeAndLatitude = "您当前位置在:" + address + "， \n 經緯度：(" + gps.latitude + "," + gps.longitude + ")";
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
                     .title(longitudeAndLatitude));
@@ -219,14 +226,16 @@ public class MapsTestActivity extends AppCompatActivity implements OnMapReadyCal
         mGoogleMap = googleMap;
     }
 
-    public String callGoogleMapApiGetSite(Location location){
+    public void callGoogleMapApiGetSite(final Location location){
         String locationUrl = Configtor.GOOGLEMAP_GET_SITE_URL + location.getLatitude() + "," + location.getLongitude() +"&key=" + Configtor.BSSM_APP_KEY;
-        String site = "";
         RequestParams params = new RequestParams(locationUrl);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.d("地址",result);
+                GMapReturnModel model = new Gson().fromJson(result, GMapReturnModel.class);
+                String address = model.getResults().get(1).getFormatted_address();
+                drawMarker(location,address);
             }
 
             @Override
@@ -242,6 +251,18 @@ public class MapsTestActivity extends AppCompatActivity implements OnMapReadyCal
             public void onFinished() {
             }
         });
-        return site;
+    }
+
+    private void parseJsonString(String jsonString) {   //对返回的数据进行解析
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            JSONArray placemarkArray = obj.getJSONArray("results");
+
+            JSONObject placemarkObj = placemarkArray.getJSONObject(0);
+            JSONArray  addressArray = placemarkObj.getJSONArray("address_components");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
