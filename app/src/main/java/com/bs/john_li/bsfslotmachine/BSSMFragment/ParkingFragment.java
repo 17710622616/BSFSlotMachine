@@ -46,7 +46,8 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void initData() {
         headView.setTitle("停車");
-        headView.setLeft(this);
+        headView.setLeft(R.mipmap.search,this);
+        headView.setRight(R.mipmap.wallet,this);
     }
 
     @Override

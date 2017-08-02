@@ -10,8 +10,8 @@
         android:layout_weight="1"/>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/colorDrakGray"/>
+        android:layout_height="0.1dp"
+        android:background="@color/colorLineGray"/>
     <include
         layout="@layout/layout_bottom_of_main"/>
 </LinearLayout>

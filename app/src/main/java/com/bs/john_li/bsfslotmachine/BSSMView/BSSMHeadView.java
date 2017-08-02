@@ -17,8 +17,8 @@ import com.bs.john_li.bsfslotmachine.R;
  */
 
 public class BSSMHeadView extends LinearLayout {
-    private ImageView leftIv;
-    private TextView leftTv,titleTv,rightTv;
+    private ImageView leftIv,rightIv;
+    private TextView leftTv,titleTv;
     private Context mContext;
     public BSSMHeadView(Context context) {
         super(context);
@@ -41,10 +41,10 @@ public class BSSMHeadView extends LinearLayout {
         inflater.inflate(R.layout.layout_head, this);
         leftIv = (ImageView) this.findViewById(R.id.head_left);
         titleTv = (TextView) this.findViewById(R.id.head_title);
-        rightTv = (TextView) this.findViewById(R.id.head_right);
+        rightIv = (ImageView) this.findViewById(R.id.head_right);
         leftIv.setVisibility(INVISIBLE);
         titleTv.setVisibility(INVISIBLE);
-        rightTv.setVisibility(INVISIBLE);
+        rightIv.setVisibility(INVISIBLE);
     }
 
     /**
@@ -68,17 +68,17 @@ public class BSSMHeadView extends LinearLayout {
          */
     public void setLeft(int resId,OnClickListener listener){
         leftIv.setVisibility(VISIBLE);
-        leftIv.setBackgroundResource(resId);
+        //leftIv.setBackgroundResource(resId);
         leftIv.setImageResource(resId);
-        leftTv.setOnClickListener(listener);
+        leftIv.setOnClickListener(listener);
     }
 
     /**
          * 右边按钮有图片
          */
     public void setRight(int resId,OnClickListener listener){
-        rightTv.setVisibility(VISIBLE);
-        rightTv.setBackgroundResource(resId);
-        rightTv.setOnClickListener(listener);
+        rightIv.setVisibility(VISIBLE);
+        rightIv.setImageResource(resId);
+        rightIv.setOnClickListener(listener);
     }
 }

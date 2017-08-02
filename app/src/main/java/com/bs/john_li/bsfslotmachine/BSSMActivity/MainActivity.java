@@ -33,12 +33,12 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //StatusBarUtil.setColor(this,getResources().getColor(R.drawable.shape_toolbar_bg),0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        StatusBarUtil.setColor(this,getResources().getColor(R.color.colorPrimary),0);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     Window window = getWindow();
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
                     window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                }
+                }*/
         initView();
         setListener();
         initData();
