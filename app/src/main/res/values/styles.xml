@@ -10,9 +10,55 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!--Window color-->
         <item name="android:windowBackground">@color/colorLightGray</item>
+        <!--<item name="android:windowBackground">@drawable/shape_toolbar_bg</item>-->
     </style>
 
     <style name="BSSMTheme" parent="BaseTheme">
     </style>
 
+    <style name="MineItemLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">13dp</item>
+        <item name="android:background">@color/colorWight</item>
+    </style>
+
+    <style name="MineItemTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MineItemImageView">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="MineItemImageNext">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:src">@mipmap/next_black</item>
+        <item name="android:layout_marginRight">10dp</item>
+    </style>
+
+    <style name="UnderLineTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.1dp</item>
+        <item name="android:background">@color/colorLineGray</item>
+    </style>
+
+    <style name="CutLineTextView">
+        <item name="android:layout_width">0.1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorLineGray</item>
+    </style>
 </resources>

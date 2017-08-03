@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">BSFSlotMachine</string>
+    <string name="mine_wallet">錢包</string>
+    <string name="mine_discount">優惠</string>
+    <string name="mine_integral">積分</string>
+    <string name="mine_car">我的車輛</string>
+    <string name="mine_order_history">歷史訂單</string>
+    <string name="mine_recommend">推薦有獎</string>
+    <string name="mine_opinion">意見反饋</string>
+    <string name="mine_server">服務中心</string>
+    <string name="mine_evaluate">歡迎評價</string>
+    <string name="mine_guojianglong">過江龍服務</string>
 </resources>

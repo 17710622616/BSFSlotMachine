@@ -8,6 +8,9 @@
     <color name="colorLightGray">#fdfdfd</color>
     <color name="colorDrakGray">#707070</color>
     <color name="colorLineGray">#c9c9c9</color>
-    <color name="colorStartBlue">#02AAFF</color>
-    <color name="colorEndBlue">#0286FF</color>
+    <color name="colorStartBlue">#3BA9FE</color>
+    <color name="colorEndBlue">#02AAFF</color>
+    <color name="colorCenterBlue">#0286FF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorMineGray">#F5F5F5</color>
 </resources>

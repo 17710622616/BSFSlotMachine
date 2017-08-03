@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/mine_mycar"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/my_car"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_car"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <LinearLayout
+        android:id="@+id/mine_history_order"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/history_order"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_order_history"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/mine_recommend"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/recommend"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_recommend"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <LinearLayout
+        android:id="@+id/mine_opinion"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/opinion"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_opinion"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/mine_server"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/server"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_server"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <LinearLayout
+        android:id="@+id/mine_evaluate"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/evaluate"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_evaluate"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <LinearLayout
+        android:id="@+id/mine_guojianglong"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/guojianglong"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/mine_guojianglong"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>

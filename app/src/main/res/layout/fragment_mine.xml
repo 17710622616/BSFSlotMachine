@@ -8,8 +8,65 @@
         android:id="@+id/mine_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <ImageView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/mine"/>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_toolbar_bg"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="15dp"
+                    android:src="@mipmap/head"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical"
+                    android:paddingLeft="15dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="暱稱：小叮噹"
+                        android:textColor="@color/colorWight"
+                        android:textSize="20sp"
+                        android:layout_marginTop="25dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="電話：65****31"
+                        android:textColor="@color/colorWight"
+                        android:textSize="16sp"
+                        android:layout_marginTop="5dp"/>
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/next"
+                    android:layout_marginRight="10dp"/>
+            </LinearLayout>
+
+            <!--錢包、優惠、積分的item-->
+            <include layout="@layout/layout_mine_property"/>
+            <TextView
+                style="@style/UnderLineTextView"/>
+
+            <!--每個item的佈局-->
+            <include layout="@layout/layout_mine_item"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

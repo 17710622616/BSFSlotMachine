@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -54,8 +55,10 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.head_left:
+                Toast.makeText(getActivity(), "查询",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.head_right:
+                Toast.makeText(getActivity(), "钱包",Toast.LENGTH_SHORT).show();
                 break;
         }
     }
