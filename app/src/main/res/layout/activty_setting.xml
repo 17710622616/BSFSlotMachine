@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/setting_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/setting_clean_cache"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/setting_clean_cache"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="1.07MB"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <LinearLayout
+        android:id="@+id/setting_image_quality"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/setting_image_quality"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="普通"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/setting_notifacation"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/setting_notifacation"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="開啟"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/setting_about"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/setting_about"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/setting_login_out"
+        android:textColor="@color/colorLoginOutRed"
+        android:textSize="20sp"
+        android:padding="10sp"
+        android:background="@color/colorWight"/>
+
+    <TextView
+        style="@style/UnderLineTextView"/>
+</LinearLayout>

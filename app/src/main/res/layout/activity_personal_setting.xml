@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/personal_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/personal_head_portrait"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/personal_head_portrait"/>
+
+        <ImageView
+            android:id="@+id/personal_head_portrait_iv"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="15dp"
+            android:src="@mipmap/head"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/personal_username"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/personal_username"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="小叮噹"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/personal_account"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
+    <TextView
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/personal_phone"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/personal_phone"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="65****31"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/personal_safe"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
+    <TextView
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/personal_pw"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/personal_pw"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="未設置"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/personal_pay_pw"
+        style="@style/MineItemLinearLayout">
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/personal_pay_pw"/>
+
+        <TextView
+            style="@style/SettingDetialTv"
+            android:text="未設置"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+</LinearLayout>

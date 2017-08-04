@@ -4,12 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
-        android:id="@+id/forum_head"
+        android:id="@+id/discount_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <!--<android.support.v7.widget.Toolbar
-        android:id="@+id/forum_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/shape_toolbar_bg"/>-->
 </LinearLayout>

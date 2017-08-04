@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="75dp">
 
     <LinearLayout
         android:id="@+id/mine_wallet_ll"
@@ -10,6 +10,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+        <TextView
+            style="@style/MineItemPropertyValueTV"
+            android:textColor="@color/colorMineYellow"
+            android:text="350蚊"/>
+
+        <TextView
+            style="@style/MineItemPropertyNameTV"
+            android:text="@string/mine_wallet"/>
     </LinearLayout>
     <TextView
         style="@style/CutLineTextView"/>
@@ -20,6 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+        <TextView
+            style="@style/MineItemPropertyValueTV"
+            android:textColor="@color/colorMineOringe"
+            android:text="3張"/>
+
+        <TextView
+            style="@style/MineItemPropertyNameTV"
+            android:text="@string/mine_discount"/>
     </LinearLayout>
     <TextView
         style="@style/CutLineTextView"/>
@@ -30,5 +46,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+        <TextView
+            style="@style/MineItemPropertyValueTV"
+            android:textColor="@color/colorMineGreen"
+            android:text="5000積分"/>
+
+        <TextView
+            style="@style/MineItemPropertyNameTV"
+            android:text="@string/mine_integral"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">BSFSlotMachine</string>
+    <string name="not_open">該入口暫未開放，敬請期待！</string>
     <string name="mine_wallet">錢包</string>
     <string name="mine_discount">優惠</string>
     <string name="mine_integral">積分</string>
@@ -10,4 +11,17 @@
     <string name="mine_server">服務中心</string>
     <string name="mine_evaluate">歡迎評價</string>
     <string name="mine_guojianglong">過江龍服務</string>
+    <string name="setting_clean_cache">清除圖片緩存</string>
+    <string name="setting_image_quality">非WIFI下的圖片質量</string>
+    <string name="setting_notifacation">開啟導航欄通知</string>
+    <string name="setting_about">關於我們</string>
+    <string name="setting_login_out">退出登錄</string>
+    <string name="personal_head_portrait">頭像</string>
+    <string name="personal_phone">電話</string>
+    <string name="personal_username">用戶名</string>
+    <string name="personal_pw">登錄密碼</string>
+    <string name="personal_pay_pw">支付密碼</string>
+    <string name="personal_account">賬戶綁定</string>
+    <string name="personal_safe">安全設置</string>
+    <string name="wallet_translation_detial">交易明細</string>
 </resources>

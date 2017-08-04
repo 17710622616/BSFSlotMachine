@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/wallet_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="75dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/my_wallet"
+        android:background="@color/colorWight"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:text="我的餘額："
+        android:textColor="@color/colorBlack"
+        android:textSize="15sp"
+        android:background="@color/colorWight"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingBottom="13dp"
+        android:paddingTop="3dp"
+        android:text="MOP $ 300.00"
+        android:textColor="@color/colorBlack"
+        android:textSize="22sp"
+        android:background="@color/colorWight"/>
+    <TextView
+        style="@style/UnderLineTextView"/>
+
+    <TextView
+        android:layout_marginTop="8dp"
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:id="@+id/mine_mycar"
+        style="@style/MineItemLinearLayout">
+        <ImageView
+            style="@style/MineItemImageView"
+            android:src="@mipmap/translation_detial"/>
+
+        <TextView
+            style="@style/MineItemTextView"
+            android:text="@string/wallet_translation_detial"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+    <TextView
+        style="@style/UnderLineTextView"/>
+</LinearLayout>

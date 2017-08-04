@@ -27,11 +27,11 @@
 
     <style name="MineItemTextView">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center_vertical</item>
     </style>
 
     <style name="MineItemImageView">
@@ -47,6 +47,31 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:src">@mipmap/next_black</item>
+        <item name="android:layout_marginRight">10dp</item>
+    </style>
+
+    <style name="MineItemPropertyValueTV">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="MineItemPropertyNameTV">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorDrakGray</item>
+    </style>
+
+    <style name="SettingDetialTv">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">@color/colorDrakGray</item>
         <item name="android:layout_marginRight">10dp</item>
     </style>
 
