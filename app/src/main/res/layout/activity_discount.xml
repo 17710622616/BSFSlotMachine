@@ -2,9 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/discount_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <ListView
+        android:id="@+id/discount_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"/>
 </LinearLayout>
