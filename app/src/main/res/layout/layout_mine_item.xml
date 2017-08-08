@@ -8,7 +8,7 @@
         android:layout_marginTop="8dp"
         style="@style/UnderLineTextView"/>
     <LinearLayout
-        android:id="@+id/mine_mycar"
+        android:id="@+id/mine_mycar_ll"
         style="@style/MineItemLinearLayout">
         <ImageView
             style="@style/MineItemImageView"

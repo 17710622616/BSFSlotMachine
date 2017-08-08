@@ -49,9 +49,10 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
 
         discountList = new ArrayList<>();
         for (int i = 0;i<3;i++) {
-            discountList.add("优惠券"+i);
+            discountList.add("MOP$"+i+".0");
         }
         discountLv.setAdapter(new DiscountAdapter(this, discountList));
+        discountLv.setDivider(null);
     }
 
     @Override

@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.DiscountActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
@@ -25,7 +27,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public static String TAG = MineFragment.class.getName();
     private View mineView;
     private BSSMHeadView mineHeadView;
-    private LinearLayout personalLL,walletLL,discountLL,integralLL;
+    private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         walletLL = mineView.findViewById(R.id.mine_wallet_ll);
         integralLL = mineView.findViewById(R.id.mine_integral_ll);
         discountLL = mineView.findViewById(R.id.mine_discount_ll);
+        historyLL = mineView.findViewById(R.id.mine_history_order);
+        myCarLL = mineView.findViewById(R.id.mine_mycar_ll);
     }
 
     @Override
@@ -56,6 +60,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         walletLL.setOnClickListener(this);
         integralLL.setOnClickListener(this);
         discountLL.setOnClickListener(this);
+        historyLL.setOnClickListener(this);
+        myCarLL.setOnClickListener(this);
     }
 
     @Override
@@ -72,6 +78,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.personal_setting_ll:
                 getActivity().startActivity(new Intent(getActivity(), PersonalSettingActivity.class));
+                break;
             case R.id.mine_wallet_ll:
                 getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));
                 break;
@@ -80,6 +87,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.mine_integral_ll:
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.mine_mycar_ll:
+                getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                break;
+            case R.id.mine_history_order:
+                getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
                 break;
         }
     }

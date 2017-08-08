@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.R;
@@ -45,16 +46,23 @@ public class DiscountAdapter extends BaseAdapter {
             holder = new ViewHolder();
             contentView = inflater.inflate(R.layout.item_discount, null);
             holder.moneyTv = contentView.findViewById(R.id.item_discount_money);
+            holder.newDiscountIv = contentView.findViewById(R.id.new_discount_iv);
             contentView.setTag(holder);
         } else {
             holder = (ViewHolder) contentView.getTag();
         }
         holder.moneyTv.setText(discountList.get(i));
+        if (i / 2 == 0){
+            holder.newDiscountIv.setVisibility(View.VISIBLE);
+        } else {
+            holder.newDiscountIv.setVisibility(View.INVISIBLE);
+        }
         return contentView;
     }
 
     public class ViewHolder{
         public TextView moneyTv;
+        public ImageView newDiscountIv;
 
         public TextView getMoneyTv() {
             return moneyTv;

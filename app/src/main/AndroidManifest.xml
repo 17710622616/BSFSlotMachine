@@ -21,6 +21,8 @@
         <activity android:name=".BSSMActivity.Mine.PersonalSettingActivity"/>
         <activity android:name=".BSSMActivity.Mine.WalletActivity"/>
         <activity android:name=".BSSMActivity.Mine.DiscountActivity"/>
+        <activity android:name=".BSSMActivity.Mine.HistoryOrderActivity"/>
+        <activity android:name=".BSSMActivity.Mine.CarListActivity"/>
     </application>
 
 </manifest>
