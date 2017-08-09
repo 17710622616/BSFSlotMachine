@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bs.john_li.bsfslotmachine">
 
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,6 +25,8 @@
         <activity android:name=".BSSMActivity.Mine.DiscountActivity"/>
         <activity android:name=".BSSMActivity.Mine.HistoryOrderActivity"/>
         <activity android:name=".BSSMActivity.Mine.CarListActivity"/>
+        <activity android:name=".BSSMActivity.Mine.OpinionActivity"/>
+        <activity android:name=".BSSMActivity.Mine.GuoJiangLongActivity"/>
     </application>
 
 </manifest>

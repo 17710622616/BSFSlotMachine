@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,7 +12,9 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.DiscountActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
@@ -27,7 +30,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public static String TAG = MineFragment.class.getName();
     private View mineView;
     private BSSMHeadView mineHeadView;
-    private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL;
+    private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         discountLL = mineView.findViewById(R.id.mine_discount_ll);
         historyLL = mineView.findViewById(R.id.mine_history_order);
         myCarLL = mineView.findViewById(R.id.mine_mycar_ll);
+        shareLL = mineView.findViewById(R.id.mine_recommend);
+        opinionLL = mineView.findViewById(R.id.mine_opinion);
+        serverLL = mineView.findViewById(R.id.mine_server);
+        gjlLL = mineView.findViewById(R.id.mine_guojianglong);
     }
 
     @Override
@@ -62,6 +69,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         discountLL.setOnClickListener(this);
         historyLL.setOnClickListener(this);
         myCarLL.setOnClickListener(this);
+        shareLL.setOnClickListener(this);
+        opinionLL.setOnClickListener(this);
+        serverLL.setOnClickListener(this);
+        gjlLL.setOnClickListener(this);
     }
 
     @Override
@@ -93,6 +104,21 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.mine_history_order:
                 getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
+                break;
+            case R.id.mine_recommend:
+                Toast.makeText(getActivity(),"分享",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.mine_opinion:
+                getActivity().startActivity(new Intent(getActivity(), OpinionActivity.class));
+                break;
+            case R.id.mine_server:
+                // 使用系统的电话拨号服务，必须去声明权限，在AndroidManifest.xml中进行声明
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:65999631"));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(intent);
+                break;
+            case R.id.mine_guojianglong:
+                getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));
                 break;
         }
     }
