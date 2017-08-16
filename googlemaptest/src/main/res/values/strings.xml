@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GoogleMap测试</string>
+
+    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+        AIzaSyBjs-CqMidthA02l_P9i4jals448Ga2_ek
+    </string>
+</resources>

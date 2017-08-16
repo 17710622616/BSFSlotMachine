@@ -1,1 +1,1 @@
-include ':app', ':gmaptest'
+include ':app', ':gmaptest', ':googlemaptest'
