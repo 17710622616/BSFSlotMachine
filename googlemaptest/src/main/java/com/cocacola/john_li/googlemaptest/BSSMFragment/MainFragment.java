@@ -1,4 +1,4 @@
-package com.cocacola.john_li.googlemaptest;
+package com.cocacola.john_li.googlemaptest.BSSMFragment;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,9 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.cocacola.john_li.googlemaptest.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationCallback;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -39,7 +41,10 @@ import java.util.Locale;
  */
 
 public class MainFragment extends Fragment implements OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static String TAG = MainFragment.class.getName();
     private View fgView;
+
+    //
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
 
@@ -60,6 +65,19 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
         fgView = inflater.inflate(R.layout.fragment_main, null);
         mMapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map_view);
         mMapFragment.getMapAsync(this);
+        View mapView = mMapFragment.getView();
+        if (mapView != null &&
+                mapView.findViewById(1) != null) {
+            // Get the button view
+            View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
+            // and next place it, on bottom right (as Google Maps app)
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+                    locationButton.getLayoutParams();
+            // position on right bottom
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            layoutParams.setMargins(0, 90, 30, 0);
+        }
         return fgView;
     }
 
@@ -68,6 +86,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
         mGoogleMap = googleMap;
         // 允许获取我的位置
         try {
+            mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
             mGoogleMap.setMyLocationEnabled(true);
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -91,7 +110,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
     }
 
     protected synchronized void buildGoogleApiClient() {
-        Toast.makeText(getActivity(), "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -101,7 +119,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Toast.makeText(getActivity(), "onConnected", Toast.LENGTH_SHORT).show();
         Location mLastLocation = null;
         try {
             Log.i("位置", LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient) + "");
@@ -113,18 +130,23 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
 
         if (mLastLocation != null) {
             //place marker at current position
+            TextView mTvAddress = (TextView) fgView.findViewById(R.id.location_address);
+            mTvAddress.setVisibility(View.VISIBLE);
+            String address = "當前位置：" + getAddress(getActivity(), mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
             mGoogleMap.clear();
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Position");
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15));
+            //MarkerOptions markerOptions = new MarkerOptions();
+            //markerOptions.position(latLng);
+            //markerOptions.title(address);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 19));
             // 添加marker，但是这里我们特意把marker弄成透明的
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.location));
+            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.location_mark));
 
-            mCurrLocation = mGoogleMap.addMarker(markerOptions);
+            //mCurrLocation = mGoogleMap.addMarker(markerOptions);
+            mTvAddress.setText(address);
 
-            Log.i("位置", mLastLocation + "1111111");
+            /*Log.i("位置", mLastLocation + "1111111");
             Log.i("位置", "最新的位置 getProvider " + mLastLocation.getProvider());
             Log.i("位置", "最新的位置 getAccuracy " + mLastLocation.getAccuracy());
             Log.i("位置", "最新的位置 getAltitude " + mLastLocation.getAltitude());
@@ -132,10 +154,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
             Log.i("位置", "最新的位置 Extras() " + mLastLocation.getExtras());
             Log.i("位置", "最新的位置 Latitude() " + mLastLocation.getLatitude());
             Log.i("位置", "最新的位置 Longitude()() " + mLastLocation.getLongitude());
-            Log.i("位置", " =============  ");
-            TextView mTvAddress = (TextView) fgView.findViewById(R.id.main_tv);
-            String address = getAddress(getActivity(), mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            mTvAddress.setText(address);
+            Log.i("位置", " =============  ");*/
         }
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(5000); //5 seconds
@@ -154,12 +173,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(getActivity(), "onConnectionSuspended", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getActivity(), "onConnectionFailed", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -181,7 +198,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback ,Google
                     + "名称：" + address.get(0).getAddressLine(1) + "\n"
                     + "街道：" + address.get(0).getAddressLine(0)
             );
-            return address.get(0).getAddressLine(0) + "  " + address.get(0).getLocality() + " " + address.get(0).getCountryName();
+            return address.get(0).getCountryName() + " " + address.get(0).getAddressLine(0);
         } catch (Exception e) {
             e.printStackTrace();
             return "未知";

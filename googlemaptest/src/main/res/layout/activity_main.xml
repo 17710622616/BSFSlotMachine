@@ -1,15 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.cocacola.john_li.googlemaptest.MainActivity">
+
+    <RadioGroup
+        android:id="@+id/main_rg"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/bg">
+        <RadioButton
+            android:id="@+id/main_parking"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:textSize="10sp"
+            android:button="@null"
+            android:textColor="@color/widnow_background"
+            android:drawableBottom="@drawable/selector_main_parking"
+            android:checked="true"
+            android:background="@color/bg"/>
+        <RadioButton
+            android:id="@+id/main_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:textSize="10sp"
+            android:button="@null"
+            android:textColor="@color/widnow_background"
+            android:drawableBottom="@drawable/selector_main_search"
+            android:background="@color/bg"/>
+        <RadioButton
+            android:id="@+id/main_chat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:textSize="10sp"
+            android:button="@null"
+            android:textColor="@color/widnow_background"
+            android:drawableBottom="@drawable/selector_main_chat"
+            android:background="@color/bg"/>
+    </RadioGroup>
 
     <FrameLayout
         android:id="@+id/main_containor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</FrameLayout>
+</LinearLayout>

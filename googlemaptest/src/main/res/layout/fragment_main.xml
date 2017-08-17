@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/main_title"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:text="定位"
-        android:textSize="22sp"
-        android:gravity="center"
-        android:background="@color/colorPrimary"/>
-
-    <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        tools:context="com.cocacola.john_li.googlemaptest.MainFragment"/>
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            tools:context="com.cocacola.john_li.googlemaptest.BSSMFragment.MainFragment"/>
+        <TextView
+            android:id="@+id/location_address"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/widnow_background"
+            android:background="#ccd75f45"
+            android:alpha="70"
+            android:visibility="invisible"/>
 
     <!--<com.google.android.gms.maps.MapView
         android:id="@+id/main_mapview"
         android:layout_width="match_parent"
         android:layout_height="70dp"/>-->
-
-    <TextView
-        android:id="@+id/main_tv"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:text="导航栏"
-        android:textSize="22sp"
-        android:gravity="center"
-        android:background="@color/colorAccent"/>
-</LinearLayout>
+</FrameLayout>

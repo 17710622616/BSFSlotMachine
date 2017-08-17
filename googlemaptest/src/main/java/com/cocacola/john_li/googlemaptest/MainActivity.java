@@ -1,23 +1,37 @@
 package com.cocacola.john_li.googlemaptest;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.cocacola.john_li.googlemaptest.BSSMFragment.ChatFragment;
+import com.cocacola.john_li.googlemaptest.BSSMFragment.MainFragment;
+import com.cocacola.john_li.googlemaptest.BSSMFragment.SearchFragment;
 import com.melnykov.fab.FloatingActionButton;
 import com.tiancaicc.springfloatingactionmenu.MenuItemView;
 import com.tiancaicc.springfloatingactionmenu.OnMenuActionListener;
 import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener{
+import java.lang.reflect.InvocationTargetException;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    private RadioGroup mainRg;
+    private RadioButton parkingRb,searchRb,chatRb;
+    private FragmentManager fm;
+    private Fragment cacheFragment;
+
     private static int[] frameAnimRes = new int[]{
             R.mipmap.compose_anim_1,
             R.mipmap.compose_anim_2,
@@ -50,15 +64,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Fragment mainFg = new MainFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.main_containor, mainFg).commit();
+
+        initView();
+        setListener();
+        initData();
 
         // 点击弹窗
         createFabFrameAnim();
         createFabReverseFrameAnim();
 
+        // 初始化浮動菜單
         final FloatingActionButton fab = new FloatingActionButton(this);
         fab.setType(FloatingActionButton.TYPE_NORMAL);
+        fab.setScaleType(ImageView.ScaleType.CENTER_CROP);
         fab.setImageDrawable(frameAnim);
 //        fab.setImageResource(android.R.drawable.ic_dialog_email);
         fab.setColorPressedResId(R.color.colorPrimary);
@@ -67,15 +85,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         fab.setShadow(true);
         springFloatingActionMenu = new SpringFloatingActionMenu.Builder(this)
                 .fab(fab)
-                .addMenuItem(R.color.photo, R.mipmap.head, "头像", R.color.text_color,this)
-                .addMenuItem(R.color.chat, R.mipmap.car, "car", R.color.text_color,this)
-                .addMenuItem(R.color.quote, R.mipmap.evaluate, "evaluate", R.color.text_color,this)
-                .addMenuItem(R.color.link, R.mipmap.history_order, "history_order", R.color.text_color,this)
-                .addMenuItem(R.color.audio, R.mipmap.recommend, "recommend", R.color.text_color,this)
-                .addMenuItem(R.color.text, R.mipmap.suggest, "suggest", R.color.text_color,this)
-                .addMenuItem(R.color.video, R.mipmap.system_server, "system_server", R.color.text_color,this)
+                .addMenuItem(R.color.bg, R.mipmap.head_little, "頭像", R.color.text_color,this)
+                .addMenuItem(R.color.chat, R.mipmap.evaluate, "歡迎評價", R.color.text_color,this)
+                .addMenuItem(R.color.quote, R.mipmap.history_order, "歷史訂單", R.color.text_color,this)
+                .addMenuItem(R.color.link, R.mipmap.recommend, "推薦有禮", R.color.text_color,this)
+                .addMenuItem(R.color.audio, R.mipmap.suggest, "意見反饋", R.color.text_color,this)
+                .addMenuItem(R.color.text, R.mipmap.system_server, "客服熱線", R.color.text_color,this)
+                .addMenuItem(R.color.video, R.mipmap.car, "我的車輛", R.color.text_color,this)
                 .animationType(SpringFloatingActionMenu.ANIMATION_TYPE_TUMBLR)
-                .revealColor(R.color.colorPrimary)
+                .revealColor(R.color.bg)
                 .gravity(Gravity.RIGHT | Gravity.BOTTOM)
                 .onMenuActionListner(new OnMenuActionListener() {
                     @Override
@@ -93,6 +111,53 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     }
                 })
                 .build();
+        initSpingFloatingMenu();
+    }
+
+    private void initView() {
+        mainRg = (RadioGroup) this.findViewById(R.id.main_rg);
+        parkingRb = (RadioButton) findViewById(R.id.main_parking);
+        searchRb = (RadioButton) findViewById(R.id.main_search);
+        chatRb = (RadioButton) findViewById(R.id.main_chat);
+    }
+
+    private void setListener() {
+        mainRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i){
+                    case R.id.main_parking:
+                        parkingRb.setChecked(true);
+                        searchRb.setChecked(false);
+                        chatRb.setChecked(false);
+                        switchPages(MainFragment.class,MainFragment.TAG);
+                        break;
+                    case R.id.main_search:
+                        parkingRb.setChecked(false);
+                        searchRb.setChecked(true);
+                        chatRb.setChecked(false);
+                        switchPages(SearchFragment.class,SearchFragment.TAG);
+                        break;
+                    case R.id.main_chat:
+                        parkingRb.setChecked(false);
+                        searchRb.setChecked(false);
+                        chatRb.setChecked(true);
+                        switchPages(ChatFragment.class,ChatFragment.TAG);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void initData() {
+        fm = getSupportFragmentManager();
+        FragmentTransaction traslation = fm.beginTransaction();
+        cacheFragment = new MainFragment();
+        traslation.add(R.id.main_containor,cacheFragment,MainFragment.TAG);
+        traslation.commit();
+    }
+
+    private void initSpingFloatingMenu() {
 
     }
 
@@ -129,5 +194,32 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Log.d("TAG eg","onclick");
         MenuItemView menuItemView = (MenuItemView) v;
         Toast.makeText(this,menuItemView.getLabelTextView().getText(),Toast.LENGTH_SHORT).show();
+    }
+
+    private void switchPages(Class<?> cls, String tag){
+        FragmentTransaction transaction = fm.beginTransaction();
+        if (cacheFragment != null){
+            transaction.hide(cacheFragment);
+        }
+        cacheFragment = fm.findFragmentByTag(tag);
+        if (cacheFragment != null){
+            transaction.show(cacheFragment);
+        } else {
+            try{
+                cacheFragment = (Fragment) cls.getConstructor().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            transaction.add(R.id.main_containor, cacheFragment, tag);
+        }
+        transaction.commit();
     }
 }

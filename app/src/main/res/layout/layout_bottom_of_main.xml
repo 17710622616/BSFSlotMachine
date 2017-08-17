@@ -72,7 +72,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="7dp"
+            android:padding="7dp"
             android:button="@null"
             android:gravity="center"
             android:text="停車"
@@ -80,18 +80,20 @@
             android:textColor="@color/colorSkyBlue"
             android:checked="true"
             android:drawableTop="@drawable/selector_parking"/>
+
         <RadioButton
             android:id="@+id/bottom_main_forum"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="7dp"
+            android:layout_weight="1"
             android:button="@null"
+            android:drawableTop="@drawable/selector_forum"
             android:gravity="center"
             android:text="論壇"
-            android:textSize="10sp"
             android:textColor="@color/colorDrakGray"
-            android:drawableTop="@drawable/selector_forum"/>
+            android:textSize="10sp" />
+
         <RadioButton
             android:id="@+id/bottom_main_mine"
             android:layout_width="0dp"
