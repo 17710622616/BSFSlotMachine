@@ -18,7 +18,7 @@ import com.bs.john_li.bsfslotmachine.R;
 
 public class BSSMHeadView extends LinearLayout {
     private ImageView leftIv,rightIv;
-    private TextView leftTv,titleTv;
+    private TextView leftTv,titleTv,rightTv;
     private Context mContext;
     public BSSMHeadView(Context context) {
         super(context);
@@ -42,9 +42,11 @@ public class BSSMHeadView extends LinearLayout {
         leftIv = (ImageView) this.findViewById(R.id.head_left);
         titleTv = (TextView) this.findViewById(R.id.head_title);
         rightIv = (ImageView) this.findViewById(R.id.head_right);
+        rightTv = (TextView) this.findViewById(R.id.head_right_tv);
         leftIv.setVisibility(INVISIBLE);
         titleTv.setVisibility(INVISIBLE);
         rightIv.setVisibility(INVISIBLE);
+        rightTv.setVisibility(GONE);
     }
 
     /**
@@ -79,6 +81,16 @@ public class BSSMHeadView extends LinearLayout {
     public void setRight(int resId,OnClickListener listener){
         rightIv.setVisibility(VISIBLE);
         rightIv.setImageResource(resId);
+        rightIv.setOnClickListener(listener);
+    }
+
+    /**
+         * 右边按钮文字
+         */
+    public void setRightText(String str,OnClickListener listener){
+        rightIv.setVisibility(GONE);
+        rightTv.setVisibility(VISIBLE);
+        rightTv.setText(str);
         rightIv.setOnClickListener(listener);
     }
 }

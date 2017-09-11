@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -60,7 +61,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 Toast.makeText(getActivity(), "查询",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.head_right:
-                startActivity(new Intent(getActivity(), WalletActivity.class));
+                startActivity(new Intent(getActivity(), LoginActivity.class));
                 break;
         }
     }

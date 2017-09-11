@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/login_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:hint="@string/username"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@color/colorWight"/>
+    <EditText
+        android:id="@+id/login_pw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:hint="@string/pw"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@color/colorWight"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tips"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="5dp"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
+
+    <TextView
+        android:id="@+id/login_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/colorWight"
+        android:textSize="22sp"
+        android:text="@string/login_btn"
+        android:background="@color/colorMineGreen"/>
+</LinearLayout>
