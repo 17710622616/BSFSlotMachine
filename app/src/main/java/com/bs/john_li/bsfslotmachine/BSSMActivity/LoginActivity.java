@@ -11,7 +11,10 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -83,13 +86,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
          */
     private void doLogin(String username, String pw) {
         RequestParams params = new RequestParams(BSSMConfigtor.TEST_IP + BSSMConfigtor.USER_LOGIN);
-        params.addHeader("mobile",username);
-        params.addHeader("password",pw);
-        params.addHeader("osVersion",BSSMConfigtor.OS_TYPE);
-        params.addHeader("osType",BSSMConfigtor.OS_TYPE);
-        x.http().post(params, new Callback.CommonCallback<String>() {
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("mobile",username);
+            jsonObj.put("password",pw);
+            jsonObj.put("osVersion",BSSMConfigtor.OS_TYPE);
+            jsonObj.put("osType",BSSMConfigtor.OS_TYPE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                String reslut = result;
                 Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                 LoginActivity.this.finish();
             }

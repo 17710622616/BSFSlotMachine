@@ -15,4 +15,6 @@ public class BSSMConfigtor {
     public final static String TEST_IP = "http://47.94.254.169:8080/parkingman-web/";
     // 用戶登錄的API
     public final static String USER_LOGIN = "reg/submit";
+    // 发送位置的API
+    public final static String USER_LOCATION = "soltMachine/byDistinct";
 }
