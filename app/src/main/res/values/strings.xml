@@ -25,13 +25,18 @@
     <string name="personal_safe">安全設置</string>
     <string name="wallet_translation_detial">交易明細</string>
     <string name="opinion">請輸入您的寶貴意見</string>
-    <string name="username">用戶名</string>
+    <string name="username">賬戶名</string>
     <string name="pw">密碼</string>
-    <string name="tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
+    <string name="login_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
+    <string name="register_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
     <string name="login_btn">登錄</string>
     <string name="register_btn">註冊</string>
-    <string name="up_not_null">用戶名密碼不可以為空哦~</string>
+    <string name="up_not_null">賬戶名密碼不可以為空哦~</string>
+    <string name="register_not_null">賬戶名密碼及驗證碼不可以為空哦~</string>
     <string name="login_success">登錄成功！~</string>
     <string name="login_fail">登錄失敗0.0確認您的賬戶密碼是否正確！</string>
+    <string name="register_un">賬戶名/手機號碼</string>
+    <string name="get_verification_code">獲取驗證碼</string>
+    <string name="get_verification_code_fail">獲取驗證碼失敗！請重試</string>
     <string name="visit_first">先逛逛~</string>
 </resources>

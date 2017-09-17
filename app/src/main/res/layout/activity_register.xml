@@ -4,21 +4,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
-        android:id="@+id/login_head"
+        android:id="@+id/register_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/login_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="@string/username"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/register_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_marginTop="5dp"
+            android:hint="@string/register_un"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:background="@color/colorWight"/>
+
+        <TextView
+            android:id="@+id/register_get_vc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="@string/get_verification_code"
+            android:textColor="@color/colorWight"
+            android:gravity="center"
+            android:background="@drawable/selector_register_getvc"/>
+    </LinearLayout>
+    <EditText
+        android:id="@+id/register_verification_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:hint="驗證碼"
         android:textSize="20sp"
         android:padding="5dp"
         android:background="@color/colorWight"/>
     <EditText
-        android:id="@+id/login_pw"
+        android:id="@+id/register_pw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -30,7 +56,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login_tips"
+        android:text="@string/register_tips"
         android:layout_marginTop="2dp"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="2dp"
@@ -39,7 +65,7 @@
         android:textColor="@color/colorDrakGray"/>
 
     <TextView
-        android:id="@+id/login_tv"
+        android:id="@+id/register_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -49,6 +75,6 @@
         android:layout_marginRight="5dp"
         android:textColor="@color/colorWight"
         android:textSize="22sp"
-        android:text="@string/login_btn"
+        android:text="@string/register_btn"
         android:background="@color/colorMineGreen"/>
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -61,10 +62,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.head_right_tv:
+                startActivityForResult(new Intent(this, RegisterActivity.class), BSSMConfigtor.REQUEST_CODE);
                 break;
             case R.id.login_tv:
                 checkUP();
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == BSSMConfigtor.REQUEST_CODE) {
+            switch (resultCode) {
+                case 1:
+                    finish();
+                    break;
+            }
         }
     }
 
@@ -85,7 +99,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
          * 登錄的方法
          */
     private void doLogin(String username, String pw) {
-        RequestParams params = new RequestParams(BSSMConfigtor.TEST_IP + BSSMConfigtor.USER_LOGIN);
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_LOGIN);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {

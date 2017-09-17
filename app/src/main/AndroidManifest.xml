@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".BSSMActivity.MainActivity"/>
         <activity android:name=".BSSMActivity.LoginActivity"/>
+        <activity android:name=".BSSMActivity.RegisterActivity"/>
         <activity android:name=".BSSMActivity.Mine.SettingActivity"/>
         <activity android:name=".BSSMActivity.Mine.PersonalSettingActivity"/>
         <activity android:name=".BSSMActivity.Mine.WalletActivity"/>

@@ -34,6 +34,5 @@
         android:layout_weight="1"
         android:gravity="center"
         android:textSize="19sp"
-        android:textColor="@color/colorWight"
-        android:visibility="gone"/>
+        android:textColor="@color/colorWight"/>
 </LinearLayout>

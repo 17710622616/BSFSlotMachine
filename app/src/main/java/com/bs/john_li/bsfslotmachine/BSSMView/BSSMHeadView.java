@@ -91,6 +91,6 @@ public class BSSMHeadView extends LinearLayout {
         rightIv.setVisibility(GONE);
         rightTv.setVisibility(VISIBLE);
         rightTv.setText(str);
-        rightIv.setOnClickListener(listener);
+        rightTv.setOnClickListener(listener);
     }
 }
