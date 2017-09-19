@@ -39,4 +39,8 @@
     <string name="get_verification_code">獲取驗證碼</string>
     <string name="get_verification_code_fail">獲取驗證碼失敗！請重試</string>
     <string name="visit_first">先逛逛~</string>
+    <!--AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g-->
+    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+        AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g
+    </string>
 </resources>

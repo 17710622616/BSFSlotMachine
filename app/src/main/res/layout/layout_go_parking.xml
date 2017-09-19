@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/colorAlpha">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorWight"
+        android:layout_marginTop="25dp"
+        android:layout_gravity="bottom">
+        <TextView
+            android:id="@+id/parking_location_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="當前位置："
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:layout_marginRight="90dp"/>
+
+        <TextView
+            android:id="@+id/parking_nearby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="離您最近的咪錶：#4008"
+            android:textSize="13sp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:singleLine="true"
+            android:layout_marginRight="80dp"/>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/go_parling_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/shape_go_parking"
+        android:layout_gravity="right"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@mipmap/go_parking_1920" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:layout_marginTop="5dp"
+            android:text="去停車"
+            android:textSize="13sp"
+            android:textColor="@color/colorWight"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</FrameLayout>

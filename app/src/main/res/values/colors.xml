@@ -18,4 +18,5 @@
     <color name="colorMineGreen">#7FC247</color>
     <color name="colorLoginOutRed">#F32E2E</color>
     <color name="colorNewGreen">#53EEBD</color>
+    <color name="colorAlpha">#00000000</color>
 </resources>
