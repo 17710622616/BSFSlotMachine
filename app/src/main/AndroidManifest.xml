@@ -41,6 +41,7 @@
         <activity android:name=".BSSMActivity.Mine.CarListActivity"/>
         <activity android:name=".BSSMActivity.Mine.OpinionActivity"/>
         <activity android:name=".BSSMActivity.Mine.GuoJiangLongActivity"/>
+        <activity android:name=".BSSMActivity.Parking.SlotMachineListActivity"/>
     </application>
 
 </manifest>

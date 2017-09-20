@@ -23,4 +23,6 @@ public class BSSMConfigtor {
     public final static String GET_VERIFICATION_CODE = "reg/getVerifyCode";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
+    // 搜索咪錶編號的API
+    public final static String SEARCH_SLOT_MACHINE = "soltMachine/byKey";
 }

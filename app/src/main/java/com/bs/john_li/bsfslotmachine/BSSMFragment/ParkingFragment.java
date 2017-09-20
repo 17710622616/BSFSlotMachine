@@ -15,12 +15,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SlotMachineListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -48,6 +50,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public static String TAG = ParkingFragment.class.getName();
     private View parkingView;
     private BSSMHeadView headView;
+    private LinearLayout goParlingLL;
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
@@ -58,6 +61,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     private Marker mCurrLocation;
     private LocationManager mLocationManager;
     private Location mLastLocation = null;
+    private String mAddress;
 
     private static final int REQUESTCODE = 6001;
 
@@ -80,6 +84,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void initView() {
         headView = (BSSMHeadView) parkingView.findViewById(R.id.parking_head);
         mMapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map_view);
+        goParlingLL = parkingView.findViewById(R.id.go_parling_ll);
         mMapFragment.getMapAsync(this);
         View mapView = mMapFragment.getView();
         if (mapView != null && mapView.findViewById(1) != null) {
@@ -96,7 +101,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void setListenter() {
-
+        goParlingLL.setOnClickListener(this);
     }
 
     @Override
@@ -115,6 +120,17 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.head_right:
                 startActivity(new Intent(getActivity(), LoginActivity.class));
+                break;
+            case R.id.go_parling_ll:
+                if (mLastLocation != null && mAddress != null) {
+                    Intent intent = new Intent(getActivity(), SlotMachineListActivity.class);
+                    intent.putExtra("Latitude",String.valueOf(mLastLocation.getLatitude()));
+                    intent.putExtra("Longitude",String.valueOf(mLastLocation.getLongitude()));
+                    intent.putExtra("Address",mAddress);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), "您還沒定位呢，請先定位~",Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -183,7 +199,8 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             //place marker at current position
             TextView mTvAddress = (TextView) parkingView.findViewById(R.id.parking_location_info);
             mTvAddress.setVisibility(View.VISIBLE);
-            String address = "當前位置：" + getAddress(getActivity(), mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mAddress = getAddress(getActivity(), mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            String address = "當前位置：" + mAddress;
 
             mGoogleMap.clear();
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -249,7 +266,8 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                     + "名称：" + address.get(0).getAddressLine(1) + "\n"
                     + "街道：" + address.get(0).getAddressLine(0)
             );
-            return address.get(0).getCountryName() + " " + address.get(0).getAddressLine(0);
+            //return address.get(0).getCountryName() + " " + address.get(0).getAddressLine(0);
+            return address.get(0).getAddressLine(0);
         } catch (Exception e) {
             e.printStackTrace();
             return "未知";

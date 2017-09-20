@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/tingchetubiao_1920">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="咪錶編號"
+        android:textSize="20sp"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"
+        android:paddingTop="15dp"/>
+    <TextView
+        android:id="@+id/item_sm_machineno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="#00003"
+        android:textSize="20sp"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"
+        android:paddingBottom="15dp"/>
+</LinearLayout>
