@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".BSSMUtils.BSSMApplication"
@@ -43,6 +44,7 @@
         <activity android:name=".BSSMActivity.Mine.GuoJiangLongActivity"/>
         <activity android:name=".BSSMActivity.Parking.SlotMachineListActivity"/>
         <activity android:name=".BSSMActivity.Parking.SearchSlotMachineActivity"/>
+        <activity android:name=".BSSMActivity.Parking.ParkingOrderActivity"/>
     </application>
 
 </manifest>

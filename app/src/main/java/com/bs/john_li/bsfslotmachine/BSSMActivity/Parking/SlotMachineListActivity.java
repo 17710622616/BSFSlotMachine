@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SlotMachineListAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -35,11 +36,13 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
     private static final int radius = 100;
     private BSSMHeadView headView;
     private GridView smGv;
+    private LinearLayout smLL;
 
     private String mAddress;
     private String mLatitude;
     private String mLongitude;
     private SlotMachineListAdapter mAdapter;
+    private List<SlotMachineListModel.SlotMachineModel> smList;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +56,26 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
     public void initView() {
         headView = findViewById(R.id.sm_list_head);
         smGv = findViewById(R.id.sm_list_gv);
+        smLL = findViewById(R.id.sm_list_ll);
     }
 
     @Override
     public void setListener() {
-
+        smGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(SlotMachineListActivity.this, "點擊了" + smList.get(i).getMachineNo() + smList.get(i).getAddress(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SlotMachineListActivity.this, ParkingOrderActivity.class);
+                startActivity(intent);
+            }
+        });
+        smLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SlotMachineListActivity.this, SearchSlotMachineActivity.class));
+                finish();
+            }
+        });
     }
 
     @Override
@@ -67,6 +85,8 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         mLatitude = intent.getStringExtra("Latitude");
         mLongitude = intent.getStringExtra("Longitude");
         headView.setLeft(this);
+        smList = new ArrayList<>();
+
         if (mAddress != null) {
             String titleAddress = null;
             if (mAddress.length() > 8) {
@@ -93,8 +113,8 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         params.setAsJsonContent(true);params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("longitude",mLatitude);
-            jsonObj.put("latitude",mLongitude);
+            jsonObj.put("longitude",mLongitude);//mLongitude"113.560976"
+            jsonObj.put("latitude",mLatitude);//mLatitude"22.191441"
             jsonObj.put("radius",radius);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -104,17 +124,14 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode().equals("200") || model.getCode().equals("10001")) {
-                    List<SlotMachineModel> testList = new ArrayList<SlotMachineModel>();
-                    for (int i = 0; i <= 10; i++) {
-                        SlotMachineModel model1 = new SlotMachineModel();
-                        model1.setMachineNo("#0000" + i);
-                        testList.add(model1);
-                        mAdapter = new SlotMachineListAdapter(testList, SlotMachineListActivity.this);
-                        smGv.setAdapter(mAdapter);
+                SlotMachineListModel model = new Gson().fromJson(result.toString(), SlotMachineListModel.class);
+                if (model.getCode() == 200) {
+                    if (model.getData() != null) {
+                        smList = model.getData();
                     }
-
+                    updateUIAfterGetData();
+                } else if (model.getCode() == 10001){
+                    Toast.makeText(SlotMachineListActivity.this, getString(R.string.check_user_fail), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(SlotMachineListActivity.this, model.getCode() + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -135,6 +152,19 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
 
             }
         });
+    }
+
+    /**
+     * 獲取數據后刷新界面
+     */
+    private void updateUIAfterGetData() {
+        if (smList.size() > 0) {
+            smLL.setVisibility(View.GONE);
+        } else {
+            smLL.setVisibility(View.VISIBLE);
+        }
+        mAdapter = new SlotMachineListAdapter(smList, SlotMachineListActivity.this);
+        smGv.setAdapter(mAdapter);
     }
 
     @Override

@@ -32,6 +32,7 @@ public class SearchSlotMachineAdapter extends ArrayAdapter {
         this.mContext = context;
         inflater = LayoutInflater.from(mContext);
     }
+
     @Override
     public int getCount() {
         return smList.size();

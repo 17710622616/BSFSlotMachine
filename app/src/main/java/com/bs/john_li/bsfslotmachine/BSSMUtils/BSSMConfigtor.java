@@ -14,6 +14,10 @@ public class BSSMConfigtor {
     public static int REQUEST_CODE = 100;
     // Login for result
     public static int LOGIN_FOR_RESULT = 1;
+    // 咪錶不存在
+    public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
+    // 咪錶存在
+    public final static String SLOT_MACHINE_EXIST = "NOT_EXIST";
 
     // 測試的IP地址
     public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";

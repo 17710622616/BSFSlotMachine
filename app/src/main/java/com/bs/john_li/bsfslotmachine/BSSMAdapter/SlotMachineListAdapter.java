@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListModel;
 import com.bs.john_li.bsfslotmachine.R;
-import com.google.android.gms.vision.text.Text;
 
 import java.util.List;
 
@@ -18,11 +17,11 @@ import java.util.List;
  */
 
 public class SlotMachineListAdapter extends BaseAdapter {
-    private List<SlotMachineModel> smList;
+    private List<SlotMachineListModel.SlotMachineModel> smList;
     private LayoutInflater mInflater;
     private Context mContext;
 
-    public SlotMachineListAdapter(List<SlotMachineModel> smList, Context context) {
+    public SlotMachineListAdapter(List<SlotMachineListModel.SlotMachineModel> smList, Context context) {
         this.smList = smList;
         mInflater = LayoutInflater.from(context);
         mContext = context;
