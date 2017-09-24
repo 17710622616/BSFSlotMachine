@@ -297,8 +297,9 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         //创建File对象用于存储拍照的图片 SD卡根目录
         //File outputImage = new File(Environment.getExternalStorageDirectory(),"test.jpg");
         //存储至DCIM文件夹
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-        File outputImage = new File(path,filename+".png");
+        //File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File outputImage = new File(path,filename+".jpg");
         try {
             if(outputImage.exists()) {
                 outputImage.delete();
@@ -309,7 +310,8 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         }
         //将File对象转换为Uri并启动照相程序
         imageUri = Uri.fromFile(outputImage);
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"); //照相
+        //Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"); //照相
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); //指定图片输出地址
         startActivityForResult(intent,TAKE_PHOTO); //启动照相
         //拍完照startActivityForResult() 结果返回onActivityResult()函数
@@ -324,13 +326,13 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         }
         switch(requestCode) {
             case TAKE_PHOTO:
-                Intent intent = new Intent(this, ParkingOrderActivity.class);
+                /*Intent intent = new Intent(this, ParkingOrderActivity.class);
                 intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
                 intent.putExtra("imageUri", imageUri.getPath());
-                startActivity(intent);
+                startActivity(intent);*/
                 finish();
-                /*Intent intent = new Intent("com.android.camera.action.CROP"); //剪裁
-                intent.setDataAndType(imageUri, "image*//*");
+                Intent intent = new Intent("com.android.camera.action.CROP"); //剪裁
+                intent.setDataAndType(imageUri, "image");
                 intent.putExtra("scale", true);
                 //设置宽高比例
                 intent.putExtra("aspectX", 1);
@@ -344,7 +346,13 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 Intent intentBc = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 intentBc.setData(imageUri);
                 this.sendBroadcast(intentBc);
-                startActivityForResult(intent, CROP_PHOTO); //设置裁剪参数显示图片至ImageView*/
+                startActivityForResult(intent, CROP_PHOTO); //设置裁剪参数显示图片至ImageView
+                break;
+            case CROP_PHOTO:
+                Intent intent1 = new Intent(this, ParkingOrderActivity.class);
+                intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
+                intent1.putExtra("imageUri", imageUri.getPath());
+                startActivity(intent1);
                 break;
             default:
                 break;
