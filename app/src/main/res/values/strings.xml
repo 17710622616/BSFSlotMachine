@@ -27,6 +27,7 @@
     <string name="opinion">請輸入您的寶貴意見</string>
     <string name="username">賬戶名</string>
     <string name="pw">密碼</string>
+    <string name="no_net">網絡連接失敗咯0.0請檢測網絡線~</string>
     <string name="login_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
     <string name="register_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
     <string name="login_btn">登錄</string>
@@ -39,6 +40,7 @@
     <string name="get_verification_code">獲取驗證碼</string>
     <string name="get_verification_code_fail">獲取驗證碼失敗！請重試</string>
     <string name="visit_first">先逛逛~</string>
+    <string name="not_login">您還未登錄，現在是遊客身份哦~</string>
     <string name="check_user_fail">身份認證失敗！請重新登錄或聯繫客服</string>
     <string name="search_noresult">搵唔到咪錶？唔怕！影相都可以泊車~~</string>
 

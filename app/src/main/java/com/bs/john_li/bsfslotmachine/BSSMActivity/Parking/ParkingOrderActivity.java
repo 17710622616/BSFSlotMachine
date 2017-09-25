@@ -33,7 +33,7 @@ public class ParkingOrderActivity extends BaseActivity {
 
     private String way;
     private List<String> imgUrlList;
-    private ImageOptions options = new ImageOptions.Builder().setFailureDrawableId(R.mipmap.car_sample).build();
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,36 +60,17 @@ public class ParkingOrderActivity extends BaseActivity {
         Intent intent = getIntent();
         way = intent.getStringExtra("way");
         imgUrlList = new ArrayList<>();
-        if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) {
+        if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
             String imgUri = intent.getStringExtra("imageUri");
             Log.d("imgUri", imgUri);
             imgUrlList.add(imgUri);
-            File f =new File("/storage/emulated/0/DCIM/20170923000720.png");
-            String path = f.getAbsolutePath();
-            x.image().bind(parkingIv, "/storage/emulated/0/DCIM/20170923000720.png", options, new Callback.CommonCallback<Drawable>() {
-                @Override
-                public void onSuccess(Drawable result) {
-                    Log.d("imgUriSuccess", result.toString());
-                }
+            x.image().bind(parkingIv, imgUrlList.get(0), options);
+        } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    Log.d("imgUriError", ex.toString());
-                }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
-
-                }
-
-                @Override
-                public void onFinished() {
-
-                }
-            });
-            //Picasso.with(this).load("/storage/emulated/0/DCIM/20170923000720.png").error(R.mipmap.car_sample).into(parkingIv);
-        } else {
+        } else {    // 咪錶存在，搜索停車
 
         }
+
+
     }
 }

@@ -64,8 +64,15 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         smGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(SlotMachineListActivity.this, "點擊了" + smList.get(i).getMachineNo() + smList.get(i).getAddress(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(SlotMachineListActivity.this, ParkingOrderActivity.class);
+                Intent intent = null;
+                if (smList.get(i).getParkingSpaces() == null) { //沒有子列表
+                    intent = new Intent(SlotMachineListActivity.this, ParkingOrderActivity.class);
+                    intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_EXIST);
+                    intent.putExtra("SlotMachine", new Gson().toJson(smList.get(i)));
+                } else {    // 有子列表
+                    intent = new Intent(SlotMachineListActivity.this, SlotMachineChildListActivity.class);
+                    intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(i)));
+                }
                 startActivity(intent);
             }
         });

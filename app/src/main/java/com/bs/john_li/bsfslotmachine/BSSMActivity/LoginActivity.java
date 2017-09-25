@@ -8,9 +8,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +30,7 @@ import org.xutils.x;
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView head;
     private EditText usernameEt,pwEt;
-    private TextView loginTv;
+    private TextView loginTv, notLoginTv;
 
     private String username, pw;
     @Override
@@ -45,11 +48,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         usernameEt = findViewById(R.id.login_username);
         pwEt = findViewById(R.id.login_pw);
         loginTv = findViewById(R.id.login_tv);
+        notLoginTv = findViewById(R.id.not_login_now_tv);
     }
 
     @Override
     public void setListener() {
         loginTv.setOnClickListener(this);
+        notLoginTv.setOnClickListener(this);
     }
 
     @Override
@@ -66,6 +71,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.login_tv:
                 checkUP();
+                break;
+            case R.id.not_login_now_tv:
+                finish();
                 break;
         }
     }
@@ -116,14 +124,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                String reslut = result;
-                Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-                LoginActivity.this.finish();
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    SPUtils.put(LoginActivity.this, "UserToken", model.getData().toString());
+                    Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                    LoginActivity.this.finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override

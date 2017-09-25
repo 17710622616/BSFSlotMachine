@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.DiscountActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
@@ -18,6 +20,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 
@@ -31,6 +34,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private View mineView;
     private BSSMHeadView mineHeadView;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
+    private TextView nickNameTv, phoneTv;
+
+    private String userToken;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +65,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         opinionLL = mineView.findViewById(R.id.mine_opinion);
         serverLL = mineView.findViewById(R.id.mine_server);
         gjlLL = mineView.findViewById(R.id.mine_guojianglong);
+        nickNameTv = mineView.findViewById(R.id.mine_nickname);
+        phoneTv = mineView.findViewById(R.id.mine_info_phone);
     }
 
     @Override
@@ -79,6 +87,40 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void initData() {
         mineHeadView.setTitle("我的");
         mineHeadView.setRight(R.mipmap.setting, this);
+
+        userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
+        if (userToken != null) {
+            if (!userToken.equals("")){
+                nickNameTv.setText("小叮噹");
+                phoneTv.setText("65****31");
+            } else {
+                Toast.makeText(getActivity(),  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshUI();
+    }
+
+    /**
+     * 刷新UI
+     */
+    private void refreshUI() {
+        if (userToken != null) {
+            if (!userToken.equals("")){
+                nickNameTv.setText("小叮噹");
+                phoneTv.setText("65****31");
+            } else {
+                Toast.makeText(getActivity(),  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -88,7 +130,15 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 getActivity().startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
             case R.id.personal_setting_ll:
-                getActivity().startActivity(new Intent(getActivity(), PersonalSettingActivity.class));
+                if (userToken != null) {
+                    if (!userToken.equals("")) {
+                        getActivity().startActivity(new Intent(getActivity(), PersonalSettingActivity.class));
+                    } else {
+                        getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
+                    }
+                } else {
+                    getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.mine_wallet_ll:
                 getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));

@@ -50,5 +50,15 @@
         android:textColor="@color/colorWight"
         android:textSize="22sp"
         android:text="@string/login_btn"
-        android:background="@color/colorMineGreen"/>
+        android:background="@drawable/shape_btn_bg"/>
+
+    <TextView
+        android:id="@+id/not_login_now_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/visit_first"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
 </LinearLayout>

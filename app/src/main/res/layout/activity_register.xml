@@ -76,5 +76,5 @@
         android:textColor="@color/colorWight"
         android:textSize="22sp"
         android:text="@string/register_btn"
-        android:background="@color/colorMineGreen"/>
+        android:background="@drawable/shape_btn_bg"/>
 </LinearLayout>

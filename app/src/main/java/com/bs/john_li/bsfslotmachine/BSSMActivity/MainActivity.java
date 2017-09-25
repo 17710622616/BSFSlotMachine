@@ -11,10 +11,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.MineFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ParkingFragment;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
 
@@ -34,6 +36,9 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //StatusBarUtil.setColor(this,getResources().getColor(R.color.colorPrimary),0);
+        // 判斷是否登錄
+        isLoginNow();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -64,6 +69,19 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         cacheFragment = new ParkingFragment();
         traslation.add(R.id.main_containor,cacheFragment,ParkingFragment.TAG);
         traslation.commit();
+    }
+
+    /**
+     * 判斷是否登錄
+     */
+    private void isLoginNow() {
+        String userToken = (String) SPUtils.get(this, "UserToken", "");
+        if (userToken == null) {
+            if (userToken.equals("")){
+                Toast.makeText(this, getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(this,  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

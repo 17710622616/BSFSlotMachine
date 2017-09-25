@@ -3,14 +3,200 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@color/colorMineGray">
+
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/parking_order_head"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
-    <ImageView
-        android:id="@+id/parking_iv"
-        android:layout_width="360dp"
-        android:layout_height="450dp" />
+    <!--訂單內容-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <!--車輛選擇-->
+            <RelativeLayout
+                android:id="@+id/parking_order_car_manage_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:background="@color/colorWight">
+
+                <TextView
+                    android:id="@+id/parking_order_car_manage_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:layout_marginTop="5dp"
+                    android:text="車輛管理"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_vertical"/>
+
+                <ImageView
+                    android:id="@+id/parking_iv"
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:src="@mipmap/car_sample"
+                    android:scaleType="fitXY"
+                    android:layout_below="@id/parking_order_car_manage_tv"/>
+                    <TextView
+                        android:id="@+id/parking_order_car_brand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="品牌："
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/parking_order_car_manage_tv"
+                        android:layout_toRightOf="@id/parking_iv"/>
+                    <TextView
+                        android:id="@+id/parking_order_car_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="車型："
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/parking_order_car_brand"
+                        android:layout_toRightOf="@id/parking_iv"/>
+
+                    <TextView
+                        android:id="@+id/parking_order_car_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="車牌號："
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/parking_order_car_type"
+                        android:layout_toRightOf="@id/parking_iv"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_location_ll"
+                android:layout_marginTop="10dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_location_tv"
+                    style="@style/MineItemTextView"
+                    android:text="停車位置：新馬路#00624號" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_starttime_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_starttime_tv"
+                    style="@style/MineItemTextView"
+                    android:text="投幣時間[預計15:30]" />
+
+                <ImageView
+                    style="@style/MineItemImageNext"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_money_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_money_tv"
+                    style="@style/MineItemTextView"
+                    android:text="投幣金額：0MOP" />
+
+                <ImageView
+                    style="@style/MineItemImageNext"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_voucher_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_voucher_tv"
+                    style="@style/MineItemTextView"
+                    android:text="代金券：超值抵用券" />
+
+                <ImageView
+                    style="@style/MineItemImageNext"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_remark_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_remark_tv"
+                    style="@style/MineItemTextView"
+                    android:text="備註："
+                    android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_renewal_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_renewal_tv"
+                    style="@style/MineItemTextView"
+                    android:text="是否自動續時" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!--訂單金額及提交訂單按鈕-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/parking_order_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="金額："
+            android:textColor="@color/colorWight"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:background="@color/colorOrderGray"/>
+
+        <TextView
+            android:id="@+id/parking_order_discounts_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:text="|已優惠：2.00"
+            android:textColor="@color/colorWight"
+            android:textSize="12sp"
+            android:gravity="center_vertical|left"
+            android:background="@color/colorOrderGray"/>
+
+        <TextView
+            android:id="@+id/parking_order_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.4"
+            android:text="提交訂單"
+            android:textColor="@color/colorWight"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@color/colorSubmitGreen"/>
+    </LinearLayout>
+
 </LinearLayout>

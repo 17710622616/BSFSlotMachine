@@ -1,6 +1,8 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +57,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 搜索界面
@@ -71,9 +75,8 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private List<SlotMachineListModel.SlotMachineModel> smList;
 
     public static final int TAKE_PHOTO = 1;
-    public static final int CROP_PHOTO = 2;
-    private Uri imageUri; //图片路径
-    private String filename; //图片名称
+    private File dir; //圖片文件夾路徑
+    private File file;  //照片文件
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,10 +90,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         initView();
         setListener();
         initData();
-
-        /*if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction() .add(R.id.container, new PlaceholderFragment()) .commit();
-        }*/
     }
 
     public void initView() {
@@ -109,8 +108,22 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         noresultLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(SearchSlotMachineActivity.this,"拍照停車",Toast.LENGTH_SHORT).show();
-                callCamare();
+                if(IsThereAnAppToTakePictures()) {
+                    dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
+
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    file = new File(dir, format.format(date) + "location.jpg");
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(intent, TAKE_PHOTO);
+                    Toast.makeText(SearchSlotMachineActivity.this,"拍照停車",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SearchSlotMachineActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -142,9 +155,19 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 String chooseStr = slotMachineList.get(position);
                 mSearchView.setQuery(chooseStr,true);
                 putInHistorySearch(position);
-                Intent intent = new Intent(SearchSlotMachineActivity.this, ParkingOrderActivity.class);
-                intent.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
+                Intent intent = null;
+                if (smList.get(position).getParkingSpaces() != null) {
+                    // 有子列表
+                    intent = new Intent(SearchSlotMachineActivity.this, SlotMachineChildListActivity.class);
+                    intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(position)));
+                } else {
+                    // 無子列表
+                    intent = new Intent(SearchSlotMachineActivity.this, ParkingOrderActivity.class);
+                    intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                    intent.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
+                }
                 startActivity(intent);
+                finish();
             }
         });
         mCompleteText.setThreshold(0);
@@ -171,6 +194,16 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * 检查相机是否可以打开
+     */
+    private boolean IsThereAnAppToTakePictures() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        List<ResolveInfo> availableActivities = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        return availableActivities != null && availableActivities.size() > 0;
+    }
+
 
     /**
      * 檢查用戶輸入的內容
@@ -289,34 +322,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         SPUtils.put(this, "SlotMachine", new Gson().toJson(historyList));
     }
 
-    private void callCamare() {
-        //图片名称 时间命名
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-        Date date = new Date(System.currentTimeMillis());
-        filename = format.format(date);
-        //创建File对象用于存储拍照的图片 SD卡根目录
-        //File outputImage = new File(Environment.getExternalStorageDirectory(),"test.jpg");
-        //存储至DCIM文件夹
-        //File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File outputImage = new File(path,filename+".jpg");
-        try {
-            if(outputImage.exists()) {
-                outputImage.delete();
-            }
-            outputImage.createNewFile();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        //将File对象转换为Uri并启动照相程序
-        imageUri = Uri.fromFile(outputImage);
-        //Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"); //照相
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); //指定图片输出地址
-        startActivityForResult(intent,TAKE_PHOTO); //启动照相
-        //拍完照startActivityForResult() 结果返回onActivityResult()函数
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -326,33 +331,15 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         }
         switch(requestCode) {
             case TAKE_PHOTO:
-                /*Intent intent = new Intent(this, ParkingOrderActivity.class);
-                intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
-                intent.putExtra("imageUri", imageUri.getPath());
-                startActivity(intent);*/
-                finish();
-                Intent intent = new Intent("com.android.camera.action.CROP"); //剪裁
-                intent.setDataAndType(imageUri, "image");
-                intent.putExtra("scale", true);
-                //设置宽高比例
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                //设置裁剪图片宽高
-                intent.putExtra("outputX", 340);
-                intent.putExtra("outputY", 340);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                Toast.makeText(SearchSlotMachineActivity.this, "剪裁图片", Toast.LENGTH_SHORT).show();
-                //广播刷新相册
-                Intent intentBc = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                intentBc.setData(imageUri);
-                this.sendBroadcast(intentBc);
-                startActivityForResult(intent, CROP_PHOTO); //设置裁剪参数显示图片至ImageView
-                break;
-            case CROP_PHOTO:
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(file);
+                mediaScanIntent.setData(contentUri);
+                sendBroadcast(mediaScanIntent);
                 Intent intent1 = new Intent(this, ParkingOrderActivity.class);
                 intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
-                intent1.putExtra("imageUri", imageUri.getPath());
+                intent1.putExtra("imageUri", file.getPath());
                 startActivity(intent1);
+                finish();
                 break;
             default:
                 break;
@@ -362,22 +349,19 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("imageUri", imageUri.getPath());
+        if (file != null){
+            outState.putString("file_path", file.getPath());
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        File outputImage = new File((String) savedInstanceState.get("imageUri"));
-        try {
-            if(outputImage.exists()) {
-                outputImage.delete();
+        String cacheFileName = savedInstanceState.get("file_path").toString();
+        if (cacheFileName != null) {
+            if (!cacheFileName.equals("")) {
+                file = new File(cacheFileName);
             }
-            outputImage.createNewFile();
-        } catch(IOException e) {
-            e.printStackTrace();
         }
-        //将File对象转换为Uri并启动照相程序
-        imageUri = Uri.fromFile(outputImage);
     }
 }

@@ -24,6 +24,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SlotMachineListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.android.gms.common.ConnectionResult;

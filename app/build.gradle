@@ -9,6 +9,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,4 +39,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.google.android.gms:play-services:10.2.6'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:multidex:1.0.1'
 }

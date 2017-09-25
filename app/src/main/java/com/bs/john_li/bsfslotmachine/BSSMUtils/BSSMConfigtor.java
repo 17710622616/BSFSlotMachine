@@ -16,14 +16,18 @@ public class BSSMConfigtor {
     public static int LOGIN_FOR_RESULT = 1;
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
+    // 咪錶搜索结果
+    public final static String SLOT_MACHINE_FROM_SEARCH = "FROM_SEARCH";
     // 咪錶存在
-    public final static String SLOT_MACHINE_EXIST = "NOT_EXIST";
+    public final static String SLOT_MACHINE_EXIST = "LOCATION_EXIST";
 
     // 測試的IP地址
     public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";
     // 用戶登錄的API
-    public final static String USER_LOGIN = "reg/submit";
-    // 用戶登錄的API
+    public final static String USER_LOGIN = "user/login";
+    // 用戶註冊的API
+    public final static String USER_RIGISTER = "reg/submit";
+    // 獲取驗證碼
     public final static String GET_VERIFICATION_CODE = "reg/getVerifyCode";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
