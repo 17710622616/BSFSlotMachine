@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/add_car_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/add_car_photo_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWight"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:text="車輛照片："
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/add_car_photo_iv"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_weight="2.5"
+                android:scaleType="centerInside"
+                android:src="@mipmap/car_zhanwei" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_car_type_ll"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/add_car_type_tv"
+                style="@style/MineItemTextView"
+                android:text="車輛類型：" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_car_no_ll"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/add_car_no_tv"
+                style="@style/MineItemTextView"
+                android:text="車牌號碼：" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_car_model_ll"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/add_car_model_tv"
+                style="@style/MineItemTextView"
+                android:text="車      型：" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_car_brand_ll"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/add_car_brand_tv"
+                style="@style/MineItemTextView"
+                android:text="車輛品牌：" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_car_style_ll"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/add_car_style_tv"
+                style="@style/MineItemTextView"
+                android:text="車輛型號：" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

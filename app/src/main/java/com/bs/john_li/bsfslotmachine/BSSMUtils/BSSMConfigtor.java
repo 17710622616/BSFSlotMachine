@@ -12,8 +12,14 @@ public class BSSMConfigtor {
     public static String OS_VERSION = null;
     // request_code
     public static int REQUEST_CODE = 100;
+    // Login for request
+    public static int LOGIN_FOR_RQUEST = 1;
     // Login for result
-    public static int LOGIN_FOR_RESULT = 1;
+    public static int LOGIN_FOR_RESULT = 2;
+    // add car for request
+    public static int ADD_CAR_RQUEST = 3;
+    // add car for result
+    public static int ADD_CAR_RESULT = 4;
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
     // 咪錶搜索结果
@@ -33,4 +39,6 @@ public class BSSMConfigtor {
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
     public final static String SEARCH_SLOT_MACHINE = "soltMachine/byKey";
+    // 添加車輛
+    public final static String ADD_CAR = "car/add?token=";
 }

@@ -47,6 +47,7 @@
         <activity android:name=".BSSMActivity.Parking.SlotMachineChildListActivity"/>
         <activity android:name=".BSSMActivity.Parking.SearchSlotMachineActivity"/>
         <activity android:name=".BSSMActivity.Parking.ParkingOrderActivity"/>
+        <activity android:name=".BSSMActivity.Mine.AddCarActivity"/>
     </application>
 
 </manifest>

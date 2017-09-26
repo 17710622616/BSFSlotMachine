@@ -117,7 +117,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     Date date = new Date(System.currentTimeMillis());
-                    file = new File(dir, format.format(date) + "location.jpg");
+                    file = new File(dir, "location" + format.format(date) + ".jpg");
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                     startActivityForResult(intent, TAKE_PHOTO);
                     Toast.makeText(SearchSlotMachineActivity.this,"拍照停車",Toast.LENGTH_SHORT).show();

@@ -15,6 +15,7 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -128,6 +129,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 if (model.getCode().equals("200")) {
                     SPUtils.put(LoginActivity.this, "UserToken", model.getData().toString());
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                    //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
+                    EventBus.getDefault().post("LOGIN");
                     LoginActivity.this.finish();
                 } else {
                     Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();

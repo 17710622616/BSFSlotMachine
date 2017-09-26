@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -133,5 +134,10 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             transaction.add(R.id.main_containor, cacheFragment, tag);
         }
         transaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

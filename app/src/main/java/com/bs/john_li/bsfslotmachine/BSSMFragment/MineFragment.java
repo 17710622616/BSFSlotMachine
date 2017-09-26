@@ -20,9 +20,13 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * 首页停车的碎片
@@ -40,6 +44,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     @Nullable
@@ -102,23 +107,46 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        refreshUI();
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {   // 隐藏
+        } else {    // 显示
+            refreshUI();
+        }
+    }
+
+    @Subscribe
+    public void onEvent(String msg){
+        if (msg.equals("LOGIN")) {
+            refreshUI();
+        } else {
+            refreshUI();
+        }
     }
 
     /**
      * 刷新UI
      */
     private void refreshUI() {
+        userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
         if (userToken != null) {
             if (!userToken.equals("")){
                 nickNameTv.setText("小叮噹");
                 phoneTv.setText("65****31");
             } else {
+                nickNameTv.setText("立即登錄");
+                phoneTv.setText("登錄后獲得更多權限");
                 Toast.makeText(getActivity(),  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
             }
         } else {
+            nickNameTv.setText("立即登錄");
+            phoneTv.setText("登錄后獲得更多權限");
             Toast.makeText(getActivity(), getString(R.string.not_login), Toast.LENGTH_SHORT).show();
         }
     }
@@ -130,14 +158,15 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 getActivity().startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
             case R.id.personal_setting_ll:
+                userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
                 if (userToken != null) {
                     if (!userToken.equals("")) {
                         getActivity().startActivity(new Intent(getActivity(), PersonalSettingActivity.class));
                     } else {
-                        getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
+                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                     }
                 } else {
-                    getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
                 break;
             case R.id.mine_wallet_ll:
@@ -150,7 +179,16 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.mine_mycar_ll:
-                getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
+                if (userToken != null) {
+                    if (!userToken.equals("")) {
+                        getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                    } else {
+                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.mine_history_order:
                 getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
@@ -171,5 +209,21 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));
                 break;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /*if (resultCode != BSSMConfigtor.LOGIN_FOR_RESULT) {
+            Toast.makeText(getActivity(), "界面刷新失敗！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        switch(requestCode) {
+            case 1:
+                refreshUI();
+                break;
+            default:
+                break;
+        }*/
     }
 }

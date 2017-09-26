@@ -15,6 +15,7 @@
     <string name="setting_image_quality">非WIFI下的圖片質量</string>
     <string name="setting_notifacation">開啟導航欄通知</string>
     <string name="setting_about">關於我們</string>
+    <string name="version_update">版本更新</string>
     <string name="setting_login_out">退出登錄</string>
     <string name="personal_head_portrait">頭像</string>
     <string name="personal_phone">電話</string>

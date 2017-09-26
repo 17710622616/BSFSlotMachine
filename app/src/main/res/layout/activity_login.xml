@@ -24,6 +24,7 @@
         android:layout_marginTop="2dp"
         android:hint="@string/pw"
         android:textSize="20sp"
+        android:inputType="textPassword"
         android:padding="5dp"
         android:background="@color/colorWight"/>
 

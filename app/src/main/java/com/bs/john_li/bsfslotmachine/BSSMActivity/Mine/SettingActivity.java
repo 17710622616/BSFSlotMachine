@@ -3,10 +3,16 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.android.gms.vision.text.Line;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * 系統設置
@@ -15,6 +21,8 @@ import com.bs.john_li.bsfslotmachine.R;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private BSSMHeadView settingHead;
+    private LinearLayout clearLL;
+    private TextView clearTv, loginOutTv;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +35,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void initView() {
         settingHead = (BSSMHeadView) findViewById(R.id.setting_head);
+        clearLL = findViewById(R.id.setting_clean_cache);
+        clearTv = findViewById(R.id.setting_clean_cache_tv);
+        loginOutTv = findViewById(R.id.login_out_tv);
     }
 
     @Override
     public void setListener() {
-
+        clearLL.setOnClickListener(this);
+        loginOutTv.setOnClickListener(this);
     }
 
     @Override
@@ -44,7 +56,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.head_left:
-                this.finish();
+                finish();
+                break;
+            case R.id.setting_clean_cache:
+                clearTv.setText("0.0MB");
+                break;
+            case R.id.login_out_tv:
+                SPUtils.put(this, "UserToken", "");
+                EventBus.getDefault().post("LOGIN_OUT");
+                finish();
                 break;
         }
     }

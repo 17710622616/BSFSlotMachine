@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWight"
+    android:paddingLeft="20dp">
+
+    <TextView
+        android:id="@+id/car_model_suv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="SUV"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/car_model_limousine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="轎車"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/car_type_mpv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="MPV"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/car_type_sport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="跑車"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/car_type_trucks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="貨車"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/car_type_others"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="其他"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+</LinearLayout>

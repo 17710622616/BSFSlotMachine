@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.ListView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarListAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 
@@ -65,6 +67,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 finish();
                 break;
             case R.id.head_right:
+                startActivityForResult(new Intent(this, AddCarActivity.class), BSSMConfigtor.ADD_CAR_RQUEST);
                 break;
         }
     }

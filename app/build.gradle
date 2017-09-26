@@ -18,6 +18,12 @@ android {
             abortOnError false
         }
 
+    allprojects {
+        repositories {
+            maven { url "https://jitpack.io" }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -40,4 +46,6 @@ dependencies {
     compile 'com.google.android.gms:play-services:10.2.6'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.github.Othershe:NiceDialog:1.1.4'
 }
