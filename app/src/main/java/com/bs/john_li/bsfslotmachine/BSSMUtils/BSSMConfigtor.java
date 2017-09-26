@@ -39,6 +39,8 @@ public class BSSMConfigtor {
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
     public final static String SEARCH_SLOT_MACHINE = "soltMachine/byKey";
+    // 獲取車輛列表
+    public final static String GET_CAR_LIST = "car/listByPage?token=";
     // 添加車輛
     public final static String ADD_CAR = "car/add?token=";
 }
