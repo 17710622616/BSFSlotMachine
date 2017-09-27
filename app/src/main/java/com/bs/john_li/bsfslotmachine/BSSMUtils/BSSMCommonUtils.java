@@ -10,14 +10,24 @@ import com.bs.john_li.bsfslotmachine.R;
  */
 
 public class BSSMCommonUtils {
+
+    /**
+     * 判斷是否登錄
+     * @param c
+     * @return
+     */
     public static boolean isLoginNow(Context c){
         String userToken = (String) SPUtils.get(c, "UserToken", "");
-        if (userToken == null) {
-            if (userToken.equals("")){
+        if (userToken != null) {
+            if (!userToken.equals("")){
+                return true;
+            } else {
                 Toast.makeText(c, c.getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+                return false;
             }
-            Toast.makeText(c,  c.getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(c, c.getString(R.string.not_login), Toast.LENGTH_SHORT).show();
+            return false;
         }
-        return true;
     }
 }

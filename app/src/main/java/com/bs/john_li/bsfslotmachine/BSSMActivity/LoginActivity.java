@@ -62,6 +62,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     public void initData() {
         head.setTitle(getString(R.string.login_btn));
         head.setRightText(getString(R.string.register_btn), this);
+        head.setLeft(this);
     }
 
     @Override
@@ -69,6 +70,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.head_right_tv:
                 startActivityForResult(new Intent(this, RegisterActivity.class), BSSMConfigtor.REQUEST_CODE);
+                break;
+            case R.id.head_left:
+                finish();
                 break;
             case R.id.login_tv:
                 checkUP();
@@ -82,6 +86,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this, "註冊失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (requestCode == BSSMConfigtor.REQUEST_CODE) {
             switch (resultCode) {
                 case 1:

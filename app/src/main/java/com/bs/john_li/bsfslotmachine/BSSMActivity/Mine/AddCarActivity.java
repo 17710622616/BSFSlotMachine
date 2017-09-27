@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -207,6 +208,35 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     Toast.makeText(AddCarActivity.this, "添加成功~", Toast.LENGTH_SHORT).show();
+                    CarModel.CarCountAndListModel.CarInsideModel carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
+                    carInsideModel.setId(Integer.parseInt(model.getData()));
+                    carInsideModel.setUserId(996);
+                    carInsideModel.setImgUrl("objectNam1");
+                    carInsideModel.setCarNo(carNo);
+                    carInsideModel.setModelForCar(carModel);
+                    carInsideModel.setCarBrand(carBrand);
+                    carInsideModel.setCarStyle(carStyle);
+                    switch (carType) {
+                        case "私家車":
+                            carInsideModel.setIfPerson(0);
+                            break;
+                        case "輕型摩托車":
+                            carInsideModel.setIfPerson(1);
+                            break;
+                        case "重型摩托車":
+                            carInsideModel.setIfPerson(2);
+                            break;
+                        case "重型汽車":
+                            carInsideModel.setIfPerson(3);
+                            break;
+                    }
+                    carInsideModel.setIfPay(0);
+                    carInsideModel.setIsDelete(null);
+                    carInsideModel.setCreateTime(null);
+                    carInsideModel.setUpdateTime(null);
+                    Intent intent = new Intent();
+                    intent.putExtra("NEW_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
+                    setResult(RESULT_OK, intent);
                     finish();
                 } else {
                     Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();

@@ -6,8 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
@@ -21,6 +23,10 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -31,7 +37,11 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 我的車輛列表
@@ -78,17 +88,13 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             public void onLoad() {
                 mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        pageNo ++;
-                        callNetGetCarList();
-                        carList.add("私家車");
-                        carList.add("電單車");
-                        carList.add("私家車");
-                        carList.add("電單車");
-                        carList.add("私家車");
-                        mCarListAdapter.notifyDataSetChanged();
-                        // 加载完后调用该方法
-                        mExpandSwipeRefreshLayout.setLoading(false);
+                    public void run() { //和最大的数据比较
+                        if (pageSize * (pageNo + 1) > totolCarCount){
+                            Toast.makeText(CarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                        } else {
+                            pageNo ++;
+                            callNetGetCarList();
+                        }
                     }
                 }, 2000);
             }
@@ -100,21 +106,24 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 carModelList.clear();
                 pageNo = 1;
                 callNetGetCarList();
-                carList.clear();
-                carList.add("私家車");
-                carList.add("電單車");
-                carList.add("私家車");
-                carList.add("電單車");
-                carList.add("私家車");
-                mCarListAdapter.notifyDataSetChanged();
-                // 更新完后调用该方法结束刷新
-                mExpandSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        carLv.setOnLongClickListener(new View.OnLongClickListener() {
+        carLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onLongClick(View view) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                showCarDeleteDialog(i);
                 return false;
+            }
+        });
+
+        noCarLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mExpandSwipeRefreshLayout.setRefreshing(true);
+                noCarLL.setVisibility(View.GONE);
+                carModelList.clear();
+                pageNo = 1;
+                callNetGetCarList();
             }
         });
     }
@@ -126,21 +135,87 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carListHead.setRight(R.mipmap.push_invitation, this);
 
         carModelList = new ArrayList<>();
-        mExpandSwipeRefreshLayout.setRefreshing(true);
-        callNetGetCarList();
-        carList = new ArrayList<String>();
-        carList.add("私家車");
-        carList.add("電單車");
-        carList.add("私家車");
-        carList.add("電單車");
-        carList.add("私家車");
-
-        mCarListAdapter = new CarListAdapter(this, carList);
+        mCarListAdapter = new CarListAdapter(this, carModelList);
         carLv.setAdapter(mCarListAdapter);
-
         mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
                 getResources().getColor(R.color.colorMineOringe),
                 getResources().getColor(R.color.colorMineGreen));
+        mExpandSwipeRefreshLayout.setRefreshing(true);
+        callNetGetCarList();
+    }
+
+    /**
+     * 刪除車輛的dialog
+     * @param position
+     */
+    private void showCarDeleteDialog(final int position) {
+        NiceDialog.init()
+                .setLayoutId(R.layout.dialog_normal)
+                .setConvertListener(new ViewConvertListener() {
+                    @Override
+                    protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                        TextView msgTv = viewHolder.getView(R.id.dialog_normal_msg);
+                        msgTv.setText("是否要刪除該車輛，刪除后車輛的會員費不會退還的哦！");
+                        viewHolder.setOnClickListener(R.id.dialog_normal_no, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                        viewHolder.setOnClickListener(R.id.dialog_normal_yes, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                callNetDeleteCar(position);
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setShowBottom(true)
+                .show(getSupportFragmentManager());
+    }
+
+    /**
+     * 請求刪除車輛
+     * @param position
+     */
+    private void callNetDeleteCar(final int position) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_CAR + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id",carModelList.get(position).getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CarModel model = new Gson().fromJson(result.toString(), CarModel.class);
+                if (model.getCode() ==200) {
+                    carModelList.remove(position);
+                    mCarListAdapter.notifyDataSetChanged();
+                    Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                refreshView();
+            }
+        });
     }
 
     /**
@@ -165,7 +240,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 CarModel model = new Gson().fromJson(result.toString(), CarModel.class);
                 if (model.getCode() ==200) {
                     totolCarCount = model.getData().getTotalCount();
-                    carModelList = model.getData().getData();
+                    List<CarModel.CarCountAndListModel.CarInsideModel> carInsideModelsFromNet = model.getData().getData();
+                    carModelList.addAll(carInsideModelsFromNet);
+                    Log.d("car_list_count", "長度：" + carModelList.size());
+                    // List去重
+                    deWeightListById();
                     Log.d("car_list_count", "長度：" + carModelList.size());
                 } else if (model.getCode() == 10001){
                     Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
@@ -189,15 +268,16 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         });
     }
 
+    /**
+     * 請求完成，刷新界面
+     */
     public void refreshView(){
         if (carModelList.size() > 0) {
             noCarLL.setVisibility(View.GONE);
-            mExpandSwipeRefreshLayout.setVisibility(View.VISIBLE);
         } else {
             noCarLL.setVisibility(View.VISIBLE);
-            mExpandSwipeRefreshLayout.setVisibility(View.GONE);
         }
-
+        mCarListAdapter.notifyDataSetChanged();
         if (mExpandSwipeRefreshLayout.isRefreshing()) {
             mExpandSwipeRefreshLayout.setRefreshing(false);
         }
@@ -213,5 +293,41 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 startActivityForResult(new Intent(this, AddCarActivity.class), BSSMConfigtor.ADD_CAR_RQUEST);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this, "添加車輛失敗！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        switch (requestCode) {
+            case 3: // 添加車輛的返回
+                carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
+                mCarListAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    /**
+     * List去重
+     */
+    private void deWeightListById() {
+        /*Set<CarModel.CarCountAndListModel.CarInsideModel> carSet = new TreeSet<>((o1, o2) -> Integer.toString(o1.getId()).compareTo(Integer.toString(o2.getId())));
+        carSet.addAll(carModelList);
+        carModelList = new ArrayList<>(carSet);*/
+        Set<CarModel.CarCountAndListModel.CarInsideModel> s= new TreeSet<CarModel.CarCountAndListModel.CarInsideModel>(new Comparator<CarModel.CarCountAndListModel.CarInsideModel>(){
+
+            @Override
+            public int compare(CarModel.CarCountAndListModel.CarInsideModel o1, CarModel.CarCountAndListModel.CarInsideModel o2) {
+                return Integer.toString(o1.getId()).compareTo(Integer.toString(o2.getId()));
+            }
+
+        });
+
+        s.addAll(carModelList);
+        carModelList = new ArrayList<CarModel.CarCountAndListModel.CarInsideModel>(s);
     }
 }

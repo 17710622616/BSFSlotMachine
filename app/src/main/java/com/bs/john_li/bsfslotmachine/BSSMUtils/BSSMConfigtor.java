@@ -29,12 +29,14 @@ public class BSSMConfigtor {
 
     // 測試的IP地址
     public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";
+    // 獲取驗證碼
+    public final static String GET_VERIFICATION_CODE = "reg/getVerifyCode";
     // 用戶登錄的API
     public final static String USER_LOGIN = "user/login";
     // 用戶註冊的API
-    public final static String USER_RIGISTER = "reg/submit";
-    // 獲取驗證碼
-    public final static String GET_VERIFICATION_CODE = "reg/getVerifyCode";
+    public final static String USER_REGISTER = "reg/submit";
+    // 獲取用戶信息
+    public final static String GET_USER_INFO = "user/getuser?token=";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
@@ -43,4 +45,6 @@ public class BSSMConfigtor {
     public final static String GET_CAR_LIST = "car/listByPage?token=";
     // 添加車輛
     public final static String ADD_CAR = "car/add?token=";
+    // 刪除車輛
+    public final static String DELETE_CAR = "car/remove?token=";
 }

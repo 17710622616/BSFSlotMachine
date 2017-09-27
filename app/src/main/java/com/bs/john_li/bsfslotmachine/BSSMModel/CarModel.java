@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMModel;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -192,6 +193,7 @@ public class CarModel {
             public void setUpdateTime(Object updateTime) {
                 this.updateTime = updateTime;
             }
+
         }
     }
 }

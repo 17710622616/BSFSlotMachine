@@ -17,6 +17,8 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -114,8 +116,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
      */
     private void checkRegisterData() {
         if(!registerUn.getText().toString().equals("") && !registerVCode.getText().toString().equals("") && !registerPw.getText().toString().equals("")) {
-            setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
-            finish();
+            callNetSubmitRegister();
         } else {
             Toast.makeText(this, getString(R.string.register_not_null), Toast.LENGTH_SHORT).show();
         }
@@ -126,6 +127,47 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
      */
     private void callNetSubmitRegister() {
         Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_REGISTER);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("mobile",registerUn.getText().toString());
+            jsonObj.put("password",registerPw.getText().toString());
+            jsonObj.put("code",registerVCode.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode() != null) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    helper.finishTimer(getString(R.string.get_verification_code));
+                    Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(RegisterActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     /**

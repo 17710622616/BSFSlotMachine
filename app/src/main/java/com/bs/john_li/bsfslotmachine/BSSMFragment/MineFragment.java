@@ -20,6 +20,8 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -98,11 +100,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             if (!userToken.equals("")){
                 nickNameTv.setText("小叮噹");
                 phoneTv.setText("65****31");
-            } else {
-                Toast.makeText(getActivity(),  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.not_login), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -142,12 +140,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             } else {
                 nickNameTv.setText("立即登錄");
                 phoneTv.setText("登錄后獲得更多權限");
-                Toast.makeText(getActivity(),  getString(R.string.not_login), Toast.LENGTH_SHORT).show();
             }
         } else {
             nickNameTv.setText("立即登錄");
             phoneTv.setText("登錄后獲得更多權限");
-            Toast.makeText(getActivity(), getString(R.string.not_login), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -170,28 +166,36 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.mine_wallet_ll:
-                getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.mine_discount_ll:
-                getActivity().startActivity(new Intent(getActivity(), DiscountActivity.class));
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), DiscountActivity.class));
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.mine_integral_ll:
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.mine_mycar_ll:
-                userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
-                if (userToken != null) {
-                    if (!userToken.equals("")) {
-                        getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
-                    } else {
-                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                    }
+                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }*/
+                getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                break;
+            case R.id.mine_history_order:
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
-                break;
-            case R.id.mine_history_order:
-                getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
                 break;
             case R.id.mine_recommend:
                 Toast.makeText(getActivity(),"分享",Toast.LENGTH_SHORT).show();
