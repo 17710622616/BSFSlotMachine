@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -145,11 +146,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode() != null) {
+                    Intent intent = new Intent();
+                    intent.putExtra("mobile", registerUn.getText().toString());
+                    intent.putExtra("password", registerPw.getText().toString());
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    helper.finishTimer(getString(R.string.get_verification_code));
-                    Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "注册失败~~~", Toast.LENGTH_SHORT).show();
                 }
             }
 
