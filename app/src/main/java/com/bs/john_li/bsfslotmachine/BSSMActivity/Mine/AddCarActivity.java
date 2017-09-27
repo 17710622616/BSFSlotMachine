@@ -207,7 +207,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
-                    Toast.makeText(AddCarActivity.this, "添加成功~", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AddCarActivity.this, "添加成功~", Toast.LENGTH_SHORT).show();
                     CarModel.CarCountAndListModel.CarInsideModel carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
                     carInsideModel.setId(Integer.parseInt(model.getData()));
                     carInsideModel.setUserId(996);

@@ -91,13 +91,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             return;
         }
 
-        if (requestCode == BSSMConfigtor.REQUEST_CODE) {
-            switch (resultCode) {
-                case 1:     // 注册返回
-                    doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
-                    //finish();
-                    break;
-            }
+        switch (requestCode) {
+            case 100:     // 注册返回
+                doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
+                //finish();
+                break;
         }
     }
 

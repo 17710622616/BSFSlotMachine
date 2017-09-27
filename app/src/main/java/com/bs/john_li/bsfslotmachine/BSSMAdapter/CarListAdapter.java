@@ -82,4 +82,9 @@ public class CarListAdapter extends BaseAdapter {
         public TextView carlistStyle;
         public TextView carTypeTv;
     }
+
+    public void refreshListView(List<CarModel.CarCountAndListModel.CarInsideModel> newList){
+        this.carList = newList;
+        notifyDataSetChanged();
+    }
 }

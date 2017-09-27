@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -127,7 +128,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
      * 请求注册
      */
     private void callNetSubmitRegister() {
-        Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_REGISTER);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -141,18 +142,18 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
         String uri = params.getUri();
-        x.http().get(params, new Callback.CommonCallback<String>() {
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode() != null) {
+                if (model.getCode().equals("200")) {
                     Intent intent = new Intent();
                     intent.putExtra("mobile", registerUn.getText().toString());
                     intent.putExtra("password", registerPw.getText().toString());
-                    setResult(RESULT_OK);
+                    setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(RegisterActivity.this, "注册失败~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "注册失败" + model.getMsg() + "~~~", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -188,7 +189,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 if (model.getCode() != null) {
                     if (model.getMsg() != null) {
                         if (model.getMsg().equals("验证码已发送！")){
-                            Toast.makeText(RegisterActivity.this, model.getMsg(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, model.getMsg() + model.getData(), Toast.LENGTH_LONG).show();
                         } else {
                             helper.finishTimer(getString(R.string.get_verification_code));
                             Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();

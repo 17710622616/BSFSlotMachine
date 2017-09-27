@@ -193,10 +193,10 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CarModel model = new Gson().fromJson(result.toString(), CarModel.class);
-                if (model.getCode() ==200) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
                     carModelList.remove(position);
-                    mCarListAdapter.notifyDataSetChanged();
+                    mCarListAdapter.refreshListView(carModelList);
                     Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
@@ -277,7 +277,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         } else {
             noCarLL.setVisibility(View.VISIBLE);
         }
-        mCarListAdapter.notifyDataSetChanged();
+        mCarListAdapter.refreshListView(carModelList);
         if (mExpandSwipeRefreshLayout.isRefreshing()) {
             mExpandSwipeRefreshLayout.setRefreshing(false);
         }
@@ -306,7 +306,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         switch (requestCode) {
             case 3: // 添加車輛的返回
                 carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
-                mCarListAdapter.notifyDataSetChanged();
+                mCarListAdapter.refreshListView(carModelList);
                 break;
         }
     }
