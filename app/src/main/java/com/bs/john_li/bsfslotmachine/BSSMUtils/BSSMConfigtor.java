@@ -18,6 +18,8 @@ public class BSSMConfigtor {
     public static int LOGIN_FOR_RESULT = 2;
     // add car for request
     public static int ADD_CAR_RQUEST = 3;
+    // add car for request
+    public static int UPDATE_CAR_RQUEST = 5;
     // add car for result
     public static int ADD_CAR_RESULT = 4;
     // 咪錶不存在

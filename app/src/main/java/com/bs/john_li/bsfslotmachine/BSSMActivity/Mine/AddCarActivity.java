@@ -1,14 +1,24 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +32,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -35,12 +46,19 @@ import com.othershe.nicedialog.ViewHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.common.util.FileUtil;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -57,10 +75,13 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv;
 
     public static final int TAKE_PHOTO = 1;
+    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
     private String carType, carNo, carModel, carBrand, carStyle;
+    private String startWay;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,9 +120,29 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void initData() {
-        headView.setTitle("添加車輛");
         headView.setLeft(this);
         headView.setRight(R.mipmap.ok, this);
+        Intent intent = getIntent();
+        startWay = intent.getStringExtra("startWay");
+        if (startWay.equals("update")){
+            headView.setTitle("修改車輛");
+            carInsideModel = new Gson().fromJson("updateModel", CarModel.CarCountAndListModel.CarInsideModel.class);
+        } else {
+            headView.setTitle("添加車輛");
+            carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
+            carInsideModel.setId(-1);
+            carInsideModel.setUserId(1);
+            carInsideModel.setImgUrl("objectNam1");
+            carInsideModel.setCarNo("");
+            carInsideModel.setModelForCar("");
+            carInsideModel.setCarBrand("");
+            carInsideModel.setCarStyle("");
+            carInsideModel.setIfPerson(0);
+            carInsideModel.setIfPay(0);
+            carInsideModel.setIsDelete(null);
+            carInsideModel.setCreateTime(null);
+            carInsideModel.setUpdateTime(null);
+        }
     }
 
     @Override
@@ -140,27 +181,23 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private void submitCarData() {
         if (file != null) {
             if (!file.getPath().equals("")) {
-                if (!carType.equals("")) {
-                    if (!carNo.equals("")) {
-                        if (!carModel.equals("")) {
-                            if (!carBrand.equals("")) {
-                                if (!carStyle.equals("")) {
-                                    // 提交車輛信息
-                                    callNetSubmiteCar();
-                                } else {
-                                    Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
-                                }
+                if (!carInsideModel.getCarNo().equals("")) {
+                    if (!carInsideModel.getModelForCar().equals("")) {
+                        if (!carInsideModel.getCarBrand().equals("")) {
+                            if (!carInsideModel.getCarStyle().equals("")) {
+                                // 提交車輛信息
+                                callNetSubmiteCar();
                             } else {
-                                Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "您還沒選擇車輛類型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
@@ -207,33 +244,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
-                    //Toast.makeText(AddCarActivity.this, "添加成功~", Toast.LENGTH_SHORT).show();
-                    CarModel.CarCountAndListModel.CarInsideModel carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
                     carInsideModel.setId(Integer.parseInt(model.getData()));
-                    carInsideModel.setUserId(996);
-                    carInsideModel.setImgUrl("objectNam1");
-                    carInsideModel.setCarNo(carNo);
-                    carInsideModel.setModelForCar(carModel);
-                    carInsideModel.setCarBrand(carBrand);
-                    carInsideModel.setCarStyle(carStyle);
-                    switch (carType) {
-                        case "私家車":
-                            carInsideModel.setIfPerson(0);
-                            break;
-                        case "輕型摩托車":
-                            carInsideModel.setIfPerson(1);
-                            break;
-                        case "重型摩托車":
-                            carInsideModel.setIfPerson(2);
-                            break;
-                        case "重型汽車":
-                            carInsideModel.setIfPerson(3);
-                            break;
-                    }
-                    carInsideModel.setIfPay(0);
-                    carInsideModel.setIsDelete(null);
-                    carInsideModel.setCreateTime(null);
-                    carInsideModel.setUpdateTime(null);
                     Intent intent = new Intent();
                     intent.putExtra("NEW_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
                     setResult(RESULT_OK, intent);
@@ -303,6 +314,25 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                if (!dir.exists()) {
+                                    dir.mkdir();
+                                }
+
+                                Intent getAlbum;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                    getAlbum = new Intent(Intent.ACTION_PICK);
+                                } else {
+                                    getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
+                                }
+                                getAlbum.setType("image/*");
+                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                        viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -324,32 +354,32 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.car_type_private, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carType = "私家車";
-                                carTypeTv.setText("車輛類型：" + carType);
+                                carInsideModel.setIfPay(0);
+                                carTypeTv.setText("車輛類型：私家車");
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_light, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carType = "輕型摩托車";
-                                carTypeTv.setText("車輛類型：" + carType);
+                                carInsideModel.setIfPay(1);
+                                carTypeTv.setText("車輛類型：輕型摩托車");
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_heavy, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carType = "重型摩托車";
-                                carTypeTv.setText("車輛類型：" + carType);
+                                carInsideModel.setIfPay(1);
+                                carTypeTv.setText("車輛類型：重型摩托車");
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_heavy_car, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carType = "重型汽車";
-                                carTypeTv.setText("車輛類型：" + carType);
+                                carInsideModel.setIfPay(1);
+                                carTypeTv.setText("車輛類型：重型汽車");
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -373,8 +403,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carBrand = editText.getText().toString();
-                                carBrandTv.setText("車牌品牌：" + carBrand);
+                                carInsideModel.setCarBrand(editText.getText().toString());
+                                carBrandTv.setText("車牌品牌：" + carInsideModel.getCarBrand());
                                 dialog.dismiss();
                             }
                         });
@@ -396,48 +426,48 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.car_model_suv, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "SUV";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("SUV");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_model_limousine, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "轎車";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("轎車");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_mpv, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "MPV";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("MPV");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_sport, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "跑車";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("跑車");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_trucks, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "貨車";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("貨車");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.car_type_others, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carModel = "其他";
-                                carModelTv.setText("車      型：" + carModel);
+                                carInsideModel.setModelForCar("其他");
+                                carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -461,8 +491,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carNo = editText.getText().toString();
-                                carNoTv.setText("車牌號碼：" + carNo);
+                                carInsideModel.setCarNo(editText.getText().toString());
+                                carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
                                 dialog.dismiss();
                             }
                         });
@@ -486,8 +516,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carStyle = editText.getText().toString();
-                                carStyleTv.setText("車牌型號：" + carStyle);
+                                carInsideModel.setCarStyle(editText.getText().toString());
+                                carStyleTv.setText("車牌型號：" + carInsideModel.getCarStyle());
                                 dialog.dismiss();
                             }
                         });
@@ -510,6 +540,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 Uri contentUri = Uri.fromFile(file);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
+                x.image().bind(carPhotoIv, file.getPath(), options);
+                break;
+            case TAKE_PHOTO_FROM_ALBUM:
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                file = new File(imagePath);
                 x.image().bind(carPhotoIv, file.getPath(), options);
                 break;
             default:

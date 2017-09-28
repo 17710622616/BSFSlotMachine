@@ -67,4 +67,13 @@
             android:singleLine="true"
             android:layout_marginTop="2dp"/>
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/item_carlist_recharge"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="fitCenter"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/translation_detial"/>
 </LinearLayout>

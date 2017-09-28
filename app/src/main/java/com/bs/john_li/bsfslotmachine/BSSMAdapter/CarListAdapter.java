@@ -17,14 +17,16 @@ import java.util.List;
  * Created by John_Li on 9/8/2017.
  */
 
-public class CarListAdapter extends BaseAdapter {
+public class CarListAdapter extends BaseAdapter implements View.OnClickListener {
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private LayoutInflater inflater;
     private Context mContext;
-    public  CarListAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> carList) {
+    private CarRechargeCallBack callBack;
+    public  CarListAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> carList, CarRechargeCallBack callBack) {
         this.carList = carList;
         this.mContext = context;
         inflater = LayoutInflater.from(context);
+        this.callBack = callBack;
     }
     @Override
     public int getCount() {
@@ -54,6 +56,7 @@ public class CarListAdapter extends BaseAdapter {
             holder.carlistModel = convertView.findViewById(R.id.item_carlist_model);
             holder.carlistStyle = convertView.findViewById(R.id.item_carlist_style);
             holder.carTypeTv = convertView.findViewById(R.id.item_carlist_car_type);
+            holder.carRecharge = convertView.findViewById(R.id.item_carlist_recharge);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -71,7 +74,19 @@ public class CarListAdapter extends BaseAdapter {
                 holder.carTypeTv.setText("電單車");
                 break;
         }
+
+        if (carList.get(i).getIfPay() == 0) {
+            holder.carRecharge.setImageResource(R.mipmap.translation_detial);
+        } else {
+            holder.carRecharge.setImageResource(R.mipmap.server);
+        }
+        holder.carRecharge.setOnClickListener(this);
         return convertView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        callBack.carRechargeClick(view);
     }
 
     class ViewHolder {
@@ -81,10 +96,18 @@ public class CarListAdapter extends BaseAdapter {
         public TextView carlistModel;
         public TextView carlistStyle;
         public TextView carTypeTv;
+        public ImageView carRecharge;
     }
 
     public void refreshListView(List<CarModel.CarCountAndListModel.CarInsideModel> newList){
         this.carList = newList;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 充值圖片點擊接口
+     */
+    public interface CarRechargeCallBack {
+        void carRechargeClick(View view);
     }
 }
