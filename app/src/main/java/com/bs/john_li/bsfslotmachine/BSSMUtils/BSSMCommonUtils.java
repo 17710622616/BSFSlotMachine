@@ -7,12 +7,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by John on 12/9/2017.
@@ -101,5 +105,21 @@ public class BSSMCommonUtils {
         outStream.close();
         inStream.close();
         return data;
+    }
+
+    /**
+     *  edittext顯示鍵盤
+     * @param editText
+     */
+    public static void showKeyboard(final EditText editText) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            public void run() {
+                InputMethodManager inputManager = (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(editText, 0);
+            }
+
+        }, 300);
     }
 }

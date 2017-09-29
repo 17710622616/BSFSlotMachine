@@ -28,13 +28,14 @@
     <TextView
         style="@style/UnderLineTextView"/>
     <LinearLayout
-        android:id="@+id/personal_username"
+        android:id="@+id/personal_nickname"
         style="@style/MineItemLinearLayout">
         <TextView
             style="@style/MineItemTextView"
             android:text="@string/personal_username"/>
 
         <TextView
+            android:id="@+id/personal_nickname_tv"
             style="@style/SettingDetialTv"
             android:text="小叮噹"/>
     </LinearLayout>
@@ -60,6 +61,7 @@
             android:text="@string/personal_phone"/>
 
         <TextView
+            android:id="@+id/personal_phone_tv"
             style="@style/SettingDetialTv"
             android:text="65****31"/>
     </LinearLayout>

@@ -24,6 +24,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SlotMachineListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -118,11 +119,14 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.head_left:
-                //Toast.makeText(getActivity(), "查询",Toast.LENGTH_SHORT).show();
                 getActivity().startActivity(new Intent(getActivity(), SearchSlotMachineActivity.class));
                 break;
             case R.id.head_right:
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.go_parling_ll:
                 if (mLastLocation != null && mAddress != null) {

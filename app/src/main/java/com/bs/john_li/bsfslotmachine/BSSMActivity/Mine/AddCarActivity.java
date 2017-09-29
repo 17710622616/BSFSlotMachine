@@ -400,6 +400,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
                         final EditText editText = holder.getView(R.id.car_edit);
                         editText.setHint("請填寫車輛品牌");
+                        BSSMCommonUtils.showKeyboard(editText);
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -488,6 +489,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
                         final EditText editText = holder.getView(R.id.car_edit);
                         editText.setHint("請填寫車牌號碼");
+                        BSSMCommonUtils.showKeyboard(editText);
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -513,6 +515,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
                         final EditText editText = holder.getView(R.id.car_edit);
                         editText.setHint("請填寫車牌型號");
+                        BSSMCommonUtils.showKeyboard(editText);
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {

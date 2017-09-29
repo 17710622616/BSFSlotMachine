@@ -21,6 +21,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -41,6 +42,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private BSSMHeadView mineHeadView;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
     private TextView nickNameTv, phoneTv;
+    private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
     private String userToken;
     @Override
@@ -96,11 +98,13 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineHeadView.setRight(R.mipmap.setting, this);
 
         userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
-        if (userToken != null) {
-            if (!userToken.equals("")){
-                nickNameTv.setText("小叮噹");
-                phoneTv.setText("65****31");
+        String userInfoJson = (String) SPUtils.get(getActivity(), "UserInfo", "");
+        if (!userToken.equals("")){
+            if (!userInfoJson.equals("")){
+
             }
+            nickNameTv.setText("小叮噹");
+            phoneTv.setText("65****31");
         }
     }
 

@@ -3,12 +3,14 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -113,7 +115,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
     /**
-         * 登錄的方法
+         * 登錄
          */
     private void doLogin(String username, String pw) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_LOGIN);
@@ -139,7 +141,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     EventBus.getDefault().post("LOGIN");
-                    LoginActivity.this.finish();
+                    getUserInfo(model.getData().toString());
+                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
                 }
@@ -148,6 +151,51 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    /**
+     * 獲取用戶信息
+     * @param token
+     */
+    private void getUserInfo(String token) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("token",token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        Log.d("getUserURI", params.getUri());
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                UserInfoOutsideModel model = new Gson().fromJson(result.toString(), UserInfoOutsideModel.class);
+                if (model.getCode() == 200) {
+                    String userInfoJson = new Gson().toJson(model.getData());
+                    SPUtils.put(LoginActivity.this, "UserInfo", model.getData().toString());
+                    Log.d("getUserURI", "獲取用戶信息成功");
+                    finish();
+                } else {
+                    Log.d("getUserURI", "獲取用戶信息失敗");
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("getUserURI", "獲取用戶信息失敗");
+                //Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override
