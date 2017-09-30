@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWight"
+    android:paddingLeft="20dp">
+
+    <TextView
+        android:id="@+id/order_area_datang_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="大堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_wangde_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="望德堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_fengshun_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="風順堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_huawang_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="花王堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_huadima_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="花地瑪堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_jiamo_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="嘉模堂區"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/order_area_other_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="其他區域"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+</LinearLayout>

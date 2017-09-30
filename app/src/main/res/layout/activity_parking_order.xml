@@ -22,11 +22,11 @@
             android:orientation="vertical"
             android:padding="10dp">
             <!--車輛選擇-->
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/parking_order_car_manage_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:orientation="vertical"
                 android:background="@color/colorWight">
 
                 <TextView
@@ -34,19 +34,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="5dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
                     android:text="車輛管理"
                     android:textSize="16sp"
                     android:textColor="@color/colorBlack"
                     android:gravity="center_vertical"/>
 
-                <ImageView
-                    android:id="@+id/parking_iv"
-                    android:layout_width="160dp"
-                    android:layout_height="120dp"
-                    android:src="@mipmap/car_sample"
-                    android:scaleType="fitXY"
-                    android:layout_below="@id/parking_order_car_manage_tv"/>
+                <RelativeLayout
+                    android:id="@+id/parking_order_car_manage_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:background="@color/colorWight">
+
+                    <ImageView
+                        android:id="@+id/parking_iv"
+                        android:layout_width="160dp"
+                        android:layout_height="120dp"
+                        android:src="@mipmap/car_sample"
+                        android:scaleType="fitXY"/>
                     <TextView
                         android:id="@+id/parking_order_car_brand"
                         android:layout_width="wrap_content"
@@ -57,7 +66,6 @@
                         android:textColor="@color/colorBlack"
                         android:layout_marginLeft="15dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@id/parking_order_car_manage_tv"
                         android:layout_toRightOf="@id/parking_iv"/>
                     <TextView
                         android:id="@+id/parking_order_car_type"
@@ -84,7 +92,8 @@
                         android:layout_marginTop="10dp"
                         android:layout_below="@id/parking_order_car_type"
                         android:layout_toRightOf="@id/parking_iv"/>
-            </RelativeLayout>
+                </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/parking_order_location_ll"
@@ -142,18 +151,18 @@
                 <TextView
                     android:id="@+id/parking_order_remark_tv"
                     style="@style/MineItemTextView"
-                    android:text="備註："
+                    android:text="備      註："
                     android:singleLine="true"/>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/parking_order_renewal_ll"
+                android:id="@+id/parking_order_area_ll"
                 android:layout_marginTop="1dp"
                 style="@style/ParkingOrderItemLinearLayout">
                 <TextView
-                    android:id="@+id/parking_order_renewal_tv"
+                    android:id="@+id/parking_order_area_tv"
                     style="@style/MineItemTextView"
-                    android:text="是否自動續時" />
+                    android:text="請選擇地區" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
