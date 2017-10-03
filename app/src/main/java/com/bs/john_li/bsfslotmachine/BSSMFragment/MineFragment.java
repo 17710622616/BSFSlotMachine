@@ -27,6 +27,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -96,16 +97,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void initData() {
         mineHeadView.setTitle("我的");
         mineHeadView.setRight(R.mipmap.setting, this);
-
-        userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
-        String userInfoJson = (String) SPUtils.get(getActivity(), "UserInfo", "");
-        if (!userToken.equals("")){
-            if (!userInfoJson.equals("")){
-
-            }
-            nickNameTv.setText("小叮噹");
-            phoneTv.setText("65****31");
-        }
+        refreshUI();
     }
 
     @Override
@@ -137,13 +129,17 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      */
     private void refreshUI() {
         userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
-        if (userToken != null) {
-            if (!userToken.equals("")){
-                nickNameTv.setText("小叮噹");
-                phoneTv.setText("65****31");
+        String userInfoJson = (String) SPUtils.get(getActivity(), "UserInfo", "");
+        if (!userToken.equals("")){
+            if (!userInfoJson.equals("")){
+                mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
+                nickNameTv.setText(mUserInfoModel.getNickname());
+                phoneTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
             } else {
+                mUserInfoModel = new UserInfoOutsideModel.UserInfoModel();
                 nickNameTv.setText("立即登錄");
                 phoneTv.setText("登錄后獲得更多權限");
+                Toast.makeText(getActivity(), "用戶信息錯誤，請重新登錄！", Toast.LENGTH_SHORT).show();
             }
         } else {
             nickNameTv.setText("立即登錄");
@@ -222,16 +218,5 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /*if (resultCode != BSSMConfigtor.LOGIN_FOR_RESULT) {
-            Toast.makeText(getActivity(), "界面刷新失敗！", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        switch(requestCode) {
-            case 1:
-                refreshUI();
-                break;
-            default:
-                break;
-        }*/
     }
 }

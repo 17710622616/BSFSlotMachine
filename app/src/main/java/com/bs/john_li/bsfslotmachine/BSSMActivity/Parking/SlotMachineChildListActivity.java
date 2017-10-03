@@ -6,20 +6,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SlotMachineChildListAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.SlotMachineListAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 咪錶子車位列表
@@ -35,7 +30,7 @@ public class SlotMachineChildListActivity extends BaseActivity implements View.O
     private String mLatitude;
     private String mLongitude;
     private SlotMachineChildListAdapter mAdapter;
-    private SlotMachineListModel.SlotMachineModel mSlotMachineModel;
+    private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +63,7 @@ public class SlotMachineChildListActivity extends BaseActivity implements View.O
     public void initData() {
         // 獲取數據
         Intent intent = getIntent();
-        mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachineModel"), SlotMachineListModel.SlotMachineModel.class);
+        mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachineModel"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
         headView.setLeft(this);
         if (mSlotMachineModel != null) {
             // 配置headview

@@ -140,9 +140,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     SPUtils.put(LoginActivity.this, "UserToken", model.getData().toString());
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
-                    EventBus.getDefault().post("LOGIN");
                     getUserInfo(model.getData().toString());
-                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
                 }
@@ -168,7 +166,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
      */
     private void getUserInfo(String token) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
-        params.setAsJsonContent(true);
+        /*params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("token",token);
@@ -177,15 +175,37 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
-        Log.d("getUserURI", params.getUri());
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+        Log.d("getUserURI", params.getUri());*/
+        x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 UserInfoOutsideModel model = new Gson().fromJson(result.toString(), UserInfoOutsideModel.class);
                 if (model.getCode() == 200) {
+                    if (model.getData().getNickname() == null) {
+                        model.getData().setNickname("用戶");
+                    }
+                    if (model.getData().getAddress() == null) {
+                        model.getData().setAddress("");
+                    }
+                    if (model.getData().getRealname() == null) {
+                        model.getData().setRealname("");
+                    }
+                    if (model.getData().getHeadimg() == null) {
+                        model.getData().setAddress("objectNam1");
+                    }
+                    if (model.getData().getDescx() == null) {
+                        model.getData().setDescx("");
+                    }
+                    if (model.getData().getIdcardno() == null) {
+                        model.getData().setIdcardno("");
+                    }
+                    if (model.getData().getBirthday() == null) {
+                        model.getData().setBirthday("");
+                    }
                     String userInfoJson = new Gson().toJson(model.getData());
-                    SPUtils.put(LoginActivity.this, "UserInfo", model.getData().toString());
+                    SPUtils.put(LoginActivity.this, "UserInfo", userInfoJson);
                     Log.d("getUserURI", "獲取用戶信息成功");
+                    EventBus.getDefault().post("LOGIN");
                     finish();
                 } else {
                     Log.d("getUserURI", "獲取用戶信息失敗");

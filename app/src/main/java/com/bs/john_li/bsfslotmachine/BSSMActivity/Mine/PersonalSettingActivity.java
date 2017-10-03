@@ -13,8 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -23,6 +26,14 @@ import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
+
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,6 +87,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         String userInfoJson = (String) SPUtils.get(this, "UserInfo", "");
         if (!userInfoJson.equals("")) {
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
+            nickNameTv.setText(mUserInfoModel.getNickname());
         }
     }
 
@@ -101,8 +113,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                     @Override
                                     public void onClick(View view) {
                                         if (!editText.getText().toString().equals("")) {
-                                            nickName = editText.getText().toString();
-                                            nickNameTv.setText(nickName);
+                                            mUserInfoModel.setNickname(editText.getText().toString());
+                                            nickNameTv.setText(mUserInfoModel.getNickname());
+                                            updateUserInfo();
                                             dialog.dismiss();
                                         } else {
                                             Toast.makeText(PersonalSettingActivity.this, "請輸入要修改的新的暱稱~", Toast.LENGTH_SHORT).show();
@@ -128,8 +141,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                     @Override
                                     public void onClick(View view) {
                                         if (!editText.getText().toString().equals("")) {
-                                            phoneNum = editText.getText().toString();
-                                            phoneNumTv.setText(phoneNum);
+                                            mUserInfoModel.setMobile(editText.getText().toString());
+                                            phoneNumTv.setText(mUserInfoModel.getMobile());
                                             dialog.dismiss();
                                         } else {
                                             Toast.makeText(PersonalSettingActivity.this, "請輸入要修改的手機號碼~", Toast.LENGTH_SHORT).show();
@@ -200,5 +213,65 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         .show(getSupportFragmentManager());
                 break;
         }
+    }
+
+    /**
+     * 更改用戶信息
+     */
+    public void updateUserInfo() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_USER_INFO + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("nickname",mUserInfoModel.getNickname());
+            jsonObj.put("birthday",mUserInfoModel.getBirthday());
+            jsonObj.put("realname",mUserInfoModel.getRealname());
+            jsonObj.put("descx",mUserInfoModel.getDescx());
+            jsonObj.put("sex",mUserInfoModel.getSex());
+            jsonObj.put("idcardno",mUserInfoModel.getIdcardno());
+            jsonObj.put("address",mUserInfoModel.getAddress());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String url = jsonObj.toString();
+        params.setBodyContent(url);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                UserInfoOutsideModel model = new Gson().fromJson(result.toString(), UserInfoOutsideModel.class);
+                if (model.getCode() == 200) {
+                    mUserInfoModel.setNickname(model.getData().getNickname());
+                    mUserInfoModel.setAddress(model.getData().getAddress());
+                    mUserInfoModel.setMobile(model.getData().getMobile());
+                    mUserInfoModel.setBirthday(model.getData().getBirthday());
+                    mUserInfoModel.setDescx(model.getData().getDescx());
+                    mUserInfoModel.setIdcardno(model.getData().getIdcardno());
+                    mUserInfoModel.setRealname(model.getData().getRealname());
+                    mUserInfoModel.setSex(model.getData().getSex());
+                    String userInfoJson = new Gson().toJson(mUserInfoModel);
+                    SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
+                    EventBus.getDefault().post("LOGIN");
+                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新成功~", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 }

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListModel;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.util.List;

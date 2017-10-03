@@ -39,12 +39,16 @@ public class BSSMConfigtor {
     public final static String USER_REGISTER = "reg/submit";
     // 獲取用戶信息
     public final static String GET_USER_INFO = "user/getuser?token=";
+    // 更新用戶信息
+    public final static String UPDATE_USER_INFO = "/user/chguser?token=";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
     public final static String SEARCH_SLOT_MACHINE = "soltMachine/byKey";
     // 獲取車輛列表
     public final static String GET_CAR_LIST = "car/listByPage?token=";
+    // 獲取已充值車輛列表
+    public final static String GET_CAR_LIST_RECHARGE = "car/getUserPayCars?token=";
     // 添加車輛
     public final static String ADD_CAR = "car/add?token=";
     // 刪除車輛

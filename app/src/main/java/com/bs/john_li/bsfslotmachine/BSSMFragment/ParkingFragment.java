@@ -105,6 +105,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void setListenter() {
         goParlingLL.setOnClickListener(this);
+
     }
 
     @Override
@@ -154,6 +155,15 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         }
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+        mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                Toast.makeText(getActivity(), "重新定位", Toast.LENGTH_SHORT).show();
+                onConnected(null);
+                return false;
+            }
+        });
     }
 
 
@@ -196,7 +206,6 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         }
 
         try {
-            Log.i("位置", LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient) + "");
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         } catch (SecurityException e) {
             e.printStackTrace();

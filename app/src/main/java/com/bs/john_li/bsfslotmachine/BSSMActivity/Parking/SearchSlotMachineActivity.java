@@ -3,8 +3,6 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,33 +10,26 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
-import android.support.constraint.Guideline;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.TestSlotMachineListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
-import com.google.android.gms.nearby.messages.internal.Update;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -50,14 +41,11 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 搜索界面
@@ -72,7 +60,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private List<String> slotMachineList;
     private SearchSlotMachineAdapter mSlotMachineAdapter;
     private AutoCompleteTextView mCompleteText;
-    private List<SlotMachineListModel.SlotMachineModel> smList;
+    private List<TestSlotMachineListModel.TestSlotMachineModel> smList;
 
     public static final int TAKE_PHOTO = 1;
     private File dir; //圖片文件夾路徑
@@ -236,7 +224,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                SlotMachineListModel model = new Gson().fromJson(result.toString(), SlotMachineListModel.class);
+                TestSlotMachineListModel model = new Gson().fromJson(result.toString(), TestSlotMachineListModel.class);
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
                         smList = model.getData();
@@ -283,15 +271,15 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         slotMachineList.clear();
         // 插入歷史數據到列表中
         if (!historySearch.equals("")) {
-            Type type = new TypeToken<ArrayList<SlotMachineListModel.SlotMachineModel>>() {}.getType();
-            List<SlotMachineListModel.SlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
-            for (SlotMachineListModel.SlotMachineModel model: historyList){
+            Type type = new TypeToken<ArrayList<TestSlotMachineListModel.TestSlotMachineModel>>() {}.getType();
+            List<TestSlotMachineListModel.TestSlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
+            for (TestSlotMachineListModel.TestSlotMachineModel model: historyList){
                 smList.add(model);
             }
         }
 
         // 插入新的數據到顯示的List
-        for (SlotMachineListModel.SlotMachineModel model : smList) {
+        for (TestSlotMachineListModel.TestSlotMachineModel model : smList) {
             slotMachineList.add(model.getMachineNo() + " " + model.getAddress());
         }
     }
@@ -301,12 +289,12 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
      */
     private void putInHistorySearch(int position) {
         String historySearch = (String) SPUtils.get(this, "SlotMachine", "");
-        Type type = new TypeToken<ArrayList<SlotMachineListModel.SlotMachineModel>>() {}.getType();
-        List<SlotMachineListModel.SlotMachineModel> historyList = null;
+        Type type = new TypeToken<ArrayList<TestSlotMachineListModel.TestSlotMachineModel>>() {}.getType();
+        List<TestSlotMachineListModel.TestSlotMachineModel> historyList = null;
         if (!historySearch.equals("")) {
             historyList = new Gson().fromJson(historySearch, type);
             boolean hasSearch = false;
-            for (SlotMachineListModel.SlotMachineModel model: historyList){
+            for (TestSlotMachineListModel.TestSlotMachineModel model: historyList){
                 if (model.getMachineNo().equals(smList.get(position).getMachineNo())){
                     hasSearch = true;
                 }

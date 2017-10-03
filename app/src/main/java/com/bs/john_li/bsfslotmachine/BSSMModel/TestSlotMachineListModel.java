@@ -3,21 +3,20 @@ package com.bs.john_li.bsfslotmachine.BSSMModel;
 import java.util.List;
 
 /**
- * 咪錶實體類
- * Created by John_Li on 21/9/2017.
+ * Created by John_Li on 4/10/2017.
  */
 
-public class SlotMachineListModel {
+public class TestSlotMachineListModel {
 
     /**
      * code : 200
-     * msg : null
-     * data : [{"id":17,"machineNo":"#00003","carType":1,"pillarColor":"gray","longitude":113.560966,"latitude":22.191443,"areaCode":"DT","address":"百德大厦","parkingSpaces":["01","02","03","04"],"distance":0.9785}]
+     * msg :
+     * data : [{"id":18,"machineNo":"#00004","carType":2,"pillarColor":"red","longitude":114.561064,"latitude":21.192861,"areaCode":"FST","address":"yyy地址","parkingSpaces":[],"distance":""},{"id":17,"machineNo":"#00003","carType":1,"pillarColor":"gray","longitude":113.560966,"latitude":22.191443,"areaCode":"DT","address":"百德大厦","parkingSpaces":["01","02","03","04"],"distance":null},{"id":15,"machineNo":"#00001","carType":2,"pillarColor":"bule","longitude":113.559394,"latitude":22.191648,"areaCode":"DT","address":"xxx地址","parkingSpaces":null,"distance":null},{"id":16,"machineNo":"#00002","carType":2,"pillarColor":"yellow","longitude":113.561064,"latitude":22.192861,"areaCode":"DT","address":"艾维斯写字楼","parkingSpaces":null,"distance":null}]
      */
 
     private int code;
-    private Object msg;
-    private List<SlotMachineModel> data;
+    private String msg;
+    private List<TestSlotMachineModel> data;
 
     public int getCode() {
         return code;
@@ -27,34 +26,34 @@ public class SlotMachineListModel {
         this.code = code;
     }
 
-    public Object getMsg() {
+    public String getMsg() {
         return msg;
     }
 
-    public void setMsg(Object msg) {
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 
-    public List<SlotMachineModel> getData() {
+    public List<TestSlotMachineModel> getData() {
         return data;
     }
 
-    public void setData(List<SlotMachineModel> data) {
+    public void setData(List<TestSlotMachineModel> data) {
         this.data = data;
     }
 
-    public static class SlotMachineModel {
+    public static class TestSlotMachineModel {
         /**
-         * id : 17
-         * machineNo : #00003
-         * carType : 1
-         * pillarColor : gray
-         * longitude : 113.560966
-         * latitude : 22.191443
-         * areaCode : DT
-         * address : 百德大厦
-         * parkingSpaces : ["01","02","03","04"]
-         * distance : 0.9785
+         * id : 18
+         * machineNo : #00004
+         * carType : 2
+         * pillarColor : red
+         * longitude : 114.561064
+         * latitude : 21.192861
+         * areaCode : FST
+         * address : yyy地址
+         * parkingSpaces : []
+         * distance :
          */
 
         private int id;
@@ -65,7 +64,7 @@ public class SlotMachineListModel {
         private double latitude;
         private String areaCode;
         private String address;
-        private double distance;
+        private String distance;
         private List<String> parkingSpaces;
 
         public int getId() {
@@ -132,11 +131,11 @@ public class SlotMachineListModel {
             this.address = address;
         }
 
-        public double getDistance() {
+        public String getDistance() {
             return distance;
         }
 
-        public void setDistance(double distance) {
+        public void setDistance(String distance) {
             this.distance = distance;
         }
 

@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,12 +13,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.othershe.nicedialog.BaseNiceDialog;
@@ -26,13 +31,19 @@ import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,14 +54,15 @@ import java.util.List;
 public class ParkingOrderActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private ImageView parkingIv;
-    private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL;
+    private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL;
     private RelativeLayout carManageRL;
-    private TextView carManagetv, remarkTv, areaTv;
+    public TextView carManagetv, remarkTv, areaTv, startTimeTv;
 
     private String way;
     private List<String> imgUrlList;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
     private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
+    public SlotOrderModel mSlotOrderModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +85,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         carManagetv = findViewById(R.id.parking_order_car_manage_tv);
         remarkTv = findViewById(R.id.parking_order_remark_tv);
         areaTv = findViewById(R.id.parking_order_area_tv);
+        voucherLL = findViewById(R.id.parking_order_voucher_ll);
+        startTimeTv = findViewById(R.id.parking_order_starttime_tv);
     }
 
     @Override
@@ -82,6 +96,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         orderMoneyLL.setOnClickListener(this);
         orderRemarkLL.setOnClickListener(this);
         orderAreaLL.setOnClickListener(this);
+        voucherLL.setOnClickListener(this);
     }
 
     @Override
@@ -104,9 +119,16 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderAreaLL.setVisibility(View.GONE);
         }
 
+        // 停車訂單
+        mSlotOrderModel = new SlotOrderModel();
+        // 車輛類
         carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
         // 判断车辆是否选择车辆
         isChooseCar();
+        // 現在時間
+        Date date = new Date( );
+        SimpleDateFormat fdt = new SimpleDateFormat ("hh:mm:ss");
+        startTimeTv.setText("投幣時間[預計" + fdt.format(date) + "]");
     }
 
     @Override
@@ -137,6 +159,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             case R.id.parking_order_area_ll:
                 chooseOrderArea();
                 break;
+            case R.id.parking_order_voucher_ll:
+                Toast.makeText(this, "暫無優惠券~", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
@@ -144,6 +169,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 判断是否选择车辆
      */
     private void isChooseCar() {
+        callNetGetCarList();
+
         if (carInsideModel.getId() != 0) {
             carManagetv.setText("車輛管理");
             carManageRL.setVisibility(View.VISIBLE);
@@ -154,10 +181,68 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * 獲取已充值車輛列表
+     */
+    private void callNetGetCarList() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_LIST_RECHARGE + SPUtils.get(this, "UserToken", ""));
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Toast.makeText(ParkingOrderActivity.this, "獲取成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
+    }
+
+    /**
      * 选择订单开始时间
      */
     private void chooseOrderStartTime() {
-
+        NiceDialog.init()
+                .setLayoutId(R.layout.dialog_choose_time)
+                .setConvertListener(new ViewConvertListener() {
+                    @Override
+                    public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                        TimePicker timePicker = holder.getView(R.id.dialog_time_picker);
+                        timePicker.setIs24HourView(true);
+                        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                            @Override
+                            public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
+                                String hourTime = null;
+                                String minuteTime = null;
+                                if (hourOfDay < 10) {
+                                    hourTime = "0" + hourOfDay;
+                                } else {
+                                    hourTime = Integer.toString(hourOfDay);
+                                }
+                                if (minute < 10) {
+                                    minuteTime = "0" + minute;
+                                } else {
+                                    minuteTime = Integer.toString(minute);
+                                }
+                                String time = hourTime + ":" + minuteTime + ":00";
+                                mSlotOrderModel.setStartSlotTime(time);
+                                startTimeTv.setText("投幣時間[預計" + time + "]");
+                            }
+                        });
+                    }
+                })
+                .setWidth(210)
+                .show(getSupportFragmentManager());
     }
 
     /**
