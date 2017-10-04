@@ -17,7 +17,7 @@ public class CarModel {
      */
 
     private int code;
-    private Object msg;
+    private String msg;
     private CarCountAndListModel data;
 
     public int getCode() {
@@ -28,11 +28,11 @@ public class CarModel {
         this.code = code;
     }
 
-    public Object getMsg() {
+    public String getMsg() {
         return msg;
     }
 
-    public void setMsg(Object msg) {
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 

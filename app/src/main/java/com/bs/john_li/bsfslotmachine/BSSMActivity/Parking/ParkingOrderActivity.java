@@ -20,11 +20,13 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
@@ -56,12 +58,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private ImageView parkingIv;
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL;
     private RelativeLayout carManageRL;
-    public TextView carManagetv, remarkTv, areaTv, startTimeTv;
+    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, remarkTv, areaTv, startTimeTv;
 
     private String way;
     private List<String> imgUrlList;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
-    private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
+    private List<TestCarListModel.CarModel> carInsideModelList;
     public SlotOrderModel mSlotOrderModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +85,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         orderAreaLL = findViewById(R.id.parking_order_area_ll);
         carManageRL = findViewById(R.id.parking_order_car_manage_rl);
         carManagetv = findViewById(R.id.parking_order_car_manage_tv);
+        carBrandTv = findViewById(R.id.parking_order_car_brand);
+        carTypeTv = findViewById(R.id.parking_order_car_type);
+        carNumTv = findViewById(R.id.parking_order_car_num);
         remarkTv = findViewById(R.id.parking_order_remark_tv);
         areaTv = findViewById(R.id.parking_order_area_tv);
         voucherLL = findViewById(R.id.parking_order_voucher_ll);
@@ -122,7 +127,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         // 停車訂單
         mSlotOrderModel = new SlotOrderModel();
         // 車輛類
-        carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
+        carInsideModelList = new ArrayList<>();
         // 判断车辆是否选择车辆
         isChooseCar();
         // 現在時間
@@ -140,8 +145,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             case R.id.parking_order_car_manage_ll:
                 // 选择车辆
                 Intent updateCarIntent = new Intent(this, CarListActivity.class);
-                if (carInsideModel.getId() != 0) {  // 已選擇車輛，修改選擇車輛
-
+                if (carInsideModelList.size() > 0) {  // 已選擇車輛，修改選擇車輛
+                    updateCarIntent.putExtra("carList", new Gson().toJson(carInsideModelList));
                 } else {    // 未選擇車輛
 
                 }
@@ -170,14 +175,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      */
     private void isChooseCar() {
         callNetGetCarList();
-
-        if (carInsideModel.getId() != 0) {
-            carManagetv.setText("車輛管理");
-            carManageRL.setVisibility(View.VISIBLE);
-        } else {
-            carManagetv.setText("未選擇車輛，請先選擇車輛");
-            carManageRL.setVisibility(View.GONE);
-        }
     }
 
     /**
@@ -188,12 +185,32 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        Toast.makeText(ParkingOrderActivity.this, "獲取成功", Toast.LENGTH_SHORT).show();
+                        TestCarListModel model = new Gson().fromJson(result.toString(), TestCarListModel.class);
+                        if (model.getCode() == 200) {
+                            carInsideModelList.clear();
+                            for (TestCarListModel.CarModel carModel : model.getData()) {
+                                if (carModel.getImgUrl() == null) {
+                                    carModel.setImgUrl("objectNam1");
+                                }
+                                if (carModel.getModelForCar() == null) {
+                                    carModel.setModelForCar("");
+                                }
+                                if (carModel.getCarBrand() == null) {
+                                    carModel.setCarBrand("");
+                                }
+                                if (carModel.getCarStyle() == null) {
+                                    carModel.setCarStyle("");
+                                }
+                                carInsideModelList.add(carModel);
+                            }
+                        } else {
+                            Toast.makeText(ParkingOrderActivity.this, "車輛獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
-
+                        Toast.makeText(ParkingOrderActivity.this, "車輛獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -203,7 +220,16 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
                     @Override
                     public void onFinished() {
-
+                        if (carInsideModelList.size() > 0) {
+                            carManagetv.setText("車輛管理");
+                            carManageRL.setVisibility(View.VISIBLE);
+                            carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
+                            carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
+                            carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
+                        } else {
+                            carManagetv.setText("未選擇車輛，請先選擇車輛");
+                            carManageRL.setVisibility(View.GONE);
+                        }
                     }
                 });
     }
@@ -263,9 +289,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
                         final EditText editText = holder.getView(R.id.car_edit);
                         if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 已顯示
-                            editText.setHint("請填寫備註");
-                        } else {
                             editText.setHint("請填寫備註(備註內容中請務必包含詳細地址！)");
+                        } else {
+                            editText.setHint("請填寫備註");
                         }
                         BSSMCommonUtils.showKeyboard(editText);
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {

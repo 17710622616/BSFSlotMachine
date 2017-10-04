@@ -2,6 +2,9 @@ package com.bs.john_li.bsfslotmachine.BSSMUtils;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +18,7 @@ import com.bs.john_li.bsfslotmachine.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -179,6 +183,15 @@ public class BSSMCommonUtils {
 
         return userNameAfterReplaced;
 
+    }
+
+    /**
+     * 检查相机是否可以打开
+     */
+    public static boolean IsThereAnAppToTakePictures(Context context) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        List<ResolveInfo> availableActivities = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        return availableActivities != null && availableActivities.size() > 0;
     }
 
     /**

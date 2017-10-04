@@ -88,6 +88,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         if (!userInfoJson.equals("")) {
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
             nickNameTv.setText(mUserInfoModel.getNickname());
+            phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
         }
     }
 
@@ -100,7 +101,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             case R.id.personal_head_portrait:   // 頭像
                 startActivityForResult(new Intent(this, HeadViewActivity.class), 7);
                 break;
-            case R.id.personal_nickname:    // 暱稱
+            case R.id.personal_nickname:    // 暱稱1
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -114,8 +115,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                     public void onClick(View view) {
                                         if (!editText.getText().toString().equals("")) {
                                             mUserInfoModel.setNickname(editText.getText().toString());
-                                            nickNameTv.setText(mUserInfoModel.getNickname());
-                                            updateUserInfo();
+                                            updateUserInfo(1);
                                             dialog.dismiss();
                                         } else {
                                             Toast.makeText(PersonalSettingActivity.this, "請輸入要修改的新的暱稱~", Toast.LENGTH_SHORT).show();
@@ -218,7 +218,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     /**
      * 更改用戶信息
      */
-    public void updateUserInfo() {
+    public void updateUserInfo(final int type) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_USER_INFO + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -253,6 +253,11 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
                     EventBus.getDefault().post("LOGIN");
                     Toast.makeText(PersonalSettingActivity.this, "用戶信息更新成功~", Toast.LENGTH_SHORT).show();
+                    switch (type) {
+                        case 1:
+                            nickNameTv.setText(mUserInfoModel.getNickname());
+                            break;
+                    }
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }

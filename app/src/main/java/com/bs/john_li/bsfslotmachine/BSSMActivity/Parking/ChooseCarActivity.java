@@ -1,4 +1,4 @@
-package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
+package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarListAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -28,7 +30,6 @@ import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -37,18 +38,17 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * 我的車輛列表
- * Created by John_Li on 9/8/2017.
+ * 選擇車輛
+ * Created by John_Li on 4/10/2017.
  */
 
-public class CarListActivity extends BaseActivity implements View.OnClickListener, CarListAdapter.CarRechargeCallBack {
+public class ChooseCarActivity extends BaseActivity implements View.OnClickListener, ChooseCarAdapter.CarUpdateCallBack {
     private BSSMHeadView carListHead;
     private ListView carLv;
     private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
@@ -56,7 +56,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
 
     private List<String> carList;
     private List<CarModel.CarCountAndListModel.CarInsideModel> carModelList;
-    private CarListAdapter mCarListAdapter;
+    private ChooseCarAdapter mCarListAdapter;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
@@ -65,7 +65,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     private long totolCarCount;
     // 修改的位置
     private int updatePosition = 0;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +91,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void run() { //和最大的数据比较
                         if (pageSize * (pageNo + 1) > totolCarCount){
-                            Toast.makeText(CarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ChooseCarActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                             mExpandSwipeRefreshLayout.setLoading(false);
                         } else {
                             pageNo ++;
@@ -122,11 +121,13 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(CarListActivity.this, AddCarActivity.class);
-                intent.putExtra("startWay", "update");
-                intent.putExtra("updateModel", new Gson().toJson(carList.get(i)));
-                updatePosition = i;
-                startActivityForResult(intent, BSSMConfigtor.UPDATE_CAR_RQUEST);
+                if (carModelList.get(i).getIfPay() == 0) {  // 未充值
+                    //Intent intent = new Intent(ChooseCarActivity.this, AddCarActivity.class);
+                } else {    // 已充值
+                    Intent intent = new Intent();
+                    intent.putExtra("carModel", new Gson().toJson(carList.get(i)));
+                    setResult(RESULT_OK, intent);
+                }
             }
         });
 
@@ -149,7 +150,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carListHead.setRight(R.mipmap.push_invitation, this);
 
         carModelList = new ArrayList<>();
-        mCarListAdapter = new CarListAdapter(this, carModelList, this);
+        mCarListAdapter = new ChooseCarAdapter(this, carModelList, this);
         carLv.setAdapter(mCarListAdapter);
         mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
                 getResources().getColor(R.color.colorMineOringe),
@@ -211,15 +212,15 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 if (model.getCode().equals("200")) {
                     carModelList.remove(position);
                     mCarListAdapter.refreshListView(carModelList);
-                    Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChooseCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override
@@ -256,20 +257,18 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     totolCarCount = model.getData().getTotalCount();
                     List<CarModel.CarCountAndListModel.CarInsideModel> carInsideModelsFromNet = model.getData().getData();
                     carModelList.addAll(carInsideModelsFromNet);
-                    Log.d("car_list_count", "長度：" + carModelList.size());
                     // List去重
                     deWeightListById();
-                    Log.d("car_list_count", "長度：" + carModelList.size());
                 } else if (model.getCode() == 10001){
-                    Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseCarActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CarListActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseCarActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChooseCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override
@@ -335,9 +334,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
      * List去重
      */
     private void deWeightListById() {
-        /*Set<CarModel.CarCountAndListModel.CarInsideModel> carSet = new TreeSet<>((o1, o2) -> Integer.toString(o1.getId()).compareTo(Integer.toString(o2.getId())));
-        carSet.addAll(carModelList);
-        carModelList = new ArrayList<>(carSet);*/
         Set<CarModel.CarCountAndListModel.CarInsideModel> s= new TreeSet<CarModel.CarCountAndListModel.CarInsideModel>(new Comparator<CarModel.CarCountAndListModel.CarInsideModel>(){
 
             @Override
@@ -351,8 +347,12 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carModelList = new ArrayList<CarModel.CarCountAndListModel.CarInsideModel>(s);
     }
 
+    /**
+     * 修改車輛
+     * @param view
+     */
     @Override
-    public void carRechargeClick(View view) {
-        Toast.makeText(CarListActivity.this, "充值按鈕" + view.getId(), Toast.LENGTH_SHORT).show();
+    public void carUpdateClick(View view) {
+
     }
 }

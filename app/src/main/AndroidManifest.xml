@@ -42,6 +42,7 @@
         <activity android:name=".BSSMActivity.Mine.DiscountActivity"/>
         <activity android:name=".BSSMActivity.Mine.HistoryOrderActivity"/>
         <activity android:name=".BSSMActivity.Mine.CarListActivity"/>
+        <activity android:name=".BSSMActivity.Parking.ChooseCarActivity"/>
         <activity android:name=".BSSMActivity.Mine.OpinionActivity"/>
         <activity android:name=".BSSMActivity.Mine.GuoJiangLongActivity"/>
         <activity android:name=".BSSMActivity.Parking.SlotMachineListActivity"/>
@@ -50,6 +51,7 @@
         <activity android:name=".BSSMActivity.Parking.ParkingOrderActivity"/>
         <activity android:name=".BSSMActivity.Mine.AddCarActivity"/>
         <activity android:name=".BSSMActivity.Mine.HeadViewActivity"/>
+        <activity android:name=".BSSMActivity.Forum.PublishForumActivity"/>
     </application>
 
 </manifest>

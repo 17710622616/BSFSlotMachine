@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TestSlotMachineListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
@@ -96,7 +97,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         noresultLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(IsThereAnAppToTakePictures()) {
+                if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
                     dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                     if (!dir.exists()) {
                         dir.mkdir();
@@ -182,16 +183,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
             }
         });
     }
-
-    /**
-     * 检查相机是否可以打开
-     */
-    private boolean IsThereAnAppToTakePictures() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> availableActivities = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return availableActivities != null && availableActivities.size() > 0;
-    }
-
 
     /**
      * 檢查用戶輸入的內容

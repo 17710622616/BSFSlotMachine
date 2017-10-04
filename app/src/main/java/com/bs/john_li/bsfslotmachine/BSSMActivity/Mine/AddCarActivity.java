@@ -292,7 +292,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(IsThereAnAppToTakePictures()) {
+                                if(BSSMCommonUtils.IsThereAnAppToTakePictures(AddCarActivity.this)) {
                                     dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                     if (!dir.exists()) {
                                         dir.mkdir();

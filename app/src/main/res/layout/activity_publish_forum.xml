@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
-        android:id="@+id/forum_head"
+        android:id="@+id/publish_forum_head"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/publish_forum_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

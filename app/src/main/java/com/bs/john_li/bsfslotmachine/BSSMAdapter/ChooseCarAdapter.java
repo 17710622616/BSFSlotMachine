@@ -15,15 +15,16 @@ import com.bs.john_li.bsfslotmachine.R;
 import java.util.List;
 
 /**
+ * 選擇車輛
  * Created by John_Li on 9/8/2017.
  */
 
-public class CarListAdapter extends BaseAdapter implements View.OnClickListener {
+public class ChooseCarAdapter extends BaseAdapter implements View.OnClickListener {
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private LayoutInflater inflater;
     private Context mContext;
-    private CarRechargeCallBack callBack;
-    public  CarListAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> carList, CarRechargeCallBack callBack) {
+    private CarUpdateCallBack callBack;
+    public ChooseCarAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> carList, CarUpdateCallBack callBack) {
         this.carList = carList;
         this.mContext = context;
         inflater = LayoutInflater.from(context);
@@ -59,6 +60,7 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
             holder.carlistStyle = convertView.findViewById(R.id.item_carlist_style);
             holder.carTypeTv = convertView.findViewById(R.id.item_carlist_car_type);
             holder.carRecharge = convertView.findViewById(R.id.item_carlist_recharge);
+            holder.notRechrageTv = convertView.findViewById(R.id.item_carlist_not_rechrage_tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -78,20 +80,19 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
         }
 
         if (carList.get(i).getIfPay() == 0) {
-            holder.carRecharge.setImageResource(R.mipmap.translation_detial);
+            holder.notRechrageTv.setVisibility(View.VISIBLE);
         } else {
-            holder.carRecharge.setImageResource(R.mipmap.server);
+            holder.notRechrageTv.setVisibility(View.GONE);
         }
 
+        holder.carRecharge.setImageResource(R.mipmap.update_car);
         holder.carRecharge.setOnClickListener(this);
-        holder.carlistCb.setVisibility(View.GONE);
-        holder.carRecharge.setVisibility(View.VISIBLE);
         return convertView;
     }
 
     @Override
     public void onClick(View view) {
-        callBack.carRechargeClick(view);
+        callBack.carUpdateClick(view);
     }
 
     class ViewHolder {
@@ -102,6 +103,7 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
         public TextView carlistModel;
         public TextView carlistStyle;
         public TextView carTypeTv;
+        public TextView notRechrageTv;
         public ImageView carRecharge;
     }
 
@@ -113,7 +115,7 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
     /**
      * 充值圖片點擊接口
      */
-    public interface CarRechargeCallBack {
-        void carRechargeClick(View view);
+    public interface CarUpdateCallBack {
+        void carUpdateClick(View view);
     }
 }
