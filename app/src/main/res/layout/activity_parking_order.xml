@@ -15,7 +15,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:overScrollMode="never">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -26,28 +27,27 @@
                 android:id="@+id/parking_order_car_manage_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/colorWight">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/parking_order_car_manage_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"
-                    android:paddingTop="5dp"
-                    android:paddingLeft="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="5dp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
                     android:text="車輛管理"
                     android:textSize="16sp"
                     android:textColor="@color/colorBlack"
-                    android:gravity="center_vertical"/>
+                    android:gravity="center_vertical"
+                    android:background="@color/colorWight"/>
 
                 <RelativeLayout
                     android:id="@+id/parking_order_car_manage_rl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
+                    android:layout_marginTop="0.5dp"
                     android:background="@color/colorWight"
                     android:visibility="gone">
 
@@ -117,6 +117,16 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/parking_order_color_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_color_tv"
+                    style="@style/MineItemTextView"
+                    android:text="請選擇柱色" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/parking_order_starttime_ll"
                 android:layout_marginTop="1dp"
                 style="@style/ParkingOrderItemLinearLayout">
@@ -132,7 +142,12 @@
             <LinearLayout
                 android:id="@+id/parking_order_money_ll"
                 android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingLeft="8dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:background="@color/colorWight">
                 <TextView
                     android:id="@+id/parking_order_money_tv"
                     style="@style/MineItemTextView"
@@ -166,11 +181,25 @@
                     android:singleLine="true"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/parking_order_photo_ll"
+                android:layout_marginTop="5dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingLeft="8dp"
+                android:paddingBottom="2dp"
+                android:paddingTop="10dp"
+                android:background="@color/colorWight">
+                <TextView
+                    style="@style/MineItemTextView"
+                    android:text="照      片"
+                    android:singleLine="true"/>
+            </LinearLayout>
             <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView
                 android:id="@+id/parking_order_gv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
                 android:padding="8dp"
                 android:background="@color/colorWight"
                 android:numColumns="auto_fit"
@@ -193,7 +222,7 @@
             android:id="@+id/parking_order_amount_tv"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="金額："
+            android:text="金額：MOP 20"
             android:textColor="@color/colorWight"
             android:textSize="15sp"
             android:gravity="center"
@@ -205,7 +234,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:text="|已優惠：2.00"
+            android:text=" |已優惠：0.00"
             android:textColor="@color/colorWight"
             android:textSize="12sp"
             android:gravity="center_vertical|left"

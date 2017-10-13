@@ -58,8 +58,9 @@ public class PhotoAdapter extends BaseAdapter {
         }
 
         if (i == photoList.size() - 1) {
-            holder.imgPhoto.setImageResource(R.mipmap.camera);
+            holder.imgPhoto.setImageResource(R.mipmap.camera1);
         } else {
+            String url = photoList.get(i);
             x.image().bind(holder.imgPhoto, photoList.get(i), options);
         }
         return convertView;
@@ -67,5 +68,10 @@ public class PhotoAdapter extends BaseAdapter {
 
     class ViewHolder {
         private ImageView imgPhoto;
+    }
+
+    public void refreshData(List<String> newList) {
+        this.photoList = newList;
+        notifyDataSetChanged();
     }
 }

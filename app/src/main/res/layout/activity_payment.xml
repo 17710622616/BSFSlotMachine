@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/payment_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWight"
+            android:gravity="center_horizontal|bottom"
+            android:paddingTop="10dp"
+            android:text="支付時間剩餘"
+            android:textColor="@color/colorBlack"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWight"
+            android:gravity="center"
+            android:text="08:00"
+            android:textColor="@color/colorBlack"
+            android:textSize="36sp"
+            android:paddingTop="2dp"
+            android:paddingBottom="5dp"/>
+
+        <LinearLayout
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/payment_orderNo"
+                style="@style/MineItemTextView"
+                android:text="訂單號：" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="13dp"
+            android:paddingLeft="15dp"
+            android:paddingBottom="3dp"
+            android:background="@color/colorWight"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                style="@style/MineItemTextView"
+                android:text="支付方式" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                style="@style/PayMentMethodIcon"
+                android:src="@mipmap/wechat"/>
+
+            <TextView
+                android:id="@+id/payment_my_wallet"
+                style="@style/MineItemTextView"
+                android:text="我的錢包" />
+
+            <ImageView
+                style="@style/MineItemImageNext"/>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                style="@style/PayMentMethodIcon"
+                android:src="@mipmap/wechat"/>
+
+            <TextView
+                android:id="@+id/payment_alipay"
+                style="@style/MineItemTextView"
+                android:text="支付寶" />
+
+            <ImageView
+                style="@style/MineItemImageNext"/>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                style="@style/PayMentMethodIcon"
+                android:src="@mipmap/wechat"/>
+
+            <TextView
+                android:id="@+id/payment_wecaht_pay"
+                style="@style/MineItemTextView"
+                android:text="微信支付" />
+
+            <ImageView
+                style="@style/MineItemImageNext"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/payment_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="確認支付"
+            android:textSize="20sp"
+            android:textColor="@color/colorWight"
+            android:padding="8dp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_btn_bg"/>
+    </LinearLayout>
+</LinearLayout>

@@ -7,77 +7,57 @@
     android:paddingLeft="20dp">
 
     <TextView
-        android:id="@+id/order_area_datang_tv"
+        android:id="@+id/meter_green"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
-        android:text="大堂區"
+        android:text="綠色"
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/order_area_wangde_tv"
+        android:id="@+id/meter_yellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
-        android:text="望德堂區"
+        android:text="黃色"
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/order_area_fengshun_tv"
+        android:id="@+id/meter_gray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
-        android:text="風順堂區"
+        android:text="灰色"
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/order_area_huawang_tv"
+        android:id="@+id/meter_blue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
-        android:text="花王堂區"
+        android:text="藍色"
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/order_area_huadima_tv"
+        android:id="@+id/meter_red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
-        android:text="花地瑪堂區"
+        android:text="紅色"
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/order_area_jiamo_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingTop="12dp"
-        android:text="嘉模堂區"
-        android:textSize="16sp"
-        android:textColor="@color/colorBlack"/>
-
-    <TextView
-        android:id="@+id/order_area_other_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingTop="12dp"
-        android:text="其他區域"
-        android:textSize="16sp"
-        android:textColor="@color/colorBlack"/>
-
-    <TextView
-        android:id="@+id/order_area_cancel_tv"
+        android:id="@+id/meter_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"

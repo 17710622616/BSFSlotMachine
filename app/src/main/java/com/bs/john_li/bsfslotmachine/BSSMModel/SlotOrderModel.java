@@ -10,6 +10,15 @@ public class SlotOrderModel {
     private String machineNo;
     private long carId;
     private String startSlotTime;
+    private String remark;
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public String getSlotAmount() {
         return slotAmount;

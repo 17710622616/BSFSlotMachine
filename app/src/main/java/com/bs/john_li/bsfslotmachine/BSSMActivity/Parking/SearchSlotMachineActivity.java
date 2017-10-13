@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -32,6 +33,10 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +70,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> smList;
 
     public static final int TAKE_PHOTO = 1;
+    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
     private int pageSize = 10;
@@ -101,22 +107,61 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         noresultLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
-                    dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                    if (!dir.exists()) {
-                        dir.mkdir();
-                    }
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_photo)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
+                                            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                            if (!dir.exists()) {
+                                                dir.mkdir();
+                                            }
 
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                    Date date = new Date(System.currentTimeMillis());
-                    file = new File(dir, "location" + format.format(date) + ".jpg");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                    startActivityForResult(intent, TAKE_PHOTO);
-                    Toast.makeText(SearchSlotMachineActivity.this,"拍照停車",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SearchSlotMachineActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                }
+                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                                            Date date = new Date(System.currentTimeMillis());
+                                            file = new File(dir, "location" + format.format(date) + ".jpg");
+                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                                            startActivityForResult(intent, TAKE_PHOTO);
+                                        } else {
+                                            Toast.makeText(SearchSlotMachineActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
+                                        }
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                        if (!dir.exists()) {
+                                            dir.mkdir();
+                                        }
+
+                                        Intent getAlbum;
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                            getAlbum = new Intent(Intent.ACTION_PICK);
+                                        } else {
+                                            getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
+                                        }
+                                        getAlbum.setType("image/*");
+                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
             }
         });
     }
@@ -331,17 +376,24 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
             Toast.makeText(SearchSlotMachineActivity.this, "影相失敗！", Toast.LENGTH_SHORT).show();
             return;
         }
+        Intent intent1 = new Intent(this, ParkingOrderActivity.class);
         switch(requestCode) {
             case TAKE_PHOTO:
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri contentUri = Uri.fromFile(file);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
-                Intent intent1 = new Intent(this, ParkingOrderActivity.class);
                 intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
                 intent1.putExtra("imageUri", file.getPath());
                 startActivity(intent1);
                 finish();
+                break;
+            case TAKE_PHOTO_FROM_ALBUM:
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                file = new File(imagePath);
+                intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
+                intent1.putExtra("imageUri", file.getPath());
+                startActivity(intent1);
                 break;
             default:
                 break;
