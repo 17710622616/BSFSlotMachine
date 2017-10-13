@@ -6,13 +6,17 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorWight">
         <CheckBox
             android:id="@+id/item_carlist_cb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:background="@color/colorWight"/>
+            android:background="@drawable/selector_cb"
+            android:button="@null"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/item_carlist_iv"
@@ -83,7 +87,8 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
-            android:padding="5dp"
+            android:paddingRight="3dp"
+            android:paddingLeft="2dp"
             android:layout_gravity="center"
             android:background="@color/colorWight"
             android:src="@mipmap/translation_detial"/>
@@ -96,8 +101,9 @@
         android:background="#e0707070"
         android:text="未充值"
         android:textColor="@color/colorWight"
-        android:textSize="24sp"
+        android:textSize="36sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:padding="5dp"/>
 </FrameLayout>

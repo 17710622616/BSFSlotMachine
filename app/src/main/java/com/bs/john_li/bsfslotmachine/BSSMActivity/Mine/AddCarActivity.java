@@ -32,6 +32,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -216,7 +217,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("imgUrl","objectNam1");
-            switch (carType) {
+            /*switch (carType) {
                 case "私家車":
                     jsonObj.put("ifPerson",0);
                     break;
@@ -229,11 +230,12 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 case "重型汽車":
                     jsonObj.put("ifPerson",3);
                     break;
-            }
-            jsonObj.put("carNo",carNo);
-            jsonObj.put("modelForCar",carModel);
-            jsonObj.put("carBrand",carBrand);
-            jsonObj.put("carStyle",carStyle);
+            }*/
+            jsonObj.put("ifPerson",carInsideModel.getIfPerson());
+            jsonObj.put("carNo",carInsideModel.getCarNo());
+            jsonObj.put("modelForCar",carInsideModel.getModelForCar());
+            jsonObj.put("carBrand",carInsideModel.getCarBrand());
+            jsonObj.put("carStyle",carInsideModel.getCarStyle());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -245,6 +247,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     carInsideModel.setId(Integer.parseInt(model.getData()));
+                    carInsideModel.setIfPay(0);
+                    carInsideModel.setUserId(996);  //new Gson().fromJson((String)SPUtils.get(AddCarActivity.this, "UserInfo", ""), UserInfoOutsideModel.class).getData().getMobile()
                     Intent intent = new Intent();
                     intent.putExtra("NEW_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
                     setResult(RESULT_OK, intent);

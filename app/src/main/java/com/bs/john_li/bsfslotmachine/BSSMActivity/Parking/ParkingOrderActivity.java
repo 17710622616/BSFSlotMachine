@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
@@ -25,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.othershe.nicedialog.BaseNiceDialog;
@@ -58,13 +63,15 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private ImageView parkingIv;
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL;
     private RelativeLayout carManageRL;
-    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, remarkTv, areaTv, startTimeTv;
+    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, remarkTv, areaTv, startTimeTv, submitTv;
+    public NoScrollGridView photoGv;
 
     private String way;
     private List<String> imgUrlList;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
     private List<TestCarListModel.CarModel> carInsideModelList;
     public SlotOrderModel mSlotOrderModel;
+    private PhotoAdapter mPhotoAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +85,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public void initView() {
         headView = findViewById(R.id.parking_order_head);
         parkingIv = findViewById(R.id.parking_iv);
+        photoGv = findViewById(R.id.parking_order_gv);
         carManageLL = findViewById(R.id.parking_order_car_manage_ll);
         startTimeLL = findViewById(R.id.parking_order_starttime_ll);
         orderMoneyLL = findViewById(R.id.parking_order_money_ll);
@@ -92,6 +100,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         areaTv = findViewById(R.id.parking_order_area_tv);
         voucherLL = findViewById(R.id.parking_order_voucher_ll);
         startTimeTv = findViewById(R.id.parking_order_starttime_tv);
+        submitTv = findViewById(R.id.parking_order_submit);
     }
 
     @Override
@@ -102,6 +111,16 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         orderRemarkLL.setOnClickListener(this);
         orderAreaLL.setOnClickListener(this);
         voucherLL.setOnClickListener(this);
+        submitTv.setOnClickListener(this);
+
+        photoGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == imgUrlList.size() - 1) {
+                    Toast.makeText(ParkingOrderActivity.this, "拍照", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -116,7 +135,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             String imgUri = intent.getStringExtra("imageUri");
             Log.d("imgUri", imgUri);
             imgUrlList.add(imgUri);
-            x.image().bind(parkingIv, imgUrlList.get(0), options);
+            imgUrlList.add("");
+            mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
+            photoGv.setAdapter(mPhotoAdapter);
+            photoGv.setVisibility(View.VISIBLE);
             orderAreaLL.setVisibility(View.VISIBLE);
         } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
             orderAreaLL.setVisibility(View.GONE);
@@ -144,13 +166,13 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.parking_order_car_manage_ll:
                 // 选择车辆
-                Intent updateCarIntent = new Intent(this, CarListActivity.class);
-                if (carInsideModelList.size() > 0) {  // 已選擇車輛，修改選擇車輛
+                /*Intent updateCarIntent = new Intent(this, ChooseCarActivity.class);
+                if (carInsideModelList.size() > 0) {  // 有已充值的車輛，默認選擇是第一個車輛，點擊修改選擇車輛
                     updateCarIntent.putExtra("carList", new Gson().toJson(carInsideModelList));
-                } else {    // 未選擇車輛
+                } else {    // 沒有已充值的車輛，點擊添加車輛
 
-                }
-                startActivity(updateCarIntent);
+                }*/
+                startActivityForResult(new Intent(this, ChooseCarActivity.class), 6);
                 break;
             case R.id.parking_order_starttime_ll:
                 chooseOrderStartTime();
@@ -166,6 +188,13 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.parking_order_voucher_ll:
                 Toast.makeText(this, "暫無優惠券~", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.parking_order_submit:
+                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
+
+                } else {    // 咪錶存在，提交已知訂單
+
+                }
                 break;
         }
     }
@@ -220,18 +249,25 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
                     @Override
                     public void onFinished() {
-                        if (carInsideModelList.size() > 0) {
-                            carManagetv.setText("車輛管理");
-                            carManageRL.setVisibility(View.VISIBLE);
-                            carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
-                            carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
-                            carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
-                        } else {
-                            carManagetv.setText("未選擇車輛，請先選擇車輛");
-                            carManageRL.setVisibility(View.GONE);
-                        }
+                        refreshCarChoosed();
                     }
                 });
+    }
+
+    /**
+     * 刷新車輛信息
+     */
+    private void refreshCarChoosed() {
+        if (carInsideModelList.size() > 0) {
+            carManagetv.setText("車輛管理");
+            carManageRL.setVisibility(View.VISIBLE);
+            carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
+            carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
+            carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
+        } else {
+            carManagetv.setText("未選擇車輛，請先選擇車輛");
+            carManageRL.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -369,5 +405,28 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 })
                 .setShowBottom(true)
                 .show(getSupportFragmentManager());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 6:
+                    TestCarListModel.CarModel carModel = new Gson().fromJson(data.getStringExtra("carModel"), TestCarListModel.CarModel.class);
+                    int position = -1;
+                    for (int i = 0; i < carInsideModelList.size(); i ++) {
+                        if (carInsideModelList.get(i).getCarNo().equals(carModel.getCarNo())) {
+                            position = i;
+                        }
+                    }
+                    if (position != -1) {
+                        carInsideModelList.remove(position);
+                    }
+                    carInsideModelList.add(0, carModel);
+                    refreshCarChoosed();
+                    break;
+            }
+        }
     }
 }

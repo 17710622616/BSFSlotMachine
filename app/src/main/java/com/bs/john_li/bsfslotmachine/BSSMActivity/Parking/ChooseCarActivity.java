@@ -110,23 +110,18 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                 callNetGetCarList();
             }
         });
-        carLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showCarDeleteDialog(i);
-                return false;
-            }
-        });
 
         carLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (carModelList.get(i).getIfPay() == 0) {  // 未充值
                     //Intent intent = new Intent(ChooseCarActivity.this, AddCarActivity.class);
+                    Toast.makeText(ChooseCarActivity.this, "這輛車還沒充值哦，請充值先~", Toast.LENGTH_SHORT).show();
                 } else {    // 已充值
                     Intent intent = new Intent();
-                    intent.putExtra("carModel", new Gson().toJson(carList.get(i)));
+                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(i)));
                     setResult(RESULT_OK, intent);
+                    finish();
                 }
             }
         });
@@ -157,80 +152,6 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                 getResources().getColor(R.color.colorMineGreen));
         mExpandSwipeRefreshLayout.setRefreshing(true);
         callNetGetCarList();
-    }
-
-    /**
-     * 刪除車輛的dialog
-     * @param position
-     */
-    private void showCarDeleteDialog(final int position) {
-        NiceDialog.init()
-                .setLayoutId(R.layout.dialog_normal)
-                .setConvertListener(new ViewConvertListener() {
-                    @Override
-                    protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                        TextView msgTv = viewHolder.getView(R.id.dialog_normal_msg);
-                        msgTv.setText("是否要刪除該車輛，刪除后車輛的會員費不會退還的哦！");
-                        viewHolder.setOnClickListener(R.id.dialog_normal_no, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                baseNiceDialog.dismiss();
-                            }
-                        });
-                        viewHolder.setOnClickListener(R.id.dialog_normal_yes, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                callNetDeleteCar(position);
-                                baseNiceDialog.dismiss();
-                            }
-                        });
-                    }
-                })
-                .setWidth(210)
-                .show(getSupportFragmentManager());
-    }
-
-    /**
-     * 請求刪除車輛
-     * @param position
-     */
-    private void callNetDeleteCar(final int position) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_CAR + SPUtils.get(this, "UserToken", ""));
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("id",carModelList.get(position).getId());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String urlJson = jsonObj.toString();
-        params.setBodyContent(urlJson);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode().equals("200")) {
-                    carModelList.remove(position);
-                    mCarListAdapter.refreshListView(carModelList);
-                    Toast.makeText(ChooseCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ChooseCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
-                }
-            }
-            //请求异常后的回调方法
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ChooseCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
-            }
-            //主动调用取消请求的回调方法
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-            @Override
-            public void onFinished() {
-                refreshView();
-            }
-        });
     }
 
     /**

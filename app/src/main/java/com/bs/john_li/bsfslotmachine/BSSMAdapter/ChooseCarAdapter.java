@@ -66,26 +66,29 @@ public class ChooseCarAdapter extends BaseAdapter implements View.OnClickListene
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.carlistLicensenum.setText(carList.get(i).getCarNo());
-        holder.carlistBrand.setText(carList.get(i).getCarBrand());
-        holder.carlistStyle.setText(carList.get(i).getCarStyle());
-        holder.carlistModel.setText(carList.get(i).getModelForCar());
+        holder.carlistLicensenum.setText("車牌：" + carList.get(i).getCarNo());
+        holder.carlistBrand.setText("品牌：" + carList.get(i).getCarBrand());
+        holder.carlistStyle.setText("款式：" + carList.get(i).getCarStyle());
+        holder.carlistModel.setText("型號：" + carList.get(i).getModelForCar());
         switch (carList.get(i).getIfPerson()) {
             case 0:
-                holder.carTypeTv.setText("私家車");
+                holder.carTypeTv.setText("類型：" + "私家車");
                 break;
             case 1:
-                holder.carTypeTv.setText("電單車");
+                holder.carTypeTv.setText("類型" + "電單車");
                 break;
         }
 
         if (carList.get(i).getIfPay() == 0) {
             holder.notRechrageTv.setVisibility(View.VISIBLE);
+            holder.carlistCb.setEnabled(false);
+            holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
             holder.notRechrageTv.setVisibility(View.GONE);
+            holder.carlistCb.setEnabled(true);
+            holder.carRecharge.setImageResource(R.mipmap.year);
         }
 
-        holder.carRecharge.setImageResource(R.mipmap.update_car);
         holder.carRecharge.setOnClickListener(this);
         return convertView;
     }

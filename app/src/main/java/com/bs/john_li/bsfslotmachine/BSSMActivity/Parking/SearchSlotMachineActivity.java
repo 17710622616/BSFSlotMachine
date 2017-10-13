@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.TestSlotMachineListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -58,14 +57,19 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private ImageView backIv;
     private LinearLayout noresultLl;
     private Toolbar mToolbar;
-    private List<String> slotMachineList;
     private SearchSlotMachineAdapter mSlotMachineAdapter;
     private AutoCompleteTextView mCompleteText;
-    private List<TestSlotMachineListModel.TestSlotMachineModel> smList;
+    // 顯示在搜索結果上的名稱集合
+    private List<String> slotMachineList;
+    // 搜索結果集合
+    private List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> smList;
 
     public static final int TAKE_PHOTO = 1;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
+    private int pageSize = 10;
+    private int pageNo = 1;
+    private long totalCount;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,22 +145,26 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         mCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String chooseStr = slotMachineList.get(position);
-                mSearchView.setQuery(chooseStr,true);
-                putInHistorySearch(position);
-                Intent intent = null;
-                if (smList.get(position).getParkingSpaces() != null) {
-                    // 有子列表
-                    intent = new Intent(SearchSlotMachineActivity.this, SlotMachineChildListActivity.class);
-                    intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(position)));
+                if (position == slotMachineList.size() && slotMachineList.get(position).equals("查看更多")) {
+                    Toast.makeText(SearchSlotMachineActivity.this, "查看更多", Toast.LENGTH_SHORT).show();
                 } else {
-                    // 無子列表
-                    intent = new Intent(SearchSlotMachineActivity.this, ParkingOrderActivity.class);
-                    intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
-                    intent.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
+                    String chooseStr = slotMachineList.get(position);
+                    mSearchView.setQuery(chooseStr,true);
+                    putInHistorySearch(position);
+                    Intent intent = null;
+                    if (smList.get(position).getParkingSpaces() != null) {
+                        // 有子列表
+                        intent = new Intent(SearchSlotMachineActivity.this, SlotMachineChildListActivity.class);
+                        intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(position)));
+                    } else {
+                        // 無子列表
+                        intent = new Intent(SearchSlotMachineActivity.this, ParkingOrderActivity.class);
+                        intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                        intent.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
+                    }
+                    startActivity(intent);
+                    finish();
                 }
-                startActivity(intent);
-                finish();
             }
         });
         mCompleteText.setThreshold(0);
@@ -207,6 +215,8 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("key",newText);
+            jsonObj.put("pageSize",pageSize);
+            jsonObj.put("pageNo",pageNo);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -215,10 +225,23 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                TestSlotMachineListModel model = new Gson().fromJson(result.toString(), TestSlotMachineListModel.class);
+                SlotMachineListOutsideModel model = new Gson().fromJson(result.toString(), SlotMachineListOutsideModel.class);
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
-                        smList = model.getData();
+                        totalCount = model.getData().getTotalCount();
+                        SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
+                        moreModel.setAddress("");
+                        moreModel.setAreaCode("");
+                        moreModel.setCarType(-1);
+                        moreModel.setDistance(-1);
+                        moreModel.setId(-1);
+                        moreModel.setLatitude(-1);
+                        moreModel.setLongitude(-1);
+                        moreModel.setMachineNo("查看更多");
+                        moreModel.setParkingSpaces(null);
+                        moreModel.setAreaCode("");
+                        moreModel.setPillarColor("");
+                        smList = model.getData().getData();
                         updateAdapterData();
                     }
                 }
@@ -262,15 +285,15 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         slotMachineList.clear();
         // 插入歷史數據到列表中
         if (!historySearch.equals("")) {
-            Type type = new TypeToken<ArrayList<TestSlotMachineListModel.TestSlotMachineModel>>() {}.getType();
-            List<TestSlotMachineListModel.TestSlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
-            for (TestSlotMachineListModel.TestSlotMachineModel model: historyList){
+            Type type = new TypeToken<ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>>() {}.getType();
+            List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
+            for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model: historyList){
                 smList.add(model);
             }
         }
 
         // 插入新的數據到顯示的List
-        for (TestSlotMachineListModel.TestSlotMachineModel model : smList) {
+        for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model : smList) {
             slotMachineList.add(model.getMachineNo() + " " + model.getAddress());
         }
     }
@@ -280,12 +303,12 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
      */
     private void putInHistorySearch(int position) {
         String historySearch = (String) SPUtils.get(this, "SlotMachine", "");
-        Type type = new TypeToken<ArrayList<TestSlotMachineListModel.TestSlotMachineModel>>() {}.getType();
-        List<TestSlotMachineListModel.TestSlotMachineModel> historyList = null;
+        Type type = new TypeToken<ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>>() {}.getType();
+        List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> historyList = null;
         if (!historySearch.equals("")) {
             historyList = new Gson().fromJson(historySearch, type);
             boolean hasSearch = false;
-            for (TestSlotMachineListModel.TestSlotMachineModel model: historyList){
+            for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model: historyList){
                 if (model.getMachineNo().equals(smList.get(position).getMachineNo())){
                     hasSearch = true;
                 }

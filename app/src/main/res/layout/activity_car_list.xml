@@ -15,7 +15,8 @@
         <com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout
             android:id="@+id/car_list_expand_swipe"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
             <ListView
                 android:id="@+id/carlist_lv"
                 android:layout_width="match_parent"
