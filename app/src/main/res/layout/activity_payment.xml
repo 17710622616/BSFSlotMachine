@@ -66,7 +66,7 @@
 
             <ImageView
                 style="@style/PayMentMethodIcon"
-                android:src="@mipmap/wechat"/>
+                android:src="@mipmap/wallet_pay"/>
 
             <TextView
                 android:id="@+id/payment_my_wallet"
@@ -83,7 +83,7 @@
 
             <ImageView
                 style="@style/PayMentMethodIcon"
-                android:src="@mipmap/wechat"/>
+                android:src="@mipmap/alipay"/>
 
             <TextView
                 android:id="@+id/payment_alipay"
@@ -124,6 +124,6 @@
             android:padding="8dp"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/shape_btn_bg"/>
+            android:background="@drawable/shape_pay_btn_bg"/>
     </LinearLayout>
 </LinearLayout>

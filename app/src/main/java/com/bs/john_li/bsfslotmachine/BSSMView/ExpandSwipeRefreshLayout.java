@@ -209,4 +209,11 @@ public class ExpandSwipeRefreshLayout extends SwipeRefreshLayout implements AbsL
     public static interface OnLoadListener {
         public void onLoad();
     }
+
+    /**
+     * 是否在加載
+     */
+    public boolean isLoading(){
+        return isLoading;
+    }
 }

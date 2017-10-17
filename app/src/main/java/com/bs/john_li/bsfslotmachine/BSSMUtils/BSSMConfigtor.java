@@ -55,4 +55,8 @@ public class BSSMConfigtor {
     public final static String DELETE_CAR = "car/remove?token=";
     // 獲取已充值車輛列表
     public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/slotOrder?token=";
+    // 獲取帖文列表
+    public final static String GET_CONTENTS = "content/getContentList?nextId=";
+    // 獲取評論列表
+    public final static String GET_COMMENTS = "content/getCommentList?id=";
 }
