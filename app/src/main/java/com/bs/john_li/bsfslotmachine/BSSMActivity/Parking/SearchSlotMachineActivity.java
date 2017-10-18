@@ -190,7 +190,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         mCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == slotMachineList.size() && slotMachineList.get(position).equals("查看更多")) {
+                if (position == (slotMachineList.size() - 1) && slotMachineList.get(position).equals("查看更多")) {
                     Toast.makeText(SearchSlotMachineActivity.this, "查看更多", Toast.LENGTH_SHORT).show();
                 } else {
                     String chooseStr = slotMachineList.get(position);
@@ -274,6 +274,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
                         totalCount = model.getData().getTotalCount();
+                        smList = model.getData().getData();
                         SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
                         moreModel.setAddress("");
                         moreModel.setAreaCode("");
@@ -286,7 +287,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                         moreModel.setParkingSpaces(null);
                         moreModel.setAreaCode("");
                         moreModel.setPillarColor("");
-                        smList = model.getData().getData();
+                        smList.add(moreModel);
                         updateAdapterData();
                     }
                 }

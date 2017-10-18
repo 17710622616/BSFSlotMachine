@@ -28,6 +28,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.MaxAmountModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
@@ -80,6 +81,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
     public SlotOrderModel mSlotOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
     private PhotoAdapter mPhotoAdapter;
+    private long amountLimit;
 
     // 拍照的參數
     public static final int TAKE_PHOTO = 1;
@@ -246,6 +248,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderColorLL.setVisibility(View.GONE);
             orderPhotoLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
+            callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
         } else {    // 咪錶存在，搜索停車
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
@@ -254,9 +257,51 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderColorLL.setVisibility(View.GONE);
             orderPhotoLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
+            callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
         }
 
     }
+
+    /**
+     * 获取已知咪表的最大金额
+     * @param machineNo
+     */
+    private void callNetGetMaxAmount(String machineNo) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_BY_SLOT_MACHINE);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("machineNo", machineNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
+                if (model.getCode() == 200) {
+                    amountLimit = model.getData().getAmountLimit();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -473,7 +518,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 选择订单金额
      */
     private void chooseOrderMoney() {
-        Toast.makeText(this, "選擇金額", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "選擇金額" + amountLimit, Toast.LENGTH_SHORT).show();
     }
 
     /**
