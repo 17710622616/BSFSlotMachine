@@ -19,6 +19,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.MaxAmountModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotUnknowOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -68,20 +70,19 @@ import java.util.List;
 
 public class ParkingOrderActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private ImageView parkingIv;
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
-    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv;
+    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
     public NoScrollGridView photoGv;
 
     private String way;
     private List<String> imgUrlList;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
     private List<TestCarListModel.CarModel> carInsideModelList;
     private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
-    public SlotOrderModel mSlotOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
+    public SlotOrderModel mSlotOrderModel;
+    public SlotUnknowOrderModel mSlotUnknowOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
     private PhotoAdapter mPhotoAdapter;
-    private long amountLimit;
+    private int amountLimit;
 
     // 拍照的參數
     public static final int TAKE_PHOTO = 1;
@@ -101,7 +102,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void initView() {
         headView = findViewById(R.id.parking_order_head);
-        parkingIv = findViewById(R.id.parking_iv);
         photoGv = findViewById(R.id.parking_order_gv);
         carManageLL = findViewById(R.id.parking_order_car_manage_ll);
         startTimeLL = findViewById(R.id.parking_order_starttime_ll);
@@ -122,6 +122,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         voucherLL = findViewById(R.id.parking_order_voucher_ll);
         meterColorTv = findViewById(R.id.parking_order_color_tv);
         startTimeTv = findViewById(R.id.parking_order_starttime_tv);
+        orderAmountTv = findViewById(R.id.parking_order_amount_tv);
         submitTv = findViewById(R.id.parking_order_submit);
     }
 
@@ -209,8 +210,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         headView.setTitle("下單");
         headView.setLeft(this);
 
-        // 停車訂單
-        mSlotOrderModel = new SlotOrderModel();
         // 車輛類
         carInsideModelList = new ArrayList<>();
         // 判断车辆是否选择车辆
@@ -220,8 +219,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         SimpleDateFormat fdt = new SimpleDateFormat ("hh:mm:ss");
         SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
         startTimeTv.setText("投幣時間[預計" + fdt.format(date) + "]");
-        mSlotOrderModel.setStartSlotTime(yearFdt.format(date));
-        mSlotOrderModel.setRemark("");
+
 
         // 判斷是哪種打開方式
         Intent intent = getIntent();
@@ -233,6 +231,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             imgUrlList.add(imgUri);
             imgUrlList.add("");
             mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
+            // 未知咪錶訂單
+            mSlotUnknowOrderModel = new SlotUnknowOrderModel();
+            mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date));
+
             orderLocationTv.setText("停車位置：未知");
             photoGv.setAdapter(mPhotoAdapter);
             photoGv.setVisibility(View.VISIBLE);
@@ -241,6 +243,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderColorLL.setVisibility(View.VISIBLE);
             isAreaAndColorChoose(); // 是否可選擇金額
         } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
+            // 停車訂單
+            mSlotOrderModel = new SlotOrderModel();
+            mSlotOrderModel.setStartSlotTime(yearFdt.format(date));
+            mSlotOrderModel.setRemark("");
+
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
             orderLocationTv.setText("停車位置：" + mSlotMachineModel.getAddress() + mSlotMachineModel.getMachineNo() + "號");
@@ -249,10 +256,17 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderPhotoLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
             callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
-        } else {    // 咪錶存在，搜索停車
+        } else {    // 咪錶存在，有子列表
+            String childMachinePosition = intent.getStringExtra("childPosition");
+
+            // 停車訂單
+            mSlotOrderModel = new SlotOrderModel();
+            mSlotOrderModel.setStartSlotTime(yearFdt.format(date));
+            mSlotOrderModel.setRemark("");
+
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
-            orderLocationTv.setText("停車位置：" + mSlotMachineModel.getAddress() + mSlotMachineModel.getMachineNo() + "號");
+            orderLocationTv.setText("停車位置：" + mSlotMachineModel.getAddress() + mSlotMachineModel.getMachineNo() + "號" + mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
             orderAreaLL.setVisibility(View.GONE);
             orderColorLL.setVisibility(View.GONE);
             orderPhotoLL.setVisibility(View.GONE);
@@ -261,47 +275,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         }
 
     }
-
-    /**
-     * 获取已知咪表的最大金额
-     * @param machineNo
-     */
-    private void callNetGetMaxAmount(String machineNo) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_BY_SLOT_MACHINE);
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("machineNo", machineNo);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        params.setBodyContent(jsonObj.toString());
-        String uri = params.getUri();
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
-                if (model.getCode() == 200) {
-                    amountLimit = model.getData().getAmountLimit();
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }
-
 
     @Override
     public void onClick(View view) {
@@ -338,20 +311,83 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 Toast.makeText(this, "暫無優惠券~", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.parking_order_submit:
-                mSlotOrderModel.setSlotAmount("20");
                 if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
-                    Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
+                    /*Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", "123456789");
-                    startActivity(intent);
+                    startActivity(intent);*/
+                    if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null) {
+                        if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
+                            submitOrderSlotMachineUnKnow();
+                        } else {
+                            Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                    }
                 } else {    // 咪錶存在，提交已知訂單
                     if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
-                        submitOrderSlotMachineExist();
+                        if (!mSlotOrderModel.getSlotAmount().equals("0")) {
+                            submitOrderSlotMachineExist();
+                        } else {
+                            Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                             Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
         }
+    }
+
+    /**
+     * 提交未知咪錶的訂單
+     */
+    private void submitOrderSlotMachineUnKnow() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_ORDER_SLOT_MACHINE_EXIST + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("slotAmount",mSlotUnknowOrderModel.getSlotAmount());
+            jsonObj.put("carId",mSlotUnknowOrderModel.getCarId());
+            jsonObj.put("carType",1);//mSlotUnknowOrderModel.getCarType()
+            jsonObj.put("pillarColor",mSlotUnknowOrderModel.getPillarColor());
+            jsonObj.put("areaCode",mSlotUnknowOrderModel.getAreaCode());
+            jsonObj.put("startSlotTime",mSlotUnknowOrderModel.getStartSlotTime());
+            jsonObj.put("remark",mSlotUnknowOrderModel.getRemark());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    String orderNo = model.getData();
+                    Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
+                    intent.putExtra("orderNo", orderNo);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     /**
@@ -402,6 +438,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             }
         });
     }
+
 
     /**
      * 判断是否选择车辆
@@ -459,6 +496,100 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * 获取已知咪表的最大金额
+     * @param machineNo
+     */
+    private void callNetGetMaxAmount(String machineNo) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_BY_SLOT_MACHINE);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("machineNo", machineNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
+                if (model.getCode() == 200) {
+                    amountLimit = model.getData().getAmountLimit();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    /**
+     * 咪錶不存在時獲取最大金額
+     */
+    private void callNetGetMaxAmountSMNotExist() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_SLOT_MACHINE_UNKOWN);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("carType", 1);//carInsideModelList.get(0).getIfPerson()
+            jsonObj.put("pillarColor", mSlotUnknowOrderModel.getPillarColor());
+            jsonObj.put("areaCode", mSlotUnknowOrderModel.getAreaCode());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
+                amountLimit = 0;
+                if (model.getCode() == 200) {
+                    amountLimit = model.getData().getAmountLimit();
+                } else {
+                    Toast.makeText(ParkingOrderActivity.this, "未查詢到對應的收費標準，請檢查車輛、地區及柱色是否選擇正確！", Toast.LENGTH_LONG).show();
+                }
+                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                    mSlotUnknowOrderModel.setSlotAmount(String.valueOf(amountLimit));
+                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                } else {
+                    mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
+                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("最大金額", "最大金額獲取失敗");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    /**
      * 刷新車輛信息
      */
     private void refreshCarChoosed() {
@@ -468,7 +599,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
             carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
-            mSlotOrderModel.setCarId(carInsideModelList.get(0).getId());
+            if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
+                mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
+                mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());
+            } else {    // 咪錶存在
+                mSlotOrderModel.setCarId(carInsideModelList.get(0).getId());
+            }
         } else {
             carManagetv.setText("未選擇車輛，請先選擇車輛");
             carManageRL.setVisibility(View.GONE);
@@ -504,7 +640,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                 String time = hourTime + ":" + minuteTime + ":00";
                                 Date date = new Date( );
                                 SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
-                                mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                    mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                } else {
+                                    mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                }
                                 startTimeTv.setText("投幣時間[預計" + time + "]");
                             }
                         });
@@ -518,7 +658,65 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 选择订单金额
      */
     private void chooseOrderMoney() {
-        Toast.makeText(this, "選擇金額" + amountLimit, Toast.LENGTH_SHORT).show();
+        if (amountLimit >= 0){
+            NiceDialog.init()
+                    .setLayoutId(R.layout.dialog_choose_order_money)
+                    .setConvertListener(new ViewConvertListener() {
+                        @Override
+                        public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                            final SeekBar moneySeekbar = holder.getView(R.id.choose_money_sb);
+                            final TextView moneyTv = holder.getView(R.id.choose_money_tv);
+                            moneySeekbar.setMax(amountLimit);
+                            moneySeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                @Override
+                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                                    if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(seekBar.getProgress()));
+                                        moneyTv.setText(String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                                    } else {
+                                        mSlotOrderModel.setSlotAmount(String.valueOf(seekBar.getProgress()));
+                                        moneyTv.setText(String.valueOf(mSlotOrderModel.getSlotAmount()));
+                                    }
+                                }
+
+                                @Override
+                                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                }
+
+                                @Override
+                                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                }
+                            });
+
+                            if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                moneySeekbar.setProgress(Integer.parseInt(mSlotUnknowOrderModel.getSlotAmount()));
+                            } else {
+                                moneySeekbar.setProgress(Integer.parseInt(mSlotOrderModel.getSlotAmount()));
+                            }
+
+                            holder.setOnClickListener(R.id.choose_money_tv, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                        orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                                        orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                                    } else {
+                                        orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                                        orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                                    }
+
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                    })
+                    .setWidth(200)
+                    .show(getSupportFragmentManager());
+        } else {
+            Toast.makeText(this, "已經過了今天的投幣時間哦，請明天再下單~", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -540,7 +738,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                mSlotOrderModel.setRemark(editText.getText().toString());
+                                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                    mSlotUnknowOrderModel.setRemark(editText.getText().toString());
+                                } else {
+                                    mSlotOrderModel.setRemark(editText.getText().toString());
+                                }
                                 remarkTv.setText("備      註：" + editText.getText().toString());
                                 dialog.dismiss();
                             }
@@ -564,6 +766,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 meterColorTv.setText("顏      色：" + "藍色");
+                                mSlotUnknowOrderModel.setPillarColor("blue");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -572,6 +775,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 meterColorTv.setText("顏      色：" + "灰色");
+                                mSlotUnknowOrderModel.setPillarColor("gray");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -580,6 +784,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 meterColorTv.setText("顏      色：" + "綠色");
+                                mSlotUnknowOrderModel.setPillarColor("green");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -588,6 +793,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 meterColorTv.setText("顏      色：" + "紅色");
+                                mSlotUnknowOrderModel.setPillarColor("red");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -596,6 +802,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 meterColorTv.setText("顏      色：" + "黃色");
+                                mSlotUnknowOrderModel.setPillarColor("yellow");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -626,6 +833,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "大堂區");
+                                mSlotUnknowOrderModel.setAreaCode("DT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -634,6 +842,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "望德堂區");
+                                mSlotUnknowOrderModel.setAreaCode("WDT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -642,6 +851,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "風順堂區");
+                                mSlotUnknowOrderModel.setAreaCode("FST");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -650,6 +860,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "花王堂區");
+                                mSlotUnknowOrderModel.setAreaCode("HWT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -658,6 +869,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "花地瑪堂區");
+                                mSlotUnknowOrderModel.setAreaCode("HDMT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -666,6 +878,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "嘉模堂區");
+                                mSlotUnknowOrderModel.setAreaCode("JMT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -674,6 +887,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             @Override
                             public void onClick(View view) {
                                 areaTv.setText("地      區：" + "其他");
+                                mSlotUnknowOrderModel.setAreaCode("QT");
                                 isAreaAndColorChoose();
                                 baseNiceDialog.dismiss();
                             }
@@ -699,6 +913,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderMoneyLL.setClickable(true);
             orderMoneyLL.setBackgroundColor(getResources().getColor(R.color.colorWight));
             orderMoneyTv.setTextColor(getResources().getColor(R.color.colorBlack));
+            callNetGetMaxAmountSMNotExist();
         } else {
             orderMoneyLL.setClickable(false);
             orderMoneyLL.setBackgroundColor(getResources().getColor(R.color.colorLineGray));

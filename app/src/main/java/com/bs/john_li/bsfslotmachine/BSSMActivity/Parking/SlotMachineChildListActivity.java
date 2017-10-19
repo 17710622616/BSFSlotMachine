@@ -51,8 +51,9 @@ public class SlotMachineChildListActivity extends BaseActivity implements View.O
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(SlotMachineChildListActivity.this, ParkingOrderActivity.class);
-                intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_EXIST);
+                intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
                 intent.putExtra("SlotMachine", new Gson().toJson(mSlotMachineModel));
+                intent.putExtra("childPosition", String.valueOf(i));
                 startActivity(intent);
                 finish();
             }

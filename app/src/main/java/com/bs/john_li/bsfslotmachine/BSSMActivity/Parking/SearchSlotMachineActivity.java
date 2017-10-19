@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -190,21 +191,21 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         mCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == (slotMachineList.size() - 1) && slotMachineList.get(position).equals("查看更多")) {
+                String testname = slotMachineList.get(position);
+                if (position == (slotMachineList.size() - 1) && testname.equals("查看更多 ")) {
                     Toast.makeText(SearchSlotMachineActivity.this, "查看更多", Toast.LENGTH_SHORT).show();
                 } else {
                     String chooseStr = slotMachineList.get(position);
                     mSearchView.setQuery(chooseStr,true);
+                    // 將搜索寫入搜索歷史
                     putInHistorySearch(position);
                     Intent intent = null;
-                    if (smList.get(position).getParkingSpaces() != null) {
-                        // 有子列表
+                    if (smList.get(position).getParkingSpaces() != null) {// 有子列表
                         intent = new Intent(SearchSlotMachineActivity.this, SlotMachineChildListActivity.class);
                         intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(position)));
-                    } else {
-                        // 無子列表
+                    } else {// 無子列表
                         intent = new Intent(SearchSlotMachineActivity.this, ParkingOrderActivity.class);
-                        intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                        intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_EXIST);
                         intent.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
                     }
                     startActivity(intent);
@@ -225,7 +226,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(SearchSlotMachineActivity.this,query,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SearchSlotMachineActivity.this,query,Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -243,7 +244,9 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
      */
     private void checkInputText(String newText) {
         if (!newText.equals("")) {
-            callNetChangeData(newText);
+            if(!(newText.length() > 8)) {   // 當長度不大於八的時候進行搜索，本身咪錶編碼長度不大於八，其次防止最後選中是為了效果會自動把選中的填充導致的再次搜索
+                callNetChangeData(newText);
+            }
         } else {
             getHistorySearchFromSP();
             mSlotMachineAdapter.refreshData(slotMachineList);
@@ -295,7 +298,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(SearchSlotMachineActivity.this, "獲取失敗" + newText, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -305,7 +307,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
 
             @Override
             public void onFinished() {
-
             }
         });
     }
@@ -317,6 +318,10 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         slotMachineList.clear();
         for (int i = 0; i < smList.size(); i++) {
             slotMachineList.add(smList.get(i).getMachineNo() + " " + smList.get(i).getAddress());
+        }
+
+        for (String str : slotMachineList) {
+            Log.d("列表内容", str);
         }
         mSlotMachineAdapter.refreshData(slotMachineList);
     }
