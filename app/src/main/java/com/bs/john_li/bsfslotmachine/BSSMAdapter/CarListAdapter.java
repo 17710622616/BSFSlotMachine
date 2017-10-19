@@ -69,18 +69,21 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
         holder.carlistStyle.setText(carList.get(i).getCarStyle());
         holder.carlistModel.setText(carList.get(i).getModelForCar());
         switch (carList.get(i).getIfPerson()) {
-            case 0:
+            case 1:
+            holder.carTypeTv.setText("輕重型電單車");
+            break;
+            case 2:
                 holder.carTypeTv.setText("私家車");
                 break;
-            case 1:
-                holder.carTypeTv.setText("電單車");
+            case 3:
+                holder.carTypeTv.setText("重型汽車");
                 break;
         }
 
         if (carList.get(i).getIfPay() == 0) {
-            holder.carRecharge.setImageResource(R.mipmap.translation_detial);
+            holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
-            holder.carRecharge.setImageResource(R.mipmap.server);
+            holder.carRecharge.setImageResource(R.mipmap.year);
         }
 
         holder.carRecharge.setOnClickListener(this);

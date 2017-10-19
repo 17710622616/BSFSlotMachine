@@ -7,6 +7,16 @@
     android:paddingLeft="20dp">
 
     <TextView
+        android:id="@+id/car_type_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:text="輕重型摩托車"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
         android:id="@+id/car_type_private"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,17 +26,7 @@
         android:textSize="16sp"
         android:textColor="@color/colorBlack"/>
 
-    <TextView
-        android:id="@+id/car_type_light"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingTop="12dp"
-        android:text="輕型摩托車"
-        android:textSize="16sp"
-        android:textColor="@color/colorBlack"/>
-
-    <TextView
+    <!--<TextView
         android:id="@+id/car_type_heavy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:paddingTop="12dp"
         android:text="重型摩托車"
         android:textSize="16sp"
-        android:textColor="@color/colorBlack"/>
+        android:textColor="@color/colorBlack"/>-->
 
     <TextView
         android:id="@+id/car_type_heavy_car"

@@ -516,6 +516,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
                 if (model.getCode() == 200) {
                     amountLimit = model.getData().getAmountLimit();
+                    mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
+                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
                 }
             }
 
@@ -561,15 +564,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "未查詢到對應的收費標準，請檢查車輛、地區及柱色是否選擇正確！", Toast.LENGTH_LONG).show();
                 }
-                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                    mSlotUnknowOrderModel.setSlotAmount(String.valueOf(amountLimit));
-                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
-                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
-                } else {
-                    mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
-                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
-                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
-                }
+                mSlotUnknowOrderModel.setSlotAmount(String.valueOf(amountLimit));
+                orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
+                orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
             }
 
             @Override

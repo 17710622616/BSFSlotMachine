@@ -124,7 +124,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(CarListActivity.this, AddCarActivity.class);
                 intent.putExtra("startWay", "update");
-                intent.putExtra("updateModel", new Gson().toJson(carList.get(i)));
+                intent.putExtra("updateModel", new Gson().toJson(carModelList.get(i)));
                 updatePosition = i;
                 startActivityForResult(intent, BSSMConfigtor.UPDATE_CAR_RQUEST);
             }

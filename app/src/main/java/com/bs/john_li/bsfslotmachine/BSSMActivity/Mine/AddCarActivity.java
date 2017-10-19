@@ -355,34 +355,34 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 .setConvertListener(new ViewConvertListener() {
                     @Override
                     protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                        viewHolder.setOnClickListener(R.id.car_type_private, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                carInsideModel.setIfPay(0);
-                                carTypeTv.setText("車輛類型：私家車");
-                                baseNiceDialog.dismiss();
-                            }
-                        });
                         viewHolder.setOnClickListener(R.id.car_type_light, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carInsideModel.setIfPay(1);
+                                carInsideModel.setIfPerson(1);
                                 carTypeTv.setText("車輛類型：輕型摩托車");
                                 baseNiceDialog.dismiss();
                             }
                         });
-                        viewHolder.setOnClickListener(R.id.car_type_heavy, new View.OnClickListener() {
+                        viewHolder.setOnClickListener(R.id.car_type_private, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                carInsideModel.setIfPerson(2);
+                                carTypeTv.setText("車輛類型：私家車");
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                        /*viewHolder.setOnClickListener(R.id.car_type_heavy, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 carInsideModel.setIfPay(1);
                                 carTypeTv.setText("車輛類型：重型摩托車");
                                 baseNiceDialog.dismiss();
                             }
-                        });
+                        });*/
                         viewHolder.setOnClickListener(R.id.car_type_heavy_car, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                carInsideModel.setIfPay(1);
+                                carInsideModel.setIfPerson(3);
                                 carTypeTv.setText("車輛類型：重型汽車");
                                 baseNiceDialog.dismiss();
                             }
