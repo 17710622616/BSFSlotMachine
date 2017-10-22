@@ -64,19 +64,19 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.carlistLicensenum.setText(carList.get(i).getCarNo());
-        holder.carlistBrand.setText(carList.get(i).getCarBrand());
-        holder.carlistStyle.setText(carList.get(i).getCarStyle());
-        holder.carlistModel.setText(carList.get(i).getModelForCar());
+        holder.carlistLicensenum.setText("車牌號碼：" +carList.get(i).getCarNo());
+        holder.carlistBrand.setText("車輛品牌：" + carList.get(i).getCarBrand());
+        holder.carlistStyle.setText("車輛型號：" + carList.get(i).getCarStyle());
+        holder.carlistModel.setText("車      型：" +carList.get(i).getModelForCar());
         switch (carList.get(i).getIfPerson()) {
             case 1:
-            holder.carTypeTv.setText("輕重型電單車");
+            holder.carTypeTv.setText("車輛類型：" + "輕重型電單車");
             break;
             case 2:
-                holder.carTypeTv.setText("私家車");
+                holder.carTypeTv.setText("車輛類型：" + "私家車");
                 break;
             case 3:
-                holder.carTypeTv.setText("重型汽車");
+                holder.carTypeTv.setText("車輛類型：" + "重型汽車");
                 break;
         }
 
@@ -87,6 +87,7 @@ public class CarListAdapter extends BaseAdapter implements View.OnClickListener 
         }
 
         holder.carRecharge.setOnClickListener(this);
+        holder.carRecharge.setTag(String.valueOf(i));
         holder.carlistCb.setVisibility(View.GONE);
         holder.carRecharge.setVisibility(View.VISIBLE);
         return convertView;

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarRechargeActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
@@ -54,7 +55,6 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
     private LinearLayout noCarLL;
 
-    private List<String> carList;
     private List<CarModel.CarCountAndListModel.CarInsideModel> carModelList;
     private ChooseCarAdapter mCarListAdapter;
     // 每頁加載數量
@@ -115,8 +115,9 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (carModelList.get(i).getIfPay() == 0) {  // 未充值
-                    //Intent intent = new Intent(ChooseCarActivity.this, AddCarActivity.class);
-                    Toast.makeText(ChooseCarActivity.this, "這輛車還沒充值哦，請充值先~", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ChooseCarActivity.this, CarRechargeActivity.class);
+                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(i)));
+                    startActivity(intent);
                 } else {    // 已充值
                     Intent intent = new Intent();
                     intent.putExtra("carModel", new Gson().toJson(carModelList.get(i)));

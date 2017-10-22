@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/recharge_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorWight"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/recharge_car_iv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorWight"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/car_sample" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorWight"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/recharge_car_carno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="車牌號碼：00000"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/recharge_car_brand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="品牌：林肯"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/recharge_car_model"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="車型：SUV"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/recharge_car_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="型號：MKC"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/recharge_car_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="車輛類型：私家車"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <RadioGroup
+        android:id="@+id/recharge_car_rg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <RadioButton
+            android:id="@+id/one_month_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="月费:300"
+            android:textSize="20sp"
+            android:textColor="#F45428"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:button="@null"
+            android:background="@drawable/selector_car_recharge_way"/>
+        <RadioButton
+            android:id="@+id/one_quarterly_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="季度费:900(300*3)返现90即10%"
+            android:textSize="20sp"
+            android:textColor="#F45428"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:button="@null"
+            android:background="@drawable/selector_car_recharge_way"/>
+        <RadioButton
+            android:id="@+id/one_sixmonth_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="半年费:1800(300*6)返现270即15%"
+            android:textSize="20sp"
+            android:textColor="#F45428"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:button="@null"
+            android:background="@drawable/selector_car_recharge_way"/>
+        <RadioButton
+            android:id="@+id/one_year_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="年费:3600(300*12)返现720即30%"
+            android:textSize="20sp"
+            android:textColor="#F45428"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:button="@null"
+            android:background="@drawable/selector_car_recharge_way"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/recharge_car_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="充值"
+        android:textSize="20sp"
+        android:textColor="@color/colorWight"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:background="@drawable/shape_pay_btn_bg"
+        android:layout_marginBottom="15dp"
+        android:layout_gravity="center_horizontal"/>
+</LinearLayout>

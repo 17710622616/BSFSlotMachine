@@ -54,7 +54,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
     private LinearLayout noCarLL;
 
-    private List<String> carList;
     private List<CarModel.CarCountAndListModel.CarInsideModel> carModelList;
     private CarListAdapter mCarListAdapter;
     // 每頁加載數量
@@ -263,7 +262,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 } else if (model.getCode() == 10001){
                     Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CarListActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
@@ -315,7 +314,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
-            Toast.makeText(this, "添加車輛失敗！", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -324,8 +322,8 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
                 mCarListAdapter.refreshListView(carModelList);
                 break;
-            case 4: // 修改車輛的返回
-                carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
+            case 5: // 修改車輛的返回
+                carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("CAR_FROM_UPDATE"), CarModel.CarCountAndListModel.CarInsideModel.class));
                 mCarListAdapter.refreshListView(carModelList);
                 break;
         }
@@ -353,6 +351,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void carRechargeClick(View view) {
-        Toast.makeText(CarListActivity.this, "充值按鈕" + view.getId(), Toast.LENGTH_SHORT).show();
+        String position = (String) view.getTag();
+        Intent intent = new Intent(this, CarRechargeActivity.class);
+        intent.putExtra("carModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
+        startActivity(intent);
     }
 }

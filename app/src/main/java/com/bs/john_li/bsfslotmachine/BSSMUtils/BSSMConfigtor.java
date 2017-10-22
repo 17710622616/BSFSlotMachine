@@ -18,7 +18,7 @@ public class BSSMConfigtor {
     public static int LOGIN_FOR_RESULT = 2;
     // add car for request
     public static int ADD_CAR_RQUEST = 3;
-    // add car for request
+    // update car for request
     public static int UPDATE_CAR_RQUEST = 5;
     // add car for result
     public static int ADD_CAR_RESULT = 4;
@@ -51,8 +51,14 @@ public class BSSMConfigtor {
     public final static String GET_CAR_LIST_RECHARGE = "car/getUserPayCars?token=";
     // 添加車輛
     public final static String ADD_CAR = "car/add?token=";
+    // 修改車輛
+    public final static String UPDATE_CAR = "car/modify?token=";
     // 刪除車輛
     public final static String DELETE_CAR = "car/remove?token=";
+    // 車輛充值價格的列表
+    public final static String CAR_CAHRGE_WAY_LIST = "memberCharge/getAll";
+    // 車輛充值價格的列表
+    public final static String SUBMIT_CAR_CAHRGE_ORDER = "order/memberOrder?token=";
     // 獲取已充值車輛列表
     public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/slotOrder?token=";
     // 獲取已知咪表最大金额

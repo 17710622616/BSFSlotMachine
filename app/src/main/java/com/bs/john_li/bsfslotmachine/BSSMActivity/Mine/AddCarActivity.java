@@ -127,7 +127,24 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         startWay = intent.getStringExtra("startWay");
         if (startWay.equals("update")){
             headView.setTitle("修改車輛");
-            carInsideModel = new Gson().fromJson("updateModel", CarModel.CarCountAndListModel.CarInsideModel.class);
+            carInsideModel = new Gson().fromJson(intent.getStringExtra("updateModel"), CarModel.CarCountAndListModel.CarInsideModel.class);
+
+            //x.image().bind(carPhotoIv, carInsideModel.getImgUrl(), options);
+            switch (carInsideModel.getIfPerson()) {
+                case 1:
+                    carTypeTv.setText("車輛類型：" + "輕重型摩托車");
+                    break;
+                case 2:
+                    carTypeTv.setText("車輛類型：" + "私家車");
+                    break;
+                case 3:
+                    carTypeTv.setText("車輛類型：" + "重型汽車");
+                    break;
+            }
+            carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
+            carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
+            carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());
+            carStyleTv.setText("車輛型號：" + carInsideModel.getCarStyle());
         } else {
             headView.setTitle("添加車輛");
             carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
@@ -186,8 +203,13 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     if (!carInsideModel.getModelForCar().equals("")) {
                         if (!carInsideModel.getCarBrand().equals("")) {
                             if (!carInsideModel.getCarStyle().equals("")) {
-                                // 提交車輛信息
-                                callNetSubmiteCar();
+                                if (startWay.equals("update")) {
+                                    // 修改車輛信息
+                                    callNetUpdateCar();
+                                } else {
+                                    // 提交車輛信息
+                                    callNetSubmiteCar();
+                                }
                             } else {
                                 Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                             }
@@ -206,6 +228,61 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         } else {
             Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * 修改車輛信息
+     */
+    private void callNetUpdateCar() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_CAR + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id", String.valueOf(carInsideModel.getId()));
+            jsonObj.put("imgUrl","objectNam1");
+            jsonObj.put("ifPerson",carInsideModel.getIfPerson());
+            jsonObj.put("carNo",carInsideModel.getCarNo());
+            jsonObj.put("modelForCar",carInsideModel.getModelForCar());
+            jsonObj.put("carBrand",carInsideModel.getCarBrand());
+            jsonObj.put("carStyle",carInsideModel.getCarStyle());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    if (model.getData().equals("true")) {
+                        Intent intent = new Intent();
+                        intent.putExtra("CAR_FROM_UPDATE", new Gson().toJson(carInsideModel));
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     /**

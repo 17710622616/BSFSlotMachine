@@ -2,13 +2,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@color/colorWight">
+        android:background="@color/colorWight"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
         <CheckBox
             android:id="@+id/item_carlist_cb"
             android:layout_width="20dp"
@@ -16,7 +18,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/selector_cb"
             android:button="@null"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/item_carlist_iv"
@@ -24,74 +26,79 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/colorWight"
-            android:src="@mipmap/car_sample"
             android:padding="5dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:src="@mipmap/car_sample" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
             android:background="@color/colorWight"
+            android:orientation="vertical"
             android:padding="5dp">
+
             <TextView
                 android:id="@+id/item_carlist_licensenum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="車牌號碼：00000"
-                android:textSize="18sp"
-                android:textColor="@color/colorBlack"
+                android:layout_marginTop="2dp"
                 android:singleLine="true"
-                android:layout_marginTop="2dp"/>
+                android:text="車牌號碼：00000"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/item_carlist_brand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="品牌：林肯"
-                android:textSize="18sp"
-                android:textColor="@color/colorBlack"
+                android:layout_marginTop="2dp"
                 android:singleLine="true"
-                android:layout_marginTop="2dp"/>
+                android:text="品牌：林肯"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/item_carlist_model"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="車型：SUV"
-                android:textSize="18sp"
-                android:textColor="@color/colorBlack"
+                android:layout_marginTop="2dp"
                 android:singleLine="true"
-                android:layout_marginTop="2dp"/>
+                android:text="車型：SUV"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/item_carlist_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="型號：MKC"
-                android:textSize="18sp"
-                android:textColor="@color/colorBlack"
+                android:layout_marginTop="2dp"
                 android:singleLine="true"
-                android:layout_marginTop="2dp"/>
+                android:text="型號：MKC"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/item_carlist_car_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="車輛類型：私家車"
-                android:textSize="18sp"
-                android:textColor="@color/colorBlack"
+                android:layout_marginTop="2dp"
                 android:singleLine="true"
-                android:layout_marginTop="2dp"/>
+                android:text="車輛類型：私家車"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/item_carlist_recharge"
             android:layout_width="30dp"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:paddingRight="3dp"
-            android:paddingLeft="2dp"
             android:layout_gravity="center"
             android:background="@color/colorWight"
-            android:src="@mipmap/translation_detial"/>
+            android:paddingLeft="2dp"
+            android:paddingRight="3dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/translation_detial" />
     </LinearLayout>
 
     <TextView

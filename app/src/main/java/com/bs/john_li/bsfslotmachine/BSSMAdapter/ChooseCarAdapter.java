@@ -116,7 +116,7 @@ public class ChooseCarAdapter extends BaseAdapter implements View.OnClickListene
     }
 
     /**
-     * 充值圖片點擊接口
+     * 未充值點擊接口
      */
     public interface CarUpdateCallBack {
         void carUpdateClick(View view);

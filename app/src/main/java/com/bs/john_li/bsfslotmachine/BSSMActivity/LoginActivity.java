@@ -166,16 +166,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
      */
     private void getUserInfo(String token) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
-        /*params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("token",token);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String urlJson = jsonObj.toString();
-        params.setBodyContent(urlJson);
-        Log.d("getUserURI", params.getUri());*/
         x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
