@@ -69,4 +69,8 @@ public class BSSMConfigtor {
     public final static String GET_CONTENTS = "content/getContentList?nextId=";
     // 獲取評論列表
     public final static String GET_COMMENTS = "content/getCommentList?id=";
+    // 登录的用户发布评论
+    public final static String SUBMITE_COMMENT_LOGIN = "content/subcomment?token=";
+    // 登录的人给指定的评论回复
+    public final static String SUBMITE_REPLY_LOGIN = "content/reply?token=";
 }

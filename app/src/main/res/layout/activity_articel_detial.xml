@@ -89,7 +89,7 @@
                 android:layout_height="22dp"
                 android:scaleType="fitXY"
                 android:layout_marginLeft="15dp"
-                android:src="@mipmap/share" />
+                android:src="@mipmap/comment" />
 
             <ImageView
                 android:id="@+id/articel_collection"
