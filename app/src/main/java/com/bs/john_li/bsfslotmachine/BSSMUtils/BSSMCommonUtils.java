@@ -43,7 +43,6 @@ public class BSSMCommonUtils {
             if (!userToken.equals("")){
                 return true;
             } else {
-                Toast.makeText(c, c.getString(R.string.not_login), Toast.LENGTH_SHORT).show();
                 return false;
             }
         } else {

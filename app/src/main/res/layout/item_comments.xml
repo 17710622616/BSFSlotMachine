@@ -11,11 +11,23 @@
         android:layout_margin="8dp"/>
 
     <TextView
+        android:id="@+id/item_commentor_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="14sp"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
         android:id="@+id/item_comments_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorDrakGray"
         android:layout_toRightOf="@id/item_comments_iv"
+        android:layout_below="@id/item_comments_iv"
         android:textSize="14sp"
         android:gravity="center_vertical"/>
 

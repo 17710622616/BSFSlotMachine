@@ -73,4 +73,8 @@ public class BSSMConfigtor {
     public final static String SUBMITE_COMMENT_LOGIN = "content/subcomment?token=";
     // 登录的人给指定的评论回复
     public final static String SUBMITE_REPLY_LOGIN = "content/reply?token=";
+    // 游客发布评论
+    public final static String SUBMITE_COMMENT_VISITOR = "content/visitorcomment";
+    // 登录的人给指定的评论回复
+    public final static String SUBMITE_REPLY_VISITOR = "content/visitorreply";
 }

@@ -27,45 +27,33 @@
 
             <TextView
                 android:id="@+id/articel_detial_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:text="John"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"
-                android:gravity="center"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:background="@color/colorWight">
-            <TextView
-                android:id="@+id/articel_detial_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorBlack"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/articel_detial_contents"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorBlack"
-                android:textSize="14sp"
-                android:layout_marginTop="2dp"/>
+                android:gravity="center_vertical"/>
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/car_sample"
-                android:scaleType="fitXY"
-                android:layout_marginTop="2dp"/>
+                android:id="@+id/articel_detial_setting"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:gravity="center_vertical"
+                android:src="@mipmap/more"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical"/>
         </LinearLayout>
+
+        <TextView
+            style="@style/UnderLineTextView"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/car_sample"
+            android:scaleType="fitXY"
+            android:background="@color/colorWight"/>
 
         <LinearLayout
             android:id="@+id/articel_opreation"
@@ -81,7 +69,7 @@
                 android:layout_height="22dp"
                 android:scaleType="fitXY"
                 android:layout_marginLeft="15dp"
-                android:src="@mipmap/favorite_checked" />
+                android:src="@mipmap/favorite_uncheck" />
 
             <ImageView
                 android:id="@+id/articel_share"
@@ -151,6 +139,37 @@
                 android:text="123546人覺得很讚"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="@color/colorWight">
+
+            <TextView
+                style="@style/UnderLineTextView"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/articel_detial_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/articel_detial_contents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+
         <TextView
             android:id="@+id/articel_contents_no_comments"
             android:layout_width="match_parent"
@@ -163,7 +182,7 @@
         <ListView
             android:id="@+id/articel_contents_lv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@color/colorWight"
             android:paddingTop="10dp"
             android:divider="#F1F1F1"

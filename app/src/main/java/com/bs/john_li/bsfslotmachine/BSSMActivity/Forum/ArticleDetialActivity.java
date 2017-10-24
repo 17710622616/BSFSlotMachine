@@ -3,8 +3,10 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
 import android.telecom.Call;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -12,8 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnCommentsOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -30,6 +34,7 @@ import com.othershe.nicedialog.ViewHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -73,6 +78,34 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
     @Override
     public void setListener() {
         postCommentIv.setOnClickListener(this);
+        contentsLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_car_edit)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                                final EditText editText = holder.getView(R.id.car_edit);
+                                editText.setHint("請填回復");
+                                BSSMCommonUtils.showKeyboard(editText);
+                                holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if(BSSMCommonUtils.isLoginNow(ArticleDetialActivity.this)) {    // 已经登录
+                                            callNetSubmitReply(editText.getText().toString(), 0);
+                                        } else {    // 未登录，游客
+                                            callNetSubmitReply(editText.getText().toString(), 1);
+                                        }
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
+            }
+        });
     }
 
     @Override
@@ -152,16 +185,15 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.articel_share: // 发表评论
-                showCommentDialog(0);
+                showCommentDialog();
                 break;
         }
     }
 
     /**
      * 評論的dialog
-     * @param way   // 打開方式0：評論帖文，1：回復評論
      */
-    private void showCommentDialog(final int way) {
+    private void showCommentDialog() {
         NiceDialog.init()
                 .setLayoutId(R.layout.dialog_car_edit)
                 .setConvertListener(new ViewConvertListener() {
@@ -173,7 +205,11 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
                         holder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                callNetSubmitComment(editText.getText().toString(), way);
+                                if(BSSMCommonUtils.isLoginNow(ArticleDetialActivity.this)) {    // 已经登录
+                                    callNetSubmitComment(editText.getText().toString(), 0);
+                                } else {    // 未登录，游客
+                                    callNetSubmitComment(editText.getText().toString(), 1);
+                                }
                                 dialog.dismiss();
                             }
                         });
@@ -189,10 +225,10 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
      */
     private void callNetSubmitComment(String content, int way) {
         RequestParams params = null;
-        if (way == 0) { // 評論
+        if (way == 0) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_COMMENT_LOGIN + SPUtils.get(this, "UserToken", ""));
-        } else {    // 回復
-            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_REPLY_LOGIN + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_COMMENT_VISITOR);
         }
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -204,7 +240,7 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
-        x.http().get(params, new Callback.CommonCallback<String>() {
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ReturnCommentsOutModel model = new Gson().fromJson(result, ReturnCommentsOutModel.class);
@@ -217,6 +253,7 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
                     commentsModel.setCreator(model.getData().getCreator());
                     commentsModel.setCreatorid(model.getData().getCreatorid());
                     mCommentsModelList.add(commentsModel);
+                    mCommentsAdapter.refreshListView(mCommentsModelList);
                 } else {
                     Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
@@ -234,7 +271,65 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onFinished() {
-                refreshCommentsList();
+
+            }
+        });
+    }
+
+    /**
+     * 回复評論
+     * @param content
+     * @param way
+     */
+    private void callNetSubmitReply(String content, int way) {
+        RequestParams params = null;
+        if (way == 0) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_REPLY_LOGIN + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_REPLY_VISITOR);
+        }
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("contentid", mContentsModel.getId());
+            jsonObj.put("content", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                ReturnCommentsOutModel model = new Gson().fromJson(result, ReturnCommentsOutModel.class);
+                if (model.getCode() == 200) {
+                    CommentListModel.CommentsArrayModel.CommentsModel commentsModel = new CommentListModel.CommentsArrayModel.CommentsModel();
+                    commentsModel.setId(model.getData().getId());
+                    commentsModel.setContent(model.getData().getContent());
+                    commentsModel.setContentid(model.getData().getContentid());
+                    commentsModel.setCreatetime(model.getData().getCreatetime());
+                    commentsModel.setCreator(model.getData().getCreator());
+                    commentsModel.setCreatorid(model.getData().getCreatorid());
+                    mCommentsModelList.add(commentsModel);
+                    mCommentsAdapter.refreshListView(mCommentsModelList);
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
             }
         });
     }

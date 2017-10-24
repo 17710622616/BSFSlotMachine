@@ -50,18 +50,21 @@ public class CommentsAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.item_comments, null);
             holder.item_comments_iv = convertView.findViewById(R.id.item_comments_iv);
+            holder.item_commentor_tv = convertView.findViewById(R.id.item_commentor_tv);
             holder.item_comments_tv = convertView.findViewById(R.id.item_comments_tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.item_comments_tv.setText(commnettsList.get(i).getCreator() + ":" + commnettsList.get(i).getContent());
+        holder.item_commentor_tv.setText(commnettsList.get(i).getCreator());
+        holder.item_comments_tv.setText(commnettsList.get(i).getContent());
         return convertView;
     }
 
     class ViewHolder {
         public ImageView item_comments_iv;
+        public TextView item_commentor_tv;
         public TextView item_comments_tv;
     }
 
