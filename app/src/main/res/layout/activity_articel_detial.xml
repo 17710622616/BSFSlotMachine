@@ -11,6 +11,12 @@
             android:id="@+id/articel_detial_head"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/car_sample"
+            android:scaleType="fitXY"
+            android:background="@color/colorWight"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,154 +44,157 @@
             <ImageView
                 android:id="@+id/articel_detial_setting"
                 android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_height="12dp"
                 android:gravity="center_vertical"
                 android:src="@mipmap/more"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="center_vertical"/>
+                android:layout_marginRight="15dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"/>
         </LinearLayout>
 
         <TextView
-            style="@style/UnderLineTextView"/>
+            style="@style/UnderLineTextView"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10sp"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/car_sample"
-            android:scaleType="fitXY"
-            android:background="@color/colorWight"/>
 
         <LinearLayout
-            android:id="@+id/articel_opreation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="10dp"
-            android:background="@color/colorWight">
-
-            <ImageView
-                android:id="@+id/articel_favorite"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:scaleType="fitXY"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/favorite_uncheck" />
-
-            <ImageView
-                android:id="@+id/articel_share"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:scaleType="fitXY"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/comment" />
-
-            <ImageView
-                android:id="@+id/articel_collection"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:scaleType="fitXY"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/collection"
-                android:layout_gravity="right"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/colorWight"
+            android:padding="10dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/articel_opreation"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="6dp"
                 android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:padding="5dp">
-                <TextView
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_margin="2dp"
+                android:background="@color/colorWight">
+
+                <ImageView
+                    android:id="@+id/articel_favorite"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/favorite_uncheck" />
+
+                <ImageView
+                    android:id="@+id/articel_share"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:scaleType="fitXY"
+                    android:layout_marginLeft="15dp"
+                    android:src="@mipmap/comment" />
+
+                <ImageView
+                    android:id="@+id/articel_collection"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:scaleType="fitXY"
+                    android:layout_marginLeft="15dp"
+                    android:src="@mipmap/collection"
+                    android:layout_gravity="right"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:background="@mipmap/point"/>
+                    android:padding="5dp">
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:background="@mipmap/point"/>
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:background="@mipmap/point"/>
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:background="@mipmap/point"/>
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:background="@mipmap/point"/>
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:background="@mipmap/point_unchoose"/>
+                </LinearLayout>
+
                 <TextView
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_margin="2dp"
-                    android:gravity="center"
-                    android:background="@mipmap/point"/>
-                <TextView
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_margin="2dp"
-                    android:gravity="center"
-                    android:background="@mipmap/point"/>
-                <TextView
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_margin="2dp"
-                    android:gravity="center"
-                    android:background="@mipmap/point"/>
-                <TextView
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_margin="2dp"
-                    android:gravity="center"
-                    android:background="@mipmap/point_unchoose"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:gravity="right"
+                    android:layout_gravity="center_vertical"
+                    android:text="123546人覺得很讚"/>
             </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                style="@style/UnderLineTextView"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="10dp"
-                android:gravity="right"
-                android:layout_gravity="center_vertical"
-                android:text="123546人覺得很讚"/>
+                android:orientation="vertical"
+                android:background="@color/colorWight"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/articel_detial_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/articel_detial_contents"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/UnderLineTextView"/>
+
+            <TextView
+                android:id="@+id/articel_contents_no_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="暫無評論"
+                android:paddingTop="10dp"
+                android:gravity="center"
+                android:background="@color/colorWight"/>
+
+            <com.bs.john_li.bsfslotmachine.BSSMView.CustomExpandableListView
+                android:id="@+id/articel_contents_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWight"
+                android:divider="#F1F1F1"
+                android:groupIndicator="@null"
+                android:paddingTop="10dp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:background="@color/colorWight">
-
-            <TextView
-                style="@style/UnderLineTextView"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
-
-            <TextView
-                android:id="@+id/articel_detial_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorBlack"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
-
-            <TextView
-                android:id="@+id/articel_detial_contents"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorBlack"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/articel_contents_no_comments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="暫無評論"
-            android:paddingTop="10dp"
-            android:gravity="center"
-            android:background="@color/colorWight"/>
-
-        <ListView
-            android:id="@+id/articel_contents_lv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/colorWight"
-            android:paddingTop="10dp"
-            android:divider="#F1F1F1"
-            android:dividerHeight="0.5dp"/>
     </LinearLayout>
 </ScrollView>

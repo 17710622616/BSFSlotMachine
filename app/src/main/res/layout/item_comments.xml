@@ -3,41 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWight">
-    <ImageView
-        android:id="@+id/item_comments_iv"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:src="@mipmap/head"
-        android:layout_margin="8dp"/>
 
     <TextView
         android:id="@+id/item_commentor_tv"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorDrakGray"
+        android:textColor="@color/colorBlack"
         android:textSize="14sp"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/item_comments_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorDrakGray"
-        android:layout_toRightOf="@id/item_comments_iv"
-        android:layout_below="@id/item_comments_iv"
+        android:textColor="@color/colorBlack"
+        android:layout_toRightOf="@id/item_commentor_tv"
         android:textSize="14sp"
+        android:layout_marginLeft="3dp"
         android:gravity="center_vertical"/>
 
     <TextView
         android:id="@+id/item_comments_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/item_comments_iv"
-        android:layout_alignParentBottom="true"
         android:paddingBottom="2dp"
+        android:layout_toRightOf="@id/item_commentor_tv"
+        android:layout_below="@id/item_comments_tv"
         android:text="剛剛"
         android:textColor="@color/colorDrakGray"
         android:textSize="12sp"
