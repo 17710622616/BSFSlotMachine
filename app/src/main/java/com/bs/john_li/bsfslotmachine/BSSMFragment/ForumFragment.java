@@ -162,8 +162,12 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 }
                 break;
             case R.id.head_right:
-                PublishPopWindow popWindow = new PublishPopWindow(getActivity(), this);
-                popWindow.showMoreWindow(view);
+                if (!SPUtils.get(getActivity(), "UserToken", "").equals("")) {
+                    PublishPopWindow popWindow = new PublishPopWindow(getActivity(), this);
+                    popWindow.showMoreWindow(view);
+                } else {
+                    Toast.makeText(getActivity(), "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -172,21 +176,43 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     public void camareCallBack() {
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","camare");
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @Override
     public void textCallBack() {
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","text");
-        startActivity(intent);
+        startActivityForResult(intent, 2);
     }
 
     @Override
     public void albumCallBack() {
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","album");
-        startActivity(intent);
+        startActivityForResult(intent, 3);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            ContentsListModel.DataBean.ContentsModel returnContentsModel = new Gson().fromJson(data.getStringExtra("return_contents"), ContentsListModel.DataBean.ContentsModel.class);
+            switch (requestCode) {
+                case 1:
+                    contentsList.add(0, returnContentsModel);
+                    refreshContentsList();
+                    break;
+                case 2:
+                    contentsList.add(0, returnContentsModel);
+                    refreshContentsList();
+                    break;
+                case 3:
+                    contentsList.add(0, returnContentsModel);
+                    refreshContentsList();
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void callNetGetContentsList(String count) {

@@ -6,11 +6,13 @@
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/publish_forum_head"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
     <ImageView
         android:id="@+id/publish_forum_iv"
         android:layout_width="match_parent"
-        android:layout_height="500dp" />
+        android:layout_height="200dp"
+        android:src="@mipmap/car_sample"
+        android:scaleType="fitXY"/>
 
     <EditText
         android:id="@+id/publish_artical_title_et"

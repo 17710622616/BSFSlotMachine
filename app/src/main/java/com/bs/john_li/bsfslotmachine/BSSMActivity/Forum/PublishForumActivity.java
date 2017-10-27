@@ -202,7 +202,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
      * 發佈帖文
      */
     private void callNetPublishArticle(String content, String title) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_LIST + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.PUBLISH_ARTICLE + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
@@ -220,7 +220,14 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
             public void onSuccess(String result) {
                 ReturnContentsOutModel model = new Gson().fromJson(result.toString(), ReturnContentsOutModel.class);
                 if (model.getCode() ==200) {
-                    
+                    Intent intent = new Intent();
+                    String contents = model.getData().getContents();
+                    String contents1 = model.getData().getCreator();
+                    String contents2 = model.getData().getTitle();
+                    String content3s = model.getData().getCover();
+                    intent.putExtra("return_contents", new Gson().toJson(model.getData()));
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
                     Toast.makeText(PublishForumActivity.this, "提交失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
