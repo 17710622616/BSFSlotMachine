@@ -10,5 +10,22 @@
     <ImageView
         android:id="@+id/publish_forum_iv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="500dp" />
+
+    <EditText
+        android:id="@+id/publish_artical_title_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:hint="新鮮事標題"
+        android:background="@color/colorAlpha"/>
+
+    <EditText
+        android:id="@+id/publish_artical_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="18sp"
+        android:hint="分享新鮮事..."
+        android:background="@color/colorAlpha"/>
 </LinearLayout>

@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
-        android:id="@+id/forum_head"
+        android:id="@+id/own_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <LinearLayout
-        android:id="@+id/no_artical_ll"
+        android:id="@+id/own_no_artical_ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -28,17 +28,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="您還沒添加車輛呢，點我刷新或者去添加車輛吧~"
+            android:text="您還沒發佈帖文呢，快去發佈點新鮮事吧~"
             android:textColor="@color/colorDrakGray"
             android:textSize="16sp"/>
     </LinearLayout>
 
     <com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout
-        android:id="@+id/expandswiperefreshlayout_forum"
+        android:id="@+id/own_forum_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ListView
-            android:id="@+id/forum_lv"
+            android:id="@+id/own_forum_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout>

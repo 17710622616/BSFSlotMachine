@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.ArticleDetialActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.OwnArticalListACtivty;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.PublishForumActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
@@ -37,6 +38,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.BSSMView.PublishPopWindow;
@@ -153,7 +155,11 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.head_left:
-                Toast.makeText(getActivity(), "管理自己的帖子", Toast.LENGTH_SHORT).show();
+                if (!SPUtils.get(getActivity(), "UserToken", "").equals("")) {
+                    startActivity(new Intent(getActivity(), OwnArticalListACtivty.class));
+                } else {
+                    Toast.makeText(getActivity(), "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.head_right:
                 PublishPopWindow popWindow = new PublishPopWindow(getActivity(), this);

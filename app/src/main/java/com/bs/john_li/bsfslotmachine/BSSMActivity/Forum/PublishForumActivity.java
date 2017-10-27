@@ -7,28 +7,44 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ChooseCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnContentsOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by John_Li on 5/10/2017.
  */
 
-public class PublishForumActivity extends BaseActivity {
+public class PublishForumActivity extends BaseActivity implements View.OnClickListener{
     private ImageView publish_forum_iv;
+    private BSSMHeadView publish_forum_head;
+    private EditText publish_artical_et, publish_artical_title_et;
 
     public static final int TAKE_PHOTO = 1;
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
@@ -47,6 +63,9 @@ public class PublishForumActivity extends BaseActivity {
     @Override
     public void initView() {
         publish_forum_iv = findViewById(R.id.publish_forum_iv);
+        publish_forum_head = findViewById(R.id.publish_forum_head);
+        publish_artical_et = findViewById(R.id.publish_artical_et);
+        publish_artical_title_et = findViewById(R.id.publish_artical_title_et);
     }
 
     @Override
@@ -58,6 +77,9 @@ public class PublishForumActivity extends BaseActivity {
     public void initData() {
         Intent intent = getIntent();
         String startWay = intent.getStringExtra("startWay");
+        publish_forum_head.setTitle("發佈帖文");
+        publish_forum_head.setLeft(this);
+        publish_forum_head.setRight(R.mipmap.ok, this);
         switch (startWay) {
             case "camare":
                 callCamare();
@@ -111,7 +133,7 @@ public class PublishForumActivity extends BaseActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            Toast.makeText(this, "影相失敗！", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
         switch(requestCode) {
@@ -152,5 +174,69 @@ public class PublishForumActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.head_left:
+                finish();
+                break;
+            case R.id.head_right:
+                String content = publish_artical_title_et.getText().toString();
+                String title = publish_artical_title_et.getText().toString();
+                if (content != null && title != null) {
+                    if (!content.equals("") && !title.equals("")) {
+                        callNetPublishArticle(content, title);
+                    } else {
+                        Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 發佈帖文
+     */
+    private void callNetPublishArticle(String content, String title) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_LIST + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("title",title);
+            jsonObj.put("cover", "objectName1");
+            jsonObj.put("contents",content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                ReturnContentsOutModel model = new Gson().fromJson(result.toString(), ReturnContentsOutModel.class);
+                if (model.getCode() ==200) {
+                    
+                } else {
+                    Toast.makeText(PublishForumActivity.this, "提交失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 }
