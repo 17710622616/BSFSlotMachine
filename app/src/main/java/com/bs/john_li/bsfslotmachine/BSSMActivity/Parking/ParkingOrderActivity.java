@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -40,6 +41,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.othershe.nicedialog.BaseNiceDialog;
@@ -661,36 +665,35 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     .setConvertListener(new ViewConvertListener() {
                         @Override
                         public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
-                            final SeekBar moneySeekbar = holder.getView(R.id.choose_money_sb);
+                            final CrystalSeekbar moneySeekbar = holder.getView(R.id.choose_money_sb);
                             final TextView moneyTv = holder.getView(R.id.choose_money_tv);
-                            moneySeekbar.setMax(amountLimit);
-                            moneySeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            moneySeekbar.setCornerRadius(10f)
+                                    .setBarColor(getResources().getColor(R.color.colorStartBlue))
+                                    .setBarHighlightColor(getResources().getColor(R.color.colorEndBlue))
+                                    .setMinValue(0)
+                                    .setMaxValue(amountLimit)
+                                    .setSteps(1)
+                                    .setLeftThumbDrawable(R.mipmap.seekbar_parking1)
+                                    .setLeftThumbHighlightDrawable(R.mipmap.seekbar_parking1)
+                                    .setDataType(CrystalRangeSeekbar.DataType.INTEGER)
+                                    .apply();
+                            moneySeekbar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
                                 @Override
-                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                                public void valueChanged(Number minValue) {
                                     if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(seekBar.getProgress()));
+                                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(minValue));
                                         moneyTv.setText(String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
                                     } else {
-                                        mSlotOrderModel.setSlotAmount(String.valueOf(seekBar.getProgress()));
+                                        mSlotOrderModel.setSlotAmount(String.valueOf(minValue));
                                         moneyTv.setText(String.valueOf(mSlotOrderModel.getSlotAmount()));
                                     }
-                                }
-
-                                @Override
-                                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                }
-
-                                @Override
-                                public void onStopTrackingTouch(SeekBar seekBar) {
-
                                 }
                             });
 
                             if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                moneySeekbar.setProgress(Integer.parseInt(mSlotUnknowOrderModel.getSlotAmount()));
+                                moneySeekbar.setMinValue(Integer.parseInt(mSlotUnknowOrderModel.getSlotAmount()));
                             } else {
-                                moneySeekbar.setProgress(Integer.parseInt(mSlotOrderModel.getSlotAmount()));
+                                moneySeekbar.setMinValue(Integer.parseInt(mSlotOrderModel.getSlotAmount()));
                             }
 
                             holder.setOnClickListener(R.id.choose_money_tv, new View.OnClickListener() {
@@ -709,7 +712,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             });
                         }
                     })
-                    .setWidth(200)
+                    .setWidth(270)
                     .show(getSupportFragmentManager());
         } else {
             Toast.makeText(this, "已經過了今天的投幣時間哦，請明天再下單~", Toast.LENGTH_SHORT).show();
