@@ -6,6 +6,7 @@
     <color name="colorAccent">#FFFFFF</color>
     <color name="colorWight">#FFFFFF</color>
     <color name="colorMineGray">#F5F5F5</color>
+    <color name="colorCommentGray">#F4F4F4</color>
     <color name="colorLightGray">#fdfdfd</color>
     <color name="colorLineGray">#c9c9c9</color>
     <color name="colorDrakGray">#707070</color>
@@ -14,6 +15,7 @@
     <color name="colorStartBlue">#3BA9FE</color>
     <color name="colorEndBlue">#0286FF</color>
     <color name="colorCenterBlue">#02AAFF</color>
+    <color name="colorDeepBlue">#33618E</color>
     <color name="colorMineYellow">#E7AA33</color>
     <color name="colorWayOringe">#F45428</color>
     <color name="colorMineOringe">#E87765</color>

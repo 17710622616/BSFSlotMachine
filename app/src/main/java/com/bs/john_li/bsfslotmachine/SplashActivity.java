@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
@@ -19,6 +20,7 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 
 public class SplashActivity extends AppCompatActivity implements View.OnClickListener{
     private BSSMHeadView splash_head;
+    private ImageView splashIV;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +33,15 @@ public class SplashActivity extends AppCompatActivity implements View.OnClickLis
         }
         setContentView(R.layout.activity_splash);
 
-        splash_head = (BSSMHeadView) findViewById(R.id.splash_head);
+        /*splash_head = (BSSMHeadView) findViewById(R.id.splash_head);
         TextView tv = (TextView) findViewById(R.id.splash_hello);
 
         splash_head.setTitle("欢迎页");
         splash_head.setLeft(this);
-        splash_head.setRight(R.mipmap.wallet,this);
+        splash_head.setRight(R.mipmap.wallet,this);*/
 
-        tv.setOnClickListener(new View.OnClickListener() {
+        splashIV = (ImageView) findViewById(R.id.splash_iv);
+        splashIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));

@@ -5,9 +5,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorLineGray"
-        android:padding="5dp"
-        android:layout_marginLeft="50dp"
+        android:background="@drawable/shape_comment_bg"
+        android:padding="8dp"
+        android:layout_marginLeft="35dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp">
@@ -15,8 +15,8 @@
             android:id="@+id/item_relpy_commentor_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorBlack"
-            android:textSize="14sp"
+            android:textColor="@color/colorDeepBlue"
+            android:textSize="12sp"
             android:textStyle="bold"/>
 
         <TextView
@@ -24,18 +24,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorBlack"
-            android:layout_toRightOf="@id/item_relpy_commentor_tv"
-            android:textSize="14sp"
-            android:layout_marginLeft="3dp"
+            android:layout_below="@id/item_relpy_commentor_tv"
+            android:textSize="15sp"
             android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/item_relpy_comments_time"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:layout_below="@id/item_relpy_comments_tv"
             android:text="剛剛"
+            android:textColor="@color/colorDrakGray"
+            android:textSize="12sp"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
+            android:paddingRight="5dp"
+            android:layout_below="@id/item_relpy_comments_tv"
+            android:layout_alignParentRight="true"
+            android:text="回復"
             android:textColor="@color/colorDrakGray"
             android:textSize="12sp"
             android:gravity="center_vertical"/>

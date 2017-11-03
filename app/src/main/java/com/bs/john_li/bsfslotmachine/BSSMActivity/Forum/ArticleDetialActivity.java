@@ -3,8 +3,14 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telecom.Call;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsExpandAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
@@ -27,6 +34,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.CustomExpandableListView;
+import com.bs.john_li.bsfslotmachine.BSSMView.FloatingTestButton;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
@@ -50,12 +58,17 @@ import java.util.List;
  * Created by John_Li on 18/10/2017.
  */
 
-public class ArticleDetialActivity extends BaseActivity implements View.OnClickListener{
-    private BSSMHeadView headView;
-    private TextView postNameTv, titleTv, contentsTv, noCommentsTv;
-    private ImageView postCommentIv;
+public class ArticleDetialActivity extends AppCompatActivity implements View.OnClickListener{
+    private TextView postNameTv, contentsTv, noCommentsTv, moreTv;
+    private ImageView postCommentIv, shareIv;
+    private Toolbar articalToolbar;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private ViewPager mViewPager;
+    private CollapsingAdapter mCollapsingAdapter;
+    private FloatingTestButton mFab;
+    private NestedScrollView mNestedScrollView;
     private CustomExpandableListView contentsLv;
-
+    private List<ImageView> imgList;
     private ContentsListModel.DataBean.ContentsModel mContentsModel;
     private List<CommentListModel.CommentsArrayModel.CommentsModel> mCommentsModelList;
     private CommentsAdapter mCommentsAdapter;
@@ -69,20 +82,25 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
         initData();
     }
 
-    @Override
     public void initView() {
-        headView = findViewById(R.id.articel_detial_head);
-        postNameTv = findViewById(R.id.articel_detial_name);
-        titleTv = findViewById(R.id.articel_detial_title);
-        contentsTv = findViewById(R.id.articel_detial_contents);
-        noCommentsTv = findViewById(R.id.articel_contents_no_comments);
-        contentsLv = findViewById(R.id.articel_contents_lv);
-        postCommentIv = findViewById(R.id.articel_share);
+        contentsTv = (TextView) findViewById(R.id.articel_detial_contents);
+        postNameTv = (TextView) findViewById(R.id.articel_creator);
+        moreTv = (TextView) findViewById(R.id.article_more_tv);
+        postCommentIv = (ImageView) findViewById(R.id.articel_post_comment);
+        shareIv = (ImageView) findViewById(R.id.articel_share);
+        articalToolbar = (Toolbar) findViewById(R.id.atical_detial_toolbar);
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.atical_detial_collapsing_toolbar);
+        mViewPager = (ViewPager) findViewById(R.id.atical_detial_vp);
+        mNestedScrollView = (NestedScrollView) findViewById(R.id.collapsing_comment_sv);
+        contentsLv = (CustomExpandableListView) findViewById(R.id.atical_detial_lv);
+        mFab = (FloatingTestButton) findViewById(R.id.atical_detial_fab);
+        noCommentsTv = (TextView) findViewById(R.id.atical_detial_no_comments);
     }
 
-    @Override
     public void setListener() {
         postCommentIv.setOnClickListener(this);
+        moreTv.setOnClickListener(this);
+        shareIv.setOnClickListener(this);
         contentsLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
@@ -173,17 +191,42 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
         });
     }
 
-    @Override
     public void initData() {
+        // 獲取帖文資料
         Intent intent = getIntent();
         mContentsModel = new Gson().fromJson(intent.getStringExtra("ContentsModel"), ContentsListModel.DataBean.ContentsModel.class);
-        headView.setTitle(mContentsModel.getTitle());
-        headView.setLeft(this);
-
-        postNameTv.setText(mContentsModel.getCreator());
-        titleTv.setText(mContentsModel.getTitle());
+        // toolbar
+        setSupportActionBar(articalToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //  設置標題
+        mCollapsingToolbarLayout.setTitle(mContentsModel.getTitle());
+        // 設置標題及內容
         contentsTv.setText(mContentsModel.getContents());
+        // 發佈者
+        postNameTv.setText(mContentsModel.getCreator());
+        // 頭部的圖片列表
+        imgList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            ImageView iv = new ImageView(this);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            if (i % 2 != 0) {
+                iv.setImageResource(R.mipmap.car_sample);
+            } else {
+                iv.setImageResource(R.mipmap.car_sample);
+            }
+            imgList.add(iv);
+        }
+        mCollapsingAdapter = new CollapsingAdapter(imgList);
+        mViewPager.setAdapter(mCollapsingAdapter);
 
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ArticleDetialActivity.this, "头像", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // 評論列表
         mCommentsModelList = new ArrayList<>();
         mCommentsExpandAdapter = new CommentsExpandAdapter(this, mCommentsModelList);
         mCommentsAdapter = new CommentsAdapter(this, mCommentsModelList);
@@ -245,6 +288,17 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
             contentsLv.setVisibility(View.GONE);
             noCommentsTv.setVisibility(View.VISIBLE);
         }
+        mNestedScrollView.smoothScrollTo(0, 0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -253,8 +307,14 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
             case R.id.head_left:
                 finish();
                 break;
-            case R.id.articel_share: // 发表评论
+            case R.id.articel_post_comment: // 发表评论
                 showCommentDialog();
+                break;
+            case R.id.article_more_tv: // 獲取更多評論
+                Toast.makeText(this, "獲取更多評論", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.articel_share: // 獲取更多評論
+                Toast.makeText(this, "分享", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -264,6 +324,7 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
      */
     private void expandListView() {
         for (int i = 0; i < mCommentsModelList.size(); i++) {
+            String content = mCommentsModelList.get(i).getContent();
             contentsLv.expandGroup(i);
         }
     }
@@ -330,6 +391,8 @@ public class ArticleDetialActivity extends BaseActivity implements View.OnClickL
                     commentsModel.setCreatetime(model.getData().getCreatetime());
                     commentsModel.setCreator(model.getData().getCreator());
                     commentsModel.setCreatorid(model.getData().getCreatorid());
+                    List<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean> replisList = new ArrayList<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean>();
+                    commentsModel.setReplies(replisList);
                     mCommentsModelList.add(commentsModel);
                     //mCommentsAdapter.refreshListView(mCommentsModelList);
                     mCommentsExpandAdapter.notifyDataSetChanged();

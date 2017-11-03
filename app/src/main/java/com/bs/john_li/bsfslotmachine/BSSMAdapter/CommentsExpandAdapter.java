@@ -8,6 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.util.List;
@@ -18,13 +19,11 @@ import java.util.List;
 
 public class CommentsExpandAdapter extends BaseExpandableListAdapter {
     public Context mContext;
-    private LayoutInflater inflater;
     private List<CommentListModel.CommentsArrayModel.CommentsModel> commnettsList;
 
     public  CommentsExpandAdapter (Context context, List<CommentListModel.CommentsArrayModel.CommentsModel> commnettsList) {
         this.commnettsList = commnettsList;
         this.mContext = context;
-        inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -76,9 +75,9 @@ public class CommentsExpandAdapter extends BaseExpandableListAdapter {
             holder = (GroupHolder) view.getTag();
         }
 
-        holder.item_commentor_tv.setText(commnettsList.get(i).getCreator() + ":");
+         holder.item_commentor_tv.setText(commnettsList.get(i).getCreator() + ":");
         holder.item_comments_tv.setText(commnettsList.get(i).getContent());
-        holder.item_comments_time.setText(String.valueOf(commnettsList.get(i).getCreatetime()));
+        holder.item_comments_time.setText(BSSMCommonUtils.stampToDate(String.valueOf(commnettsList.get(i).getCreatetime())));
         return view;
     }
 
@@ -98,7 +97,7 @@ public class CommentsExpandAdapter extends BaseExpandableListAdapter {
 
         holder.item_commentor_tv.setText(commnettsList.get(i).getReplies().get(i1).getCreator() + ":");
         holder.item_comments_tv.setText(commnettsList.get(i).getReplies().get(i1).getContent());
-        holder.item_comments_time.setText(String.valueOf(commnettsList.get(i).getReplies().get(i1).getCreatetime()));
+        holder.item_comments_time.setText(BSSMCommonUtils.stampToDate(String.valueOf(commnettsList.get(i).getReplies().get(i1).getCreatetime())));
         return view;
     }
 
