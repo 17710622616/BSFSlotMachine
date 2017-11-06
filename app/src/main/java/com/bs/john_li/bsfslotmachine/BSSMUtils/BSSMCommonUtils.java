@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -243,6 +244,76 @@ public class BSSMCommonUtils {
         } else {
             return replaceAction(bankCard, "(?<=\\d{0})\\d(?=\\d{4})");
         }
+    }
+
+    /**
+     * 獲取當前時間
+     * @return
+     */
+    public static String getTimeNoW() {
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        return dateFormat.toString();
+    }
+
+    /**
+     * 獲取年
+     * @return
+     */
+    public static int getYear() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        return year;
+    }
+
+    /**
+     * 獲取月
+     * @return
+     */
+    public static int getMonth() {
+        Calendar cal = Calendar.getInstance();
+        int month = cal.get(Calendar.MONTH) + 1;
+        return month;
+    }
+
+    /**
+     * 獲取日
+     * @return
+     */
+    public static int getDayOfMonth() {
+        Calendar cal = Calendar.getInstance();
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        return day;
+    }
+
+    /**
+     * 獲取時
+     * @return
+     */
+    public static int getHour() {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR);
+        return hour;
+    }
+
+    /**
+     * 獲取分
+     * @return
+     */
+    public static int getMinute() {
+        Calendar cal = Calendar.getInstance();
+        int minute = cal.get(Calendar.MINUTE);
+        return minute;
+    }
+
+    /**
+     * 獲取秒
+     * @return
+     */
+    public static int getSecond() {
+        Calendar cal = Calendar.getInstance();
+        int second = cal.get(Calendar.SECOND);
+        return second;
     }
 
     /*

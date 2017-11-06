@@ -575,7 +575,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("最大金額", "最大金額獲取失敗");
+                Toast.makeText(ParkingOrderActivity.this, R.string.no_net, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -621,8 +621,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 .setConvertListener(new ViewConvertListener() {
                     @Override
                     public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                        final TextView timeTv = holder.getView(R.id.dialog_time_tv);
+                        TextView submitTv = holder.getView(R.id.dialog_time_submit);
                         TimePicker timePicker = holder.getView(R.id.dialog_time_picker);
                         timePicker.setIs24HourView(true);
+                        timePicker.setCurrentHour(BSSMCommonUtils.getHour());
+                        timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
                         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
                             @Override
                             public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
@@ -646,12 +650,20 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                 } else {
                                     mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
                                 }
+                                timeTv.setText("投幣時間[預計" + time + "]");
                                 startTimeTv.setText("投幣時間[預計" + time + "]");
+                            }
+                        });
+
+                        holder.setOnClickListener(R.id.dialog_time_submit, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
                             }
                         });
                     }
                 })
-                .setWidth(210)
+                .setWidth(285)
                 .show(getSupportFragmentManager());
     }
 
@@ -659,7 +671,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 选择订单金额
      */
     private void chooseOrderMoney() {
-        if (amountLimit >= 0){
+        if (amountLimit > 0){
             NiceDialog.init()
                     .setLayoutId(R.layout.dialog_choose_order_money)
                     .setConvertListener(new ViewConvertListener() {

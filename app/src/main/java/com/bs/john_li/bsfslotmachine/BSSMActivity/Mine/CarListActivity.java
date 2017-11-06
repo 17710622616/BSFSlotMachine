@@ -92,7 +92,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     public void run() { //和最大的数据比较
                         if (pageSize * (pageNo + 1) > totolCarCount){
                             Toast.makeText(CarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
-                            mExpandSwipeRefreshLayout.setLoading(false);
+                            //mExpandSwipeRefreshLayout.setLoading(false);
                         } else {
                             pageNo ++;
                             callNetGetCarList();
@@ -149,11 +149,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
 
         carModelList = new ArrayList<>();
         mCarListAdapter = new CarListAdapter(this, carModelList, this);
-        carLv.setAdapter(mCarListAdapter);
         mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
                 getResources().getColor(R.color.colorMineOringe),
                 getResources().getColor(R.color.colorMineGreen));
         mExpandSwipeRefreshLayout.setRefreshing(true);
+        carLv.setAdapter(mCarListAdapter);
         callNetGetCarList();
     }
 
