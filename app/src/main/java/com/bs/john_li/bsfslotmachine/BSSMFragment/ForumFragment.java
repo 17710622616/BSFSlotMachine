@@ -144,10 +144,10 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         forumHeadView.setLeft(R.mipmap.operation_invitation, this);
         forumHeadView.setRight(R.mipmap.push_invitation, this);
 
+        mExpandSwipeRefreshLayout.setRefreshing(true);
         contentsList = new ArrayList<>();
         mContentsAdapter = new ContentsAdapter(getActivity(), contentsList);
         forumLv.setAdapter(mContentsAdapter);
-        mExpandSwipeRefreshLayout.setRefreshing(true);
         callNetGetContentsList("");
     }
 
@@ -224,6 +224,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 if (model.getCode() == 200) {
                     List<ContentsListModel.DataBean.ContentsModel> list = model.getData().getContents();
                     contentsList.addAll(list);
+                    contentsList.addAll(list);
                 } else {
                     Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
@@ -254,8 +255,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         if (mExpandSwipeRefreshLayout.isRefreshing()) {
             mExpandSwipeRefreshLayout.setRefreshing(false);
         }
-        if (mExpandSwipeRefreshLayout.isLoading()) {
+        /*if (mExpandSwipeRefreshLayout.isLoading()) {
             mExpandSwipeRefreshLayout.setLoading(false);
-        }
+        }*/
     }
 }
