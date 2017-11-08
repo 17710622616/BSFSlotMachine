@@ -172,9 +172,15 @@ public class ExpandSwipeRefreshLayout extends SwipeRefreshLayout implements AbsL
     public void setLoading(boolean loading) {
         isLoading = loading;
         if (isLoading) {
-            mListView.addFooterView(mListViewFooter);
+            /*if (mListView.getFooterViewsCount() > 0) {
+                mListViewFooter.setVisibility(VISIBLE);
+            } else {
+                mListView.addFooterView(mListViewFooter);
+            }*/
+            mListViewFooter.setVisibility(VISIBLE);
         } else {
-            mListView.removeFooterView(mListViewFooter);
+            //mListView.removeFooterView(mListViewFooter);
+            mListViewFooter.setVisibility(GONE);
             mYDown = 0;
             mLastY = 0;
         }
@@ -215,5 +221,9 @@ public class ExpandSwipeRefreshLayout extends SwipeRefreshLayout implements AbsL
      */
     public boolean isLoading(){
         return isLoading;
+    }
+
+    public void addFooterBeforeSetAdapter() {
+        mListView.removeFooterView(mListViewFooter);
     }
 }

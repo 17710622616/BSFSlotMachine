@@ -92,7 +92,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     public void run() { //和最大的数据比较
                         if (pageSize * (pageNo + 1) > totolCarCount){
                             Toast.makeText(CarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
-                            //mExpandSwipeRefreshLayout.setLoading(false);
                         } else {
                             pageNo ++;
                             callNetGetCarList();

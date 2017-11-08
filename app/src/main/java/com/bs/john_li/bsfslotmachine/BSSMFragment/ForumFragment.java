@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.ArticleDetialActivity;
@@ -38,9 +39,11 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.OnLoadMoreScrollListener;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
+import com.bs.john_li.bsfslotmachine.BSSMView.LoadMoreListView;
 import com.bs.john_li.bsfslotmachine.BSSMView.PublishPopWindow;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -74,9 +77,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     public static String TAG = ForumFragment.class.getName();
     private View forumView;
     private BSSMHeadView forumHeadView;
-    private ListView forumLv;
-    private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private LoadMoreListView mListView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
     private ContentsAdapter mContentsAdapter;
 
@@ -98,37 +100,54 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void initView() {
         forumHeadView = forumView.findViewById(R.id.forum_head);
-        forumLv = forumView.findViewById(R.id.forum_lv);
-        mExpandSwipeRefreshLayout = forumView.findViewById(R.id.expandswiperefreshlayout_forum);
+        mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
+        mListView.setFooterView(View.inflate(getActivity(), R.layout.layout_load_more_footer, null), new OnLoadMoreScrollListener.OnLoadMoreStateListener() {
+            @Override
+            public void onNormal(View footView) {
+                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.GONE);
+                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("上拉加載更多");
+            }
+
+            @Override
+            public void onLoading(View footView) {
+                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.VISIBLE);
+                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("正在加載...");
+
+                if (contentsList.size() > 0) {
+                    callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
+                } else {
+                    callNetGetContentsList("");
+                }
+            }
+
+            @Override
+            public void onEnd(View footView) {
+                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.GONE);
+                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("已加載全部");
+            }
+        });
+        contentsList = new ArrayList<>();
+        mContentsAdapter = new ContentsAdapter(getActivity(), contentsList);
+        mListView.setAdapter(mContentsAdapter);
+
+        swipeRefreshLayout = forumView.findViewById(R.id.forum_srl);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                reFresh();
+            }
+        });
+        reFresh();
+    }
+
+    private void reFresh() {
+        contentsList.clear();
+        callNetGetContentsList("");
     }
 
     @Override
     public void setListenter() {
-        mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
-            @Override
-            public void onLoad() {
-                mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //和最大的数据比较
-                        if (contentsList.size() > 0) {
-                            callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
-                        } else {
-                            callNetGetContentsList("");
-                        }
-                    }
-                }, 500);
-            }
-        });
-
-        mExpandSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                contentsList.clear();
-                callNetGetContentsList("");
-            }
-        });
-
-        forumLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
@@ -144,11 +163,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         forumHeadView.setLeft(R.mipmap.operation_invitation, this);
         forumHeadView.setRight(R.mipmap.push_invitation, this);
 
-        mExpandSwipeRefreshLayout.setRefreshing(true);
-        contentsList = new ArrayList<>();
-        mContentsAdapter = new ContentsAdapter(getActivity(), contentsList);
-        forumLv.setAdapter(mContentsAdapter);
-        callNetGetContentsList("");
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -223,8 +238,11 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 ContentsListModel model = new Gson().fromJson(result, ContentsListModel.class);
                 if (model.getCode() == 200) {
                     List<ContentsListModel.DataBean.ContentsModel> list = model.getData().getContents();
-                    contentsList.addAll(list);
-                    contentsList.addAll(list);
+                    if (list.size() <= 0) {
+                        mListView.setEnd(true);
+                    } else {
+                        contentsList.addAll(list);
+                    }
                 } else {
                     Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
@@ -252,11 +270,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
      */
     private void refreshContentsList() {
         mContentsAdapter.refreshListView(contentsList);
-        if (mExpandSwipeRefreshLayout.isRefreshing()) {
-            mExpandSwipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
         }
-        /*if (mExpandSwipeRefreshLayout.isLoading()) {
-            mExpandSwipeRefreshLayout.setLoading(false);
-        }*/
     }
 }
