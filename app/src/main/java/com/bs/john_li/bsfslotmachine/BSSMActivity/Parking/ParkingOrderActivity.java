@@ -31,6 +31,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.MaxAmountModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotUnknowOrderModel;
@@ -366,9 +367,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode().equals("200")) {
-                    String orderNo = model.getData();
+                OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
+                if (model.getCode() == 200) {
+                    String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
                     startActivity(intent);
@@ -415,9 +416,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode().equals("200")) {
-                    String orderNo = model.getData();
+                OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
+                if (model.getCode() == 200) {
+                    String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
                     startActivity(intent);

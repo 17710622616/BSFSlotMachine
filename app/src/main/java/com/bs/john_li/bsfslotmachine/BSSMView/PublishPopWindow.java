@@ -177,6 +177,12 @@ public class PublishPopWindow extends PopupWindow implements View.OnClickListene
         }
     }
 
+    public void closePopupWindow() {
+        if (isShowing()) {
+            closeAnimation(contentView);
+        }
+    }
+
     public interface WindowClickCallBack {
         void camareCallBack();
         void textCallBack();

@@ -351,8 +351,10 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void carRechargeClick(View view) {
         String position = (String) view.getTag();
-        Intent intent = new Intent(this, CarRechargeActivity.class);
-        intent.putExtra("carModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
-        startActivity(intent);
+        if (carModelList.get(Integer.parseInt(position)).getIfPay() == 0) {
+            Intent intent = new Intent(this, CarRechargeActivity.class);
+            intent.putExtra("carModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
+            startActivity(intent);
+        }
     }
 }

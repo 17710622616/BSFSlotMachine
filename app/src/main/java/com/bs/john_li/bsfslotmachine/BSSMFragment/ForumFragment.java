@@ -81,6 +81,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     private LoadMoreListView mListView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
     private ContentsAdapter mContentsAdapter;
+    private PublishPopWindow popWindow;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,7 +179,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 break;
             case R.id.head_right:
                 if (!SPUtils.get(getActivity(), "UserToken", "").equals("")) {
-                    PublishPopWindow popWindow = new PublishPopWindow(getActivity(), this);
+                    popWindow = new PublishPopWindow(getActivity(), this);
                     popWindow.showMoreWindow(view);
                 } else {
                     Toast.makeText(getActivity(), "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
@@ -189,6 +190,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void camareCallBack() {
+        popWindow.closePopupWindow();
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","camare");
         startActivityForResult(intent, 1);
@@ -196,6 +198,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void textCallBack() {
+        popWindow.closePopupWindow();
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","text");
         startActivityForResult(intent, 2);
@@ -203,6 +206,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void albumCallBack() {
+        popWindow.closePopupWindow();
         Intent intent = new Intent(getActivity(), PublishForumActivity.class);
         intent.putExtra("startWay","album");
         startActivityForResult(intent, 3);

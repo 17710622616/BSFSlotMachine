@@ -19,6 +19,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarRechargeWayListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarRechargeWayListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -202,11 +203,11 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
-                if (model.getCode().equals("200")) {
-                    Toast.makeText(CarRechargeActivity.this, "訂單號：" + model.getData(), Toast.LENGTH_SHORT).show();
+                OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
+                if (model.getCode() == 200) {
+                    Toast.makeText(CarRechargeActivity.this, "訂單號：" + model.getData().getOrderNo(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
-                    intent.putExtra("orderNo", model.getData());
+                    intent.putExtra("orderNo", model.getData().getOrderNo());
                     startActivity(intent);
                 } else {
                     Toast.makeText(CarRechargeActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
