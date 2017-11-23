@@ -18,12 +18,12 @@
             style="@style/MineItemTextView"
             android:text="@string/personal_head_portrait"/>
 
-        <ImageView
+        <com.bs.john_li.bsfslotmachine.BSSMView.CycleImageView
             android:id="@+id/personal_head_portrait_iv"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginRight="15dp"
-            android:src="@mipmap/head"/>
+            android:src="@mipmap/head_img"/>
     </LinearLayout>
     <TextView
         style="@style/UnderLineTextView"/>

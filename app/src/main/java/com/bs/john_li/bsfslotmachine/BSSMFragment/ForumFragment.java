@@ -235,7 +235,12 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     }
 
     private void callNetGetContentsList(String count) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS + count);
+        RequestParams params = null;
+        if (count != null) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS + count);
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS);
+        }
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
