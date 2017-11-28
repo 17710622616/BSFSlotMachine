@@ -19,6 +19,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -36,11 +38,13 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.OnLoadMoreScrollListener;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.BSSMView.LoadMoreListView;
@@ -55,6 +59,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -77,10 +85,13 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     public static String TAG = ForumFragment.class.getName();
     private View forumView;
     private BSSMHeadView forumHeadView;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private LoadMoreListView mListView;
+    //private SwipeRefreshLayout swipeRefreshLayout;
+    private RefreshLayout mRefreshLayout;
+    private RecyclerView mRecycleView;
+    //private LoadMoreListView mListView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
     private ContentsAdapter mContentsAdapter;
+    private SmartRefreshAdapter mSmartRefreshAdapter;
     private PublishPopWindow popWindow;
 
     @Override
@@ -101,7 +112,9 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void initView() {
         forumHeadView = forumView.findViewById(R.id.forum_head);
-        mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
+        mRefreshLayout = (RefreshLayout) forumView.findViewById(R.id.forum_srl);
+        mRecycleView = (RecyclerView) forumView.findViewById(R.id.forum_lv);
+        /*mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
         mListView.setFooterView(View.inflate(getActivity(), R.layout.layout_load_more_footer, null), new OnLoadMoreScrollListener.OnLoadMoreStateListener() {
             @Override
             public void onNormal(View footView) {
@@ -138,22 +151,26 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 reFresh();
             }
         });
-        reFresh();
-    }
-
-    private void reFresh() {
-        contentsList.clear();
-        callNetGetContentsList("");
+        reFresh();*/
     }
 
     @Override
     public void setListenter() {
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
-                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(i)));
-                startActivity(intent);
+            public void onRefresh(RefreshLayout refreshlayout) {
+                contentsList.clear();
+                callNetGetContentsList("");
+            }
+        });
+        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                if (contentsList.size() > 0) {
+                    callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
+                } else {
+                    callNetGetContentsList("");
+                }
             }
         });
     }
@@ -164,7 +181,27 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         forumHeadView.setLeft(R.mipmap.operation_invitation, this);
         forumHeadView.setRight(R.mipmap.push_invitation, this);
 
-        swipeRefreshLayout.setRefreshing(true);
+        /*swipeRefreshLayout.setRefreshing(true);*/
+        contentsList = new ArrayList<>();
+        mSmartRefreshAdapter = new SmartRefreshAdapter(getActivity(), contentsList);
+        mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecycleView.setAdapter(mSmartRefreshAdapter);
+
+        mSmartRefreshAdapter.setOnItemClickListenr(new SmartRefreshAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
+                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(position)));
+                startActivity(intent);
+            }
+        });
+
+        callNetGetContentsList("");
+    }
+
+    private void reFresh() {
+        contentsList.clear();
+        callNetGetContentsList("");
     }
 
     @Override
@@ -181,6 +218,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 if (!SPUtils.get(getActivity(), "UserToken", "").equals("")) {
                     popWindow = new PublishPopWindow(getActivity(), this);
                     popWindow.showMoreWindow(view);
+                    StatusBarUtil.setColor(getActivity(),getResources().getColor(R.color.colorWight));
                 } else {
                     Toast.makeText(getActivity(), "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
                 }
@@ -247,11 +285,12 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 ContentsListModel model = new Gson().fromJson(result, ContentsListModel.class);
                 if (model.getCode() == 200) {
                     List<ContentsListModel.DataBean.ContentsModel> list = model.getData().getContents();
-                    if (list.size() <= 0) {
+                    /*if (list.size() <= 0) {
                         mListView.setEnd(true);
                     } else {
                         contentsList.addAll(list);
-                    }
+                    }*/
+                    contentsList.addAll(list);
                 } else {
                     Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
@@ -278,9 +317,12 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
      * 刷新帖文界面
      */
     private void refreshContentsList() {
-        mContentsAdapter.refreshListView(contentsList);
+        /*mContentsAdapter.refreshListView(contentsList);
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
-        }
+        }*/
+        mSmartRefreshAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
     }
 }

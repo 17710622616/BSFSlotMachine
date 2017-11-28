@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.ScreenUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.util.concurrent.TimeUnit;
@@ -153,6 +154,7 @@ public class PublishPopWindow extends PopupWindow implements View.OnClickListene
             }
         }
 
+        StatusBarUtil.setColor(mContext, mContext.getResources().getColor(R.color.colorSkyBlue));
     }
 
     @Override

@@ -6,7 +6,7 @@
         <!-- 導航欄. -->
         <item name="colorPrimary">@color/colorSkyBlue</item>
         <!-- Status bar color. -->
-        <item name="colorPrimaryDark">@color/colorSkyBlue</item>
+        <item name="colorPrimaryDark">@color/colorWight</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--Window color-->
         <item name="android:windowBackground">@color/colorLightGray</item>

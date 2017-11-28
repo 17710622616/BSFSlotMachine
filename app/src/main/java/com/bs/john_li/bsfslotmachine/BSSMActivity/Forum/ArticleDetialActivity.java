@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -37,6 +39,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnCommentsOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.CustomExpandableListView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FloatingTestButton;
@@ -66,6 +69,8 @@ import java.util.List;
 public class ArticleDetialActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView postNameTv, contentsTv, noCommentsTv, moreTv;
     private ImageView postCommentIv, shareIv;
+    private CheckBox favoriteCb;
+    private AppBarLayout appbar;
     private Toolbar articalToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private ViewPager mViewPager;
@@ -81,6 +86,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtil.setColor(this,getResources().getColor(R.color.colorAlpha));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);//此FLAG可使状态栏透明，且当前视图在绘制时，从屏幕顶端开始即top = 0开始绘制，这也是实现沉浸效果的基础
             this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);//可不加
@@ -97,6 +103,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         moreTv = (TextView) findViewById(R.id.article_more_tv);
         postCommentIv = (ImageView) findViewById(R.id.articel_post_comment);
         shareIv = (ImageView) findViewById(R.id.articel_share);
+        favoriteCb = (CheckBox) findViewById(R.id.articel_favorite);
+        appbar = (AppBarLayout) findViewById(R.id.atical_detial_appbar);
         articalToolbar = (Toolbar) findViewById(R.id.atical_detial_toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.atical_detial_collapsing_toolbar);
         mViewPager = (ViewPager) findViewById(R.id.atical_detial_vp);
@@ -104,6 +112,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         contentsLv = (CustomExpandableListView) findViewById(R.id.atical_detial_lv);
         mFab = (FloatingTestButton) findViewById(R.id.atical_detial_fab);
         noCommentsTv = (TextView) findViewById(R.id.atical_detial_no_comments);
+
+        contentsLv.setFocusable(false);
+        favoriteCb.setFocusable(true);
+        favoriteCb.setFocusableInTouchMode(true);
+        favoriteCb.requestFocus();
     }
 
     public void setListener() {
@@ -297,7 +310,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             contentsLv.setVisibility(View.GONE);
             noCommentsTv.setVisibility(View.VISIBLE);
         }
-        mNestedScrollView.smoothScrollTo(0, 0);
     }
 
     @Override
