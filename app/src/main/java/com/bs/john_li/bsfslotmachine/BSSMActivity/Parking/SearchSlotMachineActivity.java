@@ -193,7 +193,12 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String testname = slotMachineList.get(position);
                 if (position == (slotMachineList.size() - 1) && testname.equals("查看更多 ")) {
-                    Toast.makeText(SearchSlotMachineActivity.this, "查看更多", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(SearchSlotMachineActivity.this, "查看更多", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SearchSlotMachineActivity.this, SearchSlotMachineListActivity.class);
+                    intent.putExtra("smList", new Gson().toJson(smList));
+                    intent.putExtra("totalCount", String.valueOf(totalCount));
+                    //intent.putExtra("", "");
+                    startActivity(intent);
                 } else {
                     String chooseStr = slotMachineList.get(position);
                     mSearchView.setQuery(chooseStr,true);
