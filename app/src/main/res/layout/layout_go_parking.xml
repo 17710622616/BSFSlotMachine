@@ -17,7 +17,7 @@
             android:id="@+id/parking_location_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="當前位置："
+            android:text="當前位置：定位中....."
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
             android:paddingTop="10dp"
