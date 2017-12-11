@@ -1,5 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -88,15 +91,9 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(OwnArticalListACtivty.this, ArticleDetialActivity.class);
+                intent.putExtra("startway", 1);
                 intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(i)));
-                startActivity(intent);
-            }
-        });
-        ownForumLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                callNetDeleteArticle(i);
-                return false;
+                startActivityForResult(intent, 6);
             }
         });
     }
@@ -181,37 +178,15 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
         }
     }
 
-    /**
-     * 刪除帖文
-     * @param i
-     */
-    private void callNetDeleteArticle(final int i) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_COTENTS + contentsList.get(i).getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
-        x.http().get(params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                ContentsListModel model = new Gson().fromJson(result, ContentsListModel.class);
-                if (model.getCode() == 200) {
-                    contentsList.remove(i);
-                } else {
-                    Toast.makeText(OwnArticalListACtivty.this, "帖文刪除失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
-                }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 6){
+                contentsList.clear();
+                mExpandSwipeRefreshLayout.setRefreshing(true);
+                callNetGetContentsList("");
             }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(OwnArticalListACtivty.this, "帖文刪除失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-                refreshContentsList();
-            }
-        });
+        }
     }
 }

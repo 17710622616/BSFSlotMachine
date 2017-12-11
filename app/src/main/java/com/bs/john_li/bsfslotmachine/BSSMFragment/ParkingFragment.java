@@ -272,7 +272,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             //MarkerOptions markerOptions = new MarkerOptions();
             //markerOptions.position(latLng);
             //markerOptions.title(address);
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 16));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 18));
             loadLL.setVisibility(View.GONE);
             // 添加marker，但是这里我们特意把marker弄成透明的
             //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.location_mark));

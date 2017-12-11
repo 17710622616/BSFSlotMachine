@@ -1,5 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,7 +70,7 @@ import java.util.List;
 
 public class ArticleDetialActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView postNameTv, contentsTv, noCommentsTv, moreTv;
-    private ImageView postCommentIv, shareIv;
+    private ImageView postCommentIv, shareIv, deleteIv;
     private CheckBox favoriteCb;
     private AppBarLayout appbar;
     private Toolbar articalToolbar;
@@ -83,6 +85,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private List<CommentListModel.CommentsArrayModel.CommentsModel> mCommentsModelList;
     private CommentsAdapter mCommentsAdapter;
     private CommentsExpandAdapter mCommentsExpandAdapter;
+    // 打開方式，0：帖文列表打開，1：個人列表打開
+    private int startway = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +107,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         moreTv = (TextView) findViewById(R.id.article_more_tv);
         postCommentIv = (ImageView) findViewById(R.id.articel_post_comment);
         shareIv = (ImageView) findViewById(R.id.articel_share);
+        deleteIv = (ImageView) findViewById(R.id.articel_delete);
         favoriteCb = (CheckBox) findViewById(R.id.articel_favorite);
         appbar = (AppBarLayout) findViewById(R.id.atical_detial_appbar);
         articalToolbar = (Toolbar) findViewById(R.id.atical_detial_toolbar);
@@ -211,12 +216,34 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 return false;
             }
         });
+
+        deleteIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(ArticleDetialActivity.this).setTitle("提醒")
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .setMessage("確定要刪除這條評論么?")
+                        .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callNetDeleteArticle();
+                            }})
+                        .setNegativeButton("取消", null)
+                        .create().show();
+            }
+        });
     }
 
     public void initData() {
         // 獲取帖文資料
         Intent intent = getIntent();
         mContentsModel = new Gson().fromJson(intent.getStringExtra("ContentsModel"), ContentsListModel.DataBean.ContentsModel.class);
+        startway = intent.getIntExtra("startway", 0);
+        // 刪除是否可見
+        if (startway != 0) {
+            deleteIv.setVisibility(View.VISIBLE);
+        }
+
         // toolbar
         setSupportActionBar(articalToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -492,6 +519,40 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    /**
+     * 刪除帖文
+     */
+    private void callNetDeleteArticle() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_COTENTS + mContentsModel.getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                ContentsListModel model = new Gson().fromJson(result, ContentsListModel.class);
+                if (model.getCode() == 200) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "帖文刪除失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(ArticleDetialActivity.this, "帖文刪除失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
             }
 
             @Override

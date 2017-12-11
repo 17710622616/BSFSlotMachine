@@ -191,6 +191,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
+                intent.putExtra("startway", 0);
                 intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(position)));
                 startActivity(intent);
             }
