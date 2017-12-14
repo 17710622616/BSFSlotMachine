@@ -509,7 +509,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("machineNo", machineNo);
+            String machineNoSub = machineNo.substring(0,machineNo.length() - 2);
+            jsonObj.put("machineNo", machineNoSub);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -524,6 +525,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
                     orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
                     orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                } else {
+                    Toast.makeText(ParkingOrderActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
 

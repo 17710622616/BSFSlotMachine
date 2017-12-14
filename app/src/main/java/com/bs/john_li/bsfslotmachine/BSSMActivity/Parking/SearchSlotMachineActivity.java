@@ -77,6 +77,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private int pageSize = 10;
     private int pageNo = 1;
     private long totalCount;
+    private String textChange = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +198,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                     Intent intent = new Intent(SearchSlotMachineActivity.this, SearchSlotMachineListActivity.class);
                     intent.putExtra("smList", new Gson().toJson(smList));
                     intent.putExtra("totalCount", String.valueOf(totalCount));
+                    intent.putExtra("textChange", textChange);
                     //intent.putExtra("", "");
                     startActivity(intent);
                 } else {
@@ -278,6 +280,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                textChange = newText;
                 SlotMachineListOutsideModel model = new Gson().fromJson(result.toString(), SlotMachineListOutsideModel.class);
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
@@ -337,20 +340,22 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     private void getHistorySearchFromSP() {
         String historySearch = (String) SPUtils.get(this, "SlotMachine", "");
         // 清空列表及顯示的列表
-        smList.clear();
-        slotMachineList.clear();
-        // 插入歷史數據到列表中
-        if (!historySearch.equals("")) {
-            Type type = new TypeToken<ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>>() {}.getType();
-            List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
-            for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model: historyList){
-                smList.add(model);
+        if (smList != null && slotMachineList != null) {
+            smList.clear();
+            slotMachineList.clear();
+            // 插入歷史數據到列表中
+            if (!historySearch.equals("")) {
+                Type type = new TypeToken<ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>>() {}.getType();
+                List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> historyList = new Gson().fromJson(historySearch, type);
+                for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model: historyList){
+                    smList.add(model);
+                }
             }
-        }
 
-        // 插入新的數據到顯示的List
-        for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model : smList) {
-            slotMachineList.add(model.getMachineNo() + " " + model.getAddress());
+            // 插入新的數據到顯示的List
+            for (SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model : smList) {
+                slotMachineList.add(model.getMachineNo() + " " + model.getAddress());
+            }
         }
     }
 

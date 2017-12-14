@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.OwnArticalListACtivty;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.ScreenUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
@@ -169,13 +170,25 @@ public class PublishPopWindow extends PopupWindow implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.camare_window:
-                forumFg.camareCallBack();
+                if (forumFg != null) {
+                    forumFg.camareCallBack();
+                } else {
+                    ((OwnArticalListACtivty)mContext).camareCallBack();
+                }
                 break;
             case R.id.text_window:
-                forumFg.textCallBack();
+                if (forumFg != null) {
+                    forumFg.textCallBack();
+                } else {
+                    ((OwnArticalListACtivty)mContext).textCallBack();
+                }
                 break;
             case R.id.album_window:
-                forumFg.albumCallBack();
+                if (forumFg != null) {
+                    forumFg.albumCallBack();
+                } else {
+                    ((OwnArticalListACtivty)mContext).textCallBack();
+                }
                 break;
             case R.id.ll_close:
                 if (isShowing()) {

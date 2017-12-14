@@ -222,7 +222,7 @@
             android:id="@+id/parking_order_amount_tv"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="金額：MOP 20"
+            android:text="金額：MOP 0"
             android:textColor="@color/colorWight"
             android:textSize="15sp"
             android:gravity="center"

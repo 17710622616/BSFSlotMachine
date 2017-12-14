@@ -3,33 +3,26 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarRechargeActivity;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartChooseCarRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
-import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
-import com.othershe.nicedialog.BaseNiceDialog;
-import com.othershe.nicedialog.NiceDialog;
-import com.othershe.nicedialog.ViewConvertListener;
-import com.othershe.nicedialog.ViewHolder;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,12 +44,15 @@ import java.util.TreeSet;
 
 public class ChooseCarActivity extends BaseActivity implements View.OnClickListener, ChooseCarAdapter.CarUpdateCallBack {
     private BSSMHeadView carListHead;
-    private ListView carLv;
-    private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
+    /*private ListView carLv;
+    private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;*/
+    private RefreshLayout mRefreshLayout;
+    private RecyclerView mRecycleView;
     private LinearLayout noCarLL;
 
     private List<CarModel.CarCountAndListModel.CarInsideModel> carModelList;
     private ChooseCarAdapter mCarListAdapter;
+    private SmartChooseCarRefreshAdapter mSmartChooseCarRefreshAdapter;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
@@ -77,14 +73,14 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void initView() {
         carListHead = findViewById(R.id.carlist_head);
-        carLv = findViewById(R.id.carlist_lv);
-        mExpandSwipeRefreshLayout = findViewById(R.id.car_list_expand_swipe);
+        mRecycleView = findViewById(R.id.carlist_lv);
+        mRefreshLayout = findViewById(R.id.car_list_expand_swipe);
         noCarLL = findViewById(R.id.no_car_ll);
     }
 
     @Override
     public void setListener() {
-        mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
+        /*mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
             @Override
             public void onLoad() {
                 mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
@@ -125,12 +121,35 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     finish();
                 }
             }
+        });*/
+
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                carModelList.clear();
+                pageNo = 1;
+                callNetGetCarList();
+            }
         });
+        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                if (pageSize * (pageNo + 1) > totolCarCount){
+                    Toast.makeText(ChooseCarActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                    mRefreshLayout.finishLoadmore(true);
+                    mRefreshLayout.finishRefresh(true);
+                } else {
+                    pageNo ++;
+                    callNetGetCarList();
+                }
+            }
+        });
+
 
         noCarLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mExpandSwipeRefreshLayout.setRefreshing(true);
+                mRefreshLayout.setEnableRefresh(true);
                 noCarLL.setVisibility(View.GONE);
                 carModelList.clear();
                 pageNo = 1;
@@ -145,13 +164,35 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         carListHead.setLeft(this);
         carListHead.setRight(R.mipmap.push_invitation, this);
 
-        carModelList = new ArrayList<>();
+        /*carModelList = new ArrayList<>();
         mCarListAdapter = new ChooseCarAdapter(this, carModelList, this);
         carLv.setAdapter(mCarListAdapter);
         mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
                 getResources().getColor(R.color.colorMineOringe),
                 getResources().getColor(R.color.colorMineGreen));
         mExpandSwipeRefreshLayout.setRefreshing(true);
+        callNetGetCarList();*/
+
+        carModelList = new ArrayList<>();
+        mSmartChooseCarRefreshAdapter = new SmartChooseCarRefreshAdapter(this, carModelList);
+        mRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        mRecycleView.setAdapter(mSmartChooseCarRefreshAdapter);
+        mSmartChooseCarRefreshAdapter.setOnItemClickListenr(new SmartChooseCarRefreshAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (carModelList.get(position).getIfPay() == 0) {  // 未充值
+                    Intent intent = new Intent(ChooseCarActivity.this, CarRechargeActivity.class);
+                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+                    startActivity(intent);
+                } else {    // 已充值
+                    Intent intent = new Intent();
+                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+        });
+        mRefreshLayout.setEnableRefresh(true);
         callNetGetCarList();
     }
 
@@ -207,7 +248,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
      * 請求完成，刷新界面
      */
     public void refreshView(){
-        if (carModelList.size() > 0) {
+        /*if (carModelList.size() > 0) {
             noCarLL.setVisibility(View.GONE);
         } else {
             noCarLL.setVisibility(View.VISIBLE);
@@ -215,7 +256,16 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         mCarListAdapter.refreshListView(carModelList);
         if (mExpandSwipeRefreshLayout.isRefreshing()) {
             mExpandSwipeRefreshLayout.setRefreshing(false);
+        }*/
+
+        if (carModelList.size() > 0) {
+            noCarLL.setVisibility(View.GONE);
+        } else {
+            noCarLL.setVisibility(View.VISIBLE);
         }
+        mSmartChooseCarRefreshAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
     }
 
     @Override

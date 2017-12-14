@@ -14,8 +14,8 @@ public class BSSMApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         x.Ext.init(this);
-        /*CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());*/
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
     }
 
 }

@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/item_search_sm_list_no"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="@mipmap/tingche_tubiao2">
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="18sp"/>
-    <TextView
-        android:id="@+id/item_search_sm_list_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="18sp"/>
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/item_search_sm_list_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/item_search_sm_list_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
+    </LinearLayout>
 </LinearLayout>

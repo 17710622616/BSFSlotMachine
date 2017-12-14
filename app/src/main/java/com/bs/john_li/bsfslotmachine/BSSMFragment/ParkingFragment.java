@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,19 +50,22 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 首页停车的碎片
  * Created by John_Li on 28/7/2017.
  */
 
-public class ParkingFragment extends BaseFragment implements View.OnClickListener, OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ParkingFragment extends BaseFragment implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static String TAG = ParkingFragment.class.getName();
     private View parkingView;
     private BSSMHeadView headView;
     private LinearLayout goParlingLL;
     private LinearLayout loadLL;
     private ImageView loadIv;
+    private ImageView loadFailIv;
     private TextView loadTv;
     private TextView mTvAddress;
 
@@ -97,9 +103,10 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         headView = (BSSMHeadView) parkingView.findViewById(R.id.parking_head);
         loadLL = parkingView.findViewById(R.id.parking_load_ll);
         loadIv = parkingView.findViewById(R.id.parking_load_iv);
+        loadFailIv = parkingView.findViewById(R.id.parking_load_fail);
         loadTv = parkingView.findViewById(R.id.parking_load_tv);
         mTvAddress = (TextView) parkingView.findViewById(R.id.parking_location_info);
-        mMapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map_view);
+        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_view);
         goParlingLL = parkingView.findViewById(R.id.go_parling_ll);
         mMapFragment.getMapAsync(this);
         View mapView = mMapFragment.getView();
@@ -108,7 +115,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             // Get the button view
             View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
             // and next place it, on bottom right (as Google Maps app)
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)locationButton.getLayoutParams();
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             // position on right bottom
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
@@ -125,17 +132,17 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void initData() {//2
         headView.setTitle("停車");
-        headView.setLeft(R.mipmap.search,this);
-        headView.setRight(R.mipmap.wallet,this);
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        headView.setLeft(R.mipmap.search, this);
+        headView.setRight(R.mipmap.wallet, this);
         loadIv.setBackgroundResource(R.drawable.load_anim);
         animationDrawable = (AnimationDrawable) loadIv.getBackground();
         animationDrawable.start();
+        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.head_left:
                 getActivity().startActivity(new Intent(getActivity(), SearchSlotMachineActivity.class));
                 break;
@@ -149,20 +156,21 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             case R.id.go_parling_ll:
                 if (mLastLocation != null && mAddress != null) {
                     Intent intent = new Intent(getActivity(), SlotMachineListActivity.class);
-                    intent.putExtra("Latitude",String.valueOf(mLastLocation.getLatitude()));
-                    intent.putExtra("Longitude",String.valueOf(mLastLocation.getLongitude()));
-                    intent.putExtra("Address",mAddress);
+                    intent.putExtra("Latitude", String.valueOf(mLastLocation.getLatitude()));
+                    intent.putExtra("Longitude", String.valueOf(mLastLocation.getLongitude()));
+                    intent.putExtra("Address", mAddress);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getActivity(), "您還沒定位呢，請先定位~",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "您還沒定位呢，請先定位~", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.parking_load_ll:
-                loadIv.setVisibility(View.VISIBLE);
-                loadTv.setText("加載中......");
                 animationDrawable.start();
+                loadIv.setVisibility(View.VISIBLE);
+                loadFailIv.setVisibility(View.GONE);
+                loadTv.setText("加載中......");
                 //onConnected(null);
-                if(mGoogleMap != null){
+                if (mGoogleMap != null) {
                     mGoogleMap.clear();
                 }
                 onMapReady(mGoogleMap);
@@ -189,7 +197,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             public boolean onMyLocationButtonClick() {
                 //onConnected(null);
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    if(mGoogleMap != null){
+                    if (mGoogleMap != null) {
                         mGoogleMap.clear();
                     }
                     onMapReady(mGoogleMap);
@@ -239,24 +247,18 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 loadMapFail();
             }
         } else {
-            Toast.makeText(getActivity(), "親，要打開GPS或網絡才可以定位的哦~", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "親，要打開GPS和網絡才可以定位的哦~", Toast.LENGTH_SHORT).show();
             loadMapFail();
         }
 
-        try {
-            int times = 0;
-            while (times < 5) {
-                Thread.sleep(1000);
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                if (mLastLocation != null) {
-                    break;
-                }
-                times ++;
-            }
-            //mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (isGPSEnabled && isNetworkEnabled){
+            mTimer = new Timer();
+            mTimer.schedule(new WaitTask(), 1000, 3000);
+        }
+
+        /*try {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -280,7 +282,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             //mCurrLocation = mGoogleMap.addMarker(markerOptions);
             mTvAddress.setText(address);
 
-            /*Log.i("位置", mLastLocation + "1111111");
+            *//*Log.i("位置", mLastLocation + "1111111");
             Log.i("位置", "最新的位置 getProvider " + mLastLocation.getProvider());
             Log.i("位置", "最新的位置 getAccuracy " + mLastLocation.getAccuracy());
             Log.i("位置", "最新的位置 getAltitude " + mLastLocation.getAltitude());
@@ -288,7 +290,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             Log.i("位置", "最新的位置 Extras() " + mLastLocation.getExtras());
             Log.i("位置", "最新的位置 Latitude() " + mLastLocation.getLatitude());
             Log.i("位置", "最新的位置 Longitude()() " + mLastLocation.getLongitude());
-            Log.i("位置", " =============  ");*/
+            Log.i("位置", " =============  ");*//*
         } else {
             loadMapFail();
         }
@@ -305,7 +307,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
             }
-        });
+        });*/
     }
 
     @Override
@@ -322,6 +324,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         //loadIv.setImageResource(R.mipmap.head_boy);
         loadIv.setVisibility(View.GONE);
         animationDrawable.stop();
+        loadFailIv.setVisibility(View.VISIBLE);
         loadTv.setText("加載失敗，點我重新加載\n如果未打開系統定位服務請開啟先!");
         mTvAddress.setText("定位失敗，請重試");
     }
@@ -357,9 +360,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUESTCODE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     buildGoogleApiClient();
                     mGoogleApiClient.connect();
                 } else {
@@ -368,4 +369,69 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
             }
         }
     }
+
+    /**
+     * 等待線程，讓主線程等待子線程，每隔一秒拿一次，直至拿到，最多拿五次
+     */
+    public class WaitTask extends TimerTask {
+        int times = 5;
+        @Override
+        public void run() {
+            Message msg = new Message();
+            if (times > 0 && mLastLocation == null) {   // 请求次数在五次内，且没获取到定位坐标
+                try {
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+                times--;
+            } else {
+                if (mLastLocation != null){     // 获取到定位坐标
+                    msg.what = 1;
+                    mHandler.sendMessage(msg);
+                } else {    // 获取次数已经超过五次，且没获取到，判定获取失败
+                    msg.what = 2;
+                    mHandler.sendMessage(msg);
+                }
+                mTimer.cancel();
+            }
+        }
+    }
+
+    private Timer mTimer;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    mTvAddress.setVisibility(View.VISIBLE);
+                    mAddress = getAddress(getActivity(), mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    String address = "當前位置：" + mAddress;
+                    mGoogleMap.clear();
+                    latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 18));
+                    loadLL.setVisibility(View.GONE);
+                    mTvAddress.setText(address);
+
+                    mLocationRequest = LocationRequest.create();
+                    mLocationRequest.setInterval(5000); //5 seconds
+                    mLocationRequest.setFastestInterval(3000); //3 seconds
+                    mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                    //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+
+                    //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            super.onLocationResult(locationResult);
+                        }
+                    });
+                    break;
+                case 2:
+                    loadMapFail();
+                    break;
+            }
+        }
+    };
 }

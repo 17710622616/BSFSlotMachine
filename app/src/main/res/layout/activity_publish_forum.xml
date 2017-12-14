@@ -37,13 +37,27 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
 
-            <ImageView
+
+            <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView
+                android:id="@+id/publish_forum_gv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:padding="8dp"
+                android:numColumns="auto_fit"
+                android:verticalSpacing="8dp"
+                android:horizontalSpacing="8dp"
+                android:columnWidth="90dp"
+                android:stretchMode="columnWidth"
+                android:gravity="center"/>
+
+            <!--<ImageView
                 android:id="@+id/publish_forum_iv"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@mipmap/car_sample"
                 android:scaleType="fitXY"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"/>-->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

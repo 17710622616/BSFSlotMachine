@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -15,14 +16,20 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ChooseCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnContentsOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +41,7 @@ import org.xutils.x;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +50,7 @@ import java.util.List;
  */
 
 public class PublishForumActivity extends BaseActivity implements View.OnClickListener{
-    private ImageView publish_forum_iv;
+    //private ImageView publish_forum_iv;
     private BSSMHeadView publish_forum_head;
     private EditText publish_artical_et, publish_artical_title_et;
 
@@ -51,6 +59,9 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private List<String> imgUrlList;
+    private NoScrollGridView photoGv;
+    private PhotoAdapter mPhotoAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,15 +73,81 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void initView() {
-        publish_forum_iv = findViewById(R.id.publish_forum_iv);
+        //publish_forum_iv = findViewById(R.id.publish_forum_iv);
         publish_forum_head = findViewById(R.id.publish_forum_head);
         publish_artical_et = findViewById(R.id.publish_artical_et);
         publish_artical_title_et = findViewById(R.id.publish_artical_title_et);
+        photoGv = findViewById(R.id.publish_forum_gv);
     }
 
     @Override
     public void setListener() {
+        photoGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == imgUrlList.size() - 1) {
+                    if (imgUrlList.size() < 6) {
+                        NiceDialog.init()
+                                .setLayoutId(R.layout.dialog_photo)
+                                .setConvertListener(new ViewConvertListener() {
+                                    @Override
+                                    protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                        viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                if(BSSMCommonUtils.IsThereAnAppToTakePictures(PublishForumActivity.this)) {
+                                                    dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                                    if (!dir.exists()) {
+                                                        dir.mkdir();
+                                                    }
 
+                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                                                    Date date = new Date(System.currentTimeMillis());
+                                                    file = new File(dir, "location" + format.format(date) + ".jpg");
+                                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                                                    startActivityForResult(intent, TAKE_PHOTO);
+                                                } else {
+                                                    Toast.makeText(PublishForumActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
+                                                }
+                                                baseNiceDialog.dismiss();
+                                            }
+                                        });
+                                        viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                                if (!dir.exists()) {
+                                                    dir.mkdir();
+                                                }
+
+                                                Intent getAlbum;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                    getAlbum = new Intent(Intent.ACTION_PICK);
+                                                } else {
+                                                    getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
+                                                }
+                                                getAlbum.setType("image/*");
+                                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                                baseNiceDialog.dismiss();
+                                            }
+                                        });
+                                        viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                baseNiceDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                })
+                                .setShowBottom(true)
+                                .show(getSupportFragmentManager());
+                    } else {
+                        Toast.makeText(PublishForumActivity.this, "照片數量不可多於5張哦~", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -80,6 +157,10 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         publish_forum_head.setTitle("發佈帖文");
         publish_forum_head.setLeft(this);
         publish_forum_head.setRight(R.mipmap.ok, this);
+        imgUrlList = new ArrayList<>();
+        mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
+        photoGv.setAdapter(mPhotoAdapter);
+
         switch (startWay) {
             case "camare":
                 callCamare();
@@ -94,6 +175,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void callAlbum() {
+        imgUrlList.add("");
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
         if (!dir.exists()) {
             dir.mkdir();
@@ -114,6 +196,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void callCamare() {
+        imgUrlList.add("");
         if(BSSMCommonUtils.IsThereAnAppToTakePictures(this)) {
             dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
             if (!dir.exists()) {
@@ -142,12 +225,16 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 Uri contentUri = Uri.fromFile(file);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
-                x.image().bind(publish_forum_iv, file.getPath(), options);
+                imgUrlList.add(0, file.getPath());
+                mPhotoAdapter.refreshData(imgUrlList);
+                //x.image().bind(publish_forum_iv, file.getPath(), options);
                 break;
             case TAKE_PHOTO_FROM_ALBUM:
                 String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
                 file = new File(imagePath);
-                x.image().bind(publish_forum_iv, file.getPath(), options);
+                imgUrlList.add(0, file.getPath());
+                mPhotoAdapter.refreshData(imgUrlList);
+                //x.image().bind(publish_forum_iv, file.getPath(), options);
                 break;
             default:
                 break;

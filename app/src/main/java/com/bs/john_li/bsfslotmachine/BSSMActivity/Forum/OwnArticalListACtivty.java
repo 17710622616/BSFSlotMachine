@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -15,14 +17,19 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.BSSMView.PublishPopWindow;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -35,14 +42,14 @@ import java.util.List;
  * Created by John_Li on 28/10/2017.
  */
 
-public class OwnArticalListACtivty extends BaseActivity implements View.OnClickListener{
+public class OwnArticalListACtivty extends BaseActivity implements View.OnClickListener, PublishPopWindow.WindowClickCallBack {
     private BSSMHeadView headView;
-    private ListView ownForumLv;
     private LinearLayout own_no_artical_ll;
-    private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;
-
+    private RefreshLayout mRefreshLayout;
+    private RecyclerView mRecycleView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
-    private ContentsAdapter mContentsAdapter;
+    private SmartOwnRefreshAdapter mSmartOwnRefreshAdapter;
+    private PublishPopWindow popWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,44 +63,30 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
     @Override
     public void initView() {
         headView = findViewById(R.id.own_head);
-        ownForumLv = findViewById(R.id.own_forum_lv);
-        mExpandSwipeRefreshLayout = findViewById(R.id.own_forum_list);
+        //ownForumLv = findViewById(R.id.own_forum_lv);
+        //mExpandSwipeRefreshLayout = findViewById(R.id.own_forum_list);
+        mRecycleView = findViewById(R.id.own_forum_lv);
+        mRefreshLayout = findViewById(R.id.own_forum_list);
         own_no_artical_ll = findViewById(R.id.own_no_artical_ll);
     }
 
     @Override
     public void setListener() {
-        mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onLoad() {
-                mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //和最大的数据比较
-                        if (contentsList.size() > 0) {
-                            callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
-                        } else {
-                            callNetGetContentsList("");
-                        }
-                    }
-                }, 500);
-            }
-        });
-
-        mExpandSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+            public void onRefresh(RefreshLayout refreshlayout) {
                 contentsList.clear();
                 callNetGetContentsList("");
             }
         });
-
-        ownForumLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(OwnArticalListACtivty.this, ArticleDetialActivity.class);
-                intent.putExtra("startway", 1);
-                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(i)));
-                startActivityForResult(intent, 6);
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                if (contentsList.size() > 0) {
+                    callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
+                } else {
+                    callNetGetContentsList("");
+                }
             }
         });
     }
@@ -105,9 +98,19 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
         headView.setRight(R.mipmap.push_invitation, this);
 
         contentsList = new ArrayList<>();
-        mContentsAdapter = new ContentsAdapter(OwnArticalListACtivty.this, contentsList);
-        ownForumLv.setAdapter(mContentsAdapter);
-        mExpandSwipeRefreshLayout.setRefreshing(true);
+        mSmartOwnRefreshAdapter = new SmartOwnRefreshAdapter(this, contentsList);
+        mRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        mRecycleView.setAdapter(mSmartOwnRefreshAdapter);
+        mSmartOwnRefreshAdapter.setOnItemClickListenr(new SmartOwnRefreshAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(OwnArticalListACtivty.this, ArticleDetialActivity.class);
+                intent.putExtra("startway", 1);
+                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(position)));
+                startActivityForResult(intent, 6);
+            }
+        });
+        mRefreshLayout.setEnableRefresh(true);
         callNetGetContentsList("");
     }
 
@@ -118,7 +121,13 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.head_right:
-
+                if (!SPUtils.get(this, "UserToken", "").equals("")) {
+                    popWindow = new PublishPopWindow(this, null);
+                    popWindow.showMoreWindow(view);
+                    StatusBarUtil.setColor(this,getResources().getColor(R.color.colorWight));
+                } else {
+                    Toast.makeText(this, "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -162,31 +171,66 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
      * 刷新帖文界面
      */
     private void refreshContentsList() {
-        mContentsAdapter.refreshListView(contentsList);
-        if (mExpandSwipeRefreshLayout.isRefreshing()) {
-            mExpandSwipeRefreshLayout.setRefreshing(false);
-        }
-        if (mExpandSwipeRefreshLayout.isLoading()) {
-            mExpandSwipeRefreshLayout.setLoading(false);
-        }
         if (contentsList.size() > 0) {
             own_no_artical_ll.setVisibility(View.GONE);
-            mExpandSwipeRefreshLayout.setVisibility(View.VISIBLE);
         } else {
             own_no_artical_ll.setVisibility(View.VISIBLE);
-            mExpandSwipeRefreshLayout.setVisibility(View.GONE);
         }
+        mSmartOwnRefreshAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == 6){
-                contentsList.clear();
-                mExpandSwipeRefreshLayout.setRefreshing(true);
-                callNetGetContentsList("");
+            switch (requestCode) {
+                case 1:
+                    ContentsListModel.DataBean.ContentsModel returnContentsModel1 = new Gson().fromJson(data.getStringExtra("return_contents"), ContentsListModel.DataBean.ContentsModel.class);
+                    contentsList.add(0, returnContentsModel1);
+                    refreshContentsList();
+                    break;
+                case 2:
+                    ContentsListModel.DataBean.ContentsModel returnContentsModel2 = new Gson().fromJson(data.getStringExtra("return_contents"), ContentsListModel.DataBean.ContentsModel.class);
+                    contentsList.add(0, returnContentsModel2);
+                    refreshContentsList();
+                    break;
+                case 3:
+                    ContentsListModel.DataBean.ContentsModel returnContentsModel3 = new Gson().fromJson(data.getStringExtra("return_contents"), ContentsListModel.DataBean.ContentsModel.class);
+                    contentsList.add(0, returnContentsModel3);
+                    refreshContentsList();
+                    break;
+                case 6:
+                    contentsList.clear();
+                    mRefreshLayout.setEnableRefresh(true);
+                    callNetGetContentsList("");
+                    break;
             }
         }
+    }
+
+    @Override
+    public void camareCallBack() {
+        popWindow.closePopupWindow();
+        Intent intent = new Intent(this, PublishForumActivity.class);
+        intent.putExtra("startWay","camare");
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void textCallBack() {
+        popWindow.closePopupWindow();
+        Intent intent = new Intent(this, PublishForumActivity.class);
+        intent.putExtra("startWay","text");
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    public void albumCallBack() {
+        popWindow.closePopupWindow();
+        Intent intent = new Intent(this, PublishForumActivity.class);
+        intent.putExtra("startWay","album");
+        startActivityForResult(intent, 3);
     }
 }

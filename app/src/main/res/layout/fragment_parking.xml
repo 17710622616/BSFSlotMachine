@@ -39,11 +39,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <ImageView
+                android:id="@+id/parking_load_fail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/load_fail"
+                android:visibility="gone"/>
             <TextView
                 android:id="@+id/parking_load_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="加載中......"
+                android:textSize="20sp"
                 android:gravity="center"
                 android:layout_marginTop="10dp"/>
         </LinearLayout>

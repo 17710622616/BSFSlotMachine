@@ -51,7 +51,7 @@ public class SplashActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
-        }, 3000);
+        }, 1500);
     }
 
     @Override

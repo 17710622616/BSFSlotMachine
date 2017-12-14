@@ -12,7 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout
+        <!--<com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout
             android:id="@+id/car_list_expand_swipe"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,7 +21,30 @@
                 android:id="@+id/carlist_lv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-        </com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout>
+        </com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout>-->
+        <!--<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/car_list_expand_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/carlist_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:background="#fff" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>-->
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/car_list_expand_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/carlist_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:background="#fff" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
         <LinearLayout
             android:id="@+id/no_car_ll"
