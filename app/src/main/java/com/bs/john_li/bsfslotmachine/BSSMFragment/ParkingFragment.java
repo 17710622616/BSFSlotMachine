@@ -155,11 +155,15 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.go_parling_ll:
                 if (mLastLocation != null && mAddress != null) {
-                    Intent intent = new Intent(getActivity(), SlotMachineListActivity.class);
-                    intent.putExtra("Latitude", String.valueOf(mLastLocation.getLatitude()));
-                    intent.putExtra("Longitude", String.valueOf(mLastLocation.getLongitude()));
-                    intent.putExtra("Address", mAddress);
-                    startActivity(intent);
+                    if(!mAddress.equals("未知")){
+                        Intent intent = new Intent(getActivity(), SlotMachineListActivity.class);
+                        intent.putExtra("Latitude", String.valueOf(mLastLocation.getLatitude()));
+                        intent.putExtra("Longitude", String.valueOf(mLastLocation.getLongitude()));
+                        intent.putExtra("Address", mAddress);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), "您的地址信息錯誤，請重開網絡或重新打開設備~", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "您還沒定位呢，請先定位~", Toast.LENGTH_SHORT).show();
                 }
