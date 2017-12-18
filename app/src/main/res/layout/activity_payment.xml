@@ -25,7 +25,8 @@
             android:textColor="@color/colorBlack"
             android:textSize="12sp" />
 
-        <TextView
+        <com.bs.john_li.bsfslotmachine.BSSMView.ShowTiemTextView
+            android:id="@+id/payment_showtime_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorWight"
@@ -73,8 +74,12 @@
                 style="@style/MineItemTextView"
                 android:text="我的錢包" />
 
-            <ImageView
-                style="@style/MineItemImageNext"/>
+            <CheckBox
+                android:id="@+id/payment_my_wallet_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -90,8 +95,12 @@
                 style="@style/MineItemTextView"
                 android:text="支付寶" />
 
-            <ImageView
-                style="@style/MineItemImageNext"/>
+            <CheckBox
+                android:id="@+id/payment_alipay_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -107,8 +116,12 @@
                 style="@style/MineItemTextView"
                 android:text="微信支付" />
 
-            <ImageView
-                style="@style/MineItemImageNext"/>
+            <CheckBox
+                android:id="@+id/payment_wecaht_pay_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp"/>
         </LinearLayout>
 
         <TextView

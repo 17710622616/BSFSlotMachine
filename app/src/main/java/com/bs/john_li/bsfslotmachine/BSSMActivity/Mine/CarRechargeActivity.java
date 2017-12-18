@@ -205,9 +205,9 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             public void onSuccess(String result) {
                 OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
                 if (model.getCode() == 200) {
-                    Toast.makeText(CarRechargeActivity.this, "訂單號：" + model.getData().getOrderNo(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", model.getData().getOrderNo());
+                    intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivity(intent);
                 } else {
                     Toast.makeText(CarRechargeActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();

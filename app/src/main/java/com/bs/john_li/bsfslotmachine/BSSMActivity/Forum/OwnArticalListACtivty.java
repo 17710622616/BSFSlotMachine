@@ -1,29 +1,21 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
-import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.BSSMView.PublishPopWindow;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;

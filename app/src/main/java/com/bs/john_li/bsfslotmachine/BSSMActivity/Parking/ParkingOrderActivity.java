@@ -372,6 +372,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
+                    intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivity(intent);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
@@ -421,6 +422,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
+                    intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivity(intent);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
