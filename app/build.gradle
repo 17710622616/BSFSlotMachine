@@ -52,4 +52,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.crystal:crystalrangeseekbar:1.1.1'
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
+    compile 'com.aliyun.dpa:oss-android-sdk:2.4.5'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okio:okio:1.9.0'
 }

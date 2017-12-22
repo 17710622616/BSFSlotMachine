@@ -191,7 +191,6 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      */
     private void exchangeMop() {
         RequestParams params = new RequestParams("http://op.juhe.cn/onebox/exchange/currency?key=" + BSSMConfigtor.JUHE_APPKEY + "&from=MOP&to=CNY");
-
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
