@@ -31,7 +31,7 @@ public class BSSMConfigtor {
     // OSS的BucketName
     public static final String BucketName = "parkingman";
     // OSS的BucketName
-    public static final String END_POINT = "oss-cn-shanghai.aliyuncs.com";
+    public static final String END_POINT = "https://oss-cn-beijing.aliyuncs.com";
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
     // 咪錶搜索结果

@@ -38,6 +38,8 @@ import com.alibaba.sdk.android.oss.callback.OSSProgressCallback;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.GetObjectRequest;
+import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
@@ -181,6 +183,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     carTypeTv.setText("車輛類型：" + "重型汽車");
                     break;
             }
+            downImage(carInsideModel.getImgUrl());
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());
@@ -744,14 +747,14 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, file.getName(), file.getPath());
         // 异步上传时可以设置进度回调
-        put.setProgressCallback(new OSSProgressCallback<PutObjectRequest>() {
+        /*put.setProgressCallback(new OSSProgressCallback<PutObjectRequest>() {
             @Override
             public void onProgress(PutObjectRequest request, long currentSize, long totalSize) {
-                /*final int progress = (int) (100 * currentSize / totalSize);
+                final int progress = (int) (100 * currentSize / totalSize);
                 pb_progress.setProgress(progress);
-                Log.d("PutObject", "currentSize: " + currentSize + " totalSize: " + totalSize);*/
+                Log.d("PutObject", "currentSize: " + currentSize + " totalSize: " + totalSize);
             }
-        });
+        });*/
         final Message msg = new Message();
         //异步上传 可在主线程中更新UI可在主线程
         OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
@@ -765,6 +768,54 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
                 msg.what = -1;
                 mHandler.sendMessage(msg);
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * 从OSS下载图片
+     */
+    private void downImage(String imgUrl) {
+        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(BSSMConfigtor.accessKey, BSSMConfigtor.screctKey);
+        //        从服务器获取token
+        //        OSSCredentialProvider credentialProvider1 = new STSGetter(endpoint);
+        ClientConfiguration conf = new ClientConfiguration();
+        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
+        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
+        conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
+        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+        oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
+        GetObjectRequest get = new GetObjectRequest(BSSMConfigtor.BucketName, imgUrl);
+        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
+            @Override
+            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
+                // 请求成功
+                //Log.d("Content-Length", "" + getResult.getContentLength());
+                InputStream inputStream = result.getObjectContent();
+                byte[] buffer = new byte[2048];
+                int len;
+                try {
+                    while ((len = inputStream.read(buffer)) != -1) {
+                        // 处理下载的数据
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
                 // 请求异常
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
