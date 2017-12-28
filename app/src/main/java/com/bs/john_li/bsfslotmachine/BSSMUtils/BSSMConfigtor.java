@@ -24,10 +24,10 @@ public class BSSMConfigtor {
     public static int ADD_CAR_RESULT = 4;
     // 聚合數據APPKEY
     public final static String JUHE_APPKEY = "9dfd4b86e08257c036ef4e5a6558882a";
-    // OSS的accessKey
-    public static final String accessKey = "LTAIGRQR9R5krVv2";
-    // 你的scretKey
-    public static final String screctKey = "lGYpQfXF1CuL8TrBvsjCXDorMBJ5eu";
+    // OSS請求token的接口
+    public static final String OSS_TOKEN = "/oss/stsAuthorize";
+    // OSS的应用服务器回調地址
+    public static final String OSS_SERVER_CALLBACK_ADDRESS = "";
     // OSS的BucketName
     public static final String BucketName = "parkingman";
     // OSS的BucketName

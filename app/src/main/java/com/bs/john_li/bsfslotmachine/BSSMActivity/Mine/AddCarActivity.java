@@ -25,12 +25,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
@@ -50,7 +52,11 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.OssService;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.STSGetter;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.UIDisplayer;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
@@ -77,6 +83,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -88,7 +95,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private BSSMHeadView headView;
     private LinearLayout carPhotoLL, carTypeLL, carNoLL, carModelLL, carBrandLL, carStyleLL;
     private ImageView carPhotoIv;
-    private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv;
+    private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv,outPutTv;
+    private ProgressBar ivProgress;
 
     public static final int TAKE_PHOTO = 1;
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
@@ -98,14 +106,15 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
     private String carType, carNo, carModel, carBrand, carStyle;
     private String startWay;
+    //负责所有的界面更新
+    private OSSClient oss;
 
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case 0:
-                    Toast.makeText(AddCarActivity.this, "圖片上傳成功！", Toast.LENGTH_LONG).show();
+                case 0:     // 車輛圖片提交至OSS成功
                     if (startWay.equals("update")) {
                         // 修改車輛信息
                         callNetUpdateCar();
@@ -114,17 +123,19 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         callNetSubmiteCar();
                     }
                     break;
-                case -1:
-                    Toast.makeText(AddCarActivity.this, "圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
+                case -1:    // 車輛圖片提交至OSS失敗
+                    Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
+                    break;
+                case 2:    // 從OSS車輛圖片獲取成功
+                    carPhotoIv.setImageBitmap((Bitmap) msg.obj);
+                    break;
+                case -2:    // 從OSS車輛圖片獲取失敗
+                    carPhotoIv.setImageResource(R.mipmap.load_img_fail);
                     break;
             }
         }
     };
-    private OSSClient oss;
-    //上传文件路径
-    private String picturePath;
-    //上传文件名称
-    private String name;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +160,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         carModelTv = findViewById(R.id.add_car_model_tv);
         carBrandTv = findViewById(R.id.add_car_brand_tv);
         carStyleTv = findViewById(R.id.add_car_style_tv);
+        outPutTv = findViewById(R.id.add_car_photo_output_tv);
+        ivProgress = findViewById(R.id.add_car_photo_bar);
     }
 
     @Override
@@ -163,15 +176,18 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void initData() {
+        // 初始化OSS
+        initOSS();
+        // 初始化數據
         headView.setLeft(this);
         headView.setRight(R.mipmap.ok, this);
         Intent intent = getIntent();
         startWay = intent.getStringExtra("startWay");
+        // 判斷打開方式
         if (startWay.equals("update")){
             headView.setTitle("修改車輛");
+            carPhotoIv.setImageResource(R.mipmap.img_loading);
             carInsideModel = new Gson().fromJson(intent.getStringExtra("updateModel"), CarModel.CarCountAndListModel.CarInsideModel.class);
-
-            //x.image().bind(carPhotoIv, carInsideModel.getImgUrl(), options);
             switch (carInsideModel.getIfPerson()) {
                 case 1:
                     carTypeTv.setText("車輛類型：" + "輕重型摩托車");
@@ -183,13 +199,14 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     carTypeTv.setText("車輛類型：" + "重型汽車");
                     break;
             }
-            downImage(carInsideModel.getImgUrl());
+            downloadImg(carInsideModel.getImgUrl());
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());
             carStyleTv.setText("車輛型號：" + carInsideModel.getCarStyle());
         } else {
             headView.setTitle("添加車輛");
+            carPhotoIv.setImageResource(R.mipmap.car_zhanwei);
             carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();
             carInsideModel.setId(-1);
             carInsideModel.setUserId(1);
@@ -246,7 +263,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     if (!carInsideModel.getModelForCar().equals("")) {
                         if (!carInsideModel.getCarBrand().equals("")) {
                             if (!carInsideModel.getCarStyle().equals("")) {
-                                uploadImage();
+                                //uploadImage();
+                                //mOssService.asyncPutImage(file.getName(), file.getPath());
+                                putImg();
                             } else {
                                 Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                             }
@@ -276,7 +295,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
-            jsonObj.put("imgUrl","objectNam1");
+            jsonObj.put("imgUrl", file.getName());
             jsonObj.put("ifPerson",carInsideModel.getIfPerson());
             jsonObj.put("carNo",carInsideModel.getCarNo());
             jsonObj.put("modelForCar",carInsideModel.getModelForCar());
@@ -330,7 +349,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("imgUrl","objectNam1");
+            String fileName = file.getName();
+            jsonObj.put("imgUrl", fileName);
             /*switch (carType) {
                 case "私家車":
                     jsonObj.put("ifPerson",0);
@@ -732,42 +752,44 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 提交照片到OSS
+     * 初始化一个OssService用来上传
      */
-    private void uploadImage(){
-        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(BSSMConfigtor.accessKey, BSSMConfigtor.screctKey);
-//        从服务器获取token
-//        OSSCredentialProvider credentialProvider1 = new STSGetter(endpoint);
+    public void initOSS() {
+        OSSCredentialProvider credentialProvider;
+        //使用自己的获取STSToken的类
+        //STSGetter类，封装如何跟从应用服务器取数据，必须继承于OSSFederationCredentialProvider这个类。 取Token这个取决于您所写的APP跟应用服务器数据的协议设计。
+        if (BSSMConfigtor.OSS_TOKEN .equals("")) {
+            credentialProvider = new STSGetter(this);
+        }else {
+            credentialProvider = new STSGetter(this, BSSMConfigtor.BASE_URL + BSSMConfigtor.OSS_TOKEN);
+        }
+        //初始化OSSClient
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
+        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
+    }
+
+    /**
+     * 上傳圖片到OSS
+     */
+    private void putImg() {
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, file.getName(), file.getPath());
-        // 异步上传时可以设置进度回调
-        /*put.setProgressCallback(new OSSProgressCallback<PutObjectRequest>() {
-            @Override
-            public void onProgress(PutObjectRequest request, long currentSize, long totalSize) {
-                final int progress = (int) (100 * currentSize / totalSize);
-                pb_progress.setProgress(progress);
-                Log.d("PutObject", "currentSize: " + currentSize + " totalSize: " + totalSize);
-            }
-        });*/
-        final Message msg = new Message();
-        //异步上传 可在主线程中更新UI可在主线程
+
+        // 異步請求
         OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                msg.what = 0;
+                Message msg = new Message();
+                msg.what  = 0;
                 mHandler.sendMessage(msg);
             }
 
             @Override
             public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                msg.what = -1;
-                mHandler.sendMessage(msg);
                 // 请求异常
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
@@ -780,39 +802,53 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     Log.e("HostId", serviceException.getHostId());
                     Log.e("RawMessage", serviceException.getRawMessage());
                 }
+
+                Message msg = new Message();
+                msg.what  = -1;
+                mHandler.sendMessage(msg);
             }
         });
     }
 
-    /**
-     * 从OSS下载图片
-     */
-    private void downImage(String imgUrl) {
-        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(BSSMConfigtor.accessKey, BSSMConfigtor.screctKey);
-        //        从服务器获取token
-        //        OSSCredentialProvider credentialProvider1 = new STSGetter(endpoint);
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
-        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
-        GetObjectRequest get = new GetObjectRequest(BSSMConfigtor.BucketName, imgUrl);
+    private void downloadImg(String object) {
+        if ((object == null) || object.equals("")) {
+            Log.w("AsyncGetImage", "ObjectNull");
+            return;
+        }
+
+        GetObjectRequest get = new GetObjectRequest(BSSMConfigtor.BucketName, object);
+
         OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
             @Override
             public void onSuccess(GetObjectRequest request, GetObjectResult result) {
                 // 请求成功
-                //Log.d("Content-Length", "" + getResult.getContentLength());
                 InputStream inputStream = result.getObjectContent();
-                byte[] buffer = new byte[2048];
-                int len;
                 try {
-                    while ((len = inputStream.read(buffer)) != -1) {
-                        // 处理下载的数据
-                    }
-                } catch (IOException e) {
+                    Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                    inputStream.close();
+                    Message msg = mHandler.obtainMessage(2, bm);
+                    msg.sendToTarget();
+                    System.gc();
+                }catch (Exception e) {
                     e.printStackTrace();
                 }
+                //重载InputStream来获取读取进度信息
+                /*ProgressInputStream progressStream = new ProgressInputStream(inputStream, new OSSProgressCallback<GetObjectRequest>() {
+                    @Override
+                    public void onProgress(GetObjectRequest o, long currentSize, long totalSize) {
+                        Log.d("GetObject", "currentSize: " + currentSize + " totalSize: " + totalSize);
+                        int progress = (int) (100 * currentSize / totalSize);
+                    }
+                }, result.getContentLength());*/
+                /*try {
+                    //需要根据对应的View大小来自适应缩放
+                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(progressStream, carPhotoIv);
+                    Message msg = mHandler.obtainMessage(2, bm);
+                    msg.sendToTarget();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }*/
             }
             @Override
             public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
@@ -828,6 +864,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     Log.e("HostId", serviceException.getHostId());
                     Log.e("RawMessage", serviceException.getRawMessage());
                 }
+
+                Message msg = new Message();
+                msg.what = -2;
+                mHandler.sendMessage(msg);
             }
         });
     }

@@ -11,12 +11,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.STSGetter;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
@@ -65,6 +69,8 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     private long totolCarCount;
     // 修改的位置
     private int updatePosition = 0;
+    //负责所有的界面更新
+    private OSSClient oss;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,55 +114,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             }
         });
 
-        /*mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
-            @Override
-            public void onLoad() {
-                mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //和最大的数据比较
-                        if (pageSize * (pageNo + 1) > totolCarCount){
-                            Toast.makeText(CarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
-                        } else {
-                            pageNo ++;
-                            callNetGetCarList();
-                        }
-                    }
-                }, 500);
-            }
-        });
-
-        mExpandSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                carModelList.clear();
-                pageNo = 1;
-                callNetGetCarList();
-            }
-        });
-        carLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showCarDeleteDialog(i);
-                return false;
-            }
-        });
-
-        carLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(CarListActivity.this, AddCarActivity.class);
-                intent.putExtra("startWay", "update");
-                intent.putExtra("updateModel", new Gson().toJson(carModelList.get(i)));
-                updatePosition = i;
-                startActivityForResult(intent, BSSMConfigtor.UPDATE_CAR_RQUEST);
-            }
-        });*/
-
         noCarLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*mExpandSwipeRefreshLayout.setRefreshing(true);
-                noCarLL.setVisibility(View.GONE);*/
                 carModelList.clear();
                 pageNo = 1;
                 callNetGetCarList();
@@ -169,18 +129,10 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carListHead.setTitle("我的車輛");
         carListHead.setLeft(this);
         carListHead.setRight(R.mipmap.push_invitation, this);
-
-        /*carModelList = new ArrayList<>();
-        mCarListAdapter = new CarListAdapter(this, carModelList, this);
-        mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
-                getResources().getColor(R.color.colorMineOringe),
-                getResources().getColor(R.color.colorMineGreen));
-        mExpandSwipeRefreshLayout.setRefreshing(true);
-        carLv.setAdapter(mCarListAdapter);
-        callNetGetCarList();*/
-
+        // 初始化OSS
+        initOSS();
         carModelList = new ArrayList<>();
-        mSmartCarListRefreshAdapter = new SmartCarListRefreshAdapter(this, carModelList);
+        mSmartCarListRefreshAdapter = new SmartCarListRefreshAdapter(this, carModelList, oss);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartCarListRefreshAdapter);
         mSmartCarListRefreshAdapter.setOnItemLongClickListenr(new SmartCarListRefreshAdapter.OnItemLongClickListener() {
@@ -190,6 +142,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             }
         });
         mRefreshLayout.setEnableRefresh(true);
+        mRefreshLayout.setHeaderHeight(60);
         callNetGetCarList();
     }
 
@@ -245,7 +198,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     carModelList.remove(position);
-                    mSmartCarListRefreshAdapter.notifyDataSetChanged();
+                    mSmartCarListRefreshAdapter.refreshListView(carModelList);
                     Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
@@ -321,22 +274,12 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
      * 請求完成，刷新界面
      */
     public void refreshView(){
-        /*if (carModelList.size() > 0) {
-            noCarLL.setVisibility(View.GONE);
-        } else {
-            noCarLL.setVisibility(View.VISIBLE);
-        }
-        mCarListAdapter.refreshListView(carModelList);
-        if (mExpandSwipeRefreshLayout.isRefreshing()) {
-            mExpandSwipeRefreshLayout.setRefreshing(false);
-        }*/
-
         if (carModelList.size() > 0) {
             noCarLL.setVisibility(View.GONE);
         } else {
             noCarLL.setVisibility(View.VISIBLE);
         }
-        mSmartCarListRefreshAdapter.notifyDataSetChanged();
+        mSmartCarListRefreshAdapter.refreshListView(carModelList);
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadmore();
     }
@@ -366,12 +309,12 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             case 3: // 添加車輛的返回
                 carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
                 //mCarListAdapter.refreshListView(carModelList);
-                mSmartCarListRefreshAdapter.notifyDataSetChanged();
+                mSmartCarListRefreshAdapter.refreshListView(carModelList);
                 break;
             case 5: // 修改車輛的返回
                 carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("CAR_FROM_UPDATE"), CarModel.CarCountAndListModel.CarInsideModel.class));
                 //mCarListAdapter.refreshListView(carModelList);
-                mSmartCarListRefreshAdapter.notifyDataSetChanged();
+                mSmartCarListRefreshAdapter.refreshListView(carModelList);
                 break;
         }
     }
@@ -380,9 +323,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
      * List去重
      */
     private void deWeightListById() {
-        /*Set<CarModel.CarCountAndListModel.CarInsideModel> carSet = new TreeSet<>((o1, o2) -> Integer.toString(o1.getId()).compareTo(Integer.toString(o2.getId())));
-        carSet.addAll(carModelList);
-        carModelList = new ArrayList<>(carSet);*/
         Set<CarModel.CarCountAndListModel.CarInsideModel> s= new TreeSet<CarModel.CarCountAndListModel.CarInsideModel>(new Comparator<CarModel.CarCountAndListModel.CarInsideModel>(){
 
             @Override
@@ -414,5 +354,26 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         intent.putExtra("updateModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
         updatePosition = Integer.parseInt(position);
         startActivityForResult(intent, BSSMConfigtor.UPDATE_CAR_RQUEST);
+    }
+
+    /**
+     * 初始化一个OssService用来上传
+     */
+    public void initOSS() {
+        OSSCredentialProvider credentialProvider;
+        //使用自己的获取STSToken的类
+        //STSGetter类，封装如何跟从应用服务器取数据，必须继承于OSSFederationCredentialProvider这个类。 取Token这个取决于您所写的APP跟应用服务器数据的协议设计。
+        if (BSSMConfigtor.OSS_TOKEN .equals("")) {
+            credentialProvider = new STSGetter(this);
+        }else {
+            credentialProvider = new STSGetter(this, BSSMConfigtor.BASE_URL + BSSMConfigtor.OSS_TOKEN);
+        }
+        //初始化OSSClient
+        ClientConfiguration conf = new ClientConfiguration();
+        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
+        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
+        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
+        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+        oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
     }
 }

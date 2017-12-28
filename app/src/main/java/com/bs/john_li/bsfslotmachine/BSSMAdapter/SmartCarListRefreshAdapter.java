@@ -1,7 +1,13 @@
 package com.bs.john_li.bsfslotmachine.BSSMAdapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +15,25 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.callback.OSSProgressCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.GetObjectRequest;
+import com.alibaba.sdk.android.oss.model.GetObjectResult;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.R;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -25,12 +44,14 @@ import java.util.List;
 public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener,View.OnLongClickListener {
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private final Context mContext;
+    private OSSClient oss;
     private OnItemLongClickListener mOnItemLongClickListener = null;
     private CarRechargeCallBack mCarRechargeCallBack = null;
     private CarUpdateCallBack mCarUpdateCallBack = null;
 
-    public SmartCarListRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list) {
+    public SmartCarListRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list, OSSClient oss) {
         this.carList = list;
+        this.oss = oss;
         mContext = context;
         mCarRechargeCallBack = (CarListActivity)mContext;
         mCarUpdateCallBack = (CarListActivity)mContext;
@@ -66,6 +87,9 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
         } else {
             ((SmartRefreshViewHolder)holder).carRecharge.setImageResource(R.mipmap.year);
         }
+
+        ((SmartRefreshViewHolder)holder).carlistIv.setTag(carList.get(position).getImgUrl());
+        downloadImg(((SmartRefreshViewHolder)holder).carlistIv, carList.get(position).getImgUrl());
 
         ((SmartRefreshViewHolder)holder).carRecharge.setOnClickListener(this);
         ((SmartRefreshViewHolder)holder).carListLL.setOnClickListener(this);
@@ -132,7 +156,6 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
     public interface OnItemLongClickListener {
         void onItemLongClick(View view, int position);
     }
-
     /**
      * 充值圖片點擊接口
      */
@@ -144,5 +167,62 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
      */
     public interface CarUpdateCallBack {
         void carUpateClick(View view);
+    }
+
+    public void refreshListView(List<CarModel.CarCountAndListModel.CarInsideModel> newList){
+        this.carList = newList;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 獲取圖片
+     * @param imageView
+     * @param object
+     */
+    private void downloadImg(final ImageView imageView, String object) {
+        String tag = (String) imageView.getTag();
+        if (!tag.equals(object)) {
+            return;
+        }
+
+        final Activity activity = (Activity) mContext;
+        OSSAsyncTask task = oss.asyncGetObject(new GetObjectRequest(BSSMConfigtor.BucketName, object), new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
+            @Override
+            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
+                // 请求成功
+                InputStream inputStream = result.getObjectContent();
+                final Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(bm);
+                        System.gc();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageResource(R.mipmap.load_img_fail_list);
+                    }
+                });
+            }
+        });
     }
 }

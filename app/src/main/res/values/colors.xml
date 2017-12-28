@@ -23,5 +23,6 @@
     <color name="colorLoginOutRed">#F32E2E</color>
     <color name="colorNewGreen">#53EEBD</color>
     <color name="colorAlpha">#00000000</color>
+    <color name="colorHalfAlpha">#00c9c9c9</color>
     <color name="colorSubmitGreen">#37C972</color>
 </resources>
