@@ -372,17 +372,21 @@ public class BSSMCommonUtils {
     }
 
     //根据ImageView大小自动缩放图片
-    public static Bitmap autoResizeFromStream(InputStream stream, ImageView imageView) throws IOException {
+    public static Bitmap autoResizeFromStream(InputStream stream, ImageView imageView) {
 
         byte[] data;
         {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
             int len = 0;
-            while ((len = stream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
+            try {
+                while ((len = stream.read(buffer)) != -1) {
+                    outStream.write(buffer, 0, len);
+                }
+                outStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            outStream.close();
             data = outStream.toByteArray();
         }
 
@@ -393,13 +397,6 @@ public class BSSMCommonUtils {
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, imageView.getWidth(), imageView.getHeight());
-        Log.d("ImageHeight", String.valueOf(options.outHeight));
-        Log.d("ImageWidth", String.valueOf(options.outWidth));
-        Log.d("Height", String.valueOf(imageView.getWidth()));
-        Log.d("Width",String.valueOf(imageView.getWidth()));
-        //options.inSampleSize = 10;
-
-        Log.d("SampleSize", String.valueOf(options.inSampleSize));
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(data, 0, data.length, options);

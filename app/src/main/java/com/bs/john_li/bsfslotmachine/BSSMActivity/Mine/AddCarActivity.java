@@ -823,32 +823,50 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             public void onSuccess(GetObjectRequest request, GetObjectResult result) {
                 // 请求成功
                 InputStream inputStream = result.getObjectContent();
+                // 直接对stream直接用不转byte
+                /*InputStream inputStreamCache = inputStream;
+                BitmapFactory.Options opt = new BitmapFactory.Options();
+                opt.inJustDecodeBounds = true;
+                //获取图片参数
+                BitmapFactory.decodeStream(inputStreamCache,null, opt);
+                opt.inSampleSize= BSSMCommonUtils.calculateInSampleSize(opt,carPhotoIv.getWidth(), carPhotoIv.getHeight());
+                opt.inPreferredConfig = Bitmap.Config.RGB_565;
+                opt.inPurgeable = true;
+                opt.inInputShareable = true;
+                opt.inJustDecodeBounds = false;
+                //先关闭InputStream 流
                 try {
-                    Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                    inputStreamCache.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //生成Bitmap对象
+                Bitmap bm = BitmapFactory.decodeStream(inputStream,null, opt);*/
+
+                //  阿里的方法不处理
+                /*try {
+                    //Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                    //需要根据对应的View大小来自适应缩放
+                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(inputStream, carPhotoIv);
                     inputStream.close();
                     Message msg = mHandler.obtainMessage(2, bm);
                     msg.sendToTarget();
                     System.gc();
                 }catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
+
+                //  阿里的方法做图片处理
                 //重载InputStream来获取读取进度信息
-                /*ProgressInputStream progressStream = new ProgressInputStream(inputStream, new OSSProgressCallback<GetObjectRequest>() {
-                    @Override
-                    public void onProgress(GetObjectRequest o, long currentSize, long totalSize) {
-                        Log.d("GetObject", "currentSize: " + currentSize + " totalSize: " + totalSize);
-                        int progress = (int) (100 * currentSize / totalSize);
-                    }
-                }, result.getContentLength());*/
-                /*try {
+                try {
                     //需要根据对应的View大小来自适应缩放
-                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(progressStream, carPhotoIv);
+                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(inputStream, carPhotoIv);
                     Message msg = mHandler.obtainMessage(2, bm);
                     msg.sendToTarget();
                 }
-                catch (IOException e) {
+                catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
             }
             @Override
             public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
