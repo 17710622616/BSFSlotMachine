@@ -29,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.R;
@@ -191,14 +192,22 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
             public void onSuccess(GetObjectRequest request, GetObjectResult result) {
                 // 请求成功
                 InputStream inputStream = result.getObjectContent();
-                final Bitmap bm = BitmapFactory.decodeStream(inputStream);
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageView.setImageBitmap(bm);
-                        System.gc();
-                    }
-                });
+                //final Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                try {
+                    byte[] date = new byte[0];
+                    date = BSSMCommonUtils.readStream(inputStream);
+                    //获取bitmap
+                    final Bitmap bm = BitmapFactory.decodeByteArray(date,0,date.length);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImageBitmap(bm);
+                            System.gc();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

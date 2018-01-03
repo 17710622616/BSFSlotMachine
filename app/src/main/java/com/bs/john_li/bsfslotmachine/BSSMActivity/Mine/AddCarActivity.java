@@ -858,16 +858,26 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
                 //  阿里的方法做图片处理
                 //重载InputStream来获取读取进度信息
-                try {
+                /*try {
                     //需要根据对应的View大小来自适应缩放
                     Bitmap bm = BSSMCommonUtils.autoResizeFromStream(inputStream, carPhotoIv);
                     Message msg = mHandler.obtainMessage(2, bm);
                     msg.sendToTarget();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+                try {
+                    byte[] date = new byte[0];
+                    date = BSSMCommonUtils.readStream(inputStream);
+                    //获取bitmap
+                    final Bitmap bm = BitmapFactory.decodeByteArray(date,0,date.length);
+                    Message msg = mHandler.obtainMessage(2, bm);
+                    msg.sendToTarget();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
                 // 请求异常
