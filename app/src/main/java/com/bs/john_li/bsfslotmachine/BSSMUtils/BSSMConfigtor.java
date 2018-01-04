@@ -91,4 +91,6 @@ public class BSSMConfigtor {
     public final static String SUBMITE_REPLY_VISITOR = "content/visitorreply";
     // 發佈帖子
     public final static String PUBLISH_ARTICLE = "content/publish?token=";
+    // 獲取訂單列表
+    public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
 }
