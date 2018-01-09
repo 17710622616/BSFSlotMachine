@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,9 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -28,7 +31,7 @@ import java.util.List;
  * Created by John_Li on 5/1/2018.
  */
 
-public class OrderPaidFragment extends LazyLoadBaseFragment {
+public class OrderPaidFragment extends LazyLoadFragment {
     private View view;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
@@ -40,24 +43,21 @@ public class OrderPaidFragment extends LazyLoadBaseFragment {
     // 頁數
     private int pageNo = 1;
     // 車輛總數
-    private long totolCarCount;
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(view == null){
-            view = inflater.inflate(R.layout.fragment_orderlist, null);
-        }
+    private long totolCarCount = 30;
 
+    @Override
+    protected void onCreateViewLazy(Bundle savedInstanceState) {
+        super.onCreateViewLazy(savedInstanceState);
+        setContentView(R.layout.fragment_orderlist);
         initView();
         setListener();
         initData();
-        return view;
     }
 
     private void initView() {
-        mRefreshLayout = view.findViewById(R.id.order_list_srl);
-        mRecycleView = view.findViewById(R.id.order_list_lv);
-        noOrderLL = view.findViewById(R.id.no_order_ll);
+        mRefreshLayout = (RefreshLayout) findViewById(R.id.order_list_srl);
+        mRecycleView = (RecyclerView) findViewById(R.id.order_list_lv);
+        noOrderLL = (LinearLayout) findViewById(R.id.no_order_ll);
     }
 
     private void setListener() {
@@ -94,26 +94,12 @@ public class OrderPaidFragment extends LazyLoadBaseFragment {
         mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                /*Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
-                intent.putExtra("startway", 0);
-                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(position)));
-                startActivity(intent);*/
+                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
+                intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
+                startActivity(intent);
             }
         });
-    }
-
-    @Override
-    protected void onFragmentVisibleChange(boolean isVisible) {
-        super.onFragmentVisibleChange(isVisible);
-        if (isVisible) {    // 可见
-            mRefreshLayout.autoLoadmore();
-            mRefreshLayout.autoRefresh();
-            orderList.clear();
-            callNetGetCarList();
-        } else {    // 不可见
-            mRefreshLayout.finishRefresh();
-            mRefreshLayout.finishLoadmore();
-        }
+        callNetGetCarList();
     }
 
     /**
@@ -123,13 +109,17 @@ public class OrderPaidFragment extends LazyLoadBaseFragment {
         if (orderList == null) {
             orderList = new ArrayList<>();
         }
-        for (int i= orderList.size(); i< orderList.size() + 5; i++) {
+        int count = orderList.size();
+        for (int i= count; i< count + 10; i++) {
             UserOrderOutModel.UserOrderInsideModel.UserOrderModel model = new UserOrderOutModel.UserOrderInsideModel.UserOrderModel();
             model.setOrderType(2);
-            model.setOrderStatus(2);
-            model.setOrderNo("测试" + i);
+            model.setOrderStatus(3);
+            model.setOrderNo("测试已支付：" + i);
             model.setTotalAmount(100);
             orderList.add(model);
+            mSmartOrderRefreshAdapter.refreshListView(orderList);
+            mRefreshLayout.finishRefresh();
+            mRefreshLayout.finishLoadmore();
         }
     }
 }

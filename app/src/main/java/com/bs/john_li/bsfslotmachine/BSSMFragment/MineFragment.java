@@ -183,19 +183,19 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.mine_mycar_ll:
-                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }*/
-                getActivity().startActivity(new Intent(getActivity(), CarListActivity.class));
+                }
                 break;
             case R.id.mine_history_order:
-                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
+                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }
+                }*/
                 break;
             case R.id.mine_recommend:
                 Toast.makeText(getActivity(),"分享",Toast.LENGTH_SHORT).show();

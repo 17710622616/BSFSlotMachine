@@ -109,8 +109,8 @@ public class HistoryOrderActivity extends BaseActivity implements View.OnClickLi
         fgList.add(new OrderCancelledFragment());
 
         OrderFgAdapter adapter = new OrderFgAdapter(getSupportFragmentManager(),fgList, Arrays.asList(sTitle));
+        mViewPager.setOffscreenPageLimit(5);
         mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(0);
     }
 
     @Override

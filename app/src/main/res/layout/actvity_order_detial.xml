@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/order_detial_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_marginTop="1dp"
+        style="@style/ParkingOrderItemLinearLayout">
+        <TextView
+            android:id="@+id/order_detial_type"
+            style="@style/MineItemTextView"
+            android:text="訂單類型：" />
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/order_detial_gv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:padding="8dp"
+        android:background="@color/colorWight"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp"
+        android:columnWidth="90dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_marginTop="1dp"
+        style="@style/ParkingOrderItemLinearLayout">
+        <TextView
+            android:id="@+id/order_detial_no"
+            style="@style/MineItemTextView"
+            android:text="訂單編號：" />
+    </LinearLayout>
+</LinearLayout>

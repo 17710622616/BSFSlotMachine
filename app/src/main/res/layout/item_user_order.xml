@@ -52,6 +52,6 @@
         android:textColor="@color/colorDrakGray"
         android:textSize="12sp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
         android:padding="5dp"/>
 </RelativeLayout>

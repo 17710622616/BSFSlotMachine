@@ -40,20 +40,20 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (list.get(position).getOrderType()) {
             case 1:
-                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：充值订单");
+                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：充值訂單");
                 break;
             case 2:
-                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型： 会员续费订单");
+                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型： 會員續費訂單");
                 break;
             case 3:
-                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：确定投币机订单 ");
+                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：投幣訂單 ");
                 break;
             case 4:
-                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：未知投币机订单");
+                ((SmartRefreshViewHolder)holder).item_order_type.setText("訂單類型：拍照停車訂單");
                 break;
         }
         ((SmartRefreshViewHolder)holder).item_order_no.setText(list.get(position).getOrderNo());
-        ((SmartRefreshViewHolder)holder).item_order_money.setText(list.get(position).getTotalAmount());
+        ((SmartRefreshViewHolder)holder).item_order_money.setText("訂單金額：" + String.valueOf(list.get(position).getTotalAmount()));
         switch (list.get(position).getOrderStatus()) {
             case 1:
                 ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：待支付");
@@ -62,7 +62,7 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
                 ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：已支付");
                 break;
             case 4:
-                ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：4.已投币 ");
+                ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：已投幣");
                 break;
             case 9:
                 ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：已取消");
@@ -95,6 +95,7 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
             item_order_type = (TextView) view.findViewById(R.id.item_order_type);
             item_order_no = (TextView) view.findViewById(R.id.item_order_no);
             item_order_status = (TextView) view.findViewById(R.id.item_order_status);
+            item_order_money = (TextView) view.findViewById(R.id.item_order_money);
         }
     }
 
