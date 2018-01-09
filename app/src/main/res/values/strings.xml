@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BSFSlotMachine</string>
+    <string name="app_name">易停車</string>
     <string name="not_open">該入口暫未開放，敬請期待！</string>
     <string name="mine_wallet">錢包</string>
     <string name="mine_discount">優惠</string>
