@@ -10,6 +10,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderPhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
@@ -23,8 +24,8 @@ import java.util.List;
 
 public class OrderDetialActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private GridView orderImgGv;
-    private TextView orderTypeTv, orderNoTv;
+    private NoScrollGridView orderImgGv;
+    private TextView orderTypeTv, orderNoTv,statusTV,payMoneyTV,startTimeTV,timeTV,machineNoTV,colorTV,addressTV,carTypeTV,carNoTV,carStyleTV,carBrandTV,remarkTV,totalAmountTV,returnAmountTV,monthTV;
 
     private UserOrderOutModel.UserOrderInsideModel.UserOrderModel mUserOrderModel;
     private List<Integer> imgList;
@@ -45,6 +46,21 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         orderImgGv = findViewById(R.id.order_detial_gv);
         orderNoTv = findViewById(R.id.order_detial_no);
         orderTypeTv = findViewById(R.id.order_detial_type);
+        statusTV = findViewById(R.id.order_detial_status);
+        payMoneyTV = findViewById(R.id.order_detial_pay_money);
+        startTimeTV = findViewById(R.id.order_detial_starttime);
+        timeTV = findViewById(R.id.order_detial_time);
+        machineNoTV = findViewById(R.id.order_detial_machine_no);
+        colorTV = findViewById(R.id.order_detial_color);
+        addressTV = findViewById(R.id.order_detial_address);
+        carTypeTV = findViewById(R.id.order_detial_car_type);
+        carNoTV = findViewById(R.id.order_detial_car_no);
+        carStyleTV = findViewById(R.id.order_detial_car_style);
+        carBrandTV = findViewById(R.id.order_detial_car_brand);
+        remarkTV = findViewById(R.id.order_detial_remark);
+        totalAmountTV = findViewById(R.id.order_detial_total_amount);
+        returnAmountTV = findViewById(R.id.order_detial_return_amount);
+        monthTV = findViewById(R.id.order_detial_month);
     }
 
     @Override
@@ -69,7 +85,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 orderTypeTv.setText("訂單類型：會員續費訂單");
                 break;
             case 3: // 確定投幣機訂單
-                imgList.add(R.mipmap.sure_order);
+                imgList.add(R.mipmap.car_sample);
                 orderTypeTv.setText("訂單類型：確定投幣機訂單");
                 break;
             case 4: // 未知投幣機訂單
