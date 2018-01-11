@@ -16,14 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_type"
-                    style="@style/MineItemTextView"
-                    android:text="訂單類型：" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/order_detial_type"
+                style="@style/HistoryOrderTextView"
+                android:text="訂單類型：" />
             <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView
                 android:id="@+id/order_detial_gv"
                 android:layout_width="match_parent"
@@ -37,136 +33,80 @@
                 android:columnWidth="90dp"
                 android:stretchMode="columnWidth"
                 android:gravity="center"/>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_no"
-                    style="@style/MineItemTextView"
-                    android:text="訂單編號：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_status"
-                    style="@style/MineItemTextView"
-                    android:text="訂單狀態：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_pay_money"
-                    style="@style/MineItemTextView"
-                    android:text="付款金額：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_starttime"
-                    style="@style/MineItemTextView"
-                    android:text="開始投幣時間：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_time"
-                    style="@style/MineItemTextView"
-                    android:text="下單時間：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_machine_no"
-                    style="@style/MineItemTextView"
-                    android:text="咪錶編號：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-
-                <TextView
-                    android:id="@+id/order_detial_color"
-                    style="@style/MineItemTextView"
-                    android:text="咪錶柱色：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-
-                <TextView
-                    android:id="@+id/order_detial_address"
-                    style="@style/MineItemTextView"
-                    android:text="地        址：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_car_type"
-                    style="@style/MineItemTextView"
-                    android:text="車輛類型：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_car_no"
-                    style="@style/MineItemTextView"
-                    android:text="車牌號碼：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_car_style"
-                    style="@style/MineItemTextView"
-                    android:text="車輛型號：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_car_brand"
-                    style="@style/MineItemTextView"
-                    android:text="車輛品牌：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_remark"
-                    style="@style/MineItemTextView"
-                    android:text="備註：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_total_amount"
-                    style="@style/MineItemTextView"
-                    android:text="總金額：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_return_amount"
-                    style="@style/MineItemTextView"
-                    android:text="返現金額：" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="1dp"
-                style="@style/ParkingOrderItemLinearLayout">
-                <TextView
-                    android:id="@+id/order_detial_month"
-                    style="@style/MineItemTextView"
-                    android:text="充值月份：" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/order_detial_no"
+                style="@style/HistoryOrderTextView"
+                android:text="訂單編號：" />
+            <TextView
+                android:id="@+id/order_detial_status"
+                style="@style/HistoryOrderTextView"
+                android:text="訂單狀態：" />
+            <TextView
+                android:id="@+id/order_detial_pay_money"
+                style="@style/HistoryOrderTextView"
+                android:text="付款金額：" />
+            <TextView
+                android:id="@+id/order_detial_starttime"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="開始投幣時間：" />
+            <TextView
+                android:id="@+id/order_detial_time"
+                style="@style/HistoryOrderTextView"
+                android:text="下單時間：" />
+            <TextView
+                android:id="@+id/order_detial_machine_no"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="咪錶編號：" />
+            <TextView
+                android:id="@+id/order_detial_color"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="咪錶柱色：" />
+            <TextView
+                android:id="@+id/order_detial_address"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="地        址：" />
+            <TextView
+                android:id="@+id/order_detial_car_type"
+                style="@style/HistoryOrderTextView"
+                android:text="車輛類型：" />
+            <TextView
+                android:id="@+id/order_detial_car_no"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="車牌號碼：" />
+            <TextView
+                android:id="@+id/order_detial_car_style"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="車輛型號：" />
+            <TextView
+                android:id="@+id/order_detial_car_brand"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="車輛品牌：" />
+            <TextView
+                android:id="@+id/order_detial_remark"
+                style="@style/HistoryOrderTextView"
+                android:text="備        註：" />
+            <TextView
+                android:id="@+id/order_detial_total_amount"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="總  金  額：" />
+            <TextView
+                android:id="@+id/order_detial_return_amount"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="返現金額：" />
+            <TextView
+                android:id="@+id/order_detial_month"
+                style="@style/HistoryOrderTextView"
+                android:visibility="gone"
+                android:text="充值月份：" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

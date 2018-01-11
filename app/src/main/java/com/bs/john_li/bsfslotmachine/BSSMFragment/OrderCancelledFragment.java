@@ -113,8 +113,10 @@ public class OrderCancelledFragment extends LazyLoadFragment {
             UserOrderOutModel.UserOrderInsideModel.UserOrderModel model = new UserOrderOutModel.UserOrderInsideModel.UserOrderModel();
             model.setOrderType(1);
             model.setOrderStatus(9);
-            model.setOrderNo("测试已取消：" + i);
+            model.setCreateTime(1508685619000L);
+            model.setPayAmount(100);
             model.setTotalAmount(100);
+            model.setOrderNo("测试已取消：" + i);
             orderList.add(model);
         }
         mSmartOrderRefreshAdapter.refreshListView(orderList);

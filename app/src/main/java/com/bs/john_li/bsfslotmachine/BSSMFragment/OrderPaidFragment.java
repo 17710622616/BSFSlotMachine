@@ -114,8 +114,12 @@ public class OrderPaidFragment extends LazyLoadFragment {
             UserOrderOutModel.UserOrderInsideModel.UserOrderModel model = new UserOrderOutModel.UserOrderInsideModel.UserOrderModel();
             model.setOrderType(2);
             model.setOrderStatus(3);
+            model.setCreateTime(1508685619000L);
+            model.setPayAmount(100);
             model.setOrderNo("测试已支付：" + i);
-            model.setTotalAmount(100);
+            model.setTotalAmount(200);
+            model.setDiscountAmount(20);
+            model.setMonthNum(3);
             orderList.add(model);
             mSmartOrderRefreshAdapter.refreshListView(orderList);
             mRefreshLayout.finishRefresh();

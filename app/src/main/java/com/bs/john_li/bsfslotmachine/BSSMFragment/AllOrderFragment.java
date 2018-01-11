@@ -111,8 +111,14 @@ public class AllOrderFragment extends LazyLoadFragment {
             UserOrderOutModel.UserOrderInsideModel.UserOrderModel model = new UserOrderOutModel.UserOrderInsideModel.UserOrderModel();
             model.setOrderType(4);
             model.setOrderStatus(3);
+            model.setCreateTime(1508685619000L);
+            model.setPayAmount(100);
             model.setOrderNo("测试已完成：" + i);
-            model.setTotalAmount(100);
+            model.setMachineNo("66579");
+            model.setPillarColor(3);
+            model.setCarId(123);
+            model.setCarType(2);
+            model.setStartSlotTime(1508686130000L);
             orderList.add(model);
         }
         mSmartOrderRefreshAdapter.refreshListView(orderList);

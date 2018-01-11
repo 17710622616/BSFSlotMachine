@@ -79,14 +79,66 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
             case 1: // 充值訂單
                 imgList.add(R.mipmap.top_up);
                 orderTypeTv.setText("訂單類型：充值訂單");
+                totalAmountTV.setVisibility(View.VISIBLE);
+                totalAmountTV.setText("總  金  額：MOP" + mUserOrderModel.getTotalAmount());
                 break;
             case 2: // 會員續費訂單
                 imgList.add(R.mipmap.renewal);
                 orderTypeTv.setText("訂單類型：會員續費訂單");
+                totalAmountTV.setVisibility(View.VISIBLE);
+                totalAmountTV.setText("總  金  額：MOP" + mUserOrderModel.getTotalAmount());
+                returnAmountTV.setVisibility(View.VISIBLE);
+                returnAmountTV.setText("返現金額：MOP" + mUserOrderModel.getDiscountAmount());
+                monthTV.setVisibility(View.VISIBLE);
+                monthTV.setText("充值月份：MOP" + mUserOrderModel.getMonthNum());
                 break;
             case 3: // 確定投幣機訂單
                 imgList.add(R.mipmap.car_sample);
                 orderTypeTv.setText("訂單類型：確定投幣機訂單");
+
+                machineNoTV.setVisibility(View.VISIBLE);
+                machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
+                carNoTV.setVisibility(View.VISIBLE);
+                carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
+                carStyleTV.setVisibility(View.VISIBLE);
+                carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
+                carBrandTV.setVisibility(View.VISIBLE);
+                carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
+                startTimeTV.setVisibility(View.VISIBLE);
+                startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
+                addressTV.setVisibility(View.VISIBLE);
+                if (mUserOrderModel.getParkingSpace() != 0) {
+                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                } else {
+                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
+                }
+                colorTV.setVisibility(View.VISIBLE);
+                switch (mUserOrderModel.getPillarColor()) {
+                    case 1:
+                        colorTV.setText("咪錶柱色：黃色");
+                        break;
+                    case 2:
+                        colorTV.setText("咪錶柱色：灰色");
+                        break;
+                    case 3:
+                        colorTV.setText("咪錶柱色：藍色");
+                        break;
+                    case 4:
+                        colorTV.setText("咪錶柱色：綠色");
+                        break;
+                }
+                carTypeTV.setVisibility(View.VISIBLE);
+                switch (mUserOrderModel.getCarType()) {
+                    case 1:
+                        carTypeTV.setText("車輛類型：電單車");
+                        break;
+                    case 2:
+                        carTypeTV.setText("車輛類型：私家車");
+                        break;
+                    case 3:
+                        carTypeTV.setText("車輛類型：重型貨車");
+                        break;
+                }
                 break;
             case 4: // 未知投幣機訂單
                 imgList.add(R.mipmap.car_sample);
@@ -95,12 +147,77 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 imgList.add(R.mipmap.top_up);
                 imgList.add(R.mipmap.car_sample);
                 orderTypeTv.setText("訂單類型：未知投幣機訂單");
+
+                machineNoTV.setVisibility(View.VISIBLE);
+                machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
+                carNoTV.setVisibility(View.VISIBLE);
+                carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
+                carStyleTV.setVisibility(View.VISIBLE);
+                carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
+                carBrandTV.setVisibility(View.VISIBLE);
+                carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
+                startTimeTV.setVisibility(View.VISIBLE);
+                startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
+                addressTV.setVisibility(View.VISIBLE);
+                if (mUserOrderModel.getParkingSpace() != 0) {
+                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                } else {
+                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
+                }
+                colorTV.setVisibility(View.VISIBLE);
+                switch (mUserOrderModel.getPillarColor()) {
+                    case 1:
+                        colorTV.setText("咪錶柱色：黃色");
+                        break;
+                    case 2:
+                        colorTV.setText("咪錶柱色：灰色");
+                        break;
+                    case 3:
+                        colorTV.setText("咪錶柱色：藍色");
+                        break;
+                    case 4:
+                        colorTV.setText("咪錶柱色：綠色");
+                        break;
+                }
+
+                carTypeTV.setVisibility(View.VISIBLE);
+                switch (mUserOrderModel.getCarType()) {
+                case 1:
+                    carTypeTV.setText("車輛類型：電單車");
+                    break;
+                case 2:
+                    carTypeTV.setText("車輛類型：私家車");
+                    break;
+                case 3:
+                    carTypeTV.setText("車輛類型：重型貨車");
+                    break;
+                }
                 break;
         }
 
         mOrderPhotoAdapter = new OrderPhotoAdapter(this, imgList);
         orderImgGv.setAdapter(mOrderPhotoAdapter);
         orderNoTv.setText("訂單編號：" + mUserOrderModel.getOrderNo());
+        payMoneyTV.setText("付款金額：MOP" + mUserOrderModel.getPayAmount());
+        timeTV.setText("下單時間：" + mUserOrderModel.getCreateTime());
+        remarkTV.setText("備註：" + mUserOrderModel.getRemark());
+        switch (mUserOrderModel.getOrderStatus()) {
+            case 1: // 待支付
+                statusTV.setText("訂單狀態：待支付");
+                break;
+            case 2: // 支付中
+                statusTV.setText("訂單狀態：支付中");
+                break;
+            case 3: // 已支付
+                statusTV.setText("訂單狀態：已支付");
+                break;
+            case 4: // 已投幣
+                statusTV.setText("訂單狀態：已投幣");
+                break;
+            case 9: // 已取消
+                statusTV.setText("訂單狀態：已取消");
+                break;
+        }
     }
 
     @Override
