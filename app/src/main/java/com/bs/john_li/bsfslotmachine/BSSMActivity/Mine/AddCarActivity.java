@@ -776,8 +776,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 上傳圖片到OSS
      */
     private void putImg() {
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
+
         // 构造上传请求
-        PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, file.getName(), file.getPath());
+        PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, filePut.getName(), filePut.getPath());
 
         // 異步請求
         OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
