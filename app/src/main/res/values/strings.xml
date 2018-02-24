@@ -41,6 +41,7 @@
     <string name="get_verification_code">獲取驗證碼</string>
     <string name="get_verification_code_fail">獲取驗證碼失敗！請重試</string>
     <string name="visit_first">先逛逛~</string>
+    <string name="forget_pw">忘記密碼~</string>
     <string name="not_login">您還未登錄，現在是遊客身份哦~</string>
     <string name="check_user_fail">身份認證失敗！請重新登錄或聯繫客服</string>
     <string name="search_noresult">搵唔到咪錶？唔怕！影相都可以泊車~~</string>

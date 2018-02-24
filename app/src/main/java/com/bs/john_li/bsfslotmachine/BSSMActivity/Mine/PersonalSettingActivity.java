@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.ForgetPwActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
@@ -127,7 +129,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.personal_phone:
+            case R.id.personal_phone://修改手機號碼
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -154,36 +156,10 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.personal_pw:
-                NiceDialog.init()
-                        .setLayoutId(R.layout.dialog_update_pw)
-                        .setConvertListener(new ViewConvertListener() {
-                            @Override
-                            public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
-                                final EditText oldPwEt = holder.getView(R.id.old_pw);
-                                final EditText newPwEt = holder.getView(R.id.new_pw);
-                                final EditText newPwAffirm = holder.getView(R.id.new_pw_affirm);
-                                BSSMCommonUtils.showKeyboard(oldPwEt);
-                                oldPwEt.setHint("請輸入舊密碼");
-                                newPwEt.setHint("請輸入新密碼");
-                                newPwAffirm.setHint("請再次輸入新密碼");
-                                holder.setOnClickListener(R.id.update_pw_submit, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (!oldPwEt.getText().toString().equals("") && !oldPwEt.getText().toString().equals("") && !oldPwEt.getText().toString().equals("")) {
-                                            loginPw = newPwEt.getText().toString();
-                                            dialog.dismiss();
-                                        } else {
-                                            Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            }
-                        })
-                        .setShowBottom(true)
-                        .show(getSupportFragmentManager());
+            case R.id.personal_pw://修改登錄密碼
+                startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
                 break;
-            case R.id.personal_pay_pw:
+            case R.id.personal_pay_pw:  // 修改支付密碼
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_update_pw)
                         .setConvertListener(new ViewConvertListener() {
@@ -211,6 +187,22 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this, "修改密碼失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        switch (requestCode) {
+            case 100:     // 修改密碼返回
+                doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
+                //finish();
                 break;
         }
     }
@@ -276,6 +268,109 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             @Override
             public void onFinished() {
 
+            }
+        });
+    }
+
+    /**
+     * 登錄
+     */
+    private void doLogin(String username, String pw) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_LOGIN);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("mobile",username);
+            jsonObj.put("password",pw);
+            jsonObj.put("osVersion",BSSMConfigtor.OS_TYPE);
+            jsonObj.put("osType",BSSMConfigtor.OS_TYPE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", model.getData().toString());
+                    Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                    //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
+                    getUserInfo(model.getData().toString());
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PersonalSettingActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    /**
+     * 獲取用戶信息
+     * @param token
+     */
+    private void getUserInfo(String token) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
+        x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                UserInfoOutsideModel model = new Gson().fromJson(result.toString(), UserInfoOutsideModel.class);
+                if (model.getCode() == 200) {
+                    if (model.getData().getNickname() == null) {
+                        model.getData().setNickname("用戶");
+                    }
+                    if (model.getData().getAddress() == null) {
+                        model.getData().setAddress("");
+                    }
+                    if (model.getData().getRealname() == null) {
+                        model.getData().setRealname("");
+                    }
+                    if (model.getData().getHeadimg() == null) {
+                        model.getData().setAddress("objectNam1");
+                    }
+                    if (model.getData().getDescx() == null) {
+                        model.getData().setDescx("");
+                    }
+                    if (model.getData().getIdcardno() == null) {
+                        model.getData().setIdcardno("");
+                    }
+                    if (model.getData().getBirthday() == null) {
+                        model.getData().setBirthday("");
+                    }
+                    String userInfoJson = new Gson().toJson(model.getData());
+                    SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
+                    Log.d("getUserURI", "獲取用戶信息成功");
+                    EventBus.getDefault().post("LOGIN");
+                    finish();
+                } else {
+                    Log.d("getUserURI", "獲取用戶信息失敗");
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("getUserURI", "獲取用戶信息失敗");
+                //Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
             }
         });
     }

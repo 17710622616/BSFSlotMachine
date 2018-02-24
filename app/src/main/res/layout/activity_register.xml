@@ -76,6 +76,6 @@
         android:layout_marginRight="5dp"
         android:textColor="@color/colorWight"
         android:textSize="22sp"
-        android:text="@string/register_btn"
+        android:text="提交"
         android:background="@drawable/shape_btn_bg"/>
 </LinearLayout>

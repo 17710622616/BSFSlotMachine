@@ -2,7 +2,6 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,7 +28,7 @@ import org.xutils.x;
  * Created by John on 14/9/2017.
  */
 
-public class RegisterActivity extends BaseActivity implements View.OnClickListener{
+public class ForgetPwActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private EditText registerUn, registerVCode,registerPw;
     private TextView registerGetVC, registerTv;
@@ -85,7 +84,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void initData() {
-        headView.setTitle(getString(R.string.register_btn));
+        headView.setTitle("修改密碼");
         headView.setLeft(R.mipmap.back, this);
 
          helper = new CountDownButtonHelper(registerGetVC, "倒計時", 60,1);
@@ -95,7 +94,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.head_left:
-                finish();
+
                 break;
             case R.id.register_tv:
                 checkRegisterData();
@@ -129,7 +128,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
      */
     private void callNetSubmitRegister() {
         //Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_REGISTER);
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_FORGET_PW);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
@@ -153,13 +152,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(RegisterActivity.this, "注册失败" + model.getMsg() + "~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetPwActivity.this, "注册失败" + model.getMsg() + "~~~", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(RegisterActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgetPwActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -189,25 +188,25 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 if (model.getCode() != null) {
                     if (model.getMsg() != null) {
                         if (model.getMsg().equals("验证码已发送！")){
-                            Toast.makeText(RegisterActivity.this, model.getMsg() + model.getData(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(ForgetPwActivity.this, model.getMsg() + model.getData(), Toast.LENGTH_LONG).show();
                         } else {
                             helper.finishTimer(getString(R.string.get_verification_code));
-                            Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgetPwActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         helper.finishTimer(getString(R.string.get_verification_code));
-                        Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ForgetPwActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     helper.finishTimer(getString(R.string.get_verification_code));
-                    Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetPwActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 helper.finishTimer(getString(R.string.get_verification_code));
-                Toast.makeText(RegisterActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgetPwActivity.this, getString(R.string.get_verification_code_fail), Toast.LENGTH_SHORT).show();
             }
 
             @Override

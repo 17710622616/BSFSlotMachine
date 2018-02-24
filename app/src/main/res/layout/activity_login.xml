@@ -62,4 +62,13 @@
         android:gravity="center"
         android:textSize="12sp"
         android:textColor="@color/colorDrakGray"/>
+    <TextView
+        android:id="@+id/login_forget_pw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/forget_pw"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
 </LinearLayout>

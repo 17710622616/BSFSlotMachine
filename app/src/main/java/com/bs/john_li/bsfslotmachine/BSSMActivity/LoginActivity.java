@@ -33,7 +33,7 @@ import org.xutils.x;
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView head;
     private EditText usernameEt,pwEt;
-    private TextView loginTv, notLoginTv;
+    private TextView loginTv, notLoginTv, forgetPwTv;
 
     private String username, pw;
     @Override
@@ -52,12 +52,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         pwEt = findViewById(R.id.login_pw);
         loginTv = findViewById(R.id.login_tv);
         notLoginTv = findViewById(R.id.not_login_now_tv);
+        forgetPwTv = findViewById(R.id.login_forget_pw);
     }
 
     @Override
     public void setListener() {
         loginTv.setOnClickListener(this);
         notLoginTv.setOnClickListener(this);
+        forgetPwTv.setOnClickListener(this);
     }
 
     @Override
@@ -82,6 +84,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             case R.id.not_login_now_tv:
                 finish();
                 break;
+            case R.id.login_forget_pw:
+                startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
+                break;
         }
     }
 
@@ -89,7 +94,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
-            Toast.makeText(this, "註冊失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "註冊失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
             return;
         }
 
