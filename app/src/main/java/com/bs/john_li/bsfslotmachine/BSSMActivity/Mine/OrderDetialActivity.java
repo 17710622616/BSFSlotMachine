@@ -200,7 +200,11 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         orderNoTv.setText("訂單編號：" + mUserOrderModel.getOrderNo());
         payMoneyTV.setText("付款金額：MOP" + mUserOrderModel.getPayAmount());
         timeTV.setText("下單時間：" + mUserOrderModel.getCreateTime());
-        remarkTV.setText("備註：" + mUserOrderModel.getRemark());
+        if(mUserOrderModel.getRemark().equals("")) {
+            remarkTV.setText("備        註：暫無");
+        } else {
+            remarkTV.setText("備        註：" + mUserOrderModel.getRemark());
+        }
         switch (mUserOrderModel.getOrderStatus()) {
             case 1: // 待支付
                 statusTV.setText("訂單狀態：待支付");

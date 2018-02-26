@@ -94,7 +94,7 @@ public class ForgetPwActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.head_left:
-
+                finish();
                 break;
             case R.id.register_tv:
                 checkRegisterData();

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Forum.ArticleDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartRefreshAdapter;
@@ -112,10 +113,9 @@ public class OrderPaymentFragment extends BaseFragment {
         mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                /*Intent intent = new Intent(getActivity(), ArticleDetialActivity.class);
-                intent.putExtra("startway", 0);
-                intent.putExtra("ContentsModel", new Gson().toJson(contentsList.get(position)));
-                startActivity(intent);*/
+                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
+                intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
+                startActivity(intent);
             }
         });
 
@@ -127,7 +127,6 @@ public class OrderPaymentFragment extends BaseFragment {
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("orderStatus",1);
             jsonObj.put("orderStatus",1);
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);

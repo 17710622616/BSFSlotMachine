@@ -15,11 +15,20 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +112,7 @@ public class AllOrderFragment extends LazyLoadFragment {
      * 请求网络刷新数据
      */
     private void callNetGetCarList() {
-        if (orderList == null) {
+        /*if (orderList == null) {
             orderList = new ArrayList<>();
         }
         int count = orderList.size();
@@ -123,6 +132,54 @@ public class AllOrderFragment extends LazyLoadFragment {
         }
         mSmartOrderRefreshAdapter.refreshListView(orderList);
         mRefreshLayout.finishRefresh();
-        mRefreshLayout.finishLoadmore();
+        mRefreshLayout.finishLoadmore();*/
+
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("pageSize",pageSize);
+            jsonObj.put("pageNo",pageNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                UserOrderOutModel model = new Gson().fromJson(result.toString(), UserOrderOutModel.class);
+                if (model.getCode() ==200) {
+                    totolCarCount = model.getData().getTotalCount();
+                    List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
+                    orderList.addAll(orderModelsFromNet);
+                } else if (model.getCode() == 10001){
+                    Toast.makeText(getActivity(), model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(getActivity(), getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                if (orderList.size() > 0) {
+                    noOrderLL.setVisibility(View.GONE);
+                } else {
+                    noOrderLL.setVisibility(View.VISIBLE);
+                }
+                mSmartOrderRefreshAdapter.refreshListView(orderList);
+                mRefreshLayout.finishRefresh();
+                mRefreshLayout.finishLoadmore();
+            }
+        });
     }
 }
