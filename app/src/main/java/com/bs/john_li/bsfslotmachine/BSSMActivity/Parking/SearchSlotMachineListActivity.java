@@ -162,7 +162,7 @@ public class SearchSlotMachineListActivity extends BaseActivity implements View.
                         totalCount = model.getData().getTotalCount();
                         smList.addAll(model.getData().getData());
                     } else {
-                        Toast.makeText(SearchSlotMachineListActivity.this, "獲取錯誤！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SearchSlotMachineListActivity.this, "獲取咪錶錯誤！", Toast.LENGTH_SHORT).show();
                     }
                 } else if (model.getCode() == 10001){
                     Toast.makeText(SearchSlotMachineListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
@@ -173,6 +173,7 @@ public class SearchSlotMachineListActivity extends BaseActivity implements View.
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(SearchSlotMachineListActivity.this, "獲取咪錶錯誤！", Toast.LENGTH_SHORT).show();
             }
 
             @Override

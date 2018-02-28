@@ -311,7 +311,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                         contentsList.addAll(list);
                     }*/
                     contentsList.addAll(list);
-                    if (count.equals("")) {
+                    if (count.equals("") && list.size() <= 0) {
                         noArticalLL.setVisibility(View.VISIBLE);
                     }
                 } else {
