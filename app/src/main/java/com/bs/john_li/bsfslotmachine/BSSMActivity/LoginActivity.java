@@ -1,11 +1,13 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private TextView loginTv, notLoginTv, forgetPwTv;
 
     private String username, pw;
+    private ProgressDialog dialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +126,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
          * 登錄
          */
     private void doLogin(String username, String pw) {
+        dialog = new ProgressDialog(this);
+        dialog.setTitle("提示");
+        dialog.setMessage("正在登錄中......");
+        dialog.setCancelable(false);
+        dialog.show();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.USER_LOGIN);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -148,11 +156,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     getUserInfo(model.getData().toString());
                 } else {
                     Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                dialog.dismiss();
                 Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
@@ -218,6 +228,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             }
             @Override
             public void onFinished() {
+                dialog.dismiss();
             }
         });
     }

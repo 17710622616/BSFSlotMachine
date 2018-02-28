@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,6 +89,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     //private SwipeRefreshLayout swipeRefreshLayout;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
+    private LinearLayout noArticalLL, getErrorLL, loadingLL;
     //private LoadMoreListView mListView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
     private ContentsAdapter mContentsAdapter;
@@ -114,6 +116,9 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         forumHeadView = forumView.findViewById(R.id.forum_head);
         mRefreshLayout = (RefreshLayout) forumView.findViewById(R.id.forum_srl);
         mRecycleView = (RecyclerView) forumView.findViewById(R.id.forum_lv);
+        noArticalLL = (LinearLayout)forumView.findViewById(R.id.no_artical_ll);
+        getErrorLL = (LinearLayout)forumView.findViewById(R.id.get_error_ll);
+        loadingLL = (LinearLayout)forumView.findViewById(R.id.loading_artical_ll);
         /*mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
         mListView.setFooterView(View.inflate(getActivity(), R.layout.layout_load_more_footer, null), new OnLoadMoreScrollListener.OnLoadMoreStateListener() {
             @Override
@@ -173,6 +178,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 }
             }
         });
+        noArticalLL.setOnClickListener(this);
+        getErrorLL.setOnClickListener(this);
     }
 
     @Override
@@ -224,6 +231,18 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                     Toast.makeText(getActivity(), "您尚未登錄，請登錄先!(｡･_･)!", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.get_error_ll:
+                contentsList.clear();
+                getErrorLL.setVisibility(View.GONE);
+                loadingLL.setVisibility(View.VISIBLE);
+                callNetGetContentsList("");
+                break;
+            case R.id.no_artical_ll:
+                contentsList.clear();
+                noArticalLL.setVisibility(View.GONE);
+                loadingLL.setVisibility(View.VISIBLE);
+                callNetGetContentsList("");
+                break;
         }
     }
 
@@ -273,7 +292,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void callNetGetContentsList(String count) {
+    private void callNetGetContentsList(final String count) {
         RequestParams params = null;
         if (count != null) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS + count);
@@ -292,14 +311,25 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                         contentsList.addAll(list);
                     }*/
                     contentsList.addAll(list);
+                    if (count.equals("")) {
+                        noArticalLL.setVisibility(View.VISIBLE);
+                    }
                 } else {
-                    Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    if (count.equals("")) {
+                        getErrorLL.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (count.equals("")) {
+                    getErrorLL.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -325,5 +355,6 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mSmartRefreshAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadmore();
+        loadingLL.setVisibility(View.GONE);
     }
 }

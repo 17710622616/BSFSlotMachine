@@ -50,11 +50,11 @@ public class BSSMConfigtor {
     // 用戶註冊的API
     public final static String USER_REGISTER = "reg/submit";
     // 用戶忘記密碼的API
-    public final static String USER_FORGET_PW = "/reg/chgpwd";
+    public final static String USER_FORGET_PW = "reg/chgpwd";
     // 獲取用戶信息
     public final static String GET_USER_INFO = "user/getuser?token=";
     // 更新用戶信息
-    public final static String UPDATE_USER_INFO = "/user/chguser?token=";
+    public final static String UPDATE_USER_INFO = "user/chguser?token=";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
@@ -97,4 +97,6 @@ public class BSSMConfigtor {
     public final static String PUBLISH_ARTICLE = "content/publish?token=";
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
+    //軟件版本號對比地址
+    public static final String CHECK_VERSION= "/AppVersion/getAppVersion";
 }

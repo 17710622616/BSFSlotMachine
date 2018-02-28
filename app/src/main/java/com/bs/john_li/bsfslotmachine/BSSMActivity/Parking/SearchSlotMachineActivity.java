@@ -300,12 +300,28 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                         moreModel.setPillarColor("");
                         smList.add(moreModel);
                         updateAdapterData();
+                    } else {
+                        SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
+                        moreModel.setAddress("");
+                        moreModel.setAreaCode("");
+                        moreModel.setCarType(-1);
+                        moreModel.setDistance(-1);
+                        moreModel.setId(-1);
+                        moreModel.setLatitude(-1);
+                        moreModel.setLongitude(-1);
+                        moreModel.setMachineNo("暫無數據");
+                        moreModel.setParkingSpaces(null);
+                        moreModel.setAreaCode("");
+                        moreModel.setPillarColor("");
+                        smList.add(moreModel);
+                        updateAdapterData();
                     }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(SearchSlotMachineActivity.this, "查詢出錯，請重試！", Toast.LENGTH_SHORT).show();
             }
 
             @Override
