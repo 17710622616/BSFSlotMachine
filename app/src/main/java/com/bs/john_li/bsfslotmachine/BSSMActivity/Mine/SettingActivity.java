@@ -16,19 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.VersionOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
-import com.google.android.gms.vision.text.Line;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.common.task.PriorityExecutor;
 import org.xutils.http.HttpMethod;
