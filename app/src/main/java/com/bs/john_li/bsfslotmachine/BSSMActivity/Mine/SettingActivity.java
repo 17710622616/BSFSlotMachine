@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.VersionOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -39,7 +40,7 @@ import java.io.File;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private BSSMHeadView settingHead;
-    private LinearLayout clearLL, updateVersion;
+    private LinearLayout clearLL, updateVersion, aboutLL;
     private TextView clearTv, loginOutTv;
 
 
@@ -63,6 +64,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void initView() {
         settingHead = (BSSMHeadView) findViewById(R.id.setting_head);
         clearLL = findViewById(R.id.setting_clean_cache);
+        aboutLL = findViewById(R.id.setting_about);
         updateVersion = findViewById(R.id.version_update);
         clearTv = findViewById(R.id.setting_clean_cache_tv);
         loginOutTv = findViewById(R.id.login_out_tv);
@@ -71,6 +73,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void setListener() {
         clearLL.setOnClickListener(this);
+        aboutLL.setOnClickListener(this);
         updateVersion.setOnClickListener(this);
         loginOutTv.setOnClickListener(this);
     }
@@ -89,6 +92,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.setting_clean_cache:
                 clearTv.setText("0.0MB");
+                break;
+            case R.id.setting_about:
+                startActivity(new Intent(this, AboutUsActivity.class));
                 break;
             case R.id.version_update:
                 checkAPPVersion();

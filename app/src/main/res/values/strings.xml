@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">易停車</string>
+    <string name="company_name">澳門博軟科技有限公司</string>
+    <string name="company_english_name">Macao Bo Soft Technology Co., Ltd.</string>
     <string name="not_open">該入口暫未開放，敬請期待！</string>
     <string name="mine_wallet">錢包</string>
     <string name="mine_discount">優惠</string>
@@ -25,6 +27,7 @@
     <string name="personal_account">賬戶綁定</string>
     <string name="personal_safe">安全設置</string>
     <string name="wallet_translation_detial">交易明細</string>
+    <string name="about_manifesto">便捷生活 無憂停車</string>
     <string name="opinion">請輸入您的寶貴意見</string>
     <string name="username">賬戶名</string>
     <string name="pw">密碼</string>
