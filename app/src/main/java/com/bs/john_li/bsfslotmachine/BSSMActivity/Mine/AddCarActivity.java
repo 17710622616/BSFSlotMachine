@@ -125,14 +125,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     }
                     break;
                 case -1:    // 車輛圖片提交至OSS失敗
-                    //Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
-                    if (startWay.equals("update")) {
-                        // 修改車輛信息
-                        callNetUpdateCar();
-                    } else {
-                        // 提交車輛信息
-                        callNetSubmiteCar();
-                    }
+                    Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
                     break;
                 case 2:    // 從OSS車輛圖片獲取成功
                     carPhotoIv.setImageBitmap((Bitmap) msg.obj);
