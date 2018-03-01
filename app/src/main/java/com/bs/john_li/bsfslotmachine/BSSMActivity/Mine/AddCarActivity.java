@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -95,7 +96,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private BSSMHeadView headView;
     private LinearLayout carPhotoLL, carTypeLL, carNoLL, carModelLL, carBrandLL, carStyleLL;
     private ImageView carPhotoIv;
-    private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv,outPutTv;
+    private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv,outPutTv, deleteCarTV;
     private ProgressBar ivProgress;
 
     public static final int TAKE_PHOTO = 1;
@@ -124,7 +125,14 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     }
                     break;
                 case -1:    // 車輛圖片提交至OSS失敗
-                    Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
+                    if (startWay.equals("update")) {
+                        // 修改車輛信息
+                        callNetUpdateCar();
+                    } else {
+                        // 提交車輛信息
+                        callNetSubmiteCar();
+                    }
                     break;
                 case 2:    // 從OSS車輛圖片獲取成功
                     carPhotoIv.setImageBitmap((Bitmap) msg.obj);
@@ -161,6 +169,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         carBrandTv = findViewById(R.id.add_car_brand_tv);
         carStyleTv = findViewById(R.id.add_car_style_tv);
         outPutTv = findViewById(R.id.add_car_photo_output_tv);
+        deleteCarTV = findViewById(R.id.delete_car_tv);
         ivProgress = findViewById(R.id.add_car_photo_bar);
     }
 
@@ -172,6 +181,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         carModelLL.setOnClickListener(this);
         carBrandLL.setOnClickListener(this);
         carStyleLL.setOnClickListener(this);
+        deleteCarTV.setOnClickListener(this);
     }
 
     @Override
@@ -187,6 +197,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         if (startWay.equals("update")){
             headView.setTitle("修改車輛");
             carPhotoIv.setImageResource(R.mipmap.img_loading);
+            deleteCarTV.setVisibility(View.VISIBLE);
             carInsideModel = new Gson().fromJson(intent.getStringExtra("updateModel"), CarModel.CarCountAndListModel.CarInsideModel.class);
             switch (carInsideModel.getIfPerson()) {
                 case 1:
@@ -249,6 +260,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.add_car_style_ll:
                 chooseCarStyle();
+                break;
+            case R.id.delete_car_tv:
+                showCarDeleteDialog();
                 break;
         }
     }
@@ -313,6 +327,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 if (model.getCode().equals("200")) {
                     if (model.getData().equals("true")) {
                         Intent intent = new Intent();
+                        intent.putExtra("resultWay", "CAR_FROM_UPDATE");
                         intent.putExtra("CAR_FROM_UPDATE", new Gson().toJson(carInsideModel));
                         setResult(RESULT_OK, intent);
                         finish();
@@ -749,6 +764,86 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         carModelTv.setText("車      型：" + carModel);
         carStyleTv.setText("車牌型號：" + carStyle);
         carNoTv.setText("車牌號碼：" + carNo);
+    }
+
+    /**
+     * 刪除車輛的dialog
+     */
+    private void showCarDeleteDialog() {
+        NiceDialog.init()
+                .setLayoutId(R.layout.dialog_normal)
+                .setConvertListener(new ViewConvertListener() {
+                    @Override
+                    protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                        TextView msgTv = viewHolder.getView(R.id.dialog_normal_msg);
+                        msgTv.setText("是否要刪除該車輛，刪除后車輛的會員費不會退還的哦！");
+                        viewHolder.setOnClickListener(R.id.dialog_normal_no, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                        viewHolder.setOnClickListener(R.id.dialog_normal_yes, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                callNetDeleteCar();
+                                baseNiceDialog.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setWidth(210)
+                .show(getSupportFragmentManager());
+    }
+
+    /**
+     * 請求刪除車輛
+     */
+    private void callNetDeleteCar() {
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setTitle("提示");
+        dialog.setMessage("正在刪除車輛......");
+        dialog.setCancelable(false);
+        dialog.show();
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_CAR + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id",carInsideModel.getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    Intent intent = new Intent();
+                    intent.putExtra("resultWay", "DELETE_CAR_FROM_ADD");
+                    intent.putExtra("DELETE_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    Toast.makeText(AddCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(AddCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                dialog.dismiss();
+            }
+        });
     }
 
     /**

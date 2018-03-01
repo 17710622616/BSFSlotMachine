@@ -312,9 +312,14 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 mSmartCarListRefreshAdapter.refreshListView(carModelList);
                 break;
             case 5: // 修改車輛的返回
-                carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("CAR_FROM_UPDATE"), CarModel.CarCountAndListModel.CarInsideModel.class));
-                //mCarListAdapter.refreshListView(carModelList);
-                mSmartCarListRefreshAdapter.refreshListView(carModelList);
+                if (data.getStringExtra("resultWay").equals("CAR_FROM_UPDATE")) {
+                    carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("CAR_FROM_UPDATE"), CarModel.CarCountAndListModel.CarInsideModel.class));
+                    //mCarListAdapter.refreshListView(carModelList);
+                    mSmartCarListRefreshAdapter.refreshListView(carModelList);
+                } else {
+                    carModelList.remove(updatePosition);
+                    mSmartCarListRefreshAdapter.refreshListView(carModelList);
+                }
                 break;
         }
     }
