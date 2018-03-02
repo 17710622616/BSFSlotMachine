@@ -116,7 +116,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         m_progressDlg.setMessage("檢查版本號中......");
         m_progressDlg.show();
         m_appNameStr = "haha.apk";
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHECK_VERSION + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHECK_VERSION + "?token=" + SPUtils.get(this, "UserToken", ""));
+        String url = params.getUri();
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -128,6 +129,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     m_versionRemark = model.getData().getExt();
                 } else {
                     m_newVerCode = "-1";
+                    Toast.makeText(SettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
 

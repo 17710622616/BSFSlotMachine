@@ -161,6 +161,9 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
         photoGv.setAdapter(mPhotoAdapter);
 
+        // 加入初始的添加照片的圖片
+        imgUrlList.add("");
+        // 判斷打開方式
         switch (startWay) {
             case "camare":
                 callCamare();
@@ -175,7 +178,6 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void callAlbum() {
-        imgUrlList.add("");
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
         if (!dir.exists()) {
             dir.mkdir();
@@ -196,7 +198,6 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void callCamare() {
-        imgUrlList.add("");
         if(BSSMCommonUtils.IsThereAnAppToTakePictures(this)) {
             dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
             if (!dir.exists()) {
@@ -270,32 +271,54 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.head_right:
-                String content = publish_artical_title_et.getText().toString();
+                String content = publish_artical_et.getText().toString();
                 String title = publish_artical_title_et.getText().toString();
                 if (content != null && title != null) {
                     if (!content.equals("") && !title.equals("")) {
-                        callNetPublishArticle(content, title);
+                        hasImage(content, title);
                     } else {
-                        Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PublishForumActivity.this, "請填寫您要發佈的標題及內容~", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PublishForumActivity.this, "請填寫您要發佈的標題及內容~", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
     }
 
     /**
-     * 發佈帖文
+     * 發佈帖文前判斷是否有照片
+     * @param content
+     * @param title
      */
-    private void callNetPublishArticle(String content, String title) {
+    private void hasImage(String content, String title) {
+        if (imgUrlList.size() > 1) {    // 有添加圖片
+            // 提交照片到OSS
+            String cover = "";
+            // 提交有照片的帖文
+            callNetPublishArticle(content, title, cover);
+        } else {
+            // 提交沒有照片的帖文
+            callNetPublishArticle(content, title, "");
+        }
+    }
+
+    /**
+     *  發佈帖文
+     * @param content
+     * @param title
+     * @param cover
+     */
+    private void callNetPublishArticle(String content, String title, String cover) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.PUBLISH_ARTICLE + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("title",title);
-            jsonObj.put("cover", "objectName1");
             jsonObj.put("contents",content);
+            jsonObj.put("title",title);
+            if (!cover.equals("")) {
+                jsonObj.put("cover", cover);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

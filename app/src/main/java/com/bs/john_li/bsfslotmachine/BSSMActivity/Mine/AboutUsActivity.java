@@ -41,7 +41,7 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
     public void initData() {
         headView.setTitle("關於易停車");
         headView.setLeft(this);
-        vercodeTv.setText("version:" + BSSMCommonUtils.getVerCode(this.getApplicationContext()));
+        vercodeTv.setText("version:" + BSSMCommonUtils.getVerName(this.getApplicationContext()));
     }
 
     @Override

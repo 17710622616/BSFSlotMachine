@@ -80,26 +80,5 @@
                 android:textColor="@color/colorDrakGray"
                 android:textSize="16sp"/>
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/loading_artical_ll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="150dp"
-            android:background="@color/colorWight">
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="@string/loading_str"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp"/>
-        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

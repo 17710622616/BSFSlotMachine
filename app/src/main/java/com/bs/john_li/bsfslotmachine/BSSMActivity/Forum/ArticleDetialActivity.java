@@ -255,18 +255,49 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         postNameTv.setText(mContentsModel.getCreator());
         // 頭部的圖片列表
         imgList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ImageView iv = new ImageView(this);
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            if (i % 2 != 0) {
-                iv.setImageResource(R.mipmap.car_sample);
+        // 如果有圖片則顯示，無則不設置
+        if (mContentsModel.getCover() != null) {
+            if (!mContentsModel.getCover().equals("")) {
+                for (int i = 0; i < 5; i++) {
+                    ImageView iv = new ImageView(this);
+                    iv.setScaleType(ImageView.ScaleType.FIT_XY);
+                    if (i % 2 != 0) {
+                        iv.setImageResource(R.mipmap.car_sample);
+                    } else {
+                        iv.setImageResource(R.mipmap.car_sample);
+                    }
+                    imgList.add(iv);
+                }
+                mCollapsingAdapter = new CollapsingAdapter(imgList);
+                mViewPager.setAdapter(mCollapsingAdapter);
             } else {
-                iv.setImageResource(R.mipmap.car_sample);
+                ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                params.height = 50;
+                mViewPager.setLayoutParams(params);
+                ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
+                ViewGroup.MarginLayoutParams marginLayoutParams = null;
+                if (params1 instanceof ViewGroup.MarginLayoutParams) {
+                    marginLayoutParams = (ViewGroup.MarginLayoutParams) params1;
+                } else {
+                    marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
+                }
+                marginLayoutParams.setMargins(0,60,0,0);
+                articalToolbar.setLayoutParams(params1);
             }
-            imgList.add(iv);
+        } else {
+            ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+            params.height = 50;
+            mViewPager.setLayoutParams(params);
+            ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
+            ViewGroup.MarginLayoutParams marginLayoutParams = null;
+            if (params1 instanceof ViewGroup.MarginLayoutParams) {
+                marginLayoutParams = (ViewGroup.MarginLayoutParams) params1;
+            } else {
+                marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
+            }
+            marginLayoutParams.setMargins(0,60,0,0);
+            articalToolbar.setLayoutParams(params1);
         }
-        mCollapsingAdapter = new CollapsingAdapter(imgList);
-        mViewPager.setAdapter(mCollapsingAdapter);
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override

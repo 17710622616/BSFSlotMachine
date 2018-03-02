@@ -204,6 +204,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
             }
         });
 
+        mRefreshLayout.autoRefresh();
         callNetGetContentsList("");
     }
 
