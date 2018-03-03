@@ -89,7 +89,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
     //private SwipeRefreshLayout swipeRefreshLayout;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
-    private LinearLayout noArticalLL, getErrorLL, loadingLL;
+    private LinearLayout noArticalLL, getErrorLL;
     //private LoadMoreListView mListView;
     private List<ContentsListModel.DataBean.ContentsModel> contentsList;
     private ContentsAdapter mContentsAdapter;
@@ -118,7 +118,6 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mRecycleView = (RecyclerView) forumView.findViewById(R.id.forum_lv);
         noArticalLL = (LinearLayout)forumView.findViewById(R.id.no_artical_ll);
         getErrorLL = (LinearLayout)forumView.findViewById(R.id.get_error_ll);
-        loadingLL = (LinearLayout)forumView.findViewById(R.id.loading_artical_ll);
         /*mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
         mListView.setFooterView(View.inflate(getActivity(), R.layout.layout_load_more_footer, null), new OnLoadMoreScrollListener.OnLoadMoreStateListener() {
             @Override
@@ -235,13 +234,11 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
             case R.id.get_error_ll:
                 contentsList.clear();
                 getErrorLL.setVisibility(View.GONE);
-                loadingLL.setVisibility(View.VISIBLE);
                 callNetGetContentsList("");
                 break;
             case R.id.no_artical_ll:
                 contentsList.clear();
                 noArticalLL.setVisibility(View.GONE);
-                loadingLL.setVisibility(View.VISIBLE);
                 callNetGetContentsList("");
                 break;
         }
@@ -356,6 +353,5 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mSmartRefreshAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadmore();
-        loadingLL.setVisibility(View.GONE);
     }
 }
