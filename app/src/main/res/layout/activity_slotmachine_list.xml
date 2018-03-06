@@ -9,14 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <FrameLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/sm_list_swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout
-            android:id="@+id/sm_list_swipe"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:layout_height="match_parent">
             <GridView
                 android:id="@+id/sm_list_gv"
                 android:layout_width="match_parent"
@@ -28,30 +28,29 @@
                 android:stretchMode="columnWidth"
                 android:gravity="center"
                 android:layout_margin="8dp"/>
-        </com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout>
-
-        <LinearLayout
-            android:id="@+id/sm_list_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="120dp"
-            android:visibility="gone">
-            <ImageView
-                android:background="@mipmap/no_car"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/sm_list_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="您周圍暫未咪錶誒，要不搜索看看~"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp"/>
-        </LinearLayout>
-    </FrameLayout>
+                android:orientation="vertical"
+                android:layout_marginTop="120dp"
+                android:visibility="gone">
+                <ImageView
+                    android:background="@mipmap/no_car"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerInside"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="您周圍暫未咪錶誒，要不搜索看看~"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

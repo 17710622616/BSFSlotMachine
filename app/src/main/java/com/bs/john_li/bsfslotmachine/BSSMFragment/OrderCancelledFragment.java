@@ -107,6 +107,7 @@ public class OrderCancelledFragment extends LazyLoadFragment {
                 startActivity(intent);
             }
         });
+        mRefreshLayout.autoRefresh();
         callNetGetCarList();
     }
 

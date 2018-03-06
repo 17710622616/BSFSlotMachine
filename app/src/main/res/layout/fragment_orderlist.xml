@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-        android:gravity="center"/>
-    <FrameLayout
+    android:layout_height="match_parent">/>
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/order_list_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/order_list_srl"
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
@@ -16,30 +16,31 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:background="#fff" />
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-        <LinearLayout
-            android:id="@+id/no_order_ll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="120dp"
-            android:background="@color/colorWight"
-            android:visibility="gone">
-            <ImageView
-                android:background="@mipmap/no_data"
-                android:layout_width="150dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerInside"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="您還沒有相關訂單，去下一單試試吧~"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp"/>
-        </LinearLayout>
-    </FrameLayout>
+            <LinearLayout
+                android:id="@+id/no_order_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="120dp"
+                android:background="@color/colorWight"
+                android:visibility="gone">
+                <ImageView
+                    android:background="@mipmap/no_data"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerInside"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="您還沒有相關訂單，下拉刷新或者去下一單試試吧~"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

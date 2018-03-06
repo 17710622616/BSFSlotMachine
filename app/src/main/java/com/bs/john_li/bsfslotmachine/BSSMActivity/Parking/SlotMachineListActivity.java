@@ -18,6 +18,9 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,9 +40,10 @@ import java.util.List;
 public class SlotMachineListActivity extends BaseActivity implements View.OnClickListener{
     private static final int radius = 100;
     private BSSMHeadView headView;
+    private RefreshLayout mRefreshLayout;
     private GridView smGv;
     private LinearLayout smLL;
-    private ExpandSwipeRefreshLayout smSwipe;
+    //private ExpandSwipeRefreshLayout smSwipe;
 
     private String mAddress;
     private String mLatitude;
@@ -47,7 +51,7 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
     private SlotMachineListAdapter mAdapter;
     private List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> smList;
     private int totalCount;
-    private int pageSize = 10;
+    private int pageSize = 12;
     private int pageNo = 1;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,7 +67,8 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         headView = findViewById(R.id.sm_list_head);
         smGv = findViewById(R.id.sm_list_gv);
         smLL = findViewById(R.id.sm_list_ll);
-        smSwipe = findViewById(R.id.sm_list_swipe);
+        mRefreshLayout = findViewById(R.id.sm_list_swipe);
+        //smSwipe = findViewById(R.id.sm_list_swipe);
     }
 
     @Override
@@ -91,30 +96,25 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
             }
         });
 
-        smSwipe.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onLoad() {
-                smSwipe.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //和最大的数据比较
-                        if (pageSize * (pageNo + 1) > totalCount){
-                            Toast.makeText(SlotMachineListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
-                            smSwipe.setLoading(false);
-                        } else {
-                            pageNo ++;
-                            callNetGetSlotMachineList();
-                        }
-                    }
-                }, 500);
-            }
-        });
-
-        smSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+            public void onRefresh(RefreshLayout refreshlayout) {
                 smList.clear();
                 pageNo = 1;
                 callNetGetSlotMachineList();
+            }
+        });
+        mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                if (pageSize * (pageNo + 1) > totalCount){
+                    Toast.makeText(SlotMachineListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                    mRefreshLayout.finishRefresh();
+                    mRefreshLayout.finishLoadmore();
+                } else {
+                    pageNo ++;
+                    callNetGetSlotMachineList();
+                }
             }
         });
     }
@@ -138,7 +138,7 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
             Toast.makeText(this, "0.0獲取列表失敗誒~",Toast.LENGTH_SHORT).show();
         }
         if (mLatitude != null  && mLongitude != null) {
-            smSwipe.setRefreshing(true);
+            mRefreshLayout.autoRefresh();
             callNetGetSlotMachineList();
         } else {
             Toast.makeText(this, "定位信息錯誤，請重新定位~", Toast.LENGTH_SHORT).show();
@@ -195,6 +195,32 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
                 updateUIAfterGetData();
             }
         });
+
+        // 測試數據
+        /*totalCount = 30;
+        int len = smList.size();
+        for (int i = len; i < len + 12; i++) {
+            SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel model = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
+            model.setId(i);
+            model.setAreaCode("AreaCode" + i);
+            model.setPillarColor("PillarColor" +i);
+            model.setParkingSpaces(null);
+            model.setAddress("Address" +i);
+            model.setMachineNo("MachineNo" +i);
+            model.setLongitude((double) i);
+            model.setLatitude((double) i);
+            model.setCarType(2);
+            model.setDistance((double) i);
+            smList.add(model);
+        }
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        updateUIAfterGetData();*/
     }
 
     /**
@@ -208,9 +234,8 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         }
         mAdapter = new SlotMachineListAdapter(smList, SlotMachineListActivity.this);
         smGv.setAdapter(mAdapter);
-        if (smSwipe.isRefreshing()) {
-            smSwipe.setRefreshing(false);
-        }
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
     }
 
     @Override

@@ -141,7 +141,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                 showCarDeleteDialog(position);
             }
         });
-        mRefreshLayout.setEnableRefresh(true);
+        mRefreshLayout.autoRefresh();
         mRefreshLayout.setHeaderHeight(60);
         callNetGetCarList();
     }

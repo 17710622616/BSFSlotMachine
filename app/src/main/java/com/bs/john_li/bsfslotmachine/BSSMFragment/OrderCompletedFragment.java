@@ -107,6 +107,7 @@ public class OrderCompletedFragment extends LazyLoadFragment {
                 startActivity(intent);
             }
         });
+        mRefreshLayout.autoRefresh();
         callNetGetCarList();
     }
 

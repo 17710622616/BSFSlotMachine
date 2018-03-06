@@ -105,6 +105,7 @@ public class AllOrderFragment extends LazyLoadFragment {
                 startActivity(intent);
             }
         });
+        mRefreshLayout.autoRefresh();
         callNetGetCarList();
     }
 

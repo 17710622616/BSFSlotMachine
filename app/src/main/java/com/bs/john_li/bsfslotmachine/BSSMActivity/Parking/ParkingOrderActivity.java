@@ -511,8 +511,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            String machineNoSub = machineNo.substring(0,machineNo.length() - 2);
-            jsonObj.put("machineNo", machineNoSub);
+            jsonObj.put("machineNo", machineNo);
         } catch (JSONException e) {
             e.printStackTrace();
         }

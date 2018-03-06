@@ -50,14 +50,6 @@
                 android:columnWidth="90dp"
                 android:stretchMode="columnWidth"
                 android:gravity="center"/>
-
-            <!--<ImageView
-                android:id="@+id/publish_forum_iv"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@mipmap/car_sample"
-                android:scaleType="fitXY"
-                android:layout_margin="10dp"/>-->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

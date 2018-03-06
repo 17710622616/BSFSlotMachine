@@ -7,11 +7,12 @@
         android:id="@+id/own_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <FrameLayout
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/own_forum_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/own_forum_list"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
@@ -20,32 +21,30 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:background="#fff" />
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            <LinearLayout
+                android:id="@+id/own_no_artical_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="120dp"
+                android:background="@color/colorWight"
+                android:visibility="gone">
+                <ImageView
+                    android:background="@mipmap/no_car"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerInside"/>
 
-        <LinearLayout
-            android:id="@+id/own_no_artical_ll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="120dp"
-            android:background="@color/colorWight"
-            android:visibility="gone">
-            <ImageView
-                android:background="@mipmap/no_car"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="您還沒發佈帖文呢，快去發佈點新鮮事吧~"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp"/>
-        </LinearLayout>
-    </FrameLayout>
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="您還沒發佈帖文呢，快去發佈點新鮮事吧~"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

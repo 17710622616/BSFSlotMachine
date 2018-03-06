@@ -118,7 +118,7 @@ public class OrderPaymentFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-
+        mRefreshLayout.autoRefresh();
         callNetGetCarList();
     }
 

@@ -62,6 +62,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -118,44 +119,27 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mRecycleView = (RecyclerView) forumView.findViewById(R.id.forum_lv);
         noArticalLL = (LinearLayout)forumView.findViewById(R.id.no_artical_ll);
         getErrorLL = (LinearLayout)forumView.findViewById(R.id.get_error_ll);
-        /*mListView = (LoadMoreListView) forumView.findViewById(R.id.forum_lv);
-        mListView.setFooterView(View.inflate(getActivity(), R.layout.layout_load_more_footer, null), new OnLoadMoreScrollListener.OnLoadMoreStateListener() {
-            @Override
-            public void onNormal(View footView) {
-                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.GONE);
-                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("上拉加載更多");
-            }
 
-            @Override
-            public void onLoading(View footView) {
-                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.VISIBLE);
-                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("正在加載...");
+        /*ClassicsHeader.REFRESH_HEADER_PULLDOWN = "下拉可刷新數據";
+        ClassicsHeader.REFRESH_HEADER_REFRESHING = "小易正在為您刷新數據...";
+        ClassicsHeader.REFRESH_HEADER_LOADING = "小易正在為您正在加载...";
+        ClassicsHeader.REFRESH_HEADER_RELEASE = "有一種愛叫做放手";
+        ClassicsHeader.REFRESH_HEADER_PULLDOWN = "";
+        ClassicsHeader.REFRESH_HEADER_REFRESHING = "";
+        ClassicsHeader.REFRESH_HEADER_LOADING = "";
+        ClassicsHeader.REFRESH_HEADER_RELEASE = "";
+        ClassicsHeader header = forumView.findViewById(R.id.forum_load_head);
+        header.setAccentColor(getResources().getColor(R.color.colorPrimary));//设置强调颜色
+        header.setPrimaryColor(getResources().getColor(R.color.colorMineGray));//设置主题颜色
+        header.setTextSizeTitle(16);//设置标题文字大小（sp单位）
+        header.setEnableLastTime(false);//是否显示时间
+        header.setDrawableSize(30);//同时设置箭头和图片的大小（dp单位）
+        header.setDrawableProgressSize(30);//设置图片的大小（dp单位）
+        header.setArrowResource(R.mipmap.load_header_arrow);//设置箭头资源
+        header.setProgressDrawable(getResources().getDrawable(R.mipmap.load_header_loading));//设置图片
 
-                if (contentsList.size() > 0) {
-                    callNetGetContentsList(Integer.toString(contentsList.get(contentsList.size() - 1).getId()));
-                } else {
-                    callNetGetContentsList("");
-                }
-            }
+        mRefreshLayout.setHeaderHeight(65);//Header标准高度（显示下拉高度>=标准高度 触发刷新）*/
 
-            @Override
-            public void onEnd(View footView) {
-                footView.findViewById(R.id.footer_pb_loading).setVisibility(View.GONE);
-                ((TextView) footView.findViewById(R.id.footer_tv_msg)).setText("已加載全部");
-            }
-        });
-        contentsList = new ArrayList<>();
-        mContentsAdapter = new ContentsAdapter(getActivity(), contentsList);
-        mListView.setAdapter(mContentsAdapter);
-
-        swipeRefreshLayout = forumView.findViewById(R.id.forum_srl);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                reFresh();
-            }
-        });
-        reFresh();*/
     }
 
     @Override
