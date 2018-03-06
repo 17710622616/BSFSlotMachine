@@ -25,13 +25,13 @@ public class BSSMConfigtor {
     // 聚合數據APPKEY
     public final static String JUHE_APPKEY = "9dfd4b86e08257c036ef4e5a6558882a";
     // OSS請求token的接口
-    public static final String OSS_TOKEN = "/oss/stsAuthorize";
+    public static final String OSS_TOKEN = "oss/stsAuthorize";
     // OSS的应用服务器回調地址
     public static final String OSS_SERVER_CALLBACK_ADDRESS = "";
     // OSS的BucketName
-    public static final String BucketName = "parkingman";
+    public static final String BucketName = "test-pic-666";
     // OSS的BucketName
-    public static final String END_POINT = "https://oss-cn-beijing.aliyuncs.com";
+    public static final String END_POINT = "http://oss-cn-hongkong.aliyuncs.com";
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
     // 咪錶搜索结果
