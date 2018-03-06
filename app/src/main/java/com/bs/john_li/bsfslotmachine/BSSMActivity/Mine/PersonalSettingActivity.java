@@ -76,7 +76,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     public void setListener() {
         headPortraitLL.setOnClickListener(this);
         usernameLL.setOnClickListener(this);
-        phoneLL.setOnClickListener(this);
+        //phoneLL.setOnClickListener(this);
         pwLL.setOnClickListener(this);
         payPwLL.setOnClickListener(this);
     }
@@ -103,7 +103,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             case R.id.personal_head_portrait:   // 頭像
                 startActivityForResult(new Intent(this, HeadViewActivity.class), 7);
                 break;
-            case R.id.personal_nickname:    // 暱稱1
+            /*case R.id.personal_nickname:    // 暱稱1
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -128,7 +128,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
+                break;*/
             case R.id.personal_phone://修改手機號碼
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
