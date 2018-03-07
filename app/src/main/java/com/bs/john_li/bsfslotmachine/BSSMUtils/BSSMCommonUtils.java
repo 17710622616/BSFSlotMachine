@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -550,5 +551,29 @@ public class BSSMCommonUtils {
             Log.e("msg",e.getMessage());
         }
         return verName;
+    }
+
+    /**
+     * 获取屏幕密度
+     * @param context
+     * @return
+     */
+    public static int getDeviceWitdh(Context context) {
+        DisplayMetrics dm = new DisplayMetrics();
+        dm = context.getResources().getDisplayMetrics();
+
+        return dm.widthPixels;      // 屏幕宽（像素，如：480px）
+    }
+
+    /**
+     * 获取屏幕密度
+     * @param context
+     * @return
+     */
+    public static int getDeviceHight(Context context) {
+        DisplayMetrics dm = new DisplayMetrics();
+        dm = context.getResources().getDisplayMetrics();
+
+        return dm.heightPixels;     // 屏幕高（像素，如：800px）
     }
 }

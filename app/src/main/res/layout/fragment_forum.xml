@@ -11,7 +11,8 @@
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/forum_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorMineGray">
         <!--<com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:id="@+id/forum_load_head"
             android:layout_width="match_parent"
@@ -19,9 +20,9 @@
             android:background="@mipmap/head_bg"/>-->
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/load"/>
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/loading_caffe_samll"/>
 
         <FrameLayout
             android:layout_width="match_parent"

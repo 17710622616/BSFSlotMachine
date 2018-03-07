@@ -139,7 +139,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         header.setProgressDrawable(getResources().getDrawable(R.mipmap.load_header_loading));//设置图片
 
         mRefreshLayout.setHeaderHeight(65);//Header标准高度（显示下拉高度>=标准高度 触发刷新）*/
-
+        int headerHight = (int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05);
+        mRefreshLayout.setHeaderHeightPx(headerHight);//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override
