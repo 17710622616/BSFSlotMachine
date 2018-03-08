@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.R;
@@ -67,6 +68,9 @@ public class OrderPaidFragment extends LazyLoadFragment {
         mRefreshLayout = (RefreshLayout) findViewById(R.id.order_list_srl);
         mRecycleView = (RecyclerView) findViewById(R.id.order_list_lv);
         noOrderLL = (LinearLayout) findViewById(R.id.no_order_ll);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     private void setListener() {
@@ -108,7 +112,7 @@ public class OrderPaidFragment extends LazyLoadFragment {
                 startActivity(intent);
             }
         });
-        mRefreshLayout.autoRefresh();
+        //mRefreshLayout.autoRefresh();
         callNetGetCarList();
     }
 

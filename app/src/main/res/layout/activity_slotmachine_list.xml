@@ -13,7 +13,13 @@
         android:id="@+id/sm_list_swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:layout_margin="8dp"
+        android:background="@color/colorMineGray">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/loading_caffe_small"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

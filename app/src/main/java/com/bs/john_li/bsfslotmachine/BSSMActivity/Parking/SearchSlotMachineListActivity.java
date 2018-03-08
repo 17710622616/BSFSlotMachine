@@ -13,6 +13,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMchineListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -68,6 +69,9 @@ public class SearchSlotMachineListActivity extends BaseActivity implements View.
         headView = findViewById(R.id.search_sm_list_head);
         mRefreshLayout = findViewById(R.id.search_sm_list__srl);
         mRecycleView = findViewById(R.id.search_sm_list__lv);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(this) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

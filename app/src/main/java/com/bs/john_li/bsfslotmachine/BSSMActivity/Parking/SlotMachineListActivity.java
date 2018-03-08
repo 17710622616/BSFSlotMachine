@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SlotMachineListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
@@ -69,6 +70,9 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         smLL = findViewById(R.id.sm_list_ll);
         mRefreshLayout = findViewById(R.id.sm_list_swipe);
         //smSwipe = findViewById(R.id.sm_list_swipe);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(this) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

@@ -120,27 +120,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         noArticalLL = (LinearLayout)forumView.findViewById(R.id.no_artical_ll);
         getErrorLL = (LinearLayout)forumView.findViewById(R.id.get_error_ll);
 
-        /*ClassicsHeader.REFRESH_HEADER_PULLDOWN = "下拉可刷新數據";
-        ClassicsHeader.REFRESH_HEADER_REFRESHING = "小易正在為您刷新數據...";
-        ClassicsHeader.REFRESH_HEADER_LOADING = "小易正在為您正在加载...";
-        ClassicsHeader.REFRESH_HEADER_RELEASE = "有一種愛叫做放手";
-        ClassicsHeader.REFRESH_HEADER_PULLDOWN = "";
-        ClassicsHeader.REFRESH_HEADER_REFRESHING = "";
-        ClassicsHeader.REFRESH_HEADER_LOADING = "";
-        ClassicsHeader.REFRESH_HEADER_RELEASE = "";
-        ClassicsHeader header = forumView.findViewById(R.id.forum_load_head);
-        header.setAccentColor(getResources().getColor(R.color.colorPrimary));//设置强调颜色
-        header.setPrimaryColor(getResources().getColor(R.color.colorMineGray));//设置主题颜色
-        header.setTextSizeTitle(16);//设置标题文字大小（sp单位）
-        header.setEnableLastTime(false);//是否显示时间
-        header.setDrawableSize(30);//同时设置箭头和图片的大小（dp单位）
-        header.setDrawableProgressSize(30);//设置图片的大小（dp单位）
-        header.setArrowResource(R.mipmap.load_header_arrow);//设置箭头资源
-        header.setProgressDrawable(getResources().getDrawable(R.mipmap.load_header_loading));//设置图片
-
-        mRefreshLayout.setHeaderHeight(65);//Header标准高度（显示下拉高度>=标准高度 触发刷新）*/
-        int headerHight = (int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05);
-        mRefreshLayout.setHeaderHeightPx(headerHight);//Header标准高度（显示下拉高度>=标准高度 触发刷新）
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

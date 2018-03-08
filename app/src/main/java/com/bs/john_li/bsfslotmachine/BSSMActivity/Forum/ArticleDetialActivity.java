@@ -271,7 +271,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 mCollapsingAdapter = new CollapsingAdapter(imgList);
                 mViewPager.setAdapter(mCollapsingAdapter);
             } else {
-                ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                /*ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
                 params.height = 50;
                 mViewPager.setLayoutParams(params);
                 ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
@@ -282,7 +282,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
                 }
                 marginLayoutParams.setMargins(0,60,0,0);
-                articalToolbar.setLayoutParams(params1);
+                articalToolbar.setLayoutParams(params1);*/
+                appbar.setExpanded(false);
             }
         } else {
             ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
@@ -297,6 +298,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             }
             marginLayoutParams.setMargins(0,60,0,0);
             articalToolbar.setLayoutParams(params1);
+            appbar.setExpanded(false);
         }
 
         mFab.setOnClickListener(new View.OnClickListener() {

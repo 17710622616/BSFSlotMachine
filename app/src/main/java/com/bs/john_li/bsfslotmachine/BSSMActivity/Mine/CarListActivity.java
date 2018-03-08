@@ -18,6 +18,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.STSGetter;
@@ -87,6 +88,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         mRecycleView = findViewById(R.id.carlist_lv);
         mRefreshLayout = findViewById(R.id.car_list_expand_swipe);
         noCarLL = findViewById(R.id.no_car_ll);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(this) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
@@ -60,6 +61,9 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
         mRecycleView = findViewById(R.id.own_forum_lv);
         mRefreshLayout = findViewById(R.id.own_forum_list);
         own_no_artical_ll = findViewById(R.id.own_no_artical_ll);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(this) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

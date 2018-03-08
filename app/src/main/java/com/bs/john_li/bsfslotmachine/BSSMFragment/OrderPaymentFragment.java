@@ -23,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.R;
@@ -75,6 +76,9 @@ public class OrderPaymentFragment extends BaseFragment {
         mRefreshLayout = view.findViewById(R.id.order_list_srl);
         mRecycleView = view.findViewById(R.id.order_list_lv);
         noOrderLL = view.findViewById(R.id.no_order_ll);
+
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -94,6 +95,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
+
+    // 提交订单的提示窗
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -316,6 +320,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 Toast.makeText(this, "暫無優惠券~", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.parking_order_submit:
+                dialog = new ProgressDialog(this);
+                dialog.setTitle("提示");
+                dialog.setMessage("提交訂單中......");
+                dialog.setCancelable(false);
+                dialog.show();
                 if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
                     /*Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", "123456789");
@@ -391,7 +400,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFinished() {
-
+                dialog.dismiss();
             }
         });
     }
@@ -441,7 +450,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFinished() {
-
+                dialog.dismiss();
             }
         });
     }
