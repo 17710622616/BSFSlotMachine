@@ -160,6 +160,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
      */
     private void getRechargeWay() {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CAR_CAHRGE_WAY_LIST);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -200,6 +201,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         }
         params.setBodyContent(jsonObj.toString());
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

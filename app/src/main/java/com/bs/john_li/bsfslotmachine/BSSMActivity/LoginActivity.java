@@ -145,6 +145,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -181,6 +182,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
      */
     private void getUserInfo(String token) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

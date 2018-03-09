@@ -200,11 +200,13 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
             case R.id.get_error_ll:
                 contentsList.clear();
                 getErrorLL.setVisibility(View.GONE);
+                mRefreshLayout.autoRefresh();
                 callNetGetContentsList("");
                 break;
             case R.id.no_artical_ll:
                 contentsList.clear();
                 noArticalLL.setVisibility(View.GONE);
+                mRefreshLayout.autoRefresh();
                 callNetGetContentsList("");
                 break;
         }
@@ -263,6 +265,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         } else {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS);
         }
+        params.setConnectTimeout(30 * 1000);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

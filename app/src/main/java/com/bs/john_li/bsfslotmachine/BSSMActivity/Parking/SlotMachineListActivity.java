@@ -168,6 +168,7 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

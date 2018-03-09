@@ -118,6 +118,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         m_appNameStr = "haha.apk";
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHECK_VERSION + "?token=" + SPUtils.get(this, "UserToken", ""));
         String url = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

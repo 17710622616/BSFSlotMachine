@@ -36,7 +36,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:minHeight="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin" />    <!--折叠模式-->
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

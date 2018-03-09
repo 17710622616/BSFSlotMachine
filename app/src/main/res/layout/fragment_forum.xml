@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/forum_head"
         android:layout_width="match_parent"
@@ -11,8 +12,7 @@
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/forum_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorMineGray">
+        android:layout_height="match_parent">
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,9 +27,7 @@
                 android:id="@+id/forum_lv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"
-                android:background="#fff" />
-
+                android:overScrollMode="never" />
             <LinearLayout
                 android:id="@+id/no_artical_ll"
                 android:layout_width="match_parent"

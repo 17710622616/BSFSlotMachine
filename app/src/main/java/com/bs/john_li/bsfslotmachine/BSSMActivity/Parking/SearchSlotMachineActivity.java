@@ -277,6 +277,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         }
         params.setBodyContent(jsonObj.toString());
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

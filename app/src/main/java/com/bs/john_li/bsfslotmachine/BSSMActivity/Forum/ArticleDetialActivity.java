@@ -14,11 +14,15 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telecom.Call;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -87,6 +91,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private CommentsExpandAdapter mCommentsExpandAdapter;
     // 打開方式，0：帖文列表打開，1：個人列表打開
     private int startway = 0;
+    // 提交中的dialog
+    private AlertDialog mSubmitDialog;
+    //提交中的dialog中的動畫
+    private ImageView mSubmitDialogIv;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -283,11 +292,15 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 }
                 marginLayoutParams.setMargins(0,60,0,0);
                 articalToolbar.setLayoutParams(params1);*/
+                ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                params.height = 270;
+                mViewPager.setLayoutParams(params);
                 appbar.setExpanded(false);
+                articalToolbar.setCollapsible(false);
             }
         } else {
-            ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-            params.height = 50;
+            /*ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+            params.height = 270;
             mViewPager.setLayoutParams(params);
             ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
             ViewGroup.MarginLayoutParams marginLayoutParams = null;
@@ -296,9 +309,13 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             } else {
                 marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
             }
-            marginLayoutParams.setMargins(0,60,0,0);
-            articalToolbar.setLayoutParams(params1);
+            marginLayoutParams.setMargins(0,30,0,0);
+            articalToolbar.setLayoutParams(params1);*/
+            ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+            params.height = 270;
+            mViewPager.setLayoutParams(params);
             appbar.setExpanded(false);
+            articalToolbar.setCollapsible(false);
         }
 
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -444,6 +461,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
      * @param content
      */
     private void callNetSubmitComment(String content, int way) {
+        showLoadingDialog();
         RequestParams params = null;
         if (way == 0) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_COMMENT_LOGIN + SPUtils.get(this, "UserToken", ""));
@@ -460,6 +478,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -474,7 +493,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     commentsModel.setCreatorid(model.getData().getCreatorid());
                     List<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean> replisList = new ArrayList<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean>();
                     commentsModel.setReplies(replisList);
-                    mCommentsModelList.add(commentsModel);
+                    mCommentsModelList.add(0, commentsModel);
                     //mCommentsAdapter.refreshListView(mCommentsModelList);
                     mCommentsExpandAdapter.notifyDataSetChanged();
                     expandListView();
@@ -495,7 +514,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFinished() {
-
+                closeLoadingDialog();
             }
         });
     }
@@ -507,6 +526,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
      * @param position
      */
     private void callNetSubmitReply(String content, int way, final int position) {
+        showLoadingDialog();
         RequestParams params = null;
         if (way == 0) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMITE_REPLY_LOGIN + SPUtils.get(this, "UserToken", ""));
@@ -523,6 +543,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -539,7 +560,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     if (repliesList == null) {
                         repliesList = new ArrayList<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean>();
                     }
-                    repliesList.add(repliesModel);
+                    repliesList.add(0, repliesModel);
                     mCommentsModelList.get(position).setReplies(repliesList);
                     //mCommentsAdapter.refreshListView(mCommentsModelList);
                     mCommentsExpandAdapter.notifyDataSetChanged();
@@ -561,7 +582,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFinished() {
-
+                closeLoadingDialog();
             }
         });
     }
@@ -570,7 +591,9 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
      * 刪除帖文
      */
     private void callNetDeleteArticle() {
+        showLoadingDialog();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.DELETE_COTENTS + mContentsModel.getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
+        params.setConnectTimeout(30 * 1000);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -595,8 +618,34 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFinished() {
-
+                closeLoadingDialog();
             }
         });
+    }
+
+    /**
+     *  顯示加載中的dialog
+     */
+    private void showLoadingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.NoBackGroundDialog);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_loading,null);
+        builder.setView(view);
+        mSubmitDialog = builder.create();
+        mSubmitDialog.setCancelable(false);
+        mSubmitDialogIv = view.findViewById(R.id.dialog_loading_iv);
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mSubmitDialogIv.setAnimation(rotateAnimation);
+        rotateAnimation.setDuration(2000);
+        mSubmitDialogIv.startAnimation(rotateAnimation);
+        mSubmitDialog.show();
+    }
+
+    /**
+     * 關閉加載中的dialog
+     */
+    private void closeLoadingDialog() {
+        //mSubmitDialogIv.clearAnimation();
+        mSubmitDialogIv.getAnimation().cancel();
+        mSubmitDialog.dismiss();
     }
 }

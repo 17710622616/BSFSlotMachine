@@ -142,6 +142,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -182,6 +183,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_VERIFICATION_CODE);
         params.addQueryStringParameter("mobile", registerUn.getText().toString());
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

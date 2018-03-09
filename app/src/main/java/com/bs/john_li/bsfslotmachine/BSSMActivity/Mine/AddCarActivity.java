@@ -203,6 +203,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     carTypeTv.setText("車輛類型：" + "重型汽車");
                     break;
             }
+            String url = carInsideModel.getImgUrl();
             downloadImg(carInsideModel.getImgUrl());
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
@@ -313,6 +314,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -357,8 +359,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            String fileName = file.getName();
-            jsonObj.put("imgUrl", fileName);
+            carInsideModel.setImgUrl(file.getName());
+            jsonObj.put("imgUrl", carInsideModel.getImgUrl());
             /*switch (carType) {
                 case "私家車":
                     jsonObj.put("ifPerson",0);
@@ -383,6 +385,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -808,6 +811,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -867,8 +871,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
         File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
 
+        String fileName = filePut.getName();
+        String filePath = filePut.getPath();
         // 构造上传请求
-        PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, filePut.getName(), filePut.getPath());
+        PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
 
         // 異步請求
         OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {

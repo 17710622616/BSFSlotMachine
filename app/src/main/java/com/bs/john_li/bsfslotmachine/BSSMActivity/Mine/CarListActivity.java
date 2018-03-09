@@ -196,6 +196,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         }
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -240,6 +241,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

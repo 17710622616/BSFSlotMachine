@@ -223,6 +223,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         }
         String url = jsonObj.toString();
         params.setBodyContent(url);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
 
             @Override
@@ -286,6 +287,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         String urlJson = jsonObj.toString();
         params.setBodyContent(urlJson);
         String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -320,6 +322,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
      */
     private void getUserInfo(String token) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_INFO + token);
+        params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

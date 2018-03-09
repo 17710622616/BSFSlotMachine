@@ -134,6 +134,7 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
      */
     private void callNetGetContentsList(String count) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CONTENTS + count + "&token=" + SPUtils.get(this, "UserToken", ""));
+        params.setConnectTimeout(30 * 1000);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
