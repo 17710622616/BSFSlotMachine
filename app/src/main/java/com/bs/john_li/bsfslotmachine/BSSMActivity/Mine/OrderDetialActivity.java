@@ -107,8 +107,12 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 startTimeTV.setVisibility(View.VISIBLE);
                 startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
                 addressTV.setVisibility(View.VISIBLE);
-                if (mUserOrderModel.getParkingSpace() != 0) {
-                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                if (mUserOrderModel.getParkingSpace() != null) {
+                    if (!mUserOrderModel.getParkingSpace().equals("")) {
+                        addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                    } else {
+                        addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
+                    }
                 } else {
                     addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
                 }
@@ -159,8 +163,12 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 startTimeTV.setVisibility(View.VISIBLE);
                 startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
                 addressTV.setVisibility(View.VISIBLE);
-                if (mUserOrderModel.getParkingSpace() != 0) {
-                    addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                if (mUserOrderModel.getParkingSpace() != null) {
+                    if (!mUserOrderModel.getParkingSpace().equals("")) {
+                        addressTV.setText("地        址：" + mUserOrderModel.getMachineNo() + mUserOrderModel.getParkingSpace() + "號");
+                    } else {
+                        addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
+                    }
                 } else {
                     addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
                 }

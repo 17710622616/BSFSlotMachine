@@ -117,7 +117,7 @@ public class UserOrderOutModel {
             private int carType;
             private int pillarColor;
             private int areaCode;
-            private int parkingSpace;
+            private String parkingSpace;
             private String img1;
             private String img2;
             private String img3;
@@ -284,11 +284,11 @@ public class UserOrderOutModel {
                 this.areaCode = areaCode;
             }
 
-            public int getParkingSpace() {
+            public String getParkingSpace() {
                 return parkingSpace;
             }
 
-            public void setParkingSpace(int parkingSpace) {
+            public void setParkingSpace(String parkingSpace) {
                 this.parkingSpace = parkingSpace;
             }
 
