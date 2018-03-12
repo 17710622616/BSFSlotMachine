@@ -9,7 +9,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.util.List;
@@ -22,11 +24,13 @@ import java.util.List;
 public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private final Context mContext;
+    private OSSClient oss;
     private OnItemClickListener mOnitemClickListener = null;
 
-    public SmartChooseCarRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list) {
+    public SmartChooseCarRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list, OSSClient oss) {
         this.carList = list;
         mContext = context;
+        this.oss = oss;
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,6 +46,7 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter implement
         ((SmartRefreshViewHolder)holder).carlistBrand.setText("品牌：" + carList.get(position).getCarBrand());
         ((SmartRefreshViewHolder)holder).carlistStyle.setText("款式：" + carList.get(position).getCarStyle());
         ((SmartRefreshViewHolder)holder).carlistModel.setText("型號：" + carList.get(position).getModelForCar());
+        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext);
         switch (carList.get(position).getIfPerson()) {
             case 1:
                 ((SmartRefreshViewHolder)holder).carTypeTv.setText("車輛類型：" + "輕重型電單車");

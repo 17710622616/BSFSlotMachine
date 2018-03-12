@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.ForgetPwActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -49,6 +51,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     private BSSMHeadView personalHead;
     private LinearLayout headPortraitLL, usernameLL, phoneLL, pwLL, payPwLL;
     private TextView nickNameTv,phoneNumTv;
+    private ImageView headIv;
     private String nickName, phoneNum, loginPw, payPw;
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
     @Override
@@ -70,6 +73,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         payPwLL = findViewById(R.id.personal_pay_pw);
         nickNameTv = findViewById(R.id.personal_nickname_tv);
         phoneNumTv = findViewById(R.id.personal_phone_tv);
+        headIv = findViewById(R.id.personal_head_portrait_iv);
     }
 
     @Override
@@ -91,6 +95,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
             nickNameTv.setText(mUserInfoModel.getNickname());
             phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
+            AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), AliyunOSSUtils.initOSS(this), headIv, this);
         }
     }
 

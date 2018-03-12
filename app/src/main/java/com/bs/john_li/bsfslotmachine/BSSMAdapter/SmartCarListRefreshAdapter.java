@@ -29,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
@@ -90,7 +91,8 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
         }
 
         ((SmartRefreshViewHolder)holder).carlistIv.setTag(carList.get(position).getImgUrl());
-        downloadImg(((SmartRefreshViewHolder)holder).carlistIv, carList.get(position).getImgUrl());
+        //downloadImg(((SmartRefreshViewHolder)holder).carlistIv, carList.get(position).getImgUrl());
+        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext);
 
         ((SmartRefreshViewHolder)holder).carRecharge.setOnClickListener(this);
         ((SmartRefreshViewHolder)holder).carListLL.setOnClickListener(this);
@@ -173,65 +175,5 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
     public void refreshListView(List<CarModel.CarCountAndListModel.CarInsideModel> newList){
         this.carList = newList;
         notifyDataSetChanged();
-    }
-
-    /**
-     * 獲取圖片
-     * @param imageView
-     * @param object
-     */
-    private void downloadImg(final ImageView imageView, String object) {
-        String tag = (String) imageView.getTag();
-        if (!tag.equals(object)) {
-            return;
-        }
-
-        final Activity activity = (Activity) mContext;
-        OSSAsyncTask task = oss.asyncGetObject(new GetObjectRequest(BSSMConfigtor.BucketName, object), new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
-            @Override
-            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
-                // 请求成功
-                InputStream inputStream = result.getObjectContent();
-                //final Bitmap bm = BitmapFactory.decodeStream(inputStream);
-                try {
-                    byte[] date = new byte[0];
-                    date = BSSMCommonUtils.readStream(inputStream);
-                    //获取bitmap
-                    final Bitmap bm = BitmapFactory.decodeByteArray(date,0,date.length);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImageBitmap(bm);
-                            System.gc();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                // 请求异常
-                if (clientExcepion != null) {
-                    // 本地异常如网络异常等
-                    clientExcepion.printStackTrace();
-                }
-                if (serviceException != null) {
-                    // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
-                }
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageView.setImageResource(R.mipmap.load_img_fail_list);
-                    }
-                });
-            }
-        });
     }
 }

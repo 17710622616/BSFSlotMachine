@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -94,7 +95,7 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
         headView.setRight(R.mipmap.push_invitation, this);
 
         contentsList = new ArrayList<>();
-        mSmartOwnRefreshAdapter = new SmartOwnRefreshAdapter(this, contentsList);
+        mSmartOwnRefreshAdapter = new SmartOwnRefreshAdapter(this, contentsList, AliyunOSSUtils.initOSS(this));
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartOwnRefreshAdapter);
         mSmartOwnRefreshAdapter.setOnItemClickListenr(new SmartOwnRefreshAdapter.OnItemClickListener() {

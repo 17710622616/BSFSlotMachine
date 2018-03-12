@@ -37,6 +37,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotUnknowOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -79,6 +80,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
     public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
+    private ImageView parkingIv;
     public NoScrollGridView photoGv;
 
     private String way;
@@ -133,6 +135,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         startTimeTv = findViewById(R.id.parking_order_starttime_tv);
         orderAmountTv = findViewById(R.id.parking_order_amount_tv);
         submitTv = findViewById(R.id.parking_order_submit);
+        parkingIv = findViewById(R.id.parking_iv);
     }
 
     @Override
@@ -282,7 +285,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             photoGv.setVisibility(View.GONE);
             callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
         }
-
     }
 
     @Override
@@ -615,6 +617,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
             carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
+            AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this);
             if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
                 mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
                 mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());
@@ -961,6 +964,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             position = i;
                         }
                     }
+                    // 置顶车辆
                     if (position != -1) {
                         carInsideModelList.remove(position);
                     }

@@ -23,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -110,7 +111,7 @@ public class OrderPaymentFragment extends BaseFragment {
     @Override
     public void initData() {
         orderList = new ArrayList<>();
-        mSmartOrderRefreshAdapter = new SmartOrderRefreshAdapter(getActivity(), orderList);
+        mSmartOrderRefreshAdapter = new SmartOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
         mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycleView.setAdapter(mSmartOrderRefreshAdapter);
 

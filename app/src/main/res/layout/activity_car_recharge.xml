@@ -85,6 +85,7 @@
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
+
     <RadioGroup
         android:id="@+id/recharge_car_rg"
         android:layout_width="match_parent"

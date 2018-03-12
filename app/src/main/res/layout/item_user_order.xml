@@ -9,7 +9,6 @@
         android:id="@+id/item_order_iv"
         android:layout_width="110dp"
         android:layout_height="78dp"
-        android:src="@mipmap/car_sample"
         android:scaleType="fitXY"/>
 
     <TextView

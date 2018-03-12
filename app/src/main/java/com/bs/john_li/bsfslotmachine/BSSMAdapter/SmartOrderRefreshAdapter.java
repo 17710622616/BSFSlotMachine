@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.R;
+
+import org.xutils.x;
 
 import java.util.List;
 
@@ -22,10 +26,12 @@ import java.util.List;
 public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> list;
     private final Context mContext;
+    private OSSClient oss;
     private OnItemClickListener mOnitemClickListener = null;
 
-    public SmartOrderRefreshAdapter(Context context, List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> list) {
+    public SmartOrderRefreshAdapter(Context context, List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> list, OSSClient oss) {
         this.list = list;
+        this.oss = oss;
         mContext = context;
     }
     @Override
@@ -66,6 +72,20 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
                 break;
             case 9:
                 ((SmartRefreshViewHolder)holder).item_order_status.setText("訂單狀態：已取消");
+                break;
+        }
+        switch (list.get(position).getOrderType()) {
+            case 1://充值訂單
+                ((SmartRefreshViewHolder)holder).item_order_iv.setImageResource(R.mipmap.top_up);
+                break;
+            case 2://會員續費訂單
+                ((SmartRefreshViewHolder)holder).item_order_iv.setImageResource(R.mipmap.sure_order);
+                break;
+            case 3://確定投幣機訂單
+                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext);
+                break;
+            case 4: //未知投幣機訂單
+                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext);
                 break;
         }
         holder.itemView.setTag(position);

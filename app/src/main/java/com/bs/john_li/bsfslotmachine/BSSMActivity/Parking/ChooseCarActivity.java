@@ -15,6 +15,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarRechargeActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartChooseCarRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -178,7 +179,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         callNetGetCarList();*/
 
         carModelList = new ArrayList<>();
-        mSmartChooseCarRefreshAdapter = new SmartChooseCarRefreshAdapter(this, carModelList);
+        mSmartChooseCarRefreshAdapter = new SmartChooseCarRefreshAdapter(this, carModelList, AliyunOSSUtils.initOSS(this));
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartChooseCarRefreshAdapter);
         mSmartChooseCarRefreshAdapter.setOnItemClickListenr(new SmartChooseCarRefreshAdapter.OnItemClickListener() {

@@ -51,6 +51,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActiv
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.OssService;
@@ -127,12 +128,12 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 case -1:    // 車輛圖片提交至OSS失敗
                     Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
                     break;
-                case 2:    // 從OSS車輛圖片獲取成功
+                /*case 2:    // 從OSS車輛圖片獲取成功
                     carPhotoIv.setImageBitmap((Bitmap) msg.obj);
                     break;
                 case -2:    // 從OSS車輛圖片獲取失敗
                     carPhotoIv.setImageResource(R.mipmap.load_img_fail);
-                    break;
+                    break;*/
             }
         }
     };
@@ -180,7 +181,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void initData() {
         // 初始化OSS
-        initOSS();
+        oss = AliyunOSSUtils.initOSS(this);
         // 初始化數據
         headView.setLeft(this);
         headView.setRight(R.mipmap.ok, this);
@@ -203,8 +204,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     carTypeTv.setText("車輛類型：" + "重型汽車");
                     break;
             }
-            String url = carInsideModel.getImgUrl();
-            downloadImg(carInsideModel.getImgUrl());
+            Log.d("CarImagePath", carInsideModel.getImgUrl().toString());
+            AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this);
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());
@@ -418,15 +419,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
             }
         });
-    }
-
-    /**
-     * 检查相机是否可以打开
-     */
-    private boolean IsThereAnAppToTakePictures() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> availableActivities = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return availableActivities != null && availableActivities.size() > 0;
     }
 
     /**
@@ -844,27 +836,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 初始化一个OssService用来上传
-     */
-    public void initOSS() {
-        OSSCredentialProvider credentialProvider;
-        //使用自己的获取STSToken的类
-        //STSGetter类，封装如何跟从应用服务器取数据，必须继承于OSSFederationCredentialProvider这个类。 取Token这个取决于您所写的APP跟应用服务器数据的协议设计。
-        if (BSSMConfigtor.OSS_TOKEN .equals("")) {
-            credentialProvider = new STSGetter(this);
-        }else {
-            credentialProvider = new STSGetter(this, BSSMConfigtor.BASE_URL + BSSMConfigtor.OSS_TOKEN);
-        }
-        //初始化OSSClient
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
-        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
-    }
-
-    /**
      * 上傳圖片到OSS
      */
     private void putImg() {
@@ -902,96 +873,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
                 Message msg = new Message();
                 msg.what  = -1;
-                mHandler.sendMessage(msg);
-            }
-        });
-    }
-
-    private void downloadImg(String object) {
-        if ((object == null) || object.equals("")) {
-            Log.w("AsyncGetImage", "ObjectNull");
-            return;
-        }
-
-        GetObjectRequest get = new GetObjectRequest(BSSMConfigtor.BucketName, object);
-
-        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
-            @Override
-            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
-                // 请求成功
-                InputStream inputStream = result.getObjectContent();
-                // 直接对stream直接用不转byte
-                /*InputStream inputStreamCache = inputStream;
-                BitmapFactory.Options opt = new BitmapFactory.Options();
-                opt.inJustDecodeBounds = true;
-                //获取图片参数
-                BitmapFactory.decodeStream(inputStreamCache,null, opt);
-                opt.inSampleSize= BSSMCommonUtils.calculateInSampleSize(opt,carPhotoIv.getWidth(), carPhotoIv.getHeight());
-                opt.inPreferredConfig = Bitmap.Config.RGB_565;
-                opt.inPurgeable = true;
-                opt.inInputShareable = true;
-                opt.inJustDecodeBounds = false;
-                //先关闭InputStream 流
-                try {
-                    inputStreamCache.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                //生成Bitmap对象
-                Bitmap bm = BitmapFactory.decodeStream(inputStream,null, opt);*/
-
-                //  阿里的方法不处理
-                /*try {
-                    //Bitmap bm = BitmapFactory.decodeStream(inputStream);
-                    //需要根据对应的View大小来自适应缩放
-                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(inputStream, carPhotoIv);
-                    inputStream.close();
-                    Message msg = mHandler.obtainMessage(2, bm);
-                    msg.sendToTarget();
-                    System.gc();
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
-                //  阿里的方法做图片处理
-                //重载InputStream来获取读取进度信息
-                /*try {
-                    //需要根据对应的View大小来自适应缩放
-                    Bitmap bm = BSSMCommonUtils.autoResizeFromStream(inputStream, carPhotoIv);
-                    Message msg = mHandler.obtainMessage(2, bm);
-                    msg.sendToTarget();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-                try {
-                    byte[] date = new byte[0];
-                    date = BSSMCommonUtils.readStream(inputStream);
-                    //获取bitmap
-                    final Bitmap bm = BitmapFactory.decodeByteArray(date,0,date.length);
-                    Message msg = mHandler.obtainMessage(2, bm);
-                    msg.sendToTarget();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                // 请求异常
-                if (clientExcepion != null) {
-                    // 本地异常如网络异常等
-                    clientExcepion.printStackTrace();
-                }
-                if (serviceException != null) {
-                    // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
-                }
-
-                Message msg = new Message();
-                msg.what = -2;
                 mHandler.sendMessage(msg);
             }
         });

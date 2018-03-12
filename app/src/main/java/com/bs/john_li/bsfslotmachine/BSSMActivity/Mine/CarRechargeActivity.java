@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,6 +21,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarRechargeWayListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -44,6 +46,7 @@ import java.util.List;
 public class CarRechargeActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv,submitTv;
+    private ImageView carIv;
     private RadioGroup rechargeWayRg;
     private RadioButton monthRb, quarterlyRb, sixMonthRb, yearRb;
 
@@ -68,6 +71,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carBrandTv = findViewById(R.id.recharge_car_brand);
         carTypeTv = findViewById(R.id.recharge_car_type);
         submitTv = findViewById(R.id.recharge_car_submit);
+        carIv = findViewById(R.id.recharge_car_iv);
         rechargeWayRg = findViewById(R.id.recharge_car_rg);
         monthRb = findViewById(R.id.one_month_rb);
         quarterlyRb = findViewById(R.id.one_quarterly_rb);
@@ -128,6 +132,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carModelTv.setText("品牌："+mCarInsideModel.getModelForCar());
         carStyleTv.setText("車型："+mCarInsideModel.getCarStyle());
         carBrandTv.setText("型號："+mCarInsideModel.getCarBrand());
+        AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this);
         switch (mCarInsideModel.getIfPerson()) {
             case 1:
                 carTypeTv.setText("車輛類型：輕重型電單車");

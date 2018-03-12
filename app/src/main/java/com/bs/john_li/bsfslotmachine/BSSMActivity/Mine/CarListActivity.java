@@ -18,6 +18,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -133,10 +134,8 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         carListHead.setTitle("我的車輛");
         carListHead.setLeft(this);
         carListHead.setRight(R.mipmap.push_invitation, this);
-        // 初始化OSS
-        initOSS();
         carModelList = new ArrayList<>();
-        mSmartCarListRefreshAdapter = new SmartCarListRefreshAdapter(this, carModelList, oss);
+        mSmartCarListRefreshAdapter = new SmartCarListRefreshAdapter(this, carModelList, AliyunOSSUtils.initOSS(this));
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartCarListRefreshAdapter);
         mSmartCarListRefreshAdapter.setOnItemLongClickListenr(new SmartCarListRefreshAdapter.OnItemLongClickListener() {
@@ -365,26 +364,5 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         intent.putExtra("updateModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
         updatePosition = Integer.parseInt(position);
         startActivityForResult(intent, BSSMConfigtor.UPDATE_CAR_RQUEST);
-    }
-
-    /**
-     * 初始化一个OssService用来上传
-     */
-    public void initOSS() {
-        OSSCredentialProvider credentialProvider;
-        //使用自己的获取STSToken的类
-        //STSGetter类，封装如何跟从应用服务器取数据，必须继承于OSSFederationCredentialProvider这个类。 取Token这个取决于您所写的APP跟应用服务器数据的协议设计。
-        if (BSSMConfigtor.OSS_TOKEN .equals("")) {
-            credentialProvider = new STSGetter(this);
-        }else {
-            credentialProvider = new STSGetter(this, BSSMConfigtor.BASE_URL + BSSMConfigtor.OSS_TOKEN);
-        }
-        //初始化OSSClient
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
-        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(getApplicationContext(), BSSMConfigtor.END_POINT, credentialProvider, conf);
     }
 }

@@ -12,7 +12,7 @@
         android:id="@+id/own_forum_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorMineGray">
+        android:background="#fff">
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

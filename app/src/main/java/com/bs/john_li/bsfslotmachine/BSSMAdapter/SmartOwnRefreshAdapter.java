@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.util.List;
@@ -21,11 +23,13 @@ import java.util.List;
 public class SmartOwnRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private List<ContentsListModel.DataBean.ContentsModel> list;
     private final Context mContext;
+    private OSSClient oss;
     private OnItemClickListener mOnitemClickListener = null;
 
-    public SmartOwnRefreshAdapter(Context context, List<ContentsListModel.DataBean.ContentsModel> list) {
+    public SmartOwnRefreshAdapter(Context context, List<ContentsListModel.DataBean.ContentsModel> list, OSSClient oss) {
         this.list = list;
         mContext = context;
+        this.oss = oss;
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -39,6 +43,7 @@ public class SmartOwnRefreshAdapter extends RecyclerView.Adapter implements View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((SmartRefreshViewHolder)holder).contentsTitle.setText(list.get(position).getTitle());
         ((SmartRefreshViewHolder)holder).contentsPostID.setText("發佈者：" + list.get(position).getCreator());
+        AliyunOSSUtils.downloadImg(list.get(position).getCover(), oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext);
         ((SmartRefreshViewHolder)holder).contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
         holder.itemView.setTag(position);
     }
