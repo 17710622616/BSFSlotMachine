@@ -102,14 +102,14 @@ public class AliyunOSSUtils {
      * @param iv    綁定的ImageView
      * @param context   上下文，用來做UI線程的執行操作
      */
-    public static void downloadImg(String object, OSSClient oss, final ImageView iv, final Context context) {
+    public static void downloadImg(String object, OSSClient oss, final ImageView iv, final Context context, final int fialImgRes) {
         final Activity activity = ((Activity)context);
         if ((object == null) || object.equals("")) {
             Log.w("AsyncGetImage", "ObjectNull");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    iv.setImageResource(R.mipmap.load_img_fail_list);
+                    iv.setImageResource(fialImgRes);
                 }
             });
             return;
@@ -200,7 +200,7 @@ public class AliyunOSSUtils {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        iv.setImageResource(R.mipmap.load_img_fail_list);
+                        iv.setImageResource(fialImgRes);
                     }
                 });
             }

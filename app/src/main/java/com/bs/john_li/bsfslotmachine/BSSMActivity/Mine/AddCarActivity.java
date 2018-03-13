@@ -205,7 +205,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     break;
             }
             Log.d("CarImagePath", carInsideModel.getImgUrl().toString());
-            AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this);
+            AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this, R.mipmap.load_img_fail_list);
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());

@@ -23,12 +23,13 @@
                 android:background="@drawable/shape_toolbar_bg"
                 android:orientation="horizontal">
                 <com.bs.john_li.bsfslotmachine.BSSMView.CycleImageView
+                    android:id="@+id/personal_setting_head_iv"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="15dp"
-                    android:src="@mipmap/head_img"
+                    android:src="@mipmap/head_boy"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"/>
 

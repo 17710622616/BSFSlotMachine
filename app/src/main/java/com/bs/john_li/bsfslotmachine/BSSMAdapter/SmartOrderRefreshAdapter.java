@@ -84,10 +84,10 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
                 ((SmartRefreshViewHolder)holder).item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 3://確定投幣機訂單
-                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext);
+                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext, R.mipmap.load_img_fail_list);
                 break;
             case 4: //未知投幣機訂單
-                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext);
+                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext, R.mipmap.load_img_fail_list);
                 break;
         }
         holder.itemView.setTag(position);

@@ -2,11 +2,14 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -19,6 +22,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.ForgetPwActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
@@ -46,6 +56,7 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -65,11 +76,28 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
     public static final int TAKE_PHOTO = 1;
-    public static final int TAKE_PHOTO_FROM_ALBUM = 0;
-    private static final int REQUEST_SMALL_IMAGE_CUTTING = 2;
+    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
+    private static final int REQUEST_SMALL_IMAGE_CUTTING = 3;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.head_boy).build();
+    private OSSClient oss;
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:     // 頭像提交至OSS成功
+                    mUserInfoModel.setHeadimg(file.getName());
+                    updateUserInfo(0);
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
+                    break;
+                case -1:    // 頭像提交至OSS失敗
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,13 +133,14 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     public void initData() {
         personalHead.setTitle("賬戶信息");
         personalHead.setLeft(this);
+        oss = AliyunOSSUtils.initOSS(this);
 
         String userInfoJson = (String) SPUtils.get(this, "UserInfo", "");
         if (!userInfoJson.equals("")) {
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
             nickNameTv.setText(mUserInfoModel.getNickname());
             phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
-            AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), AliyunOSSUtils.initOSS(this), headIv, this);
+            AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), oss, headIv, this, R.mipmap.head_boy);
         }
     }
 
@@ -140,7 +169,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                                             Date date = new Date(System.currentTimeMillis());
-                                            file = new File(dir, "car" + format.format(date) + ".jpg");
+                                            file = new File(dir, "head" + format.format(date) + ".jpg");
                                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                                             startActivityForResult(intent, TAKE_PHOTO);
                                         } else {
@@ -165,7 +194,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                             getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                                         }
                                         getAlbum.setType("image/*");
-                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                        //startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                        startActivityForResult(getAlbum, REQUEST_SMALL_IMAGE_CUTTING);
                                         baseNiceDialog.dismiss();
                                     }
                                 });
@@ -282,17 +312,57 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 Uri contentUri = Uri.fromFile(file);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
+                // 上傳頭像
+                putImg();
                 x.image().bind(headIv, file.getPath(), options);
                 break;
             case TAKE_PHOTO_FROM_ALBUM:
-                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                /*String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
                 file = new File(imagePath);
-                headIv.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                headIv.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));*/
+                if (data != null) {
+                    Bundle extras = data.getExtras();
+                    if (extras != null){
+                        Bitmap photo = extras.getParcelable("data"); // 直接获得内存中保存的 bitmap
+                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                        Date date = new Date(System.currentTimeMillis());
+                        file = new File(dir, "head" + format.format(date) + ".jpg");
+                        // 保存图片
+                        FileOutputStream outputStream = null;
+                        try {
+                            outputStream = new FileOutputStream(file);
+                            photo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                            outputStream.flush();
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        // 上傳頭像
+                        putImg();
+                        // 在视图中显示图片
+                        headIv.setImageBitmap(photo);
+                    } else {
+                        Toast.makeText(this, "圖片保存失敗", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(this, "圖片保存失敗", Toast.LENGTH_LONG).show();
+                }
                 break;
             case REQUEST_SMALL_IMAGE_CUTTING:
-                String imagePath1 = BSSMCommonUtils.getRealFilePath(this, data.getData());
-                file = new File(imagePath1);
-                x.image().bind(headIv, file.getPath(), options);
+                try {
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    intent.setDataAndType(data.getData(), "image/*");
+                    intent.putExtra("crop", "true");
+                    intent.putExtra("aspectX", 1); // 裁剪框比例
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("outputX", 300); // 输出图片大小
+                    intent.putExtra("outputY", 300);
+                    intent.putExtra("scale", true);
+                    intent.putExtra("return-data", true);
+                    startActivityForResult(intent, TAKE_PHOTO_FROM_ALBUM);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
@@ -486,5 +556,52 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 file = new File(cacheFileName);
             }
         }
+
+        if (dir == null) {
+            new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        }
+    }
+
+    /**
+     * 上傳圖片到OSS
+     */
+    private void putImg() {
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
+
+        String fileName = filePut.getName();
+        String filePath = filePut.getPath();
+        // 构造上传请求
+        PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
+
+        // 異步請求
+        OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                Message msg = new Message();
+                msg.what  = 0;
+                mHandler.sendMessage(msg);
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+
+                Message msg = new Message();
+                msg.what  = -1;
+                mHandler.sendMessage(msg);
+            }
+        });
     }
 }

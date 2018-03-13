@@ -46,7 +46,7 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter implement
         ((SmartRefreshViewHolder)holder).carlistBrand.setText("品牌：" + carList.get(position).getCarBrand());
         ((SmartRefreshViewHolder)holder).carlistStyle.setText("款式：" + carList.get(position).getCarStyle());
         ((SmartRefreshViewHolder)holder).carlistModel.setText("型號：" + carList.get(position).getModelForCar());
-        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext);
+        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext, R.mipmap.load_img_fail_list);
         switch (carList.get(position).getIfPerson()) {
             case 1:
                 ((SmartRefreshViewHolder)holder).carTypeTv.setText("車輛類型：" + "輕重型電單車");

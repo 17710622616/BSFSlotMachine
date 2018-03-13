@@ -92,7 +92,7 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
 
         ((SmartRefreshViewHolder)holder).carlistIv.setTag(carList.get(position).getImgUrl());
         //downloadImg(((SmartRefreshViewHolder)holder).carlistIv, carList.get(position).getImgUrl());
-        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext);
+        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext, R.mipmap.load_img_fail_list);
 
         ((SmartRefreshViewHolder)holder).carRecharge.setOnClickListener(this);
         ((SmartRefreshViewHolder)holder).carListLL.setOnClickListener(this);

@@ -622,7 +622,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
             carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
-            AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this);
+            AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
             if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
                 mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
                 mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());

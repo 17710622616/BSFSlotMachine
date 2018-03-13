@@ -43,7 +43,7 @@ public class SmartOwnRefreshAdapter extends RecyclerView.Adapter implements View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((SmartRefreshViewHolder)holder).contentsTitle.setText(list.get(position).getTitle());
         ((SmartRefreshViewHolder)holder).contentsPostID.setText("發佈者：" + list.get(position).getCreator());
-        AliyunOSSUtils.downloadImg(list.get(position).getCover(), oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext);
+        AliyunOSSUtils.downloadImg(list.get(position).getCover(), oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext, R.mipmap.load_img_fail_list);
         ((SmartRefreshViewHolder)holder).contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
         holder.itemView.setTag(position);
     }

@@ -132,7 +132,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carModelTv.setText("品牌："+mCarInsideModel.getModelForCar());
         carStyleTv.setText("車型："+mCarInsideModel.getCarStyle());
         carBrandTv.setText("型號："+mCarInsideModel.getCarBrand());
-        AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this);
+        AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this, R.mipmap.load_img_fail_list);
         switch (mCarInsideModel.getIfPerson()) {
             case 1:
                 carTypeTv.setText("車輛類型：輕重型電單車");

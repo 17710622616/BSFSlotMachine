@@ -23,7 +23,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginRight="15dp"
-            android:src="@mipmap/head_img"/>
+            android:src="@mipmap/head_boy"/>
     </LinearLayout>
     <TextView
         style="@style/UnderLineTextView"/>

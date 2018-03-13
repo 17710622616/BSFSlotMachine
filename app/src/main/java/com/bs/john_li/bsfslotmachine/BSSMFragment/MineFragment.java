@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -43,6 +45,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private BSSMHeadView mineHeadView;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
     private TextView nickNameTv, phoneTv;
+    private ImageView headIv;
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
     private String userToken;
@@ -77,6 +80,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         gjlLL = mineView.findViewById(R.id.mine_guojianglong);
         nickNameTv = mineView.findViewById(R.id.mine_nickname);
         phoneTv = mineView.findViewById(R.id.mine_info_phone);
+        headIv = mineView.findViewById(R.id.personal_setting_head_iv);
     }
 
     @Override
@@ -135,6 +139,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
                 nickNameTv.setText(mUserInfoModel.getNickname());
                 phoneTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
+                AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
             } else {
                 mUserInfoModel = new UserInfoOutsideModel.UserInfoModel();
                 nickNameTv.setText("立即登錄");
