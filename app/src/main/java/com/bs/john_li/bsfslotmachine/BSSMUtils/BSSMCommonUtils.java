@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.xutils.http.annotation.HttpResponse;
 
 import java.io.ByteArrayOutputStream;
@@ -36,8 +37,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,6 +74,47 @@ public class BSSMCommonUtils {
             Toast.makeText(c, c.getString(R.string.not_login), Toast.LENGTH_SHORT).show();
             return false;
         }
+    }
+
+    public static List<String> deleteDirName(List<String> list) {
+        List newList = new ArrayList();
+        for (String s : list) {
+            if (!s.equals("")) {
+                String subStr = s.substring(42, s.length());
+                newList.add(subStr);
+            }
+        }
+        return newList;
+    }
+
+    /**
+     * 將List轉數組
+     * @param l
+     * @return
+     */
+    public static String listToStrArr(List<String> l) {
+        List list = deleteDirName(l);
+        String[] toBeStored = new String[list.size()];
+        list.toArray(toBeStored);
+        String json = new Gson().toJson(toBeStored);
+        return json;
+    }
+
+    /**
+     * 根据List获取到对应的JSONArray
+     * @param list
+     * @return
+     */
+    public static JSONArray getJSONArrayByList(List<?> list){
+        JSONArray jsonArray = new JSONArray();
+        if (list==null ||list.isEmpty()) {
+            return jsonArray;//nerver return null
+        }
+
+        for (Object object : list) {
+            jsonArray.put(object);
+        }
+        return jsonArray;
     }
 
     /**

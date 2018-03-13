@@ -73,8 +73,10 @@ public class BSSMConfigtor {
     public final static String CAR_CAHRGE_WAY_LIST = "memberCharge/getAll";
     // 車輛充值價格的列表
     public final static String SUBMIT_CAR_CAHRGE_ORDER = "order/memberOrder?token=";
-    // 獲取已充值車輛列表
+    // 提交已知咪錶訂單
     public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/slotOrder?token=";
+    // 提交未知咪錶訂單
+    public final static String SUBMIT_ORDER_SLOT_MACHINE_UNKOWN = "order/unkownSlotOrder?token=";
     // 獲取已知咪表最大金额
     public final static String GET_MAX_AMOUNT_BY_SLOT_MACHINE = "soltMachine/chargeLimit";
     // 獲取未知咪表最大金额

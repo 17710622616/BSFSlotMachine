@@ -336,9 +336,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             submitOrderSlotMachineUnKnow();
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                         }
                     } else {
                         Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 } else {    // 咪錶存在，提交已知訂單
                     if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
@@ -346,9 +348,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             submitOrderSlotMachineExist();
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                         }
                     } else {
-                            Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 }
                 break;
@@ -359,17 +363,18 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 提交未知咪錶的訂單
      */
     private void submitOrderSlotMachineUnKnow() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_ORDER_SLOT_MACHINE_EXIST + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_ORDER_SLOT_MACHINE_UNKOWN + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("slotAmount",mSlotUnknowOrderModel.getSlotAmount());
             jsonObj.put("carId",mSlotUnknowOrderModel.getCarId());
-            jsonObj.put("carType",1);//mSlotUnknowOrderModel.getCarType()
+            jsonObj.put("carType", mSlotUnknowOrderModel.getCarType());//mSlotUnknowOrderModel.getCarType()
             jsonObj.put("pillarColor",mSlotUnknowOrderModel.getPillarColor());
             jsonObj.put("areaCode",mSlotUnknowOrderModel.getAreaCode());
             jsonObj.put("startSlotTime",mSlotUnknowOrderModel.getStartSlotTime());
             jsonObj.put("remark",mSlotUnknowOrderModel.getRemark());
+            jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(BSSMCommonUtils.deleteDirName(imgUrlList)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1010,8 +1015,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-        String cacheFileName = savedInstanceState.get("file_path").toString();
-        if (cacheFileName != null) {
+        if (savedInstanceState.get("file_path") != null) {
+            String cacheFileName = savedInstanceState.get("file_path").toString();
             if (!cacheFileName.equals("")) {
                 file = new File(cacheFileName);
             }

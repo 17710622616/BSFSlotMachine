@@ -115,8 +115,8 @@ public class UserOrderOutModel {
             private long createTime;
             private long updateTime;
             private int carType;
-            private int pillarColor;
-            private int areaCode;
+            private String pillarColor;
+            private String areaCode;
             private String parkingSpace;
             private String img1;
             private String img2;
@@ -268,19 +268,19 @@ public class UserOrderOutModel {
                 this.carType = carType;
             }
 
-            public int getPillarColor() {
+            public String getPillarColor() {
                 return pillarColor;
             }
 
-            public void setPillarColor(int pillarColor) {
+            public void setPillarColor(String pillarColor) {
                 this.pillarColor = pillarColor;
             }
 
-            public int getAreaCode() {
+            public String getAreaCode() {
                 return areaCode;
             }
 
-            public void setAreaCode(int areaCode) {
+            public void setAreaCode(String areaCode) {
                 this.areaCode = areaCode;
             }
 

@@ -77,9 +77,11 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter implements Vi
         switch (list.get(position).getOrderType()) {
             case 1://充值訂單
                 ((SmartRefreshViewHolder)holder).item_order_iv.setImageResource(R.mipmap.top_up);
+                ((SmartRefreshViewHolder)holder).item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 2://會員續費訂單
                 ((SmartRefreshViewHolder)holder).item_order_iv.setImageResource(R.mipmap.sure_order);
+                ((SmartRefreshViewHolder)holder).item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 3://確定投幣機訂單
                 AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, ((SmartRefreshViewHolder)holder).item_order_iv, mContext);

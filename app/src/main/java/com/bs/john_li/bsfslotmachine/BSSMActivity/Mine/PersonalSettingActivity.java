@@ -2,7 +2,12 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.Log;
@@ -37,8 +42,12 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,6 +63,13 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     private ImageView headIv;
     private String nickName, phoneNum, loginPw, payPw;
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
+
+    public static final int TAKE_PHOTO = 1;
+    public static final int TAKE_PHOTO_FROM_ALBUM = 0;
+    private static final int REQUEST_SMALL_IMAGE_CUTTING = 2;
+    private File dir; //圖片文件夾路徑
+    private File file;  //照片文件
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.head_boy).build();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,9 +122,65 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 finish();
                 break;
             case R.id.personal_head_portrait:   // 頭像
-                startActivityForResult(new Intent(this, HeadViewActivity.class), 7);
+                //startActivityForResult(new Intent(this, HeadViewActivity.class), 7);
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_photo)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if(BSSMCommonUtils.IsThereAnAppToTakePictures(PersonalSettingActivity.this)) {
+                                            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                            if (!dir.exists()) {
+                                                dir.mkdir();
+                                            }
+
+                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                                            Date date = new Date(System.currentTimeMillis());
+                                            file = new File(dir, "car" + format.format(date) + ".jpg");
+                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                                            startActivityForResult(intent, TAKE_PHOTO);
+                                        } else {
+                                            Toast.makeText(PersonalSettingActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                        if (!dir.exists()) {
+                                            dir.mkdir();
+                                        }
+
+                                        Intent getAlbum;
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                            getAlbum = new Intent(Intent.ACTION_PICK);
+                                        } else {
+                                            getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
+                                        }
+                                        getAlbum.setType("image/*");
+                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
                 break;
-            /*case R.id.personal_nickname:    // 暱稱1
+            case R.id.personal_nickname:    // 暱稱1
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -133,7 +205,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;*/
+                break;
             case R.id.personal_phone://修改手機號碼
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
@@ -204,6 +276,23 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             case 100:     // 修改密碼返回
                 doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
                 //finish();
+                break;
+            case TAKE_PHOTO:
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(file);
+                mediaScanIntent.setData(contentUri);
+                sendBroadcast(mediaScanIntent);
+                x.image().bind(headIv, file.getPath(), options);
+                break;
+            case TAKE_PHOTO_FROM_ALBUM:
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                file = new File(imagePath);
+                headIv.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                break;
+            case REQUEST_SMALL_IMAGE_CUTTING:
+                String imagePath1 = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                file = new File(imagePath1);
+                x.image().bind(headIv, file.getPath(), options);
                 break;
         }
     }
@@ -377,5 +466,25 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             public void onFinished() {
             }
         });
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (file != null){
+            outState.putString("file_path", file.getPath());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String cacheFileName = savedInstanceState.get("file_path").toString();
+        if (cacheFileName != null) {
+            if (!cacheFileName.equals("")) {
+                file = new File(cacheFileName);
+            }
+        }
     }
 }

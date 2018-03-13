@@ -117,19 +117,21 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                     addressTV.setText("地        址：" + mUserOrderModel.getMachineNo());
                 }
                 colorTV.setVisibility(View.VISIBLE);
-                switch (mUserOrderModel.getPillarColor()) {
-                    case 1:
-                        colorTV.setText("咪錶柱色：黃色");
-                        break;
-                    case 2:
-                        colorTV.setText("咪錶柱色：灰色");
-                        break;
-                    case 3:
-                        colorTV.setText("咪錶柱色：藍色");
-                        break;
-                    case 4:
-                        colorTV.setText("咪錶柱色：綠色");
-                        break;
+                if (mUserOrderModel.getPillarColor() != null) {
+                    switch (mUserOrderModel.getPillarColor()) {
+                        case "yellow":
+                            colorTV.setText("咪錶柱色：黃色");
+                            break;
+                        case "gray":
+                            colorTV.setText("咪錶柱色：灰色");
+                            break;
+                        case "blue":
+                            colorTV.setText("咪錶柱色：藍色");
+                            break;
+                        case "green":
+                            colorTV.setText("咪錶柱色：綠色");
+                            break;
+                    }
                 }
                 carTypeTV.setVisibility(View.VISIBLE);
                 switch (mUserOrderModel.getCarType()) {
@@ -174,16 +176,16 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 }
                 colorTV.setVisibility(View.VISIBLE);
                 switch (mUserOrderModel.getPillarColor()) {
-                    case 1:
+                    case "yellow":
                         colorTV.setText("咪錶柱色：黃色");
                         break;
-                    case 2:
+                    case "gray":
                         colorTV.setText("咪錶柱色：灰色");
                         break;
-                    case 3:
+                    case "blue":
                         colorTV.setText("咪錶柱色：藍色");
                         break;
-                    case 4:
+                    case "green":
                         colorTV.setText("咪錶柱色：綠色");
                         break;
                 }
