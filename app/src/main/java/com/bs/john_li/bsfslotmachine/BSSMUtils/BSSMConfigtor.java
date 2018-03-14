@@ -55,6 +55,8 @@ public class BSSMConfigtor {
     public final static String GET_USER_INFO = "user/getuser?token=";
     // 更新用戶信息
     public final static String UPDATE_USER_INFO = "user/chguser?token=";
+    // 更新用戶頭像
+    public final static String UPDATE_USER_HEAD_IMG = "/user/chgimg?img=";
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API

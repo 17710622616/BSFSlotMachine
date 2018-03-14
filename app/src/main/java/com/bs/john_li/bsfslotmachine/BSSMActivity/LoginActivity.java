@@ -198,7 +198,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         model.getData().setRealname("");
                     }
                     if (model.getData().getHeadimg() == null) {
-                        model.getData().setAddress("objectNam1");
+                        model.getData().setAddress("");
                     }
                     if (model.getData().getDescx() == null) {
                         model.getData().setDescx("");

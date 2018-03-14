@@ -101,6 +101,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.login_out_tv:
                 SPUtils.put(this, "UserToken", "");
+                SPUtils.put(this, "UserInfo", "");
                 EventBus.getDefault().post("LOGIN_OUT");
                 finish();
                 break;

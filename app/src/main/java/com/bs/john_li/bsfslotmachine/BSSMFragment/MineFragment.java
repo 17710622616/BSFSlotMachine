@@ -30,6 +30,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,12 +46,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public static String TAG = MineFragment.class.getName();
     private View mineView;
     private BSSMHeadView mineHeadView;
+    private RefreshLayout mRefreshLayout;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
     private TextView nickNameTv, phoneTv;
     private ImageView headIv;
-    private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
-    private String userToken;
+    private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void initView() {
         mineHeadView = (BSSMHeadView) mineView.findViewById(R.id.mine_head);
+        mRefreshLayout = (RefreshLayout) mineView.findViewById(R.id.mine_srl);
         personalLL = mineView.findViewById(R.id.personal_setting_ll);
         walletLL = mineView.findViewById(R.id.mine_wallet_ll);
         integralLL = mineView.findViewById(R.id.mine_integral_ll);
@@ -81,6 +85,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         nickNameTv = mineView.findViewById(R.id.mine_nickname);
         phoneTv = mineView.findViewById(R.id.mine_info_phone);
         headIv = mineView.findViewById(R.id.personal_setting_head_iv);
+
+        mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
+        mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+        // 设置header的高度
+        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
     @Override
@@ -95,13 +105,23 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         opinionLL.setOnClickListener(this);
         serverLL.setOnClickListener(this);
         gjlLL.setOnClickListener(this);
+
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshUI();
+            }
+        });
     }
 
     @Override
     public void initData() {
         mineHeadView.setTitle("我的");
         mineHeadView.setRight(R.mipmap.setting, this);
-        refreshUI();
+        String userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
+        if (userToken != null) {
+            mRefreshLayout.autoRefresh();
+        }
     }
 
     @Override
@@ -115,16 +135,16 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         super.onHiddenChanged(hidden);
         if (hidden) {   // 隐藏
         } else {    // 显示
-            refreshUI();
+            mRefreshLayout.autoRefresh();
         }
     }
 
     @Subscribe
     public void onEvent(String msg){
         if (msg.equals("LOGIN")) {
-            refreshUI();
+            mRefreshLayout.autoRefresh();
         } else {
-            refreshUI();
+            mRefreshLayout.autoRefresh();
         }
     }
 
@@ -132,7 +152,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * 刷新UI
      */
     private void refreshUI() {
-        userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
+        String userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
         String userInfoJson = (String) SPUtils.get(getActivity(), "UserInfo", "");
         if (!userToken.equals("")){
             if (!userInfoJson.equals("")){
@@ -144,12 +164,16 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 mUserInfoModel = new UserInfoOutsideModel.UserInfoModel();
                 nickNameTv.setText("立即登錄");
                 phoneTv.setText("登錄后獲得更多權限");
+                AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
                 Toast.makeText(getActivity(), "用戶信息錯誤，請重新登錄！", Toast.LENGTH_SHORT).show();
             }
         } else {
+            AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
             nickNameTv.setText("立即登錄");
             phoneTv.setText("登錄后獲得更多權限");
         }
+
+        mRefreshLayout.finishRefresh(1500);
     }
 
     @Override
@@ -159,7 +183,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 getActivity().startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
             case R.id.personal_setting_ll:
-                userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
+                String userToken = (String) SPUtils.get(getActivity(), "UserToken", "");
                 if (userToken != null) {
                     if (!userToken.equals("")) {
                         getActivity().startActivity(new Intent(getActivity(), PersonalSettingActivity.class));

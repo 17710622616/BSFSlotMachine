@@ -89,8 +89,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             switch (msg.what) {
                 case 0:     // 頭像提交至OSS成功
                     mUserInfoModel.setHeadimg(file.getName());
-                    updateUserInfo(0);
-                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
+                    updateUserHeadImg();
                     break;
                 case -1:    // 頭像提交至OSS失敗
                     Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_LONG).show();
@@ -237,7 +236,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         .show(getSupportFragmentManager());
                 break;
             case R.id.personal_phone://修改手機號碼
-                NiceDialog.init()
+                /*NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
                             @Override
@@ -262,7 +261,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
+                break;*/
             case R.id.personal_pw://修改登錄密碼
                 startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
                 break;
@@ -304,7 +303,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
 
         switch (requestCode) {
             case 100:     // 修改密碼返回
-                doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
+                if (data != null) {
+                    doLogin(data.getStringExtra("mobile"), data.getStringExtra("password"));
+                }
                 //finish();
                 break;
             case TAKE_PHOTO:
@@ -402,6 +403,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     mUserInfoModel.setIdcardno(model.getData().getIdcardno());
                     mUserInfoModel.setRealname(model.getData().getRealname());
                     mUserInfoModel.setSex(model.getData().getSex());
+                    mUserInfoModel.setHeadimg(model.getData().getHeadimg());
                     String userInfoJson = new Gson().toJson(mUserInfoModel);
                     SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
                     EventBus.getDefault().post("LOGIN");
@@ -419,6 +421,44 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    /**
+     * 更改用戶头像
+     */
+    public void updateUserHeadImg() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_USER_HEAD_IMG + mUserInfoModel.getHeadimg() + "&token=" + SPUtils.get(this, "UserToken", ""));
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                UserInfoOutsideModel model = new Gson().fromJson(result.toString(), UserInfoOutsideModel.class);
+                if (model.getCode() == 200) {
+                    String userInfoJson = new Gson().toJson(mUserInfoModel);
+                    SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
+                    EventBus.getDefault().post("LOGIN");
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_SHORT).show();
             }
 
             @Override

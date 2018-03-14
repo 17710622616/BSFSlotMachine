@@ -88,7 +88,7 @@
 
         <TextView
             style="@style/SettingDetialTv"
-            android:text="未設置"/>
+            android:text="修改密碼"/>
     </LinearLayout>
     <TextView
         style="@style/UnderLineTextView"/>

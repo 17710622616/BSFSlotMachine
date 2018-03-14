@@ -104,7 +104,18 @@ public class AliyunOSSUtils {
      */
     public static void downloadImg(String object, OSSClient oss, final ImageView iv, final Context context, final int fialImgRes) {
         final Activity activity = ((Activity)context);
-        if ((object == null) || object.equals("")) {
+        if ((object == null)) {
+            Log.w("AsyncGetImage", "ObjectNull");
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    iv.setImageResource(fialImgRes);
+                }
+            });
+            return;
+        }
+
+        if (object.equals("")){
             Log.w("AsyncGetImage", "ObjectNull");
             activity.runOnUiThread(new Runnable() {
                 @Override
