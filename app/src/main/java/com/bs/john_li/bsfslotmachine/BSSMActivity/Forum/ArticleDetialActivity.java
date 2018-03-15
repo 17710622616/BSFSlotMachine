@@ -3,6 +3,7 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,6 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
@@ -42,6 +44,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnCommentsOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -65,7 +68,9 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 帖文詳情
@@ -95,6 +100,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private AlertDialog mSubmitDialog;
     //提交中的dialog中的動畫
     private ImageView mSubmitDialogIv;
+    private OSSClient oss;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -247,6 +253,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         // 獲取帖文資料
         Intent intent = getIntent();
         mContentsModel = new Gson().fromJson(intent.getStringExtra("ContentsModel"), ContentsListModel.DataBean.ContentsModel.class);
+        oss = AliyunOSSUtils.initOSS(this);
+
         startway = intent.getIntExtra("startway", 0);
         // 刪除是否可見
         if (startway != 0) {
@@ -267,7 +275,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         // 如果有圖片則顯示，無則不設置
         if (mContentsModel.getCover() != null) {
             if (!mContentsModel.getCover().equals("")) {
-                for (int i = 0; i < 5; i++) {
+                /*for (int i = 0; i < 5; i++) {
                     ImageView iv = new ImageView(this);
                     iv.setScaleType(ImageView.ScaleType.FIT_XY);
                     if (i % 2 != 0) {
@@ -276,9 +284,31 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                         iv.setImageResource(R.mipmap.car_sample);
                     }
                     imgList.add(iv);
+                }*/
+                try {
+                    Map<String, String> coverMap = new Gson().fromJson(mContentsModel.getCover(), HashMap.class);
+
+                    for (Map.Entry<String, String> entry : coverMap.entrySet()) {
+                        ImageView iv = new ImageView(this);
+                        iv.setBackgroundColor(getResources().getColor(R.color.colorMineGray));
+                        iv.setImageResource(R.mipmap.img_loading_list);
+                        AliyunOSSUtils.downloadImg(entry.getValue(), oss, iv, this, R.mipmap.load_img_fail);
+                        if (entry.getKey().equals("mainPic")) {
+                            imgList.add(0, iv);
+                        } else {
+                            imgList.add(iv);
+                        }
+                    }
+
+                    mCollapsingAdapter = new CollapsingAdapter(imgList);
+                    mViewPager.setAdapter(mCollapsingAdapter);
+                } catch (Exception e) {
+                    ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                    params.height = 270;
+                    mViewPager.setLayoutParams(params);
+                    appbar.setExpanded(false);
+                    articalToolbar.setCollapsible(false);
                 }
-                mCollapsingAdapter = new CollapsingAdapter(imgList);
-                mViewPager.setAdapter(mCollapsingAdapter);
             } else {
                 /*ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
                 params.height = 50;

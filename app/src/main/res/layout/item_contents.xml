@@ -1,56 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:background="@color/colorWight">
-
-    <ImageView
-        android:id="@+id/item_contents_iv"
-        android:layout_width="110dp"
-        android:layout_height="78dp"
-        android:src="@mipmap/car_sample"
-        android:scaleType="fitXY"/>
-
-    <TextView
-        android:id="@+id/item_contents_title"
+    android:background="@color/colorMineGray"
+    android:paddingBottom="0.5dp">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="標題"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
-        android:layout_toRightOf="@id/item_contents_iv"
-        android:padding="5dp"/>
+        android:padding="12dp"
+        android:background="@color/colorWight">
 
-    <TextView
-        android:id="@+id/item_contents_postid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="發佈人"
-        android:textColor="@color/colorDrakGray"
-        android:textSize="12sp"
-        android:layout_toRightOf="@id/item_contents_iv"
-        android:layout_alignParentBottom="true"
-        android:padding="5dp"/>
+        <ImageView
+            android:id="@+id/item_contents_iv"
+            android:layout_width="110dp"
+            android:layout_height="87dp"
+            android:src="@mipmap/img_loading_list"
+            android:scaleType="fitXY"/>
 
-    <TextView
-        android:id="@+id/item_contents_comments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="369條評論"
-        android:textColor="@color/colorDrakGray"
-        android:textSize="12sp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:padding="5dp"/>
+        <TextView
+            android:id="@+id/item_contents_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="標題"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:layout_toRightOf="@id/item_contents_iv"
+            android:padding="5dp"/>
 
-    <ImageView
-        android:layout_width="12dp"
-        android:layout_height="18dp"
-        android:paddingBottom="7dp"
-        android:src="@mipmap/comment"
-        android:scaleType="fitXY"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/item_contents_comments"
-        android:layout_alignBottom="@id/item_contents_comments"/>
-</RelativeLayout>
+        <TextView
+            android:id="@+id/item_contents_postid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="發佈人"
+            android:textColor="@color/colorDrakGray"
+            android:textSize="12sp"
+            android:layout_toRightOf="@id/item_contents_iv"
+            android:layout_alignParentBottom="true"
+            android:padding="5dp"/>
+
+        <TextView
+            android:id="@+id/item_contents_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="369條評論"
+            android:textColor="@color/colorDrakGray"
+            android:textSize="12sp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="18dp"
+            android:paddingBottom="7dp"
+            android:src="@mipmap/comment"
+            android:scaleType="fitXY"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@id/item_contents_comments"
+            android:layout_alignBottom="@id/item_contents_comments"/>
+    </RelativeLayout>
+</LinearLayout>
+

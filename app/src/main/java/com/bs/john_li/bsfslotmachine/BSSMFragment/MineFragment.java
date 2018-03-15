@@ -135,7 +135,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         super.onHiddenChanged(hidden);
         if (hidden) {   // 隐藏
         } else {    // 显示
-            mRefreshLayout.autoRefresh();
+            //mRefreshLayout.autoRefresh();
         }
     }
 
@@ -173,7 +173,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             phoneTv.setText("登錄后獲得更多權限");
         }
 
-        mRefreshLayout.finishRefresh(1500);
+        mRefreshLayout.finishRefresh(1000);
     }
 
     @Override

@@ -8,10 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by John_Li on 28/11/2017.
@@ -20,11 +25,13 @@ import java.util.List;
 public class SmartRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private List<ContentsListModel.DataBean.ContentsModel> list;
     private final Context mContext;
+    private OSSClient oss;
     private OnItemClickListener mOnitemClickListener = null;
 
-    public SmartRefreshAdapter(Context context, List<ContentsListModel.DataBean.ContentsModel> list) {
+    public SmartRefreshAdapter(Context context, List<ContentsListModel.DataBean.ContentsModel> list, OSSClient oss) {
         this.list = list;
         mContext = context;
+        this.oss = oss;
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -39,6 +46,14 @@ public class SmartRefreshAdapter extends RecyclerView.Adapter implements View.On
         ((SmartRefreshViewHolder)holder).contentsTitle.setText(list.get(position).getTitle());
         ((SmartRefreshViewHolder)holder).contentsPostID.setText("發佈者：" + list.get(position).getCreator());
         ((SmartRefreshViewHolder)holder).contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
+        String cover = list.get(position).getCover();
+        try {
+            Map<String, String> coverMap = new Gson().fromJson(cover, HashMap.class);
+            cover = coverMap.get("mainPic");
+        } catch (Exception e) {
+            cover = "";
+        }
+        AliyunOSSUtils.downloadImg(cover, oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext, R.mipmap.load_img_fail_list);
         holder.itemView.setTag(position);
     }
 

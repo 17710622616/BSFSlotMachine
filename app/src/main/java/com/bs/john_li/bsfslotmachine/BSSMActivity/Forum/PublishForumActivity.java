@@ -1,24 +1,37 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ChooseCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.ImgSubmitModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnContentsOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -43,7 +56,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by John_Li on 5/10/2017.
@@ -62,6 +77,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     private List<String> imgUrlList;
     private NoScrollGridView photoGv;
     private PhotoAdapter mPhotoAdapter;
+    private OSSClient oss;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,6 +173,9 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         publish_forum_head.setTitle("發佈帖文");
         publish_forum_head.setLeft(this);
         publish_forum_head.setRight(R.mipmap.ok, this);
+
+        oss = AliyunOSSUtils.initOSS(this);
+
         imgUrlList = new ArrayList<>();
         mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
         photoGv.setAdapter(mPhotoAdapter);
@@ -295,12 +314,97 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         if (imgUrlList.size() > 1) {    // 有添加圖片
             // 提交照片到OSS
             String cover = "";
-            // 提交有照片的帖文
-            callNetPublishArticle(content, title, cover);
+            submitImgToOss(content, title);
         } else {
             // 提交沒有照片的帖文
             callNetPublishArticle(content, title, "");
         }
+    }
+
+    private void submitImgToOss(final String content, final String title) {
+        // 提交成功的集合
+        final Map<String, String> imgStatusMaps = new HashMap<>();
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case 1:
+                        putNum = 0;
+
+                        // 提交有照片的帖文
+                        String cover = new Gson().toJson(imgStatusMaps);
+                        Log.d("cover", cover);
+                        callNetPublishArticle(content, title, cover);
+                        break;
+                }
+            }
+        };
+        putImg(imgStatusMaps, handler);
+    }
+
+    // 提交的照片數量
+    private int putNum;
+
+    /**
+     * 上傳圖片到OSS
+     */
+    private void putImg(final Map<String, String> imgStatusLits, final Handler handler) {
+        putNum ++;
+        if (putNum == imgUrlList.size() || imgUrlList.get(putNum - 1).equals("")) {
+            // 结束的处理逻辑，并退出该方法
+            return;
+        }
+
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(imgUrlList.get(putNum - 1), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, imgUrlList.get(putNum - 1));  //按质量压缩图片
+
+        final String fileName = filePut.getName();
+        String filePath = filePut.getPath();
+        // 构造上传请求
+        final PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
+
+        // 異步請求
+        OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                Message msg = new Message();
+                msg.what  = 0;
+                //mHandler.sendMessage(msg);
+                if (putNum == 1) {
+                    imgStatusLits.put("mainPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
+                } else {
+                    imgStatusLits.put("commonPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
+                }
+
+                // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
+                if (putNum <= imgUrlList.size() - 2) {
+                    putImg(imgStatusLits, handler);
+                } else {
+                    Message message = new Message();
+                    message.what = 1;
+                    handler.sendMessage(message);
+                }
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+
+                putNum = 0;
+            }
+        });
     }
 
     /**

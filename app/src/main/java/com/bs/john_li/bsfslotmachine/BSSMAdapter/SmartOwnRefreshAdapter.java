@@ -12,8 +12,11 @@ import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 个人博文列表刷新
@@ -43,7 +46,14 @@ public class SmartOwnRefreshAdapter extends RecyclerView.Adapter implements View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((SmartRefreshViewHolder)holder).contentsTitle.setText(list.get(position).getTitle());
         ((SmartRefreshViewHolder)holder).contentsPostID.setText("發佈者：" + list.get(position).getCreator());
-        AliyunOSSUtils.downloadImg(list.get(position).getCover(), oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext, R.mipmap.load_img_fail_list);
+        String cover = list.get(position).getCover();
+        try {
+            Map<String, String> coverMap = new Gson().fromJson(cover, HashMap.class);
+            cover = coverMap.get("mainPic");
+        } catch (Exception e) {
+            cover = "";
+        }
+        AliyunOSSUtils.downloadImg(cover, oss, ((SmartRefreshViewHolder)holder).contentsIv, mContext, R.mipmap.load_img_fail_list);
         ((SmartRefreshViewHolder)holder).contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
         holder.itemView.setTag(position);
     }

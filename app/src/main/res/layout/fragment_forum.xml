@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff">
+    android:background="@color/colorWight">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/forum_head"
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:id="@+id/forum_lv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never" />
+                android:overScrollMode="never"/>
             <LinearLayout
                 android:id="@+id/no_artical_ll"
                 android:layout_width="match_parent"

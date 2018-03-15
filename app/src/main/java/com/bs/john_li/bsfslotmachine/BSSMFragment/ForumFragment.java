@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -41,6 +42,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActiv
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ContentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.OnLoadMoreScrollListener;
@@ -50,6 +52,7 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.BSSMView.LoadMoreListView;
 import com.bs.john_li.bsfslotmachine.BSSMView.PublishPopWindow;
+import com.bs.john_li.bsfslotmachine.BSSMView.RecycleViewDivider;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -132,7 +135,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                contentsList.clear();
+                                             contentsList.clear();
                 callNetGetContentsList("");
             }
         });
@@ -158,7 +161,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
 
         /*swipeRefreshLayout.setRefreshing(true);*/
         contentsList = new ArrayList<>();
-        mSmartRefreshAdapter = new SmartRefreshAdapter(getActivity(), contentsList);
+        mSmartRefreshAdapter = new SmartRefreshAdapter(getActivity(), contentsList, AliyunOSSUtils.initOSS(getActivity()));
         mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycleView.setAdapter(mSmartRefreshAdapter);
 
