@@ -111,7 +111,6 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
             }
         });
         mRefreshLayout.autoRefresh();
-        callNetGetContentsList("");
     }
 
     @Override

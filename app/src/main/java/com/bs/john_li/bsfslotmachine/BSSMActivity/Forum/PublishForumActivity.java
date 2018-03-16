@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -78,6 +79,8 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     private NoScrollGridView photoGv;
     private PhotoAdapter mPhotoAdapter;
     private OSSClient oss;
+    // 提交帖文的提示窗
+    private ProgressDialog dialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -290,15 +293,22 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.head_right:
+                dialog = new ProgressDialog(this);
+                dialog.setTitle("提示");
+                dialog.setMessage("提交貼文中......");
+                dialog.setCancelable(false);
+                dialog.show();
                 String content = publish_artical_et.getText().toString();
                 String title = publish_artical_title_et.getText().toString();
                 if (content != null && title != null) {
                     if (!content.equals("") && !title.equals("")) {
                         hasImage(content, title);
                     } else {
+                        dialog.dismiss();
                         Toast.makeText(PublishForumActivity.this, "請填寫您要發佈的標題及內容~", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(PublishForumActivity.this, "請填寫您要發佈的標題及內容~", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -313,7 +323,6 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     private void hasImage(String content, String title) {
         if (imgUrlList.size() > 1) {    // 有添加圖片
             // 提交照片到OSS
-            String cover = "";
             submitImgToOss(content, title);
         } else {
             // 提交沒有照片的帖文
@@ -349,7 +358,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     /**
      * 上傳圖片到OSS
      */
-    private void putImg(final Map<String, String> imgStatusLits, final Handler handler) {
+    private void putImg(final Map<String, String> imgStatusMaps, final Handler handler) {
         putNum ++;
         if (putNum == imgUrlList.size() || imgUrlList.get(putNum - 1).equals("")) {
             // 结束的处理逻辑，并退出该方法
@@ -372,14 +381,14 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 msg.what  = 0;
                 //mHandler.sendMessage(msg);
                 if (putNum == 1) {
-                    imgStatusLits.put("mainPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
+                    imgStatusMaps.put("mainPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
                 } else {
-                    imgStatusLits.put("commonPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
+                    imgStatusMaps.put("commonPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
                 }
 
                 // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
                 if (putNum <= imgUrlList.size() - 2) {
-                    putImg(imgStatusLits, handler);
+                    putImg(imgStatusMaps, handler);
                 } else {
                     Message message = new Message();
                     message.what = 1;
@@ -442,14 +451,17 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                     String content3s = model.getData().getCover();
                     intent.putExtra("return_contents", new Gson().toJson(model.getData()));
                     setResult(RESULT_OK, intent);
+                    dialog.dismiss();
                     finish();
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(PublishForumActivity.this, "提交失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                dialog.dismiss();
                 Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法

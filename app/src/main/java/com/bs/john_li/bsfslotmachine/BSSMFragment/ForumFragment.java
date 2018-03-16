@@ -135,7 +135,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                                             contentsList.clear();
+                contentsList.clear();
                 callNetGetContentsList("");
             }
         });
@@ -176,7 +176,6 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
         });
 
         mRefreshLayout.autoRefresh();
-        callNetGetContentsList("");
     }
 
     private void reFresh() {
@@ -278,11 +277,6 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                 ContentsListModel model = new Gson().fromJson(result, ContentsListModel.class);
                 if (model.getCode() == 200) {
                     List<ContentsListModel.DataBean.ContentsModel> list = model.getData().getContents();
-                    /*if (list.size() <= 0) {
-                        mListView.setEnd(true);
-                    } else {
-                        contentsList.addAll(list);
-                    }*/
                     contentsList.addAll(list);
                     if (count.equals("") && list.size() <= 0) {
                         noArticalLL.setVisibility(View.VISIBLE);
@@ -321,10 +315,6 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
      * 刷新帖文界面
      */
     private void refreshContentsList() {
-        /*mContentsAdapter.refreshListView(contentsList);
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }*/
         mSmartRefreshAdapter.notifyDataSetChanged();
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadmore();

@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,22 +36,27 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 车辆列表刷新
  * Created by John_Li on 28/11/2017.
  */
 
-public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements View.OnClickListener,View.OnLongClickListener {
+public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarListRefreshAdapter.SmartRefreshViewHolder> implements View.OnClickListener,View.OnLongClickListener {
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private final Context mContext;
     private OSSClient oss;
     private OnItemLongClickListener mOnItemLongClickListener = null;
     private CarRechargeCallBack mCarRechargeCallBack = null;
     private CarUpdateCallBack mCarUpdateCallBack = null;
+    private LayoutInflater mInflater;
+    private LruCache<String ,BitmapDrawable> mMemoryCache;
 
     public SmartCarListRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list, OSSClient oss) {
         this.carList = list;
@@ -57,50 +64,173 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
         mContext = context;
         mCarRechargeCallBack = (CarListActivity)mContext;
         mCarUpdateCallBack = (CarListActivity)mContext;
+        mInflater = LayoutInflater.from(context);
+        //计算内存，并且给Lrucache 设置缓存大小
+        int maxMemory = (int) Runtime.getRuntime().maxMemory();
+        int cacheSize = maxMemory/6;
+        mMemoryCache = new LruCache<String ,BitmapDrawable>(cacheSize){
+            @Override
+            protected int sizeOf(String key, BitmapDrawable value) {
+                return  value.getBitmap().getByteCount();
+            }
+        };
     }
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_car_list, parent, false);
+    public SmartCarListRefreshAdapter.SmartRefreshViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.item_car_list, parent, false);
         SmartRefreshViewHolder vh = new SmartRefreshViewHolder(view);
+        vh.carlistCb = (CheckBox) view.findViewById(R.id.item_carlist_cb);
+        vh.carlistIv = (ImageView) view.findViewById(R.id.item_carlist_iv);
+        vh.carlistLicensenum = (TextView) view.findViewById(R.id.item_carlist_licensenum);
+        vh.carlistBrand = (TextView) view.findViewById(R.id.item_carlist_brand);
+        vh.carlistModel = (TextView) view.findViewById(R.id.item_carlist_model);
+        vh.carlistStyle = (TextView) view.findViewById(R.id.item_carlist_style);
+        vh.carTypeTv = (TextView) view.findViewById(R.id.item_carlist_car_type);
+        vh.carRecharge = (ImageView) view.findViewById(R.id.item_carlist_recharge);
+        vh.carListLL = view.findViewById(R.id.item_carlist_ll);
         view.setOnLongClickListener(this);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((SmartRefreshViewHolder)holder).carlistLicensenum.setText("車牌號碼：" +carList.get(position).getCarNo());
-        ((SmartRefreshViewHolder)holder).carlistBrand.setText("車輛品牌：" + carList.get(position).getCarBrand());
-        ((SmartRefreshViewHolder)holder).carlistStyle.setText("車輛型號：" + carList.get(position).getCarStyle());
-        ((SmartRefreshViewHolder)holder).carlistModel.setText("車      型：" +carList.get(position).getModelForCar());
+    public void onBindViewHolder(SmartCarListRefreshAdapter.SmartRefreshViewHolder holder, int position) {
+        holder.carlistLicensenum.setText("車牌號碼：" +carList.get(position).getCarNo());
+        holder.carlistBrand.setText("車輛品牌：" + carList.get(position).getCarBrand());
+        holder.carlistStyle.setText("車輛型號：" + carList.get(position).getCarStyle());
+        holder.carlistModel.setText("車      型：" +carList.get(position).getModelForCar());
         switch (carList.get(position).getIfPerson()) {
             case 1:
-                ((SmartRefreshViewHolder)holder).carTypeTv.setText("車輛類型：" + "輕重型電單車");
+                holder.carTypeTv.setText("車輛類型：" + "輕重型電單車");
                 break;
             case 2:
-                ((SmartRefreshViewHolder)holder).carTypeTv.setText("車輛類型：" + "私家車");
+                holder.carTypeTv.setText("車輛類型：" + "私家車");
                 break;
             case 3:
-                ((SmartRefreshViewHolder)holder).carTypeTv.setText("車輛類型：" + "重型汽車");
+                holder.carTypeTv.setText("車輛類型：" + "重型汽車");
                 break;
         }
 
         if (carList.get(position).getIfPay() == 0) {
-            ((SmartRefreshViewHolder)holder).carRecharge.setImageResource(R.mipmap.recharge);
+            holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
-            ((SmartRefreshViewHolder)holder).carRecharge.setImageResource(R.mipmap.year);
+            holder.carRecharge.setImageResource(R.mipmap.year);
         }
 
-        ((SmartRefreshViewHolder)holder).carlistIv.setTag(carList.get(position).getImgUrl());
-        //downloadImg(((SmartRefreshViewHolder)holder).carlistIv, carList.get(position).getImgUrl());
-        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, ((SmartRefreshViewHolder)holder).carlistIv, mContext, R.mipmap.load_img_fail_list);
+        /*holder.carlistIv.setTag(carList.get(position).getImgUrl());
+        downloadImg(holder.carlistIv, carList.get(position).getImgUrl());
+        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list);*/
+        String cover = carList.get(position).getImgUrl();
+        BitmapDrawable bitmap = getBitmapDrawableFromMemoryCache(cover);
+        if (bitmap != null) {
+            holder.carlistIv.setImageDrawable(bitmap);
+        } else {
+            downloadImgByTag(cover, oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list, this);
+        }
 
-        ((SmartRefreshViewHolder)holder).carRecharge.setOnClickListener(this);
-        ((SmartRefreshViewHolder)holder).carListLL.setOnClickListener(this);
-        ((SmartRefreshViewHolder)holder).carRecharge.setTag(String.valueOf(position));
-        ((SmartRefreshViewHolder)holder).carListLL.setTag(String.valueOf(position));
-        ((SmartRefreshViewHolder)holder).carlistCb.setVisibility(View.GONE);
-        ((SmartRefreshViewHolder)holder).carRecharge.setVisibility(View.VISIBLE);
+        holder.carRecharge.setOnClickListener(this);
+        holder.carListLL.setOnClickListener(this);
+        holder.carRecharge.setTag(String.valueOf(position));
+        holder.carListLL.setTag(String.valueOf(position));
+        holder.carlistCb.setVisibility(View.GONE);
+        holder.carRecharge.setVisibility(View.VISIBLE);
         holder.itemView.setTag(position);
+    }
+
+    /**
+     * 從缓存中获取已存在的图片
+     * @param imageUrl
+     * @return
+     */
+    private BitmapDrawable getBitmapDrawableFromMemoryCache(String imageUrl) {
+        return mMemoryCache.get(imageUrl);
+    }
+
+
+    /**
+     * 添加图片到缓存中
+     * @param imageUrl
+     * @param drawable
+     */
+    public void addBitmapDrawableToMemoryCache(String imageUrl,BitmapDrawable drawable){
+        if (getBitmapDrawableFromMemoryCache(imageUrl) == null ){
+            mMemoryCache.put(imageUrl, drawable);
+        }
+    }
+
+    /**
+     *  从OSS上下载图片
+     * @param object    圖片名稱
+     * @param oss   OSS對象
+     * @param iv    綁定的ImageView
+     * @param context   上下文，用來做UI線程的執行操作
+     */
+    public static void downloadImgByTag(final String object, OSSClient oss, final ImageView iv, final Context context, final int fialImgRes,final SmartCarListRefreshAdapter adapter) {
+        final Activity activity = ((Activity)context);
+        if ((object != null)) {
+            if (object.equals("")){
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {iv.setImageResource(fialImgRes);
+                    }
+                });
+                return;
+            }
+        } else {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    iv.setImageResource(fialImgRes);
+                }
+            });
+            return;
+        }
+
+        GetObjectRequest get = new GetObjectRequest(BSSMConfigtor.BucketName, object);
+        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
+            @Override
+            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
+                // 请求成功
+                InputStream inputStream = result.getObjectContent();
+                try {
+                    byte[] date = new byte[0];
+                    date = BSSMCommonUtils.readStream(inputStream);
+                    //获取bitmap
+                    final Bitmap bm = BitmapFactory.decodeByteArray(date,0,date.length);
+                    BitmapDrawable drawable = new BitmapDrawable(activity.getResources(),bm);
+                    adapter.addBitmapDrawableToMemoryCache(object,drawable);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            iv.setImageBitmap(bm);
+                            System.gc();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("服务异常", "ErrorCode:" + serviceException.getErrorCode()+"，RequestId:" +serviceException.getRequestId()+"，HostId:"+serviceException.getHostId()+"，RawMessage:" + serviceException.getRawMessage());
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        iv.setImageResource(fialImgRes);
+                        System.gc();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -140,15 +270,6 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter implements 
         public LinearLayout carListLL;
         public SmartRefreshViewHolder(View view){
             super(view);
-            carlistCb = (CheckBox) view.findViewById(R.id.item_carlist_cb);
-            carlistIv = (ImageView) view.findViewById(R.id.item_carlist_iv);
-            carlistLicensenum = (TextView) view.findViewById(R.id.item_carlist_licensenum);
-            carlistBrand = (TextView) view.findViewById(R.id.item_carlist_brand);
-            carlistModel = (TextView) view.findViewById(R.id.item_carlist_model);
-            carlistStyle = (TextView) view.findViewById(R.id.item_carlist_style);
-            carTypeTv = (TextView) view.findViewById(R.id.item_carlist_car_type);
-            carRecharge = (ImageView) view.findViewById(R.id.item_carlist_recharge);
-            carListLL = view.findViewById(R.id.item_carlist_ll);
         }
     }
 

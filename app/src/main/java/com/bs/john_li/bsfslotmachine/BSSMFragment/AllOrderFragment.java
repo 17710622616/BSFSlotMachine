@@ -114,35 +114,12 @@ public class AllOrderFragment extends LazyLoadFragment {
             }
         });
         mRefreshLayout.autoRefresh();
-        callNetGetCarList();
     }
 
     /**
      * 请求网络刷新数据
      */
     private void callNetGetCarList() {
-        /*if (orderList == null) {
-            orderList = new ArrayList<>();
-        }
-        int count = orderList.size();
-        for (int i= count; i< count + 10; i++) {
-            UserOrderOutModel.UserOrderInsideModel.UserOrderModel model = new UserOrderOutModel.UserOrderInsideModel.UserOrderModel();
-            model.setOrderType(4);
-            model.setOrderStatus(3);
-            model.setCreateTime(1508685619000L);
-            model.setPayAmount(100);
-            model.setOrderNo("测试已完成：" + i);
-            model.setMachineNo("66579");
-            model.setPillarColor(3);
-            model.setCarId(123);
-            model.setCarType(2);
-            model.setStartSlotTime(1508686130000L);
-            orderList.add(model);
-        }
-        mSmartOrderRefreshAdapter.refreshListView(orderList);
-        mRefreshLayout.finishRefresh();
-        mRefreshLayout.finishLoadmore();*/
-
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();

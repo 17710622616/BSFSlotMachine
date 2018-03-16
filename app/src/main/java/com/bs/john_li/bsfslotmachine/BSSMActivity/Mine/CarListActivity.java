@@ -71,8 +71,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
     private long totolCarCount;
     // 修改的位置
     private int updatePosition = 0;
-    //负责所有的界面更新
-    private OSSClient oss;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,8 +146,6 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             }
         });
         mRefreshLayout.autoRefresh();
-        mRefreshLayout.setHeaderHeight(60);
-        callNetGetCarList();
     }
 
     /**

@@ -310,18 +310,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     articalToolbar.setCollapsible(false);
                 }
             } else {
-                /*ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-                params.height = 50;
-                mViewPager.setLayoutParams(params);
-                ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
-                ViewGroup.MarginLayoutParams marginLayoutParams = null;
-                if (params1 instanceof ViewGroup.MarginLayoutParams) {
-                    marginLayoutParams = (ViewGroup.MarginLayoutParams) params1;
-                } else {
-                    marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
-                }
-                marginLayoutParams.setMargins(0,60,0,0);
-                articalToolbar.setLayoutParams(params1);*/
                 ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
                 params.height = 270;
                 mViewPager.setLayoutParams(params);
@@ -329,18 +317,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 articalToolbar.setCollapsible(false);
             }
         } else {
-            /*ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-            params.height = 270;
-            mViewPager.setLayoutParams(params);
-            ViewGroup.LayoutParams params1 = articalToolbar.getLayoutParams();
-            ViewGroup.MarginLayoutParams marginLayoutParams = null;
-            if (params1 instanceof ViewGroup.MarginLayoutParams) {
-                marginLayoutParams = (ViewGroup.MarginLayoutParams) params1;
-            } else {
-                marginLayoutParams = new ViewGroup.MarginLayoutParams(params1);
-            }
-            marginLayoutParams.setMargins(0,30,0,0);
-            articalToolbar.setLayoutParams(params1);*/
             ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
             params.height = 270;
             mViewPager.setLayoutParams(params);
@@ -360,7 +336,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         mCommentsExpandAdapter = new CommentsExpandAdapter(this, mCommentsModelList);
         mCommentsAdapter = new CommentsAdapter(this, mCommentsModelList);
         contentsLv.setAdapter(mCommentsExpandAdapter);
-        //contentsLv.setGroupIndicator(null);
 
         // 獲取評論列表
         callNetGetCommentList();

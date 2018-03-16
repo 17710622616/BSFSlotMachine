@@ -3,6 +3,7 @@ package com.bs.john_li.bsfslotmachine.BSSMAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class CollapsingAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return Integer.MAX_VALUE;
+        return adImgList.size();
     }
 
     @Override
@@ -32,12 +33,12 @@ public class CollapsingAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        container.addView(adImgList.get(position % adImgList.size()));
-        return adImgList.get(position % adImgList.size());
+        container.addView(adImgList.get(position));
+        return adImgList.get(position);
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView(adImgList.get(position % adImgList.size()));
+        container.removeView(adImgList.get(position));
     }
 }

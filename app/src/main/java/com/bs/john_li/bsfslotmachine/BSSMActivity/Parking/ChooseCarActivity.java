@@ -88,49 +88,6 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void setListener() {
-        /*mExpandSwipeRefreshLayout.setOnLoadListener(new ExpandSwipeRefreshLayout.OnLoadListener() {
-            @Override
-            public void onLoad() {
-                mExpandSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() { //和最大的数据比较
-                        if (pageSize * (pageNo + 1) > totolCarCount){
-                            Toast.makeText(ChooseCarActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
-                            mExpandSwipeRefreshLayout.setLoading(false);
-                        } else {
-                            pageNo ++;
-                            callNetGetCarList();
-                        }
-                    }
-                }, 500);
-            }
-        });
-
-        mExpandSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                carModelList.clear();
-                pageNo = 1;
-                callNetGetCarList();
-            }
-        });
-
-        carLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (carModelList.get(i).getIfPay() == 0) {  // 未充值
-                    Intent intent = new Intent(ChooseCarActivity.this, CarRechargeActivity.class);
-                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(i)));
-                    startActivity(intent);
-                } else {    // 已充值
-                    Intent intent = new Intent();
-                    intent.putExtra("carModel", new Gson().toJson(carModelList.get(i)));
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-            }
-        });*/
-
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
@@ -172,15 +129,6 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         carListHead.setLeft(this);
         carListHead.setRight(R.mipmap.push_invitation, this);
 
-        /*carModelList = new ArrayList<>();
-        mCarListAdapter = new ChooseCarAdapter(this, carModelList, this);
-        carLv.setAdapter(mCarListAdapter);
-        mExpandSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorMineYellow),
-                getResources().getColor(R.color.colorMineOringe),
-                getResources().getColor(R.color.colorMineGreen));
-        mExpandSwipeRefreshLayout.setRefreshing(true);
-        callNetGetCarList();*/
-
         carModelList = new ArrayList<>();
         mSmartChooseCarRefreshAdapter = new SmartChooseCarRefreshAdapter(this, carModelList, AliyunOSSUtils.initOSS(this));
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -200,8 +148,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         });
-        mRefreshLayout.setEnableRefresh(true);
-        callNetGetCarList();
+        mRefreshLayout.autoRefresh();
     }
 
     /**

@@ -72,7 +72,6 @@ public class BaseLazyLoadFragment extends Fragment {
         return null;
     }
 
-    // 详细内容查看http://stackoverflow.com/questions/15207305/getting-the-error-java-lang-illegalstateexception-activity-has-been-destroyed
     @Override
     public void onDetach() {
         Log.d("TAG", "onDetach() : ");
