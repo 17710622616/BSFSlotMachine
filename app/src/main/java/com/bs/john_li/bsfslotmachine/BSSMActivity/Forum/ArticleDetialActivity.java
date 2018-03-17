@@ -275,19 +275,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         // 如果有圖片則顯示，無則不設置
         if (mContentsModel.getCover() != null) {
             if (!mContentsModel.getCover().equals("")) {
-                /*for (int i = 0; i < 5; i++) {
-                    ImageView iv = new ImageView(this);
-                    iv.setScaleType(ImageView.ScaleType.FIT_XY);
-                    if (i % 2 != 0) {
-                        iv.setImageResource(R.mipmap.car_sample);
-                    } else {
-                        iv.setImageResource(R.mipmap.car_sample);
-                    }
-                    imgList.add(iv);
-                }*/
                 try {
                     Map<String, String> coverMap = new Gson().fromJson(mContentsModel.getCover(), HashMap.class);
-
                     for (Map.Entry<String, String> entry : coverMap.entrySet()) {
                         ImageView iv = new ImageView(this);
                         iv.setBackgroundColor(getResources().getColor(R.color.colorMineGray));
