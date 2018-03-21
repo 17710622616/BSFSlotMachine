@@ -99,7 +99,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     // 提交中的dialog
     private AlertDialog mSubmitDialog;
     //提交中的dialog中的動畫
-    private ImageView mSubmitDialogIv;
+    private RotateAnimation mRotateAnimation;
+    //private ImageView mSubmitDialogIv;
     private OSSClient oss;
 
     @Override
@@ -375,9 +376,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         expandListView();
         if (mCommentsModelList.size() > 0) {
             contentsLv.setVisibility(View.VISIBLE);
+            moreTv.setVisibility(View.VISIBLE);
             noCommentsTv.setVisibility(View.GONE);
         } else {
             contentsLv.setVisibility(View.GONE);
+            moreTv.setVisibility(View.GONE);
             noCommentsTv.setVisibility(View.VISIBLE);
         }
     }
@@ -625,11 +628,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         builder.setView(view);
         mSubmitDialog = builder.create();
         mSubmitDialog.setCancelable(false);
-        mSubmitDialogIv = view.findViewById(R.id.dialog_loading_iv);
-        RotateAnimation rotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        mSubmitDialogIv.setAnimation(rotateAnimation);
-        rotateAnimation.setDuration(2000);
-        mSubmitDialogIv.startAnimation(rotateAnimation);
+        ImageView mSubmitDialogIv = view.findViewById(R.id.dialog_loading_iv);
+        mRotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mSubmitDialogIv.setAnimation(mRotateAnimation);
+        //rotateAnimation.setDuration(2000);
+        mSubmitDialogIv.startAnimation(mRotateAnimation);
         mSubmitDialog.show();
     }
 
@@ -638,7 +641,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
      */
     private void closeLoadingDialog() {
         //mSubmitDialogIv.clearAnimation();
-        mSubmitDialogIv.getAnimation().cancel();
+        mRotateAnimation.cancel();
         mSubmitDialog.dismiss();
     }
 }

@@ -126,10 +126,11 @@
                     android:layout_marginTop="2dp"/>
             </RelativeLayout>
 
+            <!--android:layout_height="800dp"-->
             <TextView
                 android:id="@+id/atical_detial_no_comments"
                 android:layout_width="match_parent"
-                android:layout_height="800dp"
+                android:layout_height="wrap_content"
                 android:text="暫無評論"
                 android:paddingTop="10dp"
                 android:gravity="center_horizontal"
@@ -145,10 +146,12 @@
                 android:groupIndicator="@null"
                 android:paddingTop="10dp" />
 
+           <!-- android:layout_height="450dp"-->
             <TextView
                 android:id="@+id/article_more_tv"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:padding="5dp"
                 android:background="@color/colorWight"
                 android:gravity="center_horizontal"

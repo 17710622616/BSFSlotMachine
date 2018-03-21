@@ -34,12 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 咪錶列表
+ *  定位停車咪錶列表
  * Created by John_Li on 20/9/2017.
  */
 
 public class SlotMachineListActivity extends BaseActivity implements View.OnClickListener{
-    private static final int radius = 100;
+    private static final int radius = 1000;
     private BSSMHeadView headView;
     private RefreshLayout mRefreshLayout;
     private GridView smGv;
@@ -142,11 +142,10 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
             }
             headView.setTitle(titleAddress + "附近的咪錶");
         } else {
-            Toast.makeText(this, "0.0獲取列表失敗誒~",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "獲取咪錶列表失敗誒~",Toast.LENGTH_SHORT).show();
         }
         if (mLatitude != null  && mLongitude != null) {
             mRefreshLayout.autoRefresh();
-            callNetGetSlotMachineList();
         } else {
             Toast.makeText(this, "定位信息錯誤，請重新定位~", Toast.LENGTH_SHORT).show();
             finish();
@@ -161,11 +160,11 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         params.setAsJsonContent(true);params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("longitude","113.560976");//mLongitude"113.560976"
-            jsonObj.put("latitude","22.191441");//mLatitude"22.191441"
+            jsonObj.put("longitude","113.5355");//mLongitude"113.560976"
+            jsonObj.put("latitude","22.212");//mLatitude"22.191441"
             jsonObj.put("radius",radius);
             jsonObj.put("pageSize",pageSize);
-            jsonObj.put("pageNo",pageSize);
+            jsonObj.put("pageNo",pageNo);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -178,8 +177,12 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
                 SlotMachineListOutsideModel model = new Gson().fromJson(result.toString(), SlotMachineListOutsideModel.class);
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
-                        totalCount = model.getData().getTotalCount();
-                        smList = model.getData().getData();
+                        if (model.getData().getData() != null) {
+                            totalCount = model.getData().getTotalCount();
+                            smList = model.getData().getData();
+                        } else {
+                            smList = new ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>();
+                        }
                     }
                 } else if (model.getCode() == 10001){
                     Toast.makeText(SlotMachineListActivity.this, getString(R.string.check_user_fail), Toast.LENGTH_SHORT).show();
