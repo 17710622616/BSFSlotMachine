@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
-        android:id="@+id/search_sm_list_head"
+        android:id="@+id/transaction_detial_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/search_sm_list_srl"
+        android:id="@+id/transaction_detial_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fff">
@@ -19,7 +19,7 @@
             android:scaleType="fitXY"
             android:src="@mipmap/loading_caffe_small"/>
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/search_sm_list_lv"
+            android:id="@+id/transaction_detial_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"

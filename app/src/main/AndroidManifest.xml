@@ -41,6 +41,7 @@
         <activity android:name=".BSSMActivity.Mine.SettingActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.PersonalSettingActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.WalletActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.TransactionDetailActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.DiscountActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.HistoryOrderActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.CarListActivity" android:screenOrientation="portrait"/>
