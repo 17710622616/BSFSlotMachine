@@ -54,6 +54,7 @@
         <activity android:name=".BSSMActivity.Mine.AddCarActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.HeadViewActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Forum.PublishForumActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Forum.CommentsListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.PaymentAcvtivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Forum.ArticleDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.CarRechargeActivity" android:screenOrientation="portrait"/>

@@ -92,7 +92,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private List<ImageView> imgList;
     private ContentsListModel.DataBean.ContentsModel mContentsModel;
     private List<CommentListModel.CommentsArrayModel.CommentsModel> mCommentsModelList;
-    private CommentsAdapter mCommentsAdapter;
     private CommentsExpandAdapter mCommentsExpandAdapter;
     // 打開方式，0：帖文列表打開，1：個人列表打開
     private int startway = 0;
@@ -323,7 +322,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         // 評論列表
         mCommentsModelList = new ArrayList<>();
         mCommentsExpandAdapter = new CommentsExpandAdapter(this, mCommentsModelList);
-        mCommentsAdapter = new CommentsAdapter(this, mCommentsModelList);
         contentsLv.setAdapter(mCommentsExpandAdapter);
 
         // 獲取評論列表
@@ -336,7 +334,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private void callNetGetCommentList() {
         String url = BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_COMMENTS + mContentsModel.getId() + "&nextId=";
         if(mCommentsModelList.size() > 0){
-            url = url + mCommentsModelList.get(mCommentsModelList.size() - 1);
+            url = url + mCommentsModelList.get(mCommentsModelList.size() - 1).getId();
         }
         RequestParams params = new RequestParams(url);
         x.http().get(params, new Callback.CommonCallback<String>() {
@@ -405,7 +403,9 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 showCommentDialog();
                 break;
             case R.id.article_more_tv: // 獲取更多評論
-                Toast.makeText(this, "獲取更多評論", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, CommentsListActivity.class);
+                intent.putExtra("ContentsModel", new Gson().toJson(mContentsModel));
+                startActivity(intent);
                 break;
             case R.id.articel_share: // 獲取更多評論
                 Toast.makeText(this, "分享", Toast.LENGTH_SHORT).show();

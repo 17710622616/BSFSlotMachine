@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,33 +10,63 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <FrameLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/atical_detial_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#fff">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/loading_caffe_small"/>
 
-        <LinearLayout
-            android:id="@+id/comments_list_ll"
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/collapsing_comment_sv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="120dp"
-            android:background="@color/colorWight"
-            android:visibility="gone">
-            <ImageView
-                android:background="@mipmap/no_car"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="centerInside"/>
+            android:padding="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <!--android:layout_height="800dp"-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="加載失敗，點我重新加載~"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp"/>
-        </LinearLayout>
-    </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <com.bs.john_li.bsfslotmachine.BSSMView.CustomExpandableListView
+                    android:id="@+id/atical_detial_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorWight"
+                    android:divider="#F1F1F1"
+                    android:groupIndicator="@null"
+                    android:paddingTop="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/comments_list_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="120dp"
+                    android:background="@color/colorWight"
+                    android:visibility="gone">
+                    <ImageView
+                        android:background="@mipmap/no_car"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_gravity="center_horizontal"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="加載失敗，點我重新加載~"
+                        android:textColor="@color/colorDrakGray"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+            </FrameLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>
