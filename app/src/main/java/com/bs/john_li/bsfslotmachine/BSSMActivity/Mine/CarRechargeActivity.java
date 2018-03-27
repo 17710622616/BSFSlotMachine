@@ -25,6 +25,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
@@ -155,7 +156,9 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.recharge_car_submit:
-                submitRechargeOrder();
+                LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
+                loadDialog.show();
+                submitRechargeOrder(loadDialog);
                 break;
         }
     }
@@ -194,7 +197,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
     /**
      *提交車輛充值訂單
      */
-    private void submitRechargeOrder() {
+    private void submitRechargeOrder(final LoadDialog loadDialog) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_CAR_CAHRGE_ORDER + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -215,7 +218,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", model.getData().getOrderNo());
                     intent.putExtra("createTime", model.getData().getCreateTime());
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 } else {
                     Toast.makeText(CarRechargeActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -231,7 +234,21 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             }
             @Override
             public void onFinished() {
+                loadDialog.dismiss();
             }
         });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    finish();
+                    break;
+            }
+        }
     }
 }

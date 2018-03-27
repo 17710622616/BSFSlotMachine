@@ -427,6 +427,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
                 intent1.putExtra("imageUri", file.getPath());
                 startActivity(intent1);
+                finish();
                 break;
             default:
                 break;

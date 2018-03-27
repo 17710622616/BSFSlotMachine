@@ -42,6 +42,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
@@ -97,9 +98,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
-
-    // 提交订单的提示窗
-    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -322,37 +320,34 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 Toast.makeText(this, "暫無優惠券~", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.parking_order_submit:
-                dialog = new ProgressDialog(this);
-                dialog.setTitle("提示");
-                dialog.setMessage("提交訂單中......");
-                dialog.setCancelable(false);
-                dialog.show();
+                LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
+                loadDialog.show();
                 if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
                     /*Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", "123456789");
                     startActivity(intent);*/
                     if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null) {
                         if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
-                            submitOrderSlotMachineUnKnow();
+                            submitOrderSlotMachineUnKnow(loadDialog);
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            loadDialog.dismiss();
                         }
                     } else {
                         Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
+                        loadDialog.dismiss();
                     }
                 } else {    // 咪錶存在，提交已知訂單
                     if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
                         if (!mSlotOrderModel.getSlotAmount().equals("0")) {
-                            submitOrderSlotMachineExist();
+                            submitOrderSlotMachineExist(loadDialog);
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            loadDialog.dismiss();
                         }
                     } else {
                         Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
+                        loadDialog.dismiss();
                     }
                 }
                 break;
@@ -362,7 +357,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     /**
      * 提交未知咪錶的訂單
      */
-    private void submitOrderSlotMachineUnKnow() {
+    private void submitOrderSlotMachineUnKnow(final LoadDialog loadDialog) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_ORDER_SLOT_MACHINE_UNKOWN + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -390,7 +385,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
                     intent.putExtra("createTime", model.getData().getCreateTime());
-                    startActivity(intent);
+                    startActivityForResult(intent, 4);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
                 }
@@ -408,7 +403,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFinished() {
-                dialog.dismiss();
+                loadDialog.dismiss();
             }
         });
     }
@@ -416,7 +411,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     /**
      * 提交已知咪錶訂單
      */
-    private void submitOrderSlotMachineExist() {
+    private void submitOrderSlotMachineExist(final LoadDialog loadDialog) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_ORDER_SLOT_MACHINE_EXIST + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -440,7 +435,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("orderNo", orderNo);
                     intent.putExtra("createTime", model.getData().getCreateTime());
-                    startActivity(intent);
+                    startActivityForResult(intent, 3);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
                 }
@@ -458,7 +453,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFinished() {
-                dialog.dismiss();
+                loadDialog.dismiss();
             }
         });
     }
@@ -992,6 +987,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                         Log.d("imgUrl", url);
                     }
                     mPhotoAdapter.refreshData(imgUrlList);
+                    break;
+                case 3:
+                    finish();
+                    break;
+                case 4:
+                    finish();
                     break;
             }
         }

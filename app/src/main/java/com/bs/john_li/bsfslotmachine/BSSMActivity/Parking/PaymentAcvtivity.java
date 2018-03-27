@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,10 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ShowTiemTextView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -160,7 +165,33 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 exitPayment();
                 break;
             case R.id.payment_submit:
-                if (myWalletCb.isChecked() || alipayCb.isChecked() || wecahtPayCb.isChecked()) {
+                if (myWalletCb.isChecked()) {
+                    NiceDialog.init()
+                            .setLayoutId(R.layout.dialog_wallet_paypw)
+                            .setConvertListener(new ViewConvertListener() {
+                                @Override
+                                public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                                    final EditText editText = holder.getView(R.id.pay_pw_edit);
+                                    BSSMCommonUtils.showKeyboard(editText);
+                                    holder.setOnClickListener(R.id.pay_pw_submit, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if (editText.getText().toString().equals("123456")){
+                                                setResult(RESULT_OK);
+                                                finish();
+                                                dialog.dismiss();
+                                            } else {
+                                                Toast.makeText(PaymentAcvtivity.this, "請輸入正確的支付密碼！！！", Toast.LENGTH_SHORT);
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                            .setShowBottom(true)
+                            .show(getSupportFragmentManager());
+                } else if (alipayCb.isChecked()){
+
+                } else if (wecahtPayCb.isChecked()) {
 
                 } else {
                     Toast.makeText(this, "請選擇支付方式", Toast.LENGTH_SHORT).show();
