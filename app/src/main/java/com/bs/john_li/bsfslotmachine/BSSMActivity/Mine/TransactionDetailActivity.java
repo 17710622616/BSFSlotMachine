@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMchineListAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartTransactionDetialListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TransactionDetialOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -23,6 +24,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,8 +40,8 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
     // 總數
     private long totalCount;
     // 搜索結果集合
-    private List<TransactionDetialOutModel.TransactionDetialModel> smList;
-    private SearchSlotMchineListAdapter mSearchSlotMachineAdapter;
+    private List<TransactionDetialOutModel.TransactionDetialModel> tdList;
+    private SmartTransactionDetialListRefreshAdapter mTransactionDetialAdapter;
     private int pageNo = 1;
     private int pageSize = 10;
     private String textChange = "";
@@ -55,8 +57,8 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
     @Override
     public void initView() {
         tdHead = findViewById(R.id.transaction_detial_head);
-        mRefreshLayout = findViewById(R.id.search_sm_list_srl);
-        mRecycleView = findViewById(R.id.search_sm_list_lv);
+        mRefreshLayout = findViewById(R.id.transaction_detial_srl);
+        mRecycleView = findViewById(R.id.transaction_detial_lv);
 
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
@@ -70,9 +72,9 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                /*smList.clear();
+                tdList.clear();
                 pageNo = 1;
-                callNetChangeData();*/
+                callNetChangeData();
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -87,6 +89,7 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
                     pageNo ++;
                     callNetChangeData();
                 }*/
+                callNetChangeData();
             }
         });
     }
@@ -98,27 +101,17 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
         tdHead.setLeft(this);
         tdHead.setTitle("交易明細");
         Type type = new TypeToken<List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>>() { }.getType();
-        smList = new Gson().fromJson(intent.getStringExtra("smList"), type);
-        smList.remove(smList.size() - 1);
-        /*mSearchSlotMachineAdapter = new SearchSlotMchineListAdapter(smList, this);
-        mSearchSlotMachineAdapter.setOnItemClickListenr(new SearchSlotMchineListAdapter.OnItemClickListener() {
+        tdList = new ArrayList<>();
+        mTransactionDetialAdapter = new SmartTransactionDetialListRefreshAdapter(this, tdList);
+        mTransactionDetialAdapter.setOnItemClickListenr(new SmartTransactionDetialListRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intentClick = null;
-                if (smList.get(position).getParkingSpaces() != null) {// 有子列表
-                    intentClick = new Intent(TransactionDetailActivity.this.toString().this, TransactionDetailActivity.class);
-                    intentClick.putExtra("SlotMachineModel", new Gson().toJson(smList.get(position)));
-                } else {// 無子列表
-                    intentClick = new Intent(TransactionDetailActivity.this, ParkingOrderActivity.class);
-                    intentClick.putExtra("way", BSSMConfigtor.SLOT_MACHINE_EXIST);
-                    intentClick.putExtra("SlotMachine", new Gson().toJson(smList.get(position)));
-                }
-                startActivity(intentClick);
-                finish();
+                // 点击事件
             }
-        });*/
-        //mRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        //mRecycleView.setAdapter(mSearchSlotMachineAdapter);
+        });
+        mRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        mRecycleView.setAdapter(mTransactionDetialAdapter);
+        mRefreshLayout.autoRefresh();
     }
 
     @Override
@@ -128,5 +121,18 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
                 finish();
                 break;
         }
+    }
+
+    private void callNetChangeData() {
+        for (int i = 0; i < 20; i++) {
+            TransactionDetialOutModel.TransactionDetialModel model = new TransactionDetialOutModel.TransactionDetialModel();
+            model.setRemark("咪錶" + i);
+            model.setNum(String.valueOf(i));
+            model.setTime("2018-03-15 22:27:36");
+            tdList.add(model);
+        }
+        mTransactionDetialAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishLoadmore();
+        mRefreshLayout.finishRefresh();
     }
 }
