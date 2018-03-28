@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWight">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/wallet_FAQ_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" 1:什麼是餘額\n   餘額余额是用户在美团的预付资金，支持充值，提现，支付等功能。 \n  充值：使用储蓄卡向余额充值。\n  提现：将余额里的资金转到储蓄卡。\n  支付：用美团支付时可以使用余额。\n\n
+2:提現到賬時間\n   正常情况下，提现资金会在3個工作天内到账，特殊情况（如银行系统异常）除外；若您超过两小时仍未收到提现资金，请耐心等待；提现失败时资金将退回到余额里。\n\n
+3:額度問題\n    当次最多可充值金额是由银行卡支付限额和充值业务限额综合决定。充值业务本身限额为1万/1万/3万（单笔/单日/单月），银行卡每次可使用的限额由风控限额和通道限额构成；
+当提示您“输入金额已超过限额”，您可更改充值金额再次尝试充值。\n
+   当次最多可提现金额是由可提现余额和提现业务本身限额综合决定
+提现业务本身限额为5万/5万/5万（单笔/单日/单月），当提示您“输入金额已超过提现业务限额”，您分多次进行提现。\n\n
+4:其他問題\n    请聯繫客服，给我们反馈您遇到的问题。
+为便于我们及时处理，请準備好你遇到的问题详细描述（问题现象、操作过程、可能原因等"
+                android:textColor="@color/colorBlack"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

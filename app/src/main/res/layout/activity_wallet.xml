@@ -3,60 +3,74 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMineGray">
+    android:background="@color/colorWight">
     <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
         android:id="@+id/wallet_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="75dp"
-        android:scaleType="centerInside"
-        android:src="@mipmap/my_wallet"
-        android:background="@color/colorWight"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:text="我的餘額："
-        android:textColor="@color/colorBlack"
-        android:textSize="15sp"
-        android:background="@color/colorWight"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingBottom="13dp"
-        android:paddingTop="3dp"
-        android:text="MOP $ 300.00"
-        android:textColor="@color/colorBlack"
-        android:textSize="22sp"
-        android:background="@color/colorWight"/>
-    <TextView
-        style="@style/UnderLineTextView"/>
-
-    <TextView
-        android:layout_marginTop="8dp"
-        style="@style/UnderLineTextView"/>
     <LinearLayout
-        android:id="@+id/mine_transaction_detial"
-        style="@style/MineItemLinearLayout">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
         <ImageView
-            style="@style/MineItemImageView"
-            android:src="@mipmap/translation_detial"/>
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWight"
+            android:paddingTop="75dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/my_wallet" />
 
         <TextView
-            style="@style/MineItemTextView"
-            android:text="@string/wallet_translation_detial"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="我的餘額："
+            android:textColor="@color/colorDrakGray"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:background="@color/colorWight"/>
 
-        <ImageView
-            style="@style/MineItemImageNext"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="13dp"
+            android:text="MOP $ 300.00"
+            android:textColor="@color/colorBlack"
+            android:textSize="30sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/wallet_recharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="充值"
+            android:textColor="@color/colorWight"
+            android:background="@drawable/shape_recharge_bg"/>
+
+        <TextView
+            android:id="@+id/wallet_withdraw_deposit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="提現"
+            android:textColor="@color/colorMineOringe"
+            android:background="@drawable/shape_withdraw_deposit_bg"/>
     </LinearLayout>
+
     <TextView
-        style="@style/UnderLineTextView"/>
+        android:id="@+id/wallet_FAQ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="常見問題"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
 </LinearLayout>

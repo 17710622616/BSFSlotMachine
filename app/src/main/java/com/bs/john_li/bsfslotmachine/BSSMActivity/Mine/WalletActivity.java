@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -17,7 +17,7 @@ import com.bs.john_li.bsfslotmachine.R;
 
 public class WalletActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView walletHead;
-    private LinearLayout transactionDetialLL;
+    private TextView rechargeTv, withdrawDdepositTV, FAQTV;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,18 +30,23 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void initView() {
         walletHead = findViewById(R.id.wallet_head);
-        transactionDetialLL = findViewById(R.id.mine_transaction_detial);
+        rechargeTv = findViewById(R.id.wallet_recharge);
+        withdrawDdepositTV = findViewById(R.id.wallet_withdraw_deposit);
+        FAQTV = findViewById(R.id.wallet_FAQ);
     }
 
     @Override
     public void setListener() {
-        transactionDetialLL.setOnClickListener(this);
+        rechargeTv.setOnClickListener(this);
+        withdrawDdepositTV.setOnClickListener(this);
+        FAQTV.setOnClickListener(this);
     }
 
     @Override
     public void initData() {
         walletHead.setTitle("錢包");
         walletHead.setLeft(this);
+        walletHead.setRightText("明細", this);
     }
 
     @Override
@@ -50,9 +55,20 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
             case R.id.head_left:
                 finish();
                 break;
-            case R.id.mine_transaction_detial:
+            case R.id.head_right_tv:
                 Intent intent = new Intent(this, TransactionDetailActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.wallet_recharge:
+                Intent intent1 = new Intent(this, WalletRechargeActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.wallet_withdraw_deposit:
+                Intent intent2 = new Intent(this, WithDrawalActivity.class);
+                startActivity(intent2);
+                break;
+            case R.id.wallet_FAQ:
+                startActivity(new Intent(this, WalletFQAActivity.class));
                 break;
         }
     }
