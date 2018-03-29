@@ -117,4 +117,9 @@ public class CommentsExpandAdapter extends BaseExpandableListAdapter {
         public TextView item_commentor_tv;
         public TextView item_comments_tv;
     }
+
+    public void refreshData(List<CommentListModel.CommentsArrayModel.CommentsModel> commnettsList) {
+        this.commnettsList = commnettsList;
+        notifyDataSetChanged();
+    }
 }

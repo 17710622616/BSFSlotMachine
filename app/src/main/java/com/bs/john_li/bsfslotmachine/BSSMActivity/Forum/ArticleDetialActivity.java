@@ -203,7 +203,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
         contentsLv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, final int i, int i1, long l) {
+            public boolean onChildClick(ExpandableListView expandableListView, View view, final int groupPosition, int childPosition, long l) {
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -216,9 +216,9 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                                     @Override
                                     public void onClick(View view) {
                                         if(BSSMCommonUtils.isLoginNow(ArticleDetialActivity.this)) {    // 已经登录
-                                            callNetSubmitReply(editText.getText().toString(), 0, i);
+                                            callNetSubmitReply(editText.getText().toString(), 0, groupPosition);
                                         } else {    // 未登录，游客
-                                            callNetSubmitReply(editText.getText().toString(), 1, i);
+                                            callNetSubmitReply(editText.getText().toString(), 1, groupPosition);
                                         }
                                         dialog.dismiss();
                                     }
@@ -489,8 +489,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     commentsModel.setCreatorid(model.getData().getCreatorid());
                     List<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean> replisList = new ArrayList<CommentListModel.CommentsArrayModel.CommentsModel.RepliesBean>();
                     commentsModel.setReplies(replisList);
-                    mCommentsModelList.add(0, commentsModel);
-                    //mCommentsAdapter.refreshListView(mCommentsModelList);
+                    if (mCommentsModelList.size() != 0) {
+                        mCommentsModelList.add(0, commentsModel);
+                    } else {
+                        mCommentsModelList.add(commentsModel);
+                    }
                     mCommentsExpandAdapter.notifyDataSetChanged();
                     expandListView();
                 } else {
@@ -562,13 +565,13 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     mCommentsExpandAdapter.notifyDataSetChanged();
                     expandListView();
                 } else {
-                    Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ArticleDetialActivity.this, "回復失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ArticleDetialActivity.this, "回復失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
             }
 
             @Override

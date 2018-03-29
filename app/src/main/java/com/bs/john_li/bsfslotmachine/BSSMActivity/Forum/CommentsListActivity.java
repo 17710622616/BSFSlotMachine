@@ -176,7 +176,7 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
 
         mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, final int i, int i1, long l) {
+            public boolean onChildClick(ExpandableListView expandableListView, View view, final int groupPosition, int childPosition, long l) {
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -189,9 +189,9 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
                                     @Override
                                     public void onClick(View view) {
                                         if(BSSMCommonUtils.isLoginNow(CommentsListActivity.this)) {    // 已经登录
-                                            callNetSubmitReply(editText.getText().toString(), 0, i);
+                                            callNetSubmitReply(editText.getText().toString(), 0, groupPosition);
                                         } else {    // 未登录，游客
-                                            callNetSubmitReply(editText.getText().toString(), 1, i);
+                                            callNetSubmitReply(editText.getText().toString(), 1, groupPosition);
                                         }
                                         dialog.dismiss();
                                     }
