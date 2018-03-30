@@ -55,5 +55,20 @@ dependencies {
     compile 'com.aliyun.dpa:oss-android-sdk:2.4.5'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okio:okio:1.9.0'
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'//一个开源gif控件
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
+    //一个开源gif控件
+    compile files('libs/ShareSDK-WhatsApp-3.1.4.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-3.1.4.jar')
+    compile files('libs/ShareSDK-Wechat-Favorite-3.1.4.jar')
+    compile files('libs/ShareSDK-Wechat-Core-3.1.4.jar')
+    compile files('libs/ShareSDK-Wechat-3.1.4.jar')
+    compile files('libs/ShareSDK-ShortMessage-3.1.4.jar')
+    compile files('libs/ShareSDK-QQ-3.1.4.jar')
+    compile files('libs/ShareSDK-Line-3.1.4.jar')
+    compile files('libs/ShareSDK-Instagram-3.1.4.jar')
+    compile files('libs/ShareSDK-FacebookMessenger-3.1.4.jar')
+    compile files('libs/ShareSDK-Facebook-3.1.4.jar')
+    compile files('libs/ShareSDK-Core-3.1.4.jar')
+    compile files('libs/MobTools-2018.0322.1147.jar')
+    compile files('libs/MobCommons-2018.0322.1145.jar')
 }

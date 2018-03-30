@@ -37,6 +37,8 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 /**
  * 首页停车的碎片
  * Created by John_Li on 28/7/2017.
@@ -227,7 +229,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }*/
                 break;
             case R.id.mine_recommend:
-                Toast.makeText(getActivity(),"分享",Toast.LENGTH_SHORT).show();
+                BSSMCommonUtils.openShare(getActivity(), "博软科技", "http://www.bsmaco.icoc.bz/", "博软科技的网址", "/storage/emulated/0/Pictures/BSSMPictures/icon1.png");
                 break;
             case R.id.mine_opinion:
                 getActivity().startActivity(new Intent(getActivity(), OpinionActivity.class));
