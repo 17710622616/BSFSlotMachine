@@ -46,7 +46,7 @@ public class LoadDialog extends Dialog {
         this.cancelable = cancelable;
         this.tipMsg = tipMsg;
 
-        this.getContext().setTheme(android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth);
+        //this.getContext().setTheme(android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth);
         setContentView(R.layout.loading_dialog);
         // 必须放在加载布局后
         setparams();

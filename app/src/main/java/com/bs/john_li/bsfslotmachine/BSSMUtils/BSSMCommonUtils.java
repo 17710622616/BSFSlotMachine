@@ -383,12 +383,12 @@ public class BSSMCommonUtils {
     /*
      * 将时间转换为时间戳
      */
-    public static String dateToStamp(String s) {
+    public static String dateToStamp() {
         String res = "";
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = null;
-            date = simpleDateFormat.parse(s);
+            date = simpleDateFormat.parse(getTimeNoW());
             long ts = date.getTime();
             res = String.valueOf(ts);
         } catch (ParseException e) {

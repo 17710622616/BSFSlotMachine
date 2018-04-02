@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -155,6 +156,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     getUserInfo(model.getData().toString());
+                    getHasPayPw(model.getData().toString());
                 } else {
                     Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
@@ -231,6 +233,40 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onFinished() {
                 dialog.dismiss();
+            }
+        });
+    }
+
+
+    /**
+     * 判断是否有支付密码
+     * @param token
+     */
+    private void getHasPayPw(String token) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_HAS_PAY_PW + SPUtils.get(this, "UserToken", ""));
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    String hasPayPw = new Gson().toJson(model.getData()).toString();
+                    Log.d("getUserURI", "獲取用戶是否有支付密碼成功");
+                    if (hasPayPw.equals("true")) {
+                        SPUtils.put(LoginActivity.this, "HasPayPw", true);
+                    }
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
             }
         });
     }

@@ -37,6 +37,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.DigestUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -70,9 +71,9 @@ import java.util.TimerTask;
 public class PersonalSettingActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView personalHead;
     private LinearLayout headPortraitLL, usernameLL, phoneLL, pwLL, payPwLL;
-    private TextView nickNameTv,phoneNumTv;
+    private TextView nickNameTv, phoneNumTv, payPwTv;
     private ImageView headIv;
-    private String nickName, phoneNum, loginPw, payPw;
+    private String nickName, phoneNum, loginPw;
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
     public static final int TAKE_PHOTO = 1;
@@ -116,6 +117,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         payPwLL = findViewById(R.id.personal_pay_pw);
         nickNameTv = findViewById(R.id.personal_nickname_tv);
         phoneNumTv = findViewById(R.id.personal_phone_tv);
+        payPwTv = findViewById(R.id.personal_pay_pw_tv);
         headIv = findViewById(R.id.personal_head_portrait_iv);
     }
 
@@ -134,12 +136,20 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         personalHead.setLeft(this);
         oss = AliyunOSSUtils.initOSS(this);
 
-        String userInfoJson = (String) SPUtils.get(this, "UserInfo", "");
+        String userInfoJson = String.valueOf(SPUtils.get(this, "UserInfo", "").toString());
+        boolean hasPayPw = (Boolean) SPUtils.get(this, "HasPayPw", false);
+        getHasPayPw();
         if (!userInfoJson.equals("")) {
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
             nickNameTv.setText(mUserInfoModel.getNickname());
             phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
             AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), oss, headIv, this, R.mipmap.head_boy);
+        }
+
+        if (hasPayPw) {
+            if (hasPayPw) {
+                payPwTv.setText("修改支付密碼");
+            }
         }
     }
 
@@ -266,35 +276,174 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
                 break;
             case R.id.personal_pay_pw:  // 修改支付密碼
-                NiceDialog.init()
-                        .setLayoutId(R.layout.dialog_update_pw)
-                        .setConvertListener(new ViewConvertListener() {
-                            @Override
-                            public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
-                                final EditText oldPwEt = holder.getView(R.id.old_pw);
-                                final EditText newPwEt = holder.getView(R.id.new_pw);
-                                final EditText newPwAffirm = holder.getView(R.id.new_pw_affirm);
-                                BSSMCommonUtils.showKeyboard(oldPwEt);
-                                oldPwEt.setHint("請輸入舊密碼");
-                                newPwEt.setHint("請輸入新密碼");
-                                newPwAffirm.setHint("請再次輸入新密碼");
-                                holder.setOnClickListener(R.id.update_pw_submit, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (!oldPwEt.getText().toString().equals("") && !oldPwEt.getText().toString().equals("") && !oldPwEt.getText().toString().equals("")) {
-                                            payPw = newPwEt.getText().toString();
-                                            dialog.dismiss();
-                                        } else {
-                                            Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_SHORT).show();
+                if ((Boolean) SPUtils.get(this, "HasPayPw", false)) {
+                    NiceDialog.init()
+                            .setLayoutId(R.layout.dialog_update_pw)
+                            .setConvertListener(new ViewConvertListener() {
+                                @Override
+                                public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                                    final EditText oldPwEt = holder.getView(R.id.old_pw);
+                                    final EditText newPwEt = holder.getView(R.id.new_pw);
+                                    final EditText newPwAffirm = holder.getView(R.id.new_pw_affirm);
+                                    final LinearLayout loadingLL = holder.getView(R.id.dialog_pw_loading_ll);
+                                    BSSMCommonUtils.showKeyboard(oldPwEt);
+                                    oldPwEt.setHint("請輸入舊密碼");
+                                    newPwEt.setHint("請輸入新密碼");
+                                    newPwAffirm.setHint("請再次輸入新密碼");
+                                    holder.setOnClickListener(R.id.update_pw_submit, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if (!oldPwEt.getText().toString().equals("") && !newPwEt.getText().toString().equals("") && !newPwAffirm.getText().toString().equals("")) {
+                                                if (newPwEt.getText().toString().equals(newPwAffirm.getText().toString())) {
+                                                    String oldPayPw = oldPwEt.getText().toString();
+                                                    String payPw = newPwEt.getText().toString();
+                                                    loadingLL.setVisibility(View.VISIBLE);
+                                                    callNetUpdatePayPw(oldPayPw, payPw, loadingLL);
+                                                } else {
+                                                    Toast.makeText(PersonalSettingActivity.this, "新舊支付密碼不一致", Toast.LENGTH_LONG).show();
+                                                }
+                                                dialog.dismiss();
+                                            } else {
+                                                Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_LONG).show();
+                                            }
                                         }
-                                    }
-                                });
-                            }
-                        })
-                        .setShowBottom(true)
-                        .show(getSupportFragmentManager());
+                                    });
+                                }
+                            })
+                            .setShowBottom(true)
+                            .show(getSupportFragmentManager());
+                } else {
+                    NiceDialog.init()
+                            .setLayoutId(R.layout.dialog_update_pw)
+                            .setConvertListener(new ViewConvertListener() {
+                                @Override
+                                public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                                    final EditText oldPwEt = holder.getView(R.id.old_pw);
+                                    final EditText newPwEt = holder.getView(R.id.new_pw);
+                                    final EditText newPwAffirm = holder.getView(R.id.new_pw_affirm);
+                                    final LinearLayout loadingLL = holder.getView(R.id.dialog_pw_loading_ll);
+                                    oldPwEt.setVisibility(View.GONE);
+                                    BSSMCommonUtils.showKeyboard(oldPwEt);
+                                    newPwEt.setHint("請輸入密碼");
+                                    newPwAffirm.setHint("請再次輸入密碼");
+                                    holder.setOnClickListener(R.id.update_pw_submit, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if (!newPwEt.getText().toString().equals("") && !newPwAffirm.getText().toString().equals("")) {
+                                                if (newPwEt.getText().toString().equals(newPwAffirm.getText().toString())) {
+                                                    String payPw = newPwEt.getText().toString();
+                                                    loadingLL.setVisibility(View.VISIBLE);
+                                                    callNetCreatePayPw(payPw, loadingLL);
+                                                } else {
+                                                    Toast.makeText(PersonalSettingActivity.this, "新舊支付密碼不一致", Toast.LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                            .setShowBottom(true)
+                            .show(getSupportFragmentManager());
+                }
                 break;
         }
+    }
+
+    /**
+     * 修改支付密碼
+     */
+    private void callNetUpdatePayPw(String oldPayPw, String payPw, final LinearLayout loadingLL) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHANGE_USER_PAY_PW + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("oldpwd", oldPayPw);
+            jsonObj.put("paypwd", payPw);
+            jsonObj.put("timestamp", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    if (!model.getData().equals("true")) {
+                        Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                loadingLL.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    /**
+     * 創建支付密碼
+     */
+    private void callNetCreatePayPw(String payPw, final LinearLayout loadingLL) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CREATE_USER_PAY_PW + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("paypwd", DigestUtils.encryptPw(payPw));
+            jsonObj.put("timestamp", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    if (model.getData().equals("true")) {
+                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                    } else {
+                        Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                loadingLL.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -578,6 +727,37 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         });
     }
 
+    /**
+     * 判断是否有支付密码
+     */
+    private void getHasPayPw() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_HAS_PAY_PW + SPUtils.get(this, "UserToken", ""));
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    String hasPayPw = new Gson().toJson(model.getData()).toString();
+                    if (hasPayPw.equals("true")) {
+                        payPwTv.setText("修改支付密碼");
+                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                    }
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

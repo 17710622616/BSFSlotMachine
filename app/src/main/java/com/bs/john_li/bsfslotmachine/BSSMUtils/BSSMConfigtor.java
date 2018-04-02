@@ -56,7 +56,14 @@ public class BSSMConfigtor {
     // 更新用戶信息
     public final static String UPDATE_USER_INFO = "user/chguser?token=";
     // 更新用戶頭像
-    public final static String UPDATE_USER_HEAD_IMG = "/user/chgimg?img=";
+    public final static String UPDATE_USER_HEAD_IMG = "user/chgimg?img=";
+    // 獲取用戶是否有支付密码
+    public final static String GET_USER_HAS_PAY_PW = "user/ispaypwd?token=";
+    // 修改支付密码
+    public final static String CHANGE_USER_PAY_PW = "user/chgpaypwd?token=";
+    // 創建支付密码
+    public final static String CREATE_USER_PAY_PW = "user/addpaypwd?token";
+
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
     // 搜索咪錶編號的API
