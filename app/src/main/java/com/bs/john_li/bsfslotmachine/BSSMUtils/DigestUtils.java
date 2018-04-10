@@ -205,9 +205,8 @@ public class DigestUtils {
 	 * @return
 	 */
 	public static String encryptPw(String pw) {
-		String data = "666666";
 		String secret = DigestUtils.encryptMD5("VY22HM93SM95AB85");
-		String paypwdStr = DigestUtils.byte2Hex(DigestUtils.encryptAES(data, DigestUtils.hex2Byte(secret)));
+		String paypwdStr = DigestUtils.byte2Hex(DigestUtils.encryptAES(pw, DigestUtils.hex2Byte(secret)));
 		System.out.println("支付密码" + paypwdStr);// 加密串
 		return paypwdStr;
 	}

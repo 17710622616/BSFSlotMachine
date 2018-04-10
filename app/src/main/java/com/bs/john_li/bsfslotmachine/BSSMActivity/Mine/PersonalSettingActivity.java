@@ -298,11 +298,10 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                                     String oldPayPw = oldPwEt.getText().toString();
                                                     String payPw = newPwEt.getText().toString();
                                                     loadingLL.setVisibility(View.VISIBLE);
-                                                    callNetUpdatePayPw(oldPayPw, payPw, loadingLL);
+                                                    callNetUpdatePayPw(oldPayPw, payPw, loadingLL, dialog);
                                                 } else {
                                                     Toast.makeText(PersonalSettingActivity.this, "新舊支付密碼不一致", Toast.LENGTH_LONG).show();
                                                 }
-                                                dialog.dismiss();
                                             } else {
                                                 Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_LONG).show();
                                             }
@@ -333,9 +332,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                                 if (newPwEt.getText().toString().equals(newPwAffirm.getText().toString())) {
                                                     String payPw = newPwEt.getText().toString();
                                                     loadingLL.setVisibility(View.VISIBLE);
-                                                    callNetCreatePayPw(payPw, loadingLL);
+                                                    callNetCreatePayPw(payPw, loadingLL, dialog);
                                                 } else {
-                                                    Toast.makeText(PersonalSettingActivity.this, "新舊支付密碼不一致", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(PersonalSettingActivity.this, "新支付密碼與確認新支付密碼不一致", Toast.LENGTH_LONG).show();
                                                 }
                                             } else {
                                                 Toast.makeText(PersonalSettingActivity.this, "新舊密碼及確認密碼都不可以為空哦~", Toast.LENGTH_SHORT).show();
@@ -354,13 +353,13 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     /**
      * 修改支付密碼
      */
-    private void callNetUpdatePayPw(String oldPayPw, String payPw, final LinearLayout loadingLL) {
+    private void callNetUpdatePayPw(String oldPayPw, String payPw, final LinearLayout loadingLL, final BaseNiceDialog dialog) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHANGE_USER_PAY_PW + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("oldpwd", oldPayPw);
-            jsonObj.put("paypwd", payPw);
+            jsonObj.put("oldpwd", DigestUtils.encryptPw(oldPayPw));
+            jsonObj.put("paypwd", DigestUtils.encryptPw(payPw));
             jsonObj.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -373,7 +372,10 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
-                    if (!model.getData().equals("true")) {
+                    if (model.getData().equals("true")) {
+                        Toast.makeText(PersonalSettingActivity.this, "修改密碼成功！", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
                         Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -401,7 +403,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     /**
      * 創建支付密碼
      */
-    private void callNetCreatePayPw(String payPw, final LinearLayout loadingLL) {
+    private void callNetCreatePayPw(String payPw, final LinearLayout loadingLL, final BaseNiceDialog dialog) {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CREATE_USER_PAY_PW + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -424,6 +426,10 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     } else {
                         Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
+                }else if(model.getCode().equals("10001")) {
+                    payPwTv.setText("修改支付密碼");
+                    SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                    dialog.dismiss();
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }

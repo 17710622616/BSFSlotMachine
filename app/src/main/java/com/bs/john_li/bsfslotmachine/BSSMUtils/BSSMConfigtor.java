@@ -62,7 +62,7 @@ public class BSSMConfigtor {
     // 修改支付密码
     public final static String CHANGE_USER_PAY_PW = "user/chgpaypwd?token=";
     // 創建支付密码
-    public final static String CREATE_USER_PAY_PW = "user/addpaypwd?token";
+    public final static String CREATE_USER_PAY_PW = "user/addpaypwd?token=";
 
     // 发送位置的API
     public final static String USER_LOCATION = "soltMachine/byDistinct";
