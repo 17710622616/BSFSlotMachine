@@ -744,16 +744,20 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             public void onSuccess(String result) {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
-                    String hasPayPw = new Gson().toJson(model.getData()).toString();
+                    //String hasPayPw = new Gson().toJson(model.getData()).toString();
+                    String hasPayPw = model.getData().toString();
                     if (hasPayPw.equals("true")) {
                         payPwTv.setText("修改支付密碼");
                         SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                    } else {
+                        Log.d("HasPayPw","获取支付密码失败");
                     }
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("HasPayPw","获取支付密码失败");
             }
             //主动调用取消请求的回调方法
             @Override
