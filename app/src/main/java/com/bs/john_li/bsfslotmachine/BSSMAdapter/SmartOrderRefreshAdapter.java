@@ -113,7 +113,7 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter<SmartOrderRef
                 holder.item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 2://會員續費訂單
-                holder.item_order_iv.setImageResource(R.mipmap.sure_order);
+                holder.item_order_iv.setImageResource(R.mipmap.car_recharge);
                 holder.item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 3://確定投幣機訂單

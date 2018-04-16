@@ -1,44 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorWight"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="8dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:padding="5dp"
-        android:text="請輸入支付密碼"
-        android:textSize="18sp"
-        android:textColor="@color/colorBlack"
-        android:gravity="center"/>
-    <EditText
-        android:id="@+id/pay_pw_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_car_edit"
-        android:gravity="center_horizontal"
-        android:padding="10dp"
-        android:textSize="16sp"
-        android:textColor="@color/colorBlack"
-        android:inputType="textPassword"/>
 
-    <TextView
-        android:id="@+id/pay_pw_submit"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:padding="5dp"
-        android:text="確認"
-        android:textSize="18sp"
-        android:textColor="@color/colorWight"
+        android:layout_height="match_parent"
+        android:background="@color/colorWight"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="請輸入支付密碼"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/pay_pw_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_car_edit"
+            android:gravity="center_horizontal"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/pay_pw_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_btn_bg"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="確認"
+            android:textColor="@color/colorWight"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pay_paying_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/shape_btn_bg"/>
-</LinearLayout>
+        android:background="@color/colorWight"
+        android:visibility="gone">
+        <com.bs.john_li.bsfslotmachine.BSSMView.FaceView
+            android:id="@+id/pay_faceview"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+
+        <TextView
+            android:id="@+id/pay_status_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付中......"
+            android:textColor="@color/colorBlack"/>
+    </LinearLayout>
+</FrameLayout>

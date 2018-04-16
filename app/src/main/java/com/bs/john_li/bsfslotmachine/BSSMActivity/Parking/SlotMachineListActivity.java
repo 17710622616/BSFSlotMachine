@@ -193,7 +193,11 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(SlotMachineListActivity.this, "網絡連接錯誤誒~~~", Toast.LENGTH_SHORT).show();
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(SlotMachineListActivity.this, "連接超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SlotMachineListActivity.this, "支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -12,23 +13,35 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.JuheExchangeModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.DigestUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
+import com.bs.john_li.bsfslotmachine.BSSMView.FaceView;
 import com.bs.john_li.bsfslotmachine.BSSMView.ShowTiemTextView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.bs.john_li.bsfslotmachine.SplashActivity;
+import com.google.android.gms.vision.text.Text;
 import com.google.gson.Gson;
 import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -50,6 +63,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private JuheExchangeModel exchangeModel;
     private String orderNo;
     private String orderTime;
+    private int startWay = 0; // 1是停車訂單。2是會員充值訂單
     // 支付金額
     private double payMoney;
     @Override
@@ -131,6 +145,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         headView.setLeft(this);
 
         Intent intent = getIntent();
+        startWay = intent.getIntExtra("startWay", 0);
         orderNo = intent.getStringExtra("orderNo");
         orderTime = String.valueOf(intent.getLongExtra("createTime", 0));
         orderNoTv.setText("訂單號：" + orderNo);
@@ -172,17 +187,29 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                                 @Override
                                 public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
                                     final EditText editText = holder.getView(R.id.pay_pw_edit);
+                                    final LinearLayout payingLL = holder.getView(R.id.pay_paying_ll);
+                                    final FaceView pay_faceview = holder.getView(R.id.pay_faceview);
+                                    final TextView pay_status_tv = holder.getView(R.id.pay_status_tv);
                                     BSSMCommonUtils.showKeyboard(editText);
                                     holder.setOnClickListener(R.id.pay_pw_submit, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            if (editText.getText().toString().equals("123456")){
-                                                setResult(RESULT_OK);
-                                                finish();
-                                                dialog.dismiss();
+                                            pay_faceview.reset();
+                                            payingLL.setVisibility(View.VISIBLE);
+                                            String enterPw = editText.getText().toString();
+                                            if (!enterPw.equals("")){
+                                                callNetSubmitPayment(enterPw, dialog, pay_faceview, payingLL, pay_status_tv);
                                             } else {
-                                                Toast.makeText(PaymentAcvtivity.this, "請輸入正確的支付密碼！！！", Toast.LENGTH_SHORT);
+                                                Toast.makeText(PaymentAcvtivity.this, "支付密碼不可為空！！！", Toast.LENGTH_SHORT);
                                             }
+                                        }
+                                    });
+
+                                    holder.setOnClickListener(R.id.pay_paying_ll, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            payingLL.setVisibility(View.GONE);
+                                            pay_faceview.reset();
                                         }
                                     });
                                 }
@@ -198,6 +225,69 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    /**
+     * 請求支付
+     * @param enterPw
+     */
+    private void callNetSubmitPayment(String enterPw, final BaseNiceDialog dialog, final FaceView pay_faceview, final LinearLayout payingLL, final TextView pay_status_tv) {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WALLET_PAY + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("orderNo", orderNo);
+            jsonObj.put("password", DigestUtils.encryptPw(enterPw));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    pay_faceview.setStatus(FaceView.SUCCESS);
+                    Toast.makeText(PaymentAcvtivity.this, "支付成功！", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (startWay == 1) {
+                                EventBus.getDefault().post("ParkingOrderSuccess");
+                            }
+                            dialog.dismiss();
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    }, 1500);
+                } else {
+                    pay_faceview.setStatus(FaceView.FAILED);
+                    pay_status_tv.setText("支付失敗，點我重試");
+                    Toast.makeText(PaymentAcvtivity.this, "支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                pay_faceview.setStatus(FaceView.FAILED);
+                pay_status_tv.setText("支付失敗，點我重試");
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(PaymentAcvtivity.this, "支付超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     /**

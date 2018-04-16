@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -7,6 +8,8 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderPhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -72,7 +75,9 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
     public void initData() {
         headView.setTitle("訂單詳情");
         headView.setLeft(this);
-        headView.setRight(R.mipmap.ok, this);
+        if (mUserOrderModel.getOrderStatus() == 1) {
+            headView.setRightText("支付", this);
+        }
 
         imgList = new ArrayList<>();
         switch (mUserOrderModel.getOrderType()) {
@@ -241,8 +246,45 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.head_right_tv:
-                finish();
+                switch (mUserOrderModel.getOrderType()) {
+                    case 1: // 充值訂單
+                        break;
+                    case 2: // 會員續費訂單
+                        Intent intent2 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                        intent2.putExtra("startWay", 2);   // carChargeOrder
+                        intent2.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent2.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        startActivityForResult(intent2, 1);
+                        break;
+                    case 3: // 確定投幣機訂單
+                        Intent intent3 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                        intent3.putExtra("startWay", 1);   // parkingOrder
+                        intent3.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent3.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        startActivityForResult(intent3, 1);
+                        break;
+                    case 4: // 未知投幣機訂單
+                        Intent intent4 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                        intent4.putExtra("startWay", 1);   // parkingOrder
+                        intent4.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent4.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        startActivityForResult(intent4, 1);
+                        break;
+                }
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    setResult(RESULT_OK);
+                    finish();
+                    break;
+            }
         }
     }
 }

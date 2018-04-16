@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -17,11 +18,13 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.MineFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ParkingFragment;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by John_Li on 27/7/2017.
@@ -32,6 +35,8 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     private RadioGroup bottom_group;
     private FragmentManager fm;
     private Fragment cacheFragment;
+    private ImageView iv;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +61,8 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         park_rb = (RadioButton) findViewById(R.id.bottom_main_parking);
         forum_rb = (RadioButton) findViewById(R.id.bottom_main_forum);
         mine_rb = (RadioButton) findViewById(R.id.bottom_main_mine);
+
+        //iv = findViewById(R.id.order_icon);
     }
 
     @Override
@@ -70,6 +77,27 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         cacheFragment = new ParkingFragment();
         traslation.add(R.id.main_containor,cacheFragment,ParkingFragment.TAG);
         traslation.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*String orderStartTimeStamp = String.valueOf(SPUtils.get(this, "orderStartTimeStamp", ""));
+        String orderTimeStamp = String.valueOf(SPUtils.get(this, "orderTimeStamp", ""));
+        if (!orderTimeStamp.equals("")) {   // 判斷停車訂單的時間戳是否存在
+            SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long between = 0;
+            try {
+                // 訂單開始時間
+                java.util.Date begin=dfs.parse(BSSMCommonUtils.stampToDate(orderStartTimeStamp));
+                // 訂單時長
+                java.util.Date timeLen =dfs.parse(BSSMCommonUtils.stampToDate(orderTimeStamp));
+                // 現在時間
+                java.util.Date end = dfs.parse(BSSMCommonUtils.getTimeNoW());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
     }
 
     /**

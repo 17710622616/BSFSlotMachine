@@ -216,6 +216,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
                 if (model.getCode() == 200) {
                     Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
+                    intent.putExtra("startWay", 2);   // carChargeOrder
                     intent.putExtra("orderNo", model.getData().getOrderNo());
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 1);
@@ -246,6 +247,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case 1:
+                    setResult(RESULT_OK);
                     finish();
                     break;
             }

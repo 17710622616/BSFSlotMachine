@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -110,7 +111,12 @@ public class AllOrderFragment extends LazyLoadFragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
                 intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
-                startActivity(intent);
+                if (orderList.get(position).getOrderStatus() == 1) {
+                    // 如果是待支付
+                    startActivityForResult(intent, 1);
+                } else {
+                    startActivity(intent);
+                }
             }
         });
         mRefreshLayout.autoRefresh();
@@ -168,5 +174,17 @@ public class AllOrderFragment extends LazyLoadFragment {
                 mRefreshLayout.finishLoadmore();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    mRefreshLayout.autoRefresh();
+                    break;
+            }
+        }
     }
 }

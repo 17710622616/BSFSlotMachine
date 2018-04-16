@@ -310,6 +310,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         }
 
         switch (requestCode) {
+            case 1: // 車輛充值的刷新
+                mRefreshLayout.autoRefresh();
+                break;
             case 3: // 添加車輛的返回
                 carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
                 //mCarListAdapter.refreshListView(carModelList);
@@ -351,7 +354,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
         if (carModelList.get(Integer.parseInt(position)).getIfPay() == 0) {
             Intent intent = new Intent(this, CarRechargeActivity.class);
             intent.putExtra("carModel", new Gson().toJson(carModelList.get(Integer.parseInt(position))));
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
     }
 

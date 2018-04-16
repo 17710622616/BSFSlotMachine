@@ -383,6 +383,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 if (model.getCode() == 200) {
                     String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
+                    intent.putExtra("startWay", 1);   // parkingOrder
                     intent.putExtra("orderNo", orderNo);
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 4);
@@ -433,6 +434,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 if (model.getCode() == 200) {
                     String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
+                    intent.putExtra("startWay", 1);   // parkingOrder
                     intent.putExtra("orderNo", orderNo);
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 3);

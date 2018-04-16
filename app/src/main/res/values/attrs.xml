@@ -4,4 +4,11 @@
         <attr name="outCycleColor" format="color"></attr>
         <attr name="outCycleWidth" format="dimension"></attr>
     </declare-styleable>
+
+    <declare-styleable name="FaceView">
+        <attr name="roundColor" format="color"/>
+        <attr name="roundProgressColor" format="color"/>
+        <attr name="roundWidth" format="dimension"></attr>
+        <attr name="max" format="integer"></attr>
+    </declare-styleable>
 </resources>

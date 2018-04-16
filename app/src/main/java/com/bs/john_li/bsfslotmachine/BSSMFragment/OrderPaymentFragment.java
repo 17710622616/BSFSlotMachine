@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,6 +44,8 @@ import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.Result;
 
 /**
  * 待支付訂單
@@ -123,7 +126,7 @@ public class OrderPaymentFragment extends BaseFragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
                 intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         mRefreshLayout.autoRefresh();
@@ -184,5 +187,17 @@ public class OrderPaymentFragment extends BaseFragment {
         mSmartOrderRefreshAdapter.refreshListView(orderList);
         mRefreshLayout.finishRefresh();
         mRefreshLayout.finishLoadmore();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    mRefreshLayout.autoRefresh();
+                    break;
+            }
+        }
     }
 }

@@ -54,6 +54,7 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -332,6 +333,8 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
 
     private void submitImgToOss(final String content, final String title) {
         // 提交成功的集合
+        // 照片數組
+        final String[] imgArr = new String[imgUrlList.size() - 1];
         final Map<String, String> imgStatusMaps = new HashMap<>();
         Handler handler = new Handler() {
             @Override
@@ -340,16 +343,15 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 switch (msg.what) {
                     case 1:
                         putNum = 0;
-
                         // 提交有照片的帖文
-                        String cover = new Gson().toJson(imgStatusMaps);
+                        String cover = new Gson().toJson(imgArr);
                         Log.d("cover", cover);
                         callNetPublishArticle(content, title, cover);
                         break;
                 }
             }
         };
-        putImg(imgStatusMaps, handler);
+        putImg(imgArr, handler);
     }
 
     // 提交的照片數量
@@ -358,7 +360,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
     /**
      * 上傳圖片到OSS
      */
-    private void putImg(final Map<String, String> imgStatusMaps, final Handler handler) {
+    private void putImg(final String[] imgArr, final Handler handler) {
         putNum ++;
         if (putNum == imgUrlList.size() || imgUrlList.get(putNum - 1).equals("")) {
             // 结束的处理逻辑，并退出该方法
@@ -380,15 +382,16 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 Message msg = new Message();
                 msg.what  = 0;
                 //mHandler.sendMessage(msg);
-                if (putNum == 1) {
+                /*if (putNum == 1) {
                     imgStatusMaps.put("mainPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
                 } else {
                     imgStatusMaps.put("commonPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
-                }
+                }*/
+                imgArr[putNum - 1] = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/avatar/" + fileName;
 
                 // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
                 if (putNum <= imgUrlList.size() - 2) {
-                    putImg(imgStatusMaps, handler);
+                    putImg(imgArr, handler);
                 } else {
                     Message message = new Message();
                     message.what = 1;
@@ -462,7 +465,11 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 dialog.dismiss();
-                Toast.makeText(PublishForumActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(PublishForumActivity.this, "請求超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PublishForumActivity.this, "請求錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override
