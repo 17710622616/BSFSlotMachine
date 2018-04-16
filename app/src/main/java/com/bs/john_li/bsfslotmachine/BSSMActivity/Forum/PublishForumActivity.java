@@ -387,7 +387,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 } else {
                     imgStatusMaps.put("commonPic", fileName);  // 把当前上传图片成功的阿里云路径添加到集合
                 }*/
-                imgArr[putNum - 1] = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/avatar/" + fileName;
+                imgArr[putNum - 1] = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileName;
 
                 // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
                 if (putNum <= imgUrlList.size() - 2) {
