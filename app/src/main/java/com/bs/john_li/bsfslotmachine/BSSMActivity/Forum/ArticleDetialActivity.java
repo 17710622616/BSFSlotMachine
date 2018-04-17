@@ -65,6 +65,7 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -101,6 +102,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private RotateAnimation mRotateAnimation;
     //private ImageView mSubmitDialogIv;
     private OSSClient oss;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -275,17 +277,15 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         if (mContentsModel.getCover() != null) {
             if (!mContentsModel.getCover().equals("")) {
                 try {
-                    Map<String, String> coverMap = new Gson().fromJson(mContentsModel.getCover(), HashMap.class);
-                    for (Map.Entry<String, String> entry : coverMap.entrySet()) {
+                    //Map<String, String> coverMap = new Gson().fromJson(mContentsModel.getCover(), HashMap.class);
+                    String[] coverArr = new Gson().fromJson(mContentsModel.getCover(), String[].class);
+                    for (String cover : coverArr) {
                         ImageView iv = new ImageView(this);
                         iv.setBackgroundColor(getResources().getColor(R.color.colorMineGray));
                         iv.setImageResource(R.mipmap.img_loading_list);
-                        AliyunOSSUtils.downloadImg(entry.getValue(), oss, iv, this, R.mipmap.load_img_fail);
-                        if (entry.getKey().equals("mainPic")) {
-                            imgList.add(0, iv);
-                        } else {
-                            imgList.add(iv);
-                        }
+                        //AliyunOSSUtils.downloadImg(entry.getValue(), oss, iv, this, R.mipmap.load_img_fail);
+                        x.image().bind(iv, cover, options);
+                        imgList.add(iv);
                     }
 
                     mCollapsingAdapter = new CollapsingAdapter(imgList);

@@ -104,7 +104,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
     private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
     private String carType, carNo, carModel, carBrand, carStyle;
     private String startWay;
@@ -205,7 +205,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     break;
             }
             Log.d("CarImagePath", carInsideModel.getImgUrl().toString());
-            AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this, R.mipmap.load_img_fail_list);
+            //AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this, R.mipmap.load_img_fail_list);
+            x.image().bind(carPhotoIv, carInsideModel.getImgUrl(), options);
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());

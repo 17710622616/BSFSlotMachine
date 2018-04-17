@@ -92,6 +92,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public SlotUnknowOrderModel mSlotUnknowOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
     private PhotoAdapter mPhotoAdapter;
     private int amountLimit;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     // 拍照的參數
     public static final int TAKE_PHOTO = 1;
@@ -619,7 +620,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
             carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
-            AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
+            //AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
+            x.image().bind(parkingIv, carInsideModelList.get(0).getImgUrl(), options);
             if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
                 mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
                 mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());

@@ -28,6 +28,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.R;
 
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -43,6 +46,7 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
     private OnItemClickListener mOnitemClickListener = null;
     private LayoutInflater mInflater;
     private LruCache<String, BitmapDrawable> mMemoryCache;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     public SmartChooseCarRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list, OSSClient oss) {
         this.carList = list;
@@ -82,7 +86,8 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         holder.carlistBrand.setText("品牌：" + carList.get(position).getCarBrand());
         holder.carlistStyle.setText("款式：" + carList.get(position).getCarStyle());
         holder.carlistModel.setText("型號：" + carList.get(position).getModelForCar());
-        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list);
+        //AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list);
+        x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
         switch (carList.get(position).getIfPerson()) {
             case 1:
                 holder.carTypeTv.setText("車輛類型：" + "輕重型電單車");
@@ -108,13 +113,14 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         holder.carlistCb.setVisibility(View.GONE);
         holder.carRecharge.setVisibility(View.VISIBLE);
 
-        String cover = carList.get(position).getImgUrl();
+        x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
+        /*String cover = carList.get(position).getImgUrl();
         BitmapDrawable bitmap = getBitmapDrawableFromMemoryCache(cover);
         if (bitmap != null) {
             holder.carlistIv.setImageDrawable(bitmap);
         } else {
             downloadImgByTag(cover, oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list, this);
-        }
+        }*/
         holder.itemView.setTag(position);
     }
 

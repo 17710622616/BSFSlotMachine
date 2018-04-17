@@ -81,7 +81,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     private static final int REQUEST_SMALL_IMAGE_CUTTING = 3;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.head_boy).build();
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.head_boy).setFailureDrawableId(R.mipmap.head_boy).build();
     private OSSClient oss;
     private Handler mHandler = new Handler(){
         @Override
@@ -137,19 +137,18 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         oss = AliyunOSSUtils.initOSS(this);
 
         String userInfoJson = String.valueOf(SPUtils.get(this, "UserInfo", "").toString());
-        boolean hasPayPw = (Boolean) SPUtils.get(this, "HasPayPw", false);
+        String hasPayPw = String.valueOf(SPUtils.get(this, "HasPayPw", "0")).toString();
         getHasPayPw();
         if (!userInfoJson.equals("")) {
             mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
             nickNameTv.setText(mUserInfoModel.getNickname());
             phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
-            AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), oss, headIv, this, R.mipmap.head_boy);
+            //AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), oss, headIv, this, R.mipmap.head_boy);
+            x.image().bind(headIv, mUserInfoModel.getHeadimg(), options);
         }
 
-        if (hasPayPw) {
-            if (hasPayPw) {
-                payPwTv.setText("修改支付密碼");
-            }
+        if (hasPayPw.equals("1")) {
+            payPwTv.setText("修改支付密碼");
         }
     }
 
@@ -276,7 +275,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
                 break;
             case R.id.personal_pay_pw:  // 修改支付密碼
-                if ((Boolean) SPUtils.get(this, "HasPayPw", false)) {
+                if (SPUtils.get(this, "HasPayPw", "").equals("1")) {
                     NiceDialog.init()
                             .setLayoutId(R.layout.dialog_update_pw)
                             .setConvertListener(new ViewConvertListener() {
@@ -422,13 +421,13 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     if (model.getData().equals("true")) {
-                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", "1");
                     } else {
                         Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
-                }else if(model.getCode().equals("10001")) {
+                } else if(model.getCode().equals("10001")) {
                     payPwTv.setText("修改支付密碼");
-                    SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                    SPUtils.put(PersonalSettingActivity.this, "HasPayPw", "1");
                     dialog.dismiss();
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
@@ -748,7 +747,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     String hasPayPw = model.getData().toString();
                     if (hasPayPw.equals("true")) {
                         payPwTv.setText("修改支付密碼");
-                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", true);
+                        SPUtils.put(PersonalSettingActivity.this, "HasPayPw", "1");
                     } else {
                         Log.d("HasPayPw","获取支付密码失败");
                     }

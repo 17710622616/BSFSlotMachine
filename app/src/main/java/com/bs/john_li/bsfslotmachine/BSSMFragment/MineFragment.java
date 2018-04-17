@@ -36,6 +36,8 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
 
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -54,6 +56,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private ImageView headIv;
 
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.head_boy).setFailureDrawableId(R.mipmap.head_boy).build();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,16 +164,19 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
                 nickNameTv.setText(mUserInfoModel.getNickname());
                 phoneTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
-                AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+                //AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+                x.image().bind(headIv, mUserInfoModel.getHeadimg(), options);
             } else {
                 mUserInfoModel = new UserInfoOutsideModel.UserInfoModel();
                 nickNameTv.setText("立即登錄");
                 phoneTv.setText("登錄后獲得更多權限");
-                AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+                //AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+                x.image().bind(headIv, "", options);
                 Toast.makeText(getActivity(), "用戶信息錯誤，請重新登錄！", Toast.LENGTH_SHORT).show();
             }
         } else {
-            AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+            //AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
+            x.image().bind(headIv, "", options);
             nickNameTv.setText("立即登錄");
             phoneTv.setText("登錄后獲得更多權限");
         }

@@ -6,14 +6,18 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.bs.john_li.bsfslotmachine.R;
+
+import org.xutils.image.AsyncDrawable;
 
 /**
  * 自定義圓形imageview
@@ -151,9 +155,28 @@ public class CycleImageView extends ImageView {
     }
 
     private void loadImage() {
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) this.getDrawable();
+        Drawable drawable = this.getDrawable();
+        if (drawable != null) {
+            if(drawable instanceof AsyncDrawable){
+                image = Bitmap
+                        .createBitmap(
+                                getWidth(),
+                                getHeight(),
+                                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                                        : Bitmap.Config.RGB_565);
+                Canvas canvas1 = new Canvas(image);
+                // canvas.setBitmap(bitmap);
+                drawable.setBounds(0, 0, getWidth(),
+                        getHeight());
+                drawable.draw(canvas1);
+            } else if(drawable instanceof BitmapDrawable){
+                image =  ((BitmapDrawable)drawable).getBitmap() ;
+            }
+        }
+
+        /*BitmapDrawable bitmapDrawable = (BitmapDrawable) this.getDrawable();
         if (bitmapDrawable != null) {
             image = bitmapDrawable.getBitmap();
-        }
+        }*/
     }
 }

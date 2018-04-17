@@ -13,12 +13,14 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.JuheExchangeModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -181,41 +183,8 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.payment_submit:
                 if (myWalletCb.isChecked()) {
-                    NiceDialog.init()
-                            .setLayoutId(R.layout.dialog_wallet_paypw)
-                            .setConvertListener(new ViewConvertListener() {
-                                @Override
-                                public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
-                                    final EditText editText = holder.getView(R.id.pay_pw_edit);
-                                    final LinearLayout payingLL = holder.getView(R.id.pay_paying_ll);
-                                    final FaceView pay_faceview = holder.getView(R.id.pay_faceview);
-                                    final TextView pay_status_tv = holder.getView(R.id.pay_status_tv);
-                                    BSSMCommonUtils.showKeyboard(editText);
-                                    holder.setOnClickListener(R.id.pay_pw_submit, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            pay_faceview.reset();
-                                            payingLL.setVisibility(View.VISIBLE);
-                                            String enterPw = editText.getText().toString();
-                                            if (!enterPw.equals("")){
-                                                callNetSubmitPayment(enterPw, dialog, pay_faceview, payingLL, pay_status_tv);
-                                            } else {
-                                                Toast.makeText(PaymentAcvtivity.this, "支付密碼不可為空！！！", Toast.LENGTH_SHORT);
-                                            }
-                                        }
-                                    });
-
-                                    holder.setOnClickListener(R.id.pay_paying_ll, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            payingLL.setVisibility(View.GONE);
-                                            pay_faceview.reset();
-                                        }
-                                    });
-                                }
-                            })
-                            .setShowBottom(true)
-                            .show(getSupportFragmentManager());
+                    // 發起錢包支付，先查看是否有支付密碼0：請求失敗，1：請求成功且有支付密碼，2：請求成功但無支付密碼
+                    callNetCheckHasPayPw();
                 } else if (alipayCb.isChecked()){
 
                 } else if (wecahtPayCb.isChecked()) {
@@ -225,6 +194,110 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    private void callNetCheckHasPayPw() {
+        NiceDialog.init()
+                .setLayoutId(R.layout.dialog_loading)
+                .setConvertListener(new ViewConvertListener() {
+                    @Override
+                    public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                        final ImageView loadingIv = holder.getView(R.id.dialog_loading_iv);
+                        final TextView loadingTv = holder.getView(R.id.dialog_loading_tv);
+                        final LinearLayout loadingLL = holder.getView(R.id.dialog_loading_ll);
+                        loadingTv.setText("發起支付中......");
+
+                        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USER_HAS_PAY_PW + SPUtils.get(PaymentAcvtivity.this, "UserToken", ""));
+                        params.setConnectTimeout(30 * 1000);
+                        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
+                            @Override
+                            public void onSuccess(String result) {
+                                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                                if (model.getCode().equals("200")) {
+                                    String hasPayPw = model.getData().toString();
+                                    Log.d("getUserURI", "獲取用戶是否有支付密碼成功");
+                                    if (hasPayPw.equals("true")) {  // 發起支付成功，且有支付密碼
+                                        SPUtils.put(PaymentAcvtivity.this, "HasPayPw", "1");
+                                        dialog.dismiss();
+                                        NiceDialog.init()
+                                                .setLayoutId(R.layout.dialog_wallet_paypw)
+                                                .setConvertListener(new ViewConvertListener() {
+                                                    @Override
+                                                    public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                                                        final EditText editText = holder.getView(R.id.pay_pw_edit);
+                                                        final LinearLayout payingLL = holder.getView(R.id.pay_paying_ll);
+                                                        final FaceView pay_faceview = holder.getView(R.id.pay_faceview);
+                                                        final TextView pay_status_tv = holder.getView(R.id.pay_status_tv);
+                                                        BSSMCommonUtils.showKeyboard(editText);
+                                                        holder.setOnClickListener(R.id.pay_pw_submit, new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View view) {
+                                                                pay_faceview.reset();
+                                                                payingLL.setVisibility(View.VISIBLE);
+                                                                String enterPw = editText.getText().toString();
+                                                                if (!enterPw.equals("")) {
+                                                                    callNetSubmitPayment(enterPw, dialog, pay_faceview, payingLL, pay_status_tv);
+                                                                } else {
+                                                                    Toast.makeText(PaymentAcvtivity.this, "支付密碼不可為空！！！", Toast.LENGTH_SHORT);
+                                                                }
+                                                            }
+                                                        });
+
+                                                        holder.setOnClickListener(R.id.pay_paying_ll, new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View view) {
+                                                                payingLL.setVisibility(View.GONE);
+                                                                pay_faceview.reset();
+                                                            }
+                                                        });
+                                                    }
+                                                })
+                                                .setShowBottom(true)
+                                                .show(getSupportFragmentManager());
+                                    } else {
+                                        loadingIv.setVisibility(View.INVISIBLE);
+                                        loadingTv.setText("您暫未設置支付密碼，點我去個人中心設置！");
+                                        loadingLL.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(PaymentAcvtivity.this, PersonalSettingActivity.class);
+                                                startActivity(intent);
+                                                dialog.dismiss();
+                                                finish();
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    dialog.dismiss();
+                                    Toast.makeText(PaymentAcvtivity.this, "發起支付失敗，" + model.getMsg().toString(), Toast.LENGTH_SHORT);
+                                }
+                            }
+
+                            //请求异常后的回调方法
+                            @Override
+                            public void onError(Throwable ex, boolean isOnCallback) {
+                                dialog.dismiss();
+                                if (ex instanceof java.net.SocketTimeoutException) {
+                                    Toast.makeText(PaymentAcvtivity.this, "發起支付超時，請重試！！！", Toast.LENGTH_SHORT);
+                                } else {
+                                    Toast.makeText(PaymentAcvtivity.this, "發起支付失敗，請重試！！！", Toast.LENGTH_SHORT);
+                                }
+                            }
+
+                            //主动调用取消请求的回调方法
+                            @Override
+                            public void onCancelled(CancelledException cex) {
+                            }
+
+                            @Override
+                            public void onFinished() {
+                            }
+                        });
+                    }
+                })
+                .setShowBottom(false)
+                .setWidth(300)
+                .show(getSupportFragmentManager());
     }
 
     /**

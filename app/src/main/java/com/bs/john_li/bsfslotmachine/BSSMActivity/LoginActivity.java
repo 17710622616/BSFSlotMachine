@@ -166,6 +166,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 dialog.dismiss();
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(LoginActivity.this, "網絡連接超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "登錄失敗，請重新提交", Toast.LENGTH_SHORT).show();
+                }
                 Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
@@ -223,6 +228,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(LoginActivity.this, "獲取用戶信息超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "獲取用戶信息失敗，請重新提交", Toast.LENGTH_SHORT).show();
+                }
                 Log.d("getUserURI", "獲取用戶信息失敗");
                 //Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
@@ -253,7 +263,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     String hasPayPw = new Gson().toJson(model.getData()).toString();
                     Log.d("getUserURI", "獲取用戶是否有支付密碼成功");
                     if (hasPayPw.equals("true")) {
-                        SPUtils.put(LoginActivity.this, "HasPayPw", true);
+                        SPUtils.put(LoginActivity.this, "HasPayPw", "1");
                     }
                 }
             }

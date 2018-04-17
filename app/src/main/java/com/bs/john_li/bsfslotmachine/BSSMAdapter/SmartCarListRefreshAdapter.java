@@ -38,6 +38,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +60,7 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
     private CarUpdateCallBack mCarUpdateCallBack = null;
     private LayoutInflater mInflater;
     private LruCache<String ,BitmapDrawable> mMemoryCache;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     public SmartCarListRefreshAdapter(Context context, List<CarModel.CarCountAndListModel.CarInsideModel> list, OSSClient oss) {
         this.carList = list;
@@ -116,16 +120,15 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
             holder.carRecharge.setImageResource(R.mipmap.year);
         }
 
-        /*holder.carlistIv.setTag(carList.get(position).getImgUrl());
-        downloadImg(holder.carlistIv, carList.get(position).getImgUrl());
-        AliyunOSSUtils.downloadImg(carList.get(position).getImgUrl(), oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list);*/
-        String cover = carList.get(position).getImgUrl();
+
+        x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
+        /*String cover = carList.get(position).getImgUrl();
         BitmapDrawable bitmap = getBitmapDrawableFromMemoryCache(cover);
         if (bitmap != null) {
             holder.carlistIv.setImageDrawable(bitmap);
         } else {
             downloadImgByTag(cover, oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list, this);
-        }
+        }*/
 
         holder.carRecharge.setOnClickListener(this);
         holder.carListLL.setOnClickListener(this);

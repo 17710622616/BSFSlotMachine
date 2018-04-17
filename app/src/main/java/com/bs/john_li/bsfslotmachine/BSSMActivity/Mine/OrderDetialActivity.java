@@ -95,7 +95,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 returnAmountTV.setVisibility(View.VISIBLE);
                 returnAmountTV.setText("返現金額：MOP" + mUserOrderModel.getDiscountAmount());
                 monthTV.setVisibility(View.VISIBLE);
-                monthTV.setText("充值月份：MOP" + mUserOrderModel.getMonthNum());
+                monthTV.setText("充值月份：" + mUserOrderModel.getMonthNum());
                 break;
             case 3: // 確定投幣機訂單
                 imgList.add(R.mipmap.car_sample);
@@ -154,7 +154,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
             case 4: // 未知投幣機訂單
                 imgList.add(R.mipmap.car_sample);
                 imgList.add(R.mipmap.sure_order);
-                imgList.add(R.mipmap.renewal);
+                imgList.add(R.mipmap.car_recharge);
                 imgList.add(R.mipmap.top_up);
                 imgList.add(R.mipmap.car_sample);
                 orderTypeTv.setText("訂單類型：未知投幣機訂單");

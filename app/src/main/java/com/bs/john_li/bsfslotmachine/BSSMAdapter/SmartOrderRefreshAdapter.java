@@ -29,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.R;
 
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.InputStream;
@@ -45,6 +46,7 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter<SmartOrderRef
     private LayoutInflater mInflater;
     private LruCache<String ,BitmapDrawable> mMemoryCache;
     private OnItemClickListener mOnitemClickListener = null;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     public SmartOrderRefreshAdapter(Context context, List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> list, OSSClient oss) {
         this.list = list;
@@ -117,10 +119,12 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter<SmartOrderRef
                 holder.item_order_iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 break;
             case 3://確定投幣機訂單
-                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, holder.item_order_iv, mContext, R.mipmap.load_img_fail_list);
+                //AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, holder.item_order_iv, mContext, R.mipmap.load_img_fail_list);
+                x.image().bind(holder.item_order_iv, list.get(position).getImg1(), options);
                 break;
             case 4: //未知投幣機訂單
-                AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, holder.item_order_iv, mContext, R.mipmap.load_img_fail_list);
+                //AliyunOSSUtils.downloadImg(list.get(position).getImg1(), oss, holder.item_order_iv, mContext, R.mipmap.load_img_fail_list);
+                x.image().bind(holder.item_order_iv, list.get(position).getImg1(), options);
                 break;
         }
         holder.itemView.setTag(position);

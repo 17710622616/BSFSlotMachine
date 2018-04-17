@@ -28,6 +28,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +47,7 @@ public class SmartRefreshAdapter extends RecyclerView.Adapter<SmartRefreshAdapte
     private LayoutInflater mInflater;
     private LruCache<String ,BitmapDrawable> mMemoryCache;
     private OnItemClickListener mOnitemClickListener = null;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     public SmartRefreshAdapter(Context context, List<ContentsListModel.DataBean.ContentsModel> list, OSSClient oss) {
         this.list = list;
@@ -74,11 +78,29 @@ public class SmartRefreshAdapter extends RecyclerView.Adapter<SmartRefreshAdapte
 
     @Override
     public void onBindViewHolder(SmartRefreshAdapter.SmartRefreshViewHolder holder, int position) {
-        holder.contentsTitle.setText(list.get(position).getTitle());
         holder.contentsPostID.setText("發佈者：" + list.get(position).getCreator());
         holder.contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
 
-        String cover = list.get(position).getCover();
+        try {
+            if (list.get(position).getCover() != null) {
+                String[] coverArr = new Gson().fromJson(list.get(position).getCover(), String[].class);
+                if (coverArr.length > 0) {
+                    holder.contentsTitle.setText(list.get(position).getTitle());
+                    x.image().bind(holder.contentsIv, coverArr[0], options);
+                } else {
+                    //x.image().bind(holder.contentsIv, "", options);
+                    holder.contentsTitle.setText("   " + list.get(position).getTitle());
+                    holder.contentsIv.setVisibility(View.GONE);
+                }
+            } else {
+                holder.contentsTitle.setText("   " + list.get(position).getTitle());
+                holder.contentsIv.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            holder.contentsTitle.setText("   " + list.get(position).getTitle());
+            holder.contentsIv.setVisibility(View.GONE);
+        }
+        /*String cover = list.get(position).getCover();
         try {
             Map<String, String> coverMap = new Gson().fromJson(cover, HashMap.class);
             cover = coverMap.get("mainPic");
@@ -90,7 +112,7 @@ public class SmartRefreshAdapter extends RecyclerView.Adapter<SmartRefreshAdapte
             holder.contentsIv.setImageDrawable(bitmap);
         } else {
             downloadImgByTag(cover, oss, holder.contentsIv, mContext, R.mipmap.load_img_fail_list, this);
-        }
+        }*/
         holder.itemView.setTag(position);
     }
 

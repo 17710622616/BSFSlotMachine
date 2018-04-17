@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
     private long memberChargeId;
     private CarModel.CarCountAndListModel.CarInsideModel mCarInsideModel;
     private List<CarRechargeWayListModel.CarRechargeWayModel> mCarRechargeWayModelList;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +135,8 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carModelTv.setText("品牌："+mCarInsideModel.getModelForCar());
         carStyleTv.setText("車型："+mCarInsideModel.getCarStyle());
         carBrandTv.setText("型號："+mCarInsideModel.getCarBrand());
-        AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this, R.mipmap.load_img_fail_list);
+        //AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this, R.mipmap.load_img_fail_list);
+        x.image().bind(carIv, mCarInsideModel.getImgUrl(), options);
         switch (mCarInsideModel.getIfPerson()) {
             case 1:
                 carTypeTv.setText("車輛類型：輕重型電單車");
