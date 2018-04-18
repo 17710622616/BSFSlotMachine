@@ -68,6 +68,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -344,13 +345,17 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                 if (model.getCode() == 200) {
                     mCommentsModelList.addAll(model.getData().getComments());
                 } else {
-                    Toast.makeText(ArticleDetialActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ArticleDetialActivity.this, "獲取評論失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ArticleDetialActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(ArticleDetialActivity.this, "獲取評論超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -497,13 +502,17 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                     mCommentsExpandAdapter.notifyDataSetChanged();
                     expandListView();
                 } else {
-                    Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(ArticleDetialActivity.this, "評論失敗超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

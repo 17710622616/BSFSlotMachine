@@ -31,7 +31,8 @@
     <string name="opinion">請輸入您的寶貴意見</string>
     <string name="username">賬戶名</string>
     <string name="pw">密碼</string>
-    <string name="no_net">請求錯誤，可能是網絡出了問題~</string>
+    <string name="timeout">超時，請重試！~</string>
+    <string name="no_net">請求錯誤，請重試！~</string>
     <string name="login_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
     <string name="register_tips">溫馨提示：未註冊用戶可以直接點擊去逛逛或者選擇手機號碼註冊，只需要獲取驗證碼就可以快速註冊哦~</string>
     <string name="login_btn">登錄</string>

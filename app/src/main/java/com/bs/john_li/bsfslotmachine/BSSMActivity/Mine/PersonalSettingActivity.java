@@ -58,6 +58,7 @@ import org.xutils.x;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -378,13 +379,17 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonalSettingActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(PersonalSettingActivity.this, "修改密碼超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -430,13 +435,17 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     SPUtils.put(PersonalSettingActivity.this, "HasPayPw", "1");
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(PersonalSettingActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonalSettingActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(PersonalSettingActivity.this, "創建密碼超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -568,13 +577,17 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                             break;
                     }
                 } else {
-                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -606,13 +619,17 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     EventBus.getDefault().post("LOGIN");
                     Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -656,13 +673,17 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     getUserInfo(model.getData().toString());
                 } else {
-                    Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_fail) + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(PersonalSettingActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(PersonalSettingActivity.this, "登錄超時，請重試！", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override

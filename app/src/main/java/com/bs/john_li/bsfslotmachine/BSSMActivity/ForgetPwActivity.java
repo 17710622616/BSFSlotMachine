@@ -24,6 +24,8 @@ import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
+
 /**
  * Created by John on 14/9/2017.
  */
@@ -153,13 +155,17 @@ public class ForgetPwActivity extends BaseActivity implements View.OnClickListen
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(ForgetPwActivity.this, "注册失败" + model.getMsg() + "~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetPwActivity.this, "修改密碼失败" + String.valueOf(model.getMsg()) + "~~~", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ForgetPwActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(ForgetPwActivity.this, "修改密碼請求超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ForgetPwActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

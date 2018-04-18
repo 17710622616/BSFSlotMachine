@@ -83,6 +83,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -329,16 +330,20 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(AddCarActivity.this, "添加車輛" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -401,13 +406,17 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(AddCarActivity.this, "添加cheliang" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -817,13 +826,17 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     finish();
                     Toast.makeText(AddCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(AddCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCarActivity.this, "刪除失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(AddCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(AddCarActivity.this, "刪除超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddCarActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override

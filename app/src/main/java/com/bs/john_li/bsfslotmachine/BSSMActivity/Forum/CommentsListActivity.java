@@ -42,6 +42,7 @@ import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,9 +131,9 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
                                     @Override
                                     public void onClick(View view) {
                                         if(BSSMCommonUtils.isLoginNow(CommentsListActivity.this)) {    // 已经登录
-                                            callNetSubmitReply(editText.getText().toString(), 0, i);
+                                            callNetSubmitReply(String.valueOf(editText.getText()), 0, i);
                                         } else {    // 未登录，游客
-                                            callNetSubmitReply(editText.getText().toString(), 1, i);
+                                            callNetSubmitReply(String.valueOf(editText.getText()), 1, i);
                                         }
                                         dialog.dismiss();
                                     }
@@ -159,9 +160,9 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
                                     @Override
                                     public void onClick(View view) {
                                         if(BSSMCommonUtils.isLoginNow(CommentsListActivity.this)) {    // 已经登录
-                                            callNetSubmitReply(editText.getText().toString(), 0, i);
+                                            callNetSubmitReply(String.valueOf(editText.getText()), 0, i);
                                         } else {    // 未登录，游客
-                                            callNetSubmitReply(editText.getText().toString(), 1, i);
+                                            callNetSubmitReply(String.valueOf(editText.getText()), 1, i);
                                         }
                                         dialog.dismiss();
                                     }
@@ -236,13 +237,17 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
                 if (model.getCode() == 200) {
                     mCommentsModelList.addAll(model.getData().getComments());
                 } else {
-                    Toast.makeText(CommentsListActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CommentsListActivity.this, "獲取評論失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CommentsListActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CommentsListActivity.this, "獲取評論失敗超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CommentsListActivity.this, "獲取評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -327,13 +332,17 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
                     mCommentsExpandAdapter.notifyDataSetChanged();
                     expandListView();
                 } else {
-                    Toast.makeText(CommentsListActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CommentsListActivity.this, "評論失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CommentsListActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CommentsListActivity.this, "評論失敗超時，請重試!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CommentsListActivity.this, "評論失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

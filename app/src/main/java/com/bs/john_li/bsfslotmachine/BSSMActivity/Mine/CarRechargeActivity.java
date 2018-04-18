@@ -37,6 +37,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,13 +180,17 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 if (model.getCode() ==200) {
                     mCarRechargeWayModelList = model.getData();
                 } else {
-                    Toast.makeText(CarRechargeActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarRechargeActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CarRechargeActivity.this, "充值方式提交失敗！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override
@@ -224,13 +229,17 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 1);
                 } else {
-                    Toast.makeText(CarRechargeActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarRechargeActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CarRechargeActivity.this, "提交充值訂單超時", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override

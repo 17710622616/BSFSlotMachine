@@ -48,6 +48,7 @@ import org.xutils.x;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -286,21 +287,38 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 if (model.getCode() == 200) {
                     if (model.getData() != null) {
                         totalCount = model.getData().getTotalCount();
-                        smList = model.getData().getData();
-                        SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
-                        moreModel.setAddress("");
-                        moreModel.setAreaCode("");
-                        moreModel.setCarType(-1);
-                        moreModel.setDistance(-1);
-                        moreModel.setId(-1);
-                        moreModel.setLatitude(-1);
-                        moreModel.setLongitude(-1);
-                        moreModel.setMachineNo("查看更多");
-                        moreModel.setParkingSpaces(null);
-                        moreModel.setAreaCode("");
-                        moreModel.setPillarColor("");
-                        smList.add(moreModel);
-                        updateAdapterData();
+                        if (model.getData().getData() != null) {
+                            smList = model.getData().getData();
+                            SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
+                            moreModel.setAddress("");
+                            moreModel.setAreaCode("");
+                            moreModel.setCarType(-1);
+                            moreModel.setDistance(-1);
+                            moreModel.setId(-1);
+                            moreModel.setLatitude(-1);
+                            moreModel.setLongitude(-1);
+                            moreModel.setMachineNo("查看更多");
+                            moreModel.setParkingSpaces(null);
+                            moreModel.setAreaCode("");
+                            moreModel.setPillarColor("");
+                            smList.add(moreModel);
+                            updateAdapterData();
+                        } else {
+                            SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
+                            moreModel.setAddress("");
+                            moreModel.setAreaCode("");
+                            moreModel.setCarType(-1);
+                            moreModel.setDistance(-1);
+                            moreModel.setId(-1);
+                            moreModel.setLatitude(-1);
+                            moreModel.setLongitude(-1);
+                            moreModel.setMachineNo("暫無數據");
+                            moreModel.setParkingSpaces(null);
+                            moreModel.setAreaCode("");
+                            moreModel.setPillarColor("");
+                            smList.add(moreModel);
+                            updateAdapterData();
+                        }
                     } else {
                         SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel moreModel = new SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel();
                         moreModel.setAddress("");
@@ -322,7 +340,11 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(SearchSlotMachineActivity.this, "查詢出錯，請重試！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(SearchSlotMachineActivity.this, "查詢超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SearchSlotMachineActivity.this, "查詢出錯，請重試！", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

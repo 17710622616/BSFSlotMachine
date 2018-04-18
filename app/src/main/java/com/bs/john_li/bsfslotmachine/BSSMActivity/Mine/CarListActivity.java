@@ -41,6 +41,7 @@ import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -204,13 +205,17 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     mSmartCarListRefreshAdapter.refreshListView(carModelList);
                     Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarListActivity.this, "刪除失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CarListActivity.this, "刪除超時！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CarListActivity.this, "刪除失敗！", Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override
@@ -252,16 +257,18 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     // List去重
                     deWeightListById();
                     Log.d("car_list_count", "長度：" + carModelList.size());
-                } else if (model.getCode() == 10001){
-                    Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CarListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(CarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(CarListActivity.this, "獲取車輛列表" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
             }
             //主动调用取消请求的回调方法
             @Override

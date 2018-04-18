@@ -458,7 +458,7 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                     finish();
                 } else {
                     dialog.dismiss();
-                    Toast.makeText(PublishForumActivity.this, "提交失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PublishForumActivity.this, "提交失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法

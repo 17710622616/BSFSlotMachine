@@ -158,7 +158,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     getUserInfo(model.getData().toString());
                     getHasPayPw(model.getData().toString());
                 } else {
-                    Toast.makeText(LoginActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.login_fail) + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             }
@@ -171,7 +171,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 } else {
                     Toast.makeText(LoginActivity.this, "登錄失敗，請重新提交", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(LoginActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override

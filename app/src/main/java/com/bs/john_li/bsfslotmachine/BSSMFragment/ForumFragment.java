@@ -74,6 +74,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -285,7 +286,7 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
                     if (count.equals("")) {
                         getErrorLL.setVisibility(View.VISIBLE);
                     } else {
-                        Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -294,6 +295,8 @@ public class ForumFragment extends BaseFragment implements View.OnClickListener,
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (count.equals("")) {
                     getErrorLL.setVisibility(View.VISIBLE);
+                } else if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(getActivity(), "帖文列表獲取超時，請重試!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                 }

@@ -111,5 +111,5 @@ public class BSSMConfigtor {
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     //軟件版本號對比地址
-    public static final String CHECK_VERSION= "/AppVersion/getAppVersion";
+    public static final String CHECK_VERSION= "AppVersion/getAppVersion";
 }

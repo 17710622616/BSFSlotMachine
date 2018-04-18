@@ -29,6 +29,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,13 +147,17 @@ public class OwnArticalListACtivty extends BaseActivity implements View.OnClickL
                     List<ContentsListModel.DataBean.ContentsModel> list = model.getData().getContents();
                     contentsList.addAll(list);
                 } else {
-                    Toast.makeText(OwnArticalListACtivty.this, "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OwnArticalListACtivty.this, "帖文列表獲取失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(OwnArticalListACtivty.this, "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(OwnArticalListACtivty.this, "帖文列表獲取超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(OwnArticalListACtivty.this, "帖文列表獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
