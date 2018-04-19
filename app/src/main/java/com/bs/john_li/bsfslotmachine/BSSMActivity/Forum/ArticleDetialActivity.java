@@ -26,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -40,6 +41,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsExpandAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.ArticalLikeOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
@@ -247,6 +249,54 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
                             }})
                         .setNegativeButton("取消", null)
                         .create().show();
+            }
+        });
+
+        favoriteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                callNetSubmitLike(isChecked);
+            }
+        });
+    }
+
+    private void callNetSubmitLike(boolean isChecked) {
+        RequestParams params = null;
+        if (isChecked) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ARTICAL_LIKE + "id=" + mContentsModel.getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ARTICAL_UNLIKE + "id=" + mContentsModel.getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
+        }
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                ArticalLikeOutModel model = new Gson().fromJson(result.toString(), ArticalLikeOutModel.class);
+                if (model.getCode() == 200) {
+                    Toast.makeText(ArticleDetialActivity.this, "點讚成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "點讚失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(ArticleDetialActivity.this, "點讚超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "點讚失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                closeLoadingDialog();
             }
         });
     }

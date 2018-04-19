@@ -108,6 +108,10 @@ public class BSSMConfigtor {
     public final static String SUBMITE_REPLY_VISITOR = "content/visitorreply";
     // 發佈帖子
     public final static String PUBLISH_ARTICLE = "content/publish?token=";
+    // 点赞接口
+    public final static String ARTICAL_LIKE = "content/reply?token=";
+    // 取消点赞接口
+    public final static String ARTICAL_UNLIKE = "content/reply?token=";
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     //軟件版本號對比地址
