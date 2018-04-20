@@ -109,9 +109,9 @@ public class BSSMConfigtor {
     // 發佈帖子
     public final static String PUBLISH_ARTICLE = "content/publish?token=";
     // 点赞接口
-    public final static String ARTICAL_LIKE = "content/reply?token=";
+    public final static String ARTICAL_LIKE = "content/like?";
     // 取消点赞接口
-    public final static String ARTICAL_UNLIKE = "content/reply?token=";
+    public final static String ARTICAL_UNLIKE = "content/unlike?";
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     //軟件版本號對比地址

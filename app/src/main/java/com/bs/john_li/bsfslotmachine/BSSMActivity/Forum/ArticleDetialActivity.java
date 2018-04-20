@@ -260,7 +260,11 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         });
     }
 
-    private void callNetSubmitLike(boolean isChecked) {
+    /**
+     * 点赞及取消点赞
+     * @param isChecked
+     */
+    private void callNetSubmitLike(final boolean isChecked) {
         RequestParams params = null;
         if (isChecked) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ARTICAL_LIKE + "id=" + mContentsModel.getId() + "&token=" + SPUtils.get(this, "UserToken", ""));
@@ -269,23 +273,39 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         }
         params.setAsJsonContent(true);
         params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ArticalLikeOutModel model = new Gson().fromJson(result.toString(), ArticalLikeOutModel.class);
                 if (model.getCode() == 200) {
-                    Toast.makeText(ArticleDetialActivity.this, "點讚成功", Toast.LENGTH_SHORT).show();
+                    if (isChecked) {
+                        Toast.makeText(ArticleDetialActivity.this, "點讚成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ArticleDetialActivity.this, "取消點讚成功", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(ArticleDetialActivity.this, "點讚失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    if (isChecked) {
+                        Toast.makeText(ArticleDetialActivity.this, "點讚失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ArticleDetialActivity.this, "取消點讚失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(ArticleDetialActivity.this, "點讚超時，請重試！", Toast.LENGTH_SHORT).show();
+                    if (isChecked) {
+                        Toast.makeText(ArticleDetialActivity.this, "點讚超時，請重試！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ArticleDetialActivity.this, "取消點讚超時，請重試！", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(ArticleDetialActivity.this, "點讚失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    if (isChecked) {
+                        Toast.makeText(ArticleDetialActivity.this, "點讚失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ArticleDetialActivity.this, "取消點讚失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -296,7 +316,6 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFinished() {
-                closeLoadingDialog();
             }
         });
     }
