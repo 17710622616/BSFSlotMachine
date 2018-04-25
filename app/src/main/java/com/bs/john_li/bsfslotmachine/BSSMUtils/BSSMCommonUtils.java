@@ -114,7 +114,7 @@ public class BSSMCommonUtils {
         }
 
         for (Object object : list) {
-            jsonArray.put(object);
+            jsonArray.put("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + object.toString());
         }
         return jsonArray;
     }
