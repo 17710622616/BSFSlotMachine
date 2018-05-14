@@ -116,4 +116,6 @@ public class BSSMConfigtor {
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     //軟件版本號對比地址
     public static final String CHECK_VERSION= "AppVersion/getAppVersion";
+    //提交意見反饋的接口
+    public static final String SUBMIT_OPINION= "feedback/submit";
 }

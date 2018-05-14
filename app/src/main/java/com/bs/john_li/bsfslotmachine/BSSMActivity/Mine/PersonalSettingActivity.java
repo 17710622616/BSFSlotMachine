@@ -273,7 +273,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         .show(getSupportFragmentManager());
                 break;*/
             case R.id.personal_pw://修改登錄密碼
-                startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
+                Intent intent = new Intent(this, ForgetPwActivity.class);
+                intent.putExtra("updatePw", "updatePw");
+                startActivityForResult(intent, BSSMConfigtor.REQUEST_CODE);
                 break;
             case R.id.personal_pay_pw:  // 修改支付密碼
                 if (SPUtils.get(this, "HasPayPw", "").equals("1")) {
@@ -358,8 +360,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("oldpwd", DigestUtils.encryptPw(oldPayPw));
-            jsonObj.put("paypwd", DigestUtils.encryptPw(payPw));
+            jsonObj.put("oldpwd", DigestUtils.getMD5Str(oldPayPw));
+            jsonObj.put("paypwd", DigestUtils.getMD5Str(payPw));
             jsonObj.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -412,7 +414,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("paypwd", DigestUtils.encryptPw(payPw));
+            jsonObj.put("paypwd", DigestUtils.getMD5Str(payPw));
             jsonObj.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();

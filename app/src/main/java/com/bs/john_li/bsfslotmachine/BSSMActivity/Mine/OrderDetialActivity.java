@@ -212,13 +212,13 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
 
         mOrderPhotoAdapter = new OrderPhotoAdapter(this, imgList);
         orderImgGv.setAdapter(mOrderPhotoAdapter);
-        orderNoTv.setText("訂單編號：" + mUserOrderModel.getOrderNo());
-        payMoneyTV.setText("付款金額：MOP" + mUserOrderModel.getPayAmount());
-        timeTV.setText("下單時間：" + mUserOrderModel.getCreateTime());
-        if(mUserOrderModel.getRemark().equals("")) {
+        orderNoTv.setText("訂單編號：" + String.valueOf(mUserOrderModel.getOrderNo()));
+        payMoneyTV.setText("付款金額：MOP" + String.valueOf(mUserOrderModel.getPayAmount()));
+        timeTV.setText("下單時間：" + String.valueOf(mUserOrderModel.getCreateTime()));
+        if(String.valueOf(mUserOrderModel.getRemark()).equals("")) {
             remarkTV.setText("備        註：暫無");
         } else {
-            remarkTV.setText("備        註：" + mUserOrderModel.getRemark());
+            remarkTV.setText("備        註：" + String.valueOf(mUserOrderModel.getRemark()));
         }
         switch (mUserOrderModel.getOrderStatus()) {
             case 1: // 待支付

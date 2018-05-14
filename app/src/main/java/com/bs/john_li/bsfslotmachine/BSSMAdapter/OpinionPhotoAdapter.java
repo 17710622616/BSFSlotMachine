@@ -9,6 +9,9 @@ import android.widget.ImageView;
 
 import com.bs.john_li.bsfslotmachine.R;
 
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
+
 import java.util.List;
 
 /**
@@ -16,10 +19,11 @@ import java.util.List;
  */
 
 public class OpinionPhotoAdapter extends BaseAdapter {
-    private List<Integer> photoList;
+    private List<String> photoList;
     private LayoutInflater inflater;
     private Context mContext;
-    public OpinionPhotoAdapter(Context context, List<Integer> photoList) {
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
+    public OpinionPhotoAdapter(Context context, List<String> photoList) {
         this.photoList = photoList;
         inflater = LayoutInflater.from(context);
         mContext = context;
@@ -52,11 +56,21 @@ public class OpinionPhotoAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.opinionPhoto.setImageResource(photoList.get(i));
+        if (i == photoList.size() - 1) {
+            holder.opinionPhoto.setImageResource(R.mipmap.camera1);
+        } else {
+            String url = photoList.get(i);
+            x.image().bind(holder.opinionPhoto, photoList.get(i), options);
+        }
         return convertView;
     }
 
     class ViewHolder {
         private ImageView opinionPhoto;
+    }
+
+    public void refreshData(List<String> newList) {
+        this.photoList = newList;
+        notifyDataSetChanged();
     }
 }

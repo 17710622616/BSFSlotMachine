@@ -310,7 +310,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("orderNo", orderNo);
-            jsonObj.put("password", DigestUtils.encryptPw(enterPw));
+            jsonObj.put("password", DigestUtils.getMD5Str(enterPw));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -89,7 +89,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 finish();
                 break;
             case R.id.login_forget_pw:
-                startActivityForResult(new Intent(this, ForgetPwActivity.class), BSSMConfigtor.REQUEST_CODE);
+                Intent intent = new Intent(this, ForgetPwActivity.class);
+                intent.putExtra("updatePw", "forgetPw");
+                startActivityForResult(intent, BSSMConfigtor.REQUEST_CODE);
                 break;
         }
     }

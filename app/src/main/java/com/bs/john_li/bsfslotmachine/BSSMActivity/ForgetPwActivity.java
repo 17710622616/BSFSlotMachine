@@ -33,7 +33,7 @@ import java.net.SocketTimeoutException;
 public class ForgetPwActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private EditText registerUn, registerVCode,registerPw;
-    private TextView registerGetVC, registerTv;
+    private TextView registerGetVC, registerTv, registerTipsTv;
     private CountDownButtonHelper helper;
 
     private String verificationCode;
@@ -49,6 +49,7 @@ public class ForgetPwActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void initView() {
         headView = findViewById(R.id.register_head);
+        registerTipsTv = findViewById(R.id.register_tips);
         registerUn = findViewById(R.id.register_username);
         registerVCode = findViewById(R.id.register_verification_code);
         registerPw = findViewById(R.id.register_pw);
@@ -86,10 +87,17 @@ public class ForgetPwActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void initData() {
-        headView.setTitle("修改密碼");
+        Intent intent = getIntent();
+        String startWay = intent.getStringExtra("updatePw");
+        if (startWay.equals("updatePw")) {
+            headView.setTitle("修改密碼");
+            registerTipsTv.setText("溫馨提示：密碼推薦長度在8~32位，包含數字、字母、符號中兩種或以上為佳");
+        } else {
+            headView.setTitle("忘記密碼");
+            registerTipsTv.setText("");
+        }
         headView.setLeft(R.mipmap.back, this);
-
-         helper = new CountDownButtonHelper(registerGetVC, "倒計時", 60,1);
+        helper = new CountDownButtonHelper(registerGetVC, "倒計時", 60,1);
     }
 
     @Override
