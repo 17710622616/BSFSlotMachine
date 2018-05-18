@@ -114,7 +114,7 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                if (pageSize * (pageNo + 1) > totalCount){
+                if (pageSize * pageNo > totalCount){
                     Toast.makeText(SlotMachineListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();
@@ -179,7 +179,7 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
                     if (model.getData() != null) {
                         if (model.getData().getData() != null) {
                             totalCount = model.getData().getTotalCount();
-                            smList = model.getData().getData();
+                            smList.addAll(model.getData().getData());
                         } else {
                             smList = new ArrayList<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel>();
                         }
