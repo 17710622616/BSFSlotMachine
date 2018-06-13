@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        bosoft {
+            keyAlias 'BoSoft'
+            keyPassword 'Uo123456.'
+            storeFile file('D:/TeamWorkSpace/ASWorkSpace/BSFSlotMachine/app/build/BSFSlotMachine.jks')
+            storePassword 'Uo123456.'
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
@@ -12,18 +20,14 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
-
-        lintOptions {
-            abortOnError false
-        }
-
+    lintOptions {
+        abortOnError false
+    }
     allprojects {
         repositories {
             maven { url "https://jitpack.io" }
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
