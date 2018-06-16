@@ -40,7 +40,7 @@ public class BSSMConfigtor {
     public final static String SLOT_MACHINE_EXIST = "LOCATION_EXIST";
 
     // 測試的IP地址
-    public final static String BASE_URL = "http://47.75.5.50:8080/parkingman-web/";
+    public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
     // 測試的IP地址
     //public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";
     // 獲取驗證碼
