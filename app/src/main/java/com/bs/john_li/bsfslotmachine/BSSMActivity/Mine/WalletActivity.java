@@ -5,10 +5,24 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.net.SocketTimeoutException;
 
 /**
  * 我的錢包
@@ -17,7 +31,7 @@ import com.bs.john_li.bsfslotmachine.R;
 
 public class WalletActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView walletHead;
-    private TextView rechargeTv, withdrawDdepositTV, FAQTV;
+    private TextView rechargeTv, withdrawDdepositTV, FAQTV, balanceTv;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +47,7 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
         rechargeTv = findViewById(R.id.wallet_recharge);
         withdrawDdepositTV = findViewById(R.id.wallet_withdraw_deposit);
         FAQTV = findViewById(R.id.wallet_FAQ);
+        balanceTv = findViewById(R.id.wallet_balance);
     }
 
     @Override
@@ -47,6 +62,47 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
         walletHead.setTitle("錢包");
         walletHead.setLeft(this);
         walletHead.setRightText("明細", this);
+
+        callNetGetWalletBalance();
+    }
+
+    /**
+     * 獲取我的餘額
+     */
+    private void callNetGetWalletBalance() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_WALLET_BALANCE + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    balanceTv.setText("MOP $ " + String.format("%.2f", Double.parseDouble(model.getData())).toString());
+                } else {
+                    Toast.makeText(WalletActivity.this, "獲取餘額失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(WalletActivity.this, "獲取餘額" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(WalletActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     @Override

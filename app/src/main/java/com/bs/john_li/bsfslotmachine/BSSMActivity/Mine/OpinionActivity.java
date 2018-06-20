@@ -335,7 +335,7 @@ public class OpinionActivity extends BaseActivity implements View.OnClickListene
     }
 
     /**
-     *  發佈帖文
+     *  發佈意见反馈
      * @param content
      * @param mobile
      * @param cutpic
@@ -350,10 +350,6 @@ public class OpinionActivity extends BaseActivity implements View.OnClickListene
             jsonObj.put("mobile",mobile);
             jsonObj.put("name",name);
             jsonObj.put("cutpic", cutpic);
-            String token = String.valueOf(SPUtils.get(this, "UserToken", ""));
-            if (token.equals("null")) {
-                jsonObj.put("token", token);
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

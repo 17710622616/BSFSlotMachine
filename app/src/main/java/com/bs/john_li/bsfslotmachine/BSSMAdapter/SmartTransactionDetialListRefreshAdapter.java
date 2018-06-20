@@ -26,6 +26,7 @@ import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TransactionDetialOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.WalletRecordOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.R;
@@ -39,12 +40,12 @@ import java.util.List;
  */
 
 public class SmartTransactionDetialListRefreshAdapter extends RecyclerView.Adapter<SmartTransactionDetialListRefreshAdapter.SmartRefreshViewHolder> implements View.OnClickListener{
-    private List<TransactionDetialOutModel.TransactionDetialModel> list;
+    private List<WalletRecordOutModel.DataBeanX.WalletRecordModel> list;
     private Context mContext;
     private LayoutInflater mInflater;
     private SmartTransactionDetialListRefreshAdapter.OnItemClickListener mOnitemClickListener = null;
 
-    public SmartTransactionDetialListRefreshAdapter(Context context, List<TransactionDetialOutModel.TransactionDetialModel> list) {
+    public SmartTransactionDetialListRefreshAdapter(Context context, List<WalletRecordOutModel.DataBeanX.WalletRecordModel> list) {
         this.list = list;
         mContext = context;
         mInflater = LayoutInflater.from(context);
@@ -56,15 +57,33 @@ public class SmartTransactionDetialListRefreshAdapter extends RecyclerView.Adapt
         vh.item_td_num = (TextView) view.findViewById(R.id.item_td_num);
         vh.item_td_remark = (TextView) view.findViewById(R.id.item_td_remark);
         vh.item_td_time = (TextView) view.findViewById(R.id.item_td_time);
+        vh.item_td_type = (TextView) view.findViewById(R.id.item_td_type);
         view.setOnClickListener(this);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(SmartTransactionDetialListRefreshAdapter.SmartRefreshViewHolder holder, int position) {
-        holder.item_td_num.setText("MOP：-" +list.get(position).getNum());
-        holder.item_td_time.setText(list.get(position).getTime());
-        holder.item_td_remark.setText("投幣訂單：大堂區" + list.get(position).getRemark());
+        holder.item_td_num.setText(String.format("%.2f", list.get(position).getAmount()).toString());
+        holder.item_td_time.setText("時間：" + BSSMCommonUtils.stampToDate(String.valueOf(list.get(position).getCreateTime())));
+        switch (list.get(position).getPayType()) {
+            case 1:
+                holder.item_td_remark.setText("支付方式：微信");
+                break;
+            case 2:
+                holder.item_td_remark.setText("支付方式：支付寶");
+                break;
+            case 3:
+                holder.item_td_remark.setText("支付方式：賬戶錢包");
+                break;
+        }
+        if (list.get(position).getFlag() == 1) {
+            holder.item_td_type.setText("+");
+            holder.item_td_type.setTextColor(mContext.getResources().getColor(R.color.colorNewGreen));
+        } else {
+            holder.item_td_type.setText("-");
+            holder.item_td_type.setTextColor(mContext.getResources().getColor(R.color.colorLoginOutRed));
+        }
         holder.itemView.setTag(position);
     }
 
@@ -85,6 +104,7 @@ public class SmartTransactionDetialListRefreshAdapter extends RecyclerView.Adapt
         public TextView item_td_remark;
         public TextView item_td_time;
         public TextView item_td_num;
+        public TextView item_td_type;
         public SmartRefreshViewHolder(View view){
             super(view);
         }
@@ -98,7 +118,7 @@ public class SmartTransactionDetialListRefreshAdapter extends RecyclerView.Adapt
         void onItemClick(View view, int position);
     }
 
-    public void refreshListView(List<TransactionDetialOutModel.TransactionDetialModel> newList){
+    public void refreshListView(List<WalletRecordOutModel.DataBeanX.WalletRecordModel> newList){
         this.list = newList;
         notifyDataSetChanged();
     }

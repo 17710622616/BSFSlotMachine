@@ -92,6 +92,12 @@ public class BSSMConfigtor {
     public final static String GET_MAX_AMOUNT_SLOT_MACHINE_UNKOWN = "soltMachine/chargeUnkownLimit";
     // 錢包支付的接口
     public final static String POST_WALLET_PAY = "pay/walletPay?token=";
+    // 錢包餘額的接口
+    public final static String GET_WALLET_BALANCE = "pay/getBalance?token=";
+    // 錢包餘額的接口
+    public final static String GET_WALLET_RECORD = "pay/getUserWalletRecord?token=";
+    // 钱包充值订单的接口
+    public final static String POST_CHARGE_ORDER = "order/chargeOrder?token=";
     // 獲取帖文列表
     public final static String GET_CONTENTS = "content/getContentList?nextId=";
     // 獲取評論列表
@@ -117,5 +123,5 @@ public class BSSMConfigtor {
     //軟件版本號對比地址
     public static final String CHECK_VERSION= "AppVersion/getAppVersion";
     //提交意見反饋的接口
-    public static final String SUBMIT_OPINION= "feedback/submit";
+    public static final String SUBMIT_OPINION= "feedback/submit?token=";
 }

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsAdapter;
@@ -111,7 +112,7 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //StatusBarUtil.setColor(this,getResources().getColor(R.color.colorAlpha));
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        //getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         setContentView(R.layout.activity_articel_detial);
@@ -255,7 +256,14 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         favoriteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                callNetSubmitLike(isChecked);
+                String token = String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", ""));
+                if (!String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("")) {
+                    callNetSubmitLike(isChecked);
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, R.string.not_login, Toast.LENGTH_LONG);
+                    startActivity(new Intent(ArticleDetialActivity.this, LoginActivity.class));
+                    finish();
+                }
             }
         });
     }

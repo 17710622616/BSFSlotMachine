@@ -145,6 +145,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             nickNameTv.setText(mUserInfoModel.getNickname());
             phoneNumTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
             //AliyunOSSUtils.downloadImg(mUserInfoModel.getHeadimg(), oss, headIv, this, R.mipmap.head_boy);
+            String img = mUserInfoModel.getHeadimg();
             x.image().bind(headIv, mUserInfoModel.getHeadimg(), options);
         }
 

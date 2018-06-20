@@ -11,10 +11,13 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMchineListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartTransactionDetialListRefreshAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.TransactionDetialOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.WalletRecordOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
@@ -23,7 +26,14 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +50,10 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
     // 總數
     private long totalCount;
     // 搜索結果集合
-    private List<TransactionDetialOutModel.TransactionDetialModel> tdList;
+    private List<WalletRecordOutModel.DataBeanX.WalletRecordModel> tdList;
     private SmartTransactionDetialListRefreshAdapter mTransactionDetialAdapter;
     private int pageNo = 1;
     private int pageSize = 10;
-    private String textChange = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,15 +90,14 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 //和最大的数据比较
-                /*if (pageSize * (pageNo + 1) > totalCount){
-                    Toast.makeText(SearchSlotMachineListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                if (pageSize * (pageNo + 1) > totalCount){
+                    Toast.makeText(TransactionDetailActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
                     callNetChangeData();
-                }*/
-                callNetChangeData();
+                }
             }
         });
     }
@@ -124,13 +132,52 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
     }
 
     private void callNetChangeData() {
-        for (int i = 0; i < 20; i++) {
-            TransactionDetialOutModel.TransactionDetialModel model = new TransactionDetialOutModel.TransactionDetialModel();
-            model.setRemark("咪錶" + i);
-            model.setNum(String.valueOf(i));
-            model.setTime("2018-03-15 22:27:36");
-            tdList.add(model);
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_WALLET_RECORD + SPUtils.get(this, "UserToken", ""));
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("pageSize",pageSize);
+            jsonObj.put("pageNo",pageNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        params.setConnectTimeout(30 * 1000);
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                WalletRecordOutModel model = new Gson().fromJson(result, WalletRecordOutModel.class);
+                if (model.getCode() == 200) {
+                    List<WalletRecordOutModel.DataBeanX.WalletRecordModel> list = model.getData().getData();
+                    totalCount = model.getData().getTotalCount();
+                    tdList.addAll(list);
+                } else {
+                    Toast.makeText(TransactionDetailActivity.this, "錢包明細獲取失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(TransactionDetailActivity.this, "錢包明細獲取超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(TransactionDetailActivity.this, "錢包明細獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                refreshContentsList();
+            }
+        });
+    }
+
+    private void refreshContentsList() {
         mTransactionDetialAdapter.notifyDataSetChanged();
         mRefreshLayout.finishLoadmore();
         mRefreshLayout.finishRefresh();

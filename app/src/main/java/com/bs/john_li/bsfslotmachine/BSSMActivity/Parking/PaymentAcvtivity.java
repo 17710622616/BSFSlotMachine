@@ -65,7 +65,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private JuheExchangeModel exchangeModel;
     private String orderNo;
     private String orderTime;
-    private int startWay = 0; // 1是停車訂單。2是會員充值訂單
+    private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單
     // 支付金額
     private double payMoney;
     @Override
@@ -322,6 +322,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     pay_faceview.setStatus(FaceView.SUCCESS);
+                    pay_status_tv.setText("支付成功！");
                     Toast.makeText(PaymentAcvtivity.this, "支付成功！", Toast.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {
                         @Override

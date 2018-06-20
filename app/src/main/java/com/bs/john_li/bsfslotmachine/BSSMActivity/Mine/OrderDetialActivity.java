@@ -12,6 +12,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderPhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -110,7 +111,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 carBrandTV.setVisibility(View.VISIBLE);
                 carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
                 startTimeTV.setVisibility(View.VISIBLE);
-                startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
+                startTimeTV.setText("開始投幣時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mUserOrderModel.getStartSlotTime())));
                 addressTV.setVisibility(View.VISIBLE);
                 if (mUserOrderModel.getParkingSpace() != null) {
                     if (!mUserOrderModel.getParkingSpace().equals("")) {
@@ -168,7 +169,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 carBrandTV.setVisibility(View.VISIBLE);
                 carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
                 startTimeTV.setVisibility(View.VISIBLE);
-                startTimeTV.setText("開始投幣時間：" + mUserOrderModel.getStartSlotTime());
+                startTimeTV.setText("開始投幣時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mUserOrderModel.getStartSlotTime())));
                 addressTV.setVisibility(View.VISIBLE);
                 if (mUserOrderModel.getParkingSpace() != null) {
                     if (!mUserOrderModel.getParkingSpace().equals("")) {
@@ -214,7 +215,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         orderImgGv.setAdapter(mOrderPhotoAdapter);
         orderNoTv.setText("訂單編號：" + String.valueOf(mUserOrderModel.getOrderNo()));
         payMoneyTV.setText("付款金額：MOP" + String.valueOf(mUserOrderModel.getPayAmount()));
-        timeTV.setText("下單時間：" + String.valueOf(mUserOrderModel.getCreateTime()));
+        timeTV.setText("下單時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mUserOrderModel.getCreateTime())));
         if(String.valueOf(mUserOrderModel.getRemark()).equals("")) {
             remarkTV.setText("備        註：暫無");
         } else {

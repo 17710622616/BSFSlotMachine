@@ -119,8 +119,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             switch (msg.what) {
                 case 0:     // 車輛圖片提交至OSS成功
                     if (startWay.equals("update")) {
-                        // 修改車輛信息
-                        callNetUpdateCar();
                     } else {
                         // 提交車輛信息
                         callNetSubmiteCar();
@@ -268,33 +266,55 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 提交車輛信息
      */
     private void submitCarData() {
-        if (file != null) {
-            if (!file.getPath().equals("")) {
-                if (!carInsideModel.getCarNo().equals("")) {
-                    if (!carInsideModel.getModelForCar().equals("")) {
-                        if (!carInsideModel.getCarBrand().equals("")) {
-                            if (!carInsideModel.getCarStyle().equals("")) {
-                                //uploadImage();
-                                //mOssService.asyncPutImage(file.getName(), file.getPath());
-                                putImg();
-                            } else {
-                                Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
-                            }
+        if (startWay.equals("update")) {
+            if (!carInsideModel.getCarNo().equals("")) {
+                if (!carInsideModel.getModelForCar().equals("")) {
+                    if (!carInsideModel.getCarBrand().equals("")) {
+                        if (!carInsideModel.getCarStyle().equals("")) {
+                            // 修改車輛信息
+                            callNetUpdateCar();
                         } else {
-                            Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (file != null) {
+                if (!file.getPath().equals("")) {
+                    if (!carInsideModel.getCarNo().equals("")) {
+                        if (!carInsideModel.getModelForCar().equals("")) {
+                            if (!carInsideModel.getCarBrand().equals("")) {
+                                if (!carInsideModel.getCarStyle().equals("")) {
+                                    //uploadImage();
+                                    //mOssService.asyncPutImage(file.getName(), file.getPath());
+                                    putImg();
+                                } else {
+                                    Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     /**
@@ -306,8 +326,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
-            jsonObj.put("imgUrl", file.getName());
-            jsonObj.put("ifPerson",carInsideModel.getIfPerson());
+            jsonObj.put("imgUrl", carInsideModel.getImgUrl());
+            jsonObj.put("ifPerson", carInsideModel.getIfPerson());
             jsonObj.put("carNo",carInsideModel.getCarNo());
             jsonObj.put("modelForCar",carInsideModel.getModelForCar());
             jsonObj.put("carBrand",carInsideModel.getCarBrand());
@@ -856,7 +876,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
         File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
 
-        String fileName = filePut.getName();
+        String fileName = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + filePut.getName();
         String filePath = filePut.getPath();
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
