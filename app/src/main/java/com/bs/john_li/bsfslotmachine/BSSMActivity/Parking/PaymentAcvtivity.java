@@ -23,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.JuheExchangeModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.WechatPrePayIDModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.DigestUtils;
@@ -38,17 +39,26 @@ import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.common.util.MD5;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 投幣訂單支付界面
@@ -68,10 +78,13 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單
     // 支付金額
     private double payMoney;
+    // 微信API
+    IWXAPI wxApi;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+        EventBus.getDefault().register(this);
         exchangeMop();
         initView();
         setListener();
@@ -151,6 +164,11 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         orderNo = intent.getStringExtra("orderNo");
         orderTime = String.valueOf(intent.getLongExtra("createTime", 0));
         orderNoTv.setText("訂單號：" + orderNo);
+        // 微信註冊APPID
+        wxApi = WXAPIFactory.createWXAPI(this, null);
+        wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
+
+        // 倒計時
         SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long between = 600;
         try {
@@ -163,6 +181,12 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         mShowTiemTextView.setTime((int)between);
         mShowTiemTextView.beginRun();
         myWalletCb.setChecked(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -188,12 +212,76 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 } else if (alipayCb.isChecked()){
 
                 } else if (wecahtPayCb.isChecked()) {
-
+                    if (wxApi.isWXAppInstalled() && wxApi.isWXAppSupportAPI()) {
+                        // 发起微信支付，先请求获取微信的prepay_id
+                        callNetGetWechatPrepayId();
+                    } else {
+                        Toast.makeText(this, "請先安裝微信客戶端！", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(this, "請選擇支付方式", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
+    }
+
+    /**
+     * 发起请求，向后台获取预支付Data
+     */
+    private void callNetGetWechatPrepayId() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("orderNo", orderNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                WechatPrePayIDModel model = new Gson().fromJson(result.toString(), WechatPrePayIDModel.class);
+                if (model.getCode() == 200) {
+                    PayReq request = new PayReq();
+                    request.appId = BSSMConfigtor.WECHAT_APPID;
+                    request.partnerId = model.getData().getPartnerid();
+                    request.prepayId= model.getData().getPrepayid();
+                    request.packageValue = "Sign=WXPay";
+                    request.nonceStr= model.getData().getNoncestr();
+                    request.timeStamp= model.getData().getTimestamp();
+                    request.sign = model.getData().getSign();
+                    if (wxApi == null) {
+                        // 微信註冊APPID
+                        wxApi = WXAPIFactory.createWXAPI(PaymentAcvtivity.this, null);
+                    }
+
+                    wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
+                    wxApi.sendReq(request);
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     private void callNetCheckHasPayPw() {
@@ -415,5 +503,13 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     @Override
     public void endPayTime() {
         finish();
+    }
+
+    @Subscribe
+    public void onEvent(String msg){
+        if (msg.equals("WX_PAY_SUCCESS")) {
+            Toast.makeText(PaymentAcvtivity.this, "wechat支付成功！", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

@@ -79,7 +79,7 @@ public class SmartTransactionDetialListRefreshAdapter extends RecyclerView.Adapt
         }
         if (list.get(position).getFlag() == 1) {
             holder.item_td_type.setText("+");
-            holder.item_td_type.setTextColor(mContext.getResources().getColor(R.color.colorNewGreen));
+            holder.item_td_type.setTextColor(mContext.getResources().getColor(R.color.colorSubmitGreen));
         } else {
             holder.item_td_type.setText("-");
             holder.item_td_type.setTextColor(mContext.getResources().getColor(R.color.colorLoginOutRed));

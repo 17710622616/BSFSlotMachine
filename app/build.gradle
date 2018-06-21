@@ -60,6 +60,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okio:okio:1.9.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
+    // 微信SDK
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     //一个开源gif控件
     compile files('libs/ShareSDK-WhatsApp-3.1.4.jar')
     compile files('libs/ShareSDK-Wechat-Moments-3.1.4.jar')

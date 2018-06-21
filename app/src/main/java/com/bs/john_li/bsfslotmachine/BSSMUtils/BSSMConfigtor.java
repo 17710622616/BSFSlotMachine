@@ -38,6 +38,8 @@ public class BSSMConfigtor {
     public final static String SLOT_MACHINE_FROM_SEARCH = "FROM_SEARCH";
     // 咪錶存在
     public final static String SLOT_MACHINE_EXIST = "LOCATION_EXIST";
+    // 微信APP_ID
+    public final static String WECHAT_APPID = "wxa78767024378b134";
 
     // 測試的IP地址
     public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
@@ -92,6 +94,8 @@ public class BSSMConfigtor {
     public final static String GET_MAX_AMOUNT_SLOT_MACHINE_UNKOWN = "soltMachine/chargeUnkownLimit";
     // 錢包支付的接口
     public final static String POST_WALLET_PAY = "pay/walletPay?token=";
+    // 微信支付获取prepay_id的接口
+    public final static String POST_WECHAT_PAY_PRE_PAY_ID = "pay/weixinTrade?token=";
     // 錢包餘額的接口
     public final static String GET_WALLET_BALANCE = "pay/getBalance?token=";
     // 錢包餘額的接口

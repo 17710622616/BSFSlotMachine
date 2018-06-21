@@ -51,6 +51,7 @@
     <string name="search_noresult">搵唔到咪錶？唔怕！影相都可以泊車~~</string>
     <string name="get_data_error">獲取數據失敗，點我重試~</string>
     <string name="loading_str">正在加載......</string>
+    <string name="pay_result_callback_msg" formatted="false">微信支付結果：%s</string>
 
     <!--AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g-->
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
