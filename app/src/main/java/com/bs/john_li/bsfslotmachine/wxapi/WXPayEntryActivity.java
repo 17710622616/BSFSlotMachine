@@ -24,7 +24,7 @@ import org.greenrobot.eventbus.EventBus;
  */
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
-    private static final String TAG = "MicroMsg.SDKSample.WXPayEntryActivity";
+    private static final String TAG = "WXPayEntryActivity";
 
     private IWXAPI api;
 
@@ -51,6 +51,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp resp) {
         Log.d(TAG, "onPayFinish, errCode = " + resp.errCode);
+        Toast.makeText(this, "onPayFinish, errCode =" + resp.errCode, Toast.LENGTH_LONG).show();
 
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
             /*AlertDialog.Builder builder = new AlertDialog.Builder(this);

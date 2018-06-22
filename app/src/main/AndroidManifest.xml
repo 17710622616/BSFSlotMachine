@@ -75,7 +75,7 @@
         <activity android:name=".BSSMActivity.Mine.OrderDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.ForgetPwActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.AboutUsActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".wxapi.WXPayEntryActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.bs.john_li.bsfslotmachine.wxapi.WXPayEntryActivity" android:screenOrientation="portrait" android:exported="true"/>
 
 
         <!-- ShareSDK的activity -->
