@@ -57,7 +57,7 @@ import java.util.TimerTask;
  * 首页停车的碎片
  * Created by John_Li on 28/7/2017.
  */
-
+@SuppressWarnings("ResourceType")
 public class ParkingFragment extends BaseFragment implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static String TAG = ParkingFragment.class.getName();
     private View parkingView;

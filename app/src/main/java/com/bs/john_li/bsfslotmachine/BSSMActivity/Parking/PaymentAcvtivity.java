@@ -1,12 +1,15 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,11 +18,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alipay.sdk.app.PayTask;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.JuheExchangeModel;
@@ -27,6 +33,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.WechatPrePayIDModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.DigestUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PayResult;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FaceView;
@@ -70,6 +77,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private TextView orderNoTv, submitTv;
     private ShowTiemTextView mShowTiemTextView;
     private CheckBox myWalletCb, alipayCb, wecahtPayCb;
+    private ProgressBar payment_submit_progress;
 
     // 匯率
     private JuheExchangeModel exchangeModel;
@@ -80,6 +88,38 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private double payMoney;
     // 微信API
     IWXAPI wxApi;
+    // 支付寶支付回調
+    private static final int SDK_PAY_FLAG = 1;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressWarnings("unused")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SDK_PAY_FLAG: {
+                    @SuppressWarnings("unchecked")
+                    PayResult payResult = new PayResult((Map<String, String>) msg.obj);
+                    /**
+                     对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为9000则代表支付成功
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+                        Toast.makeText(PaymentAcvtivity.this, "支付寶支付成功", Toast.LENGTH_SHORT).show();
+                        orderPaySuccess();
+                    } else {
+                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                        Toast.makeText(PaymentAcvtivity.this, "支付寶支付失敗", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        };
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +140,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         myWalletCb = findViewById(R.id.payment_my_wallet_cb);
         alipayCb = findViewById(R.id.payment_alipay_cb);
         wecahtPayCb = findViewById(R.id.payment_wecaht_pay_cb);
+        payment_submit_progress = findViewById(R.id.payment_submit_progress);
     }
 
     @Override
@@ -206,19 +247,22 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 exitPayment();
                 break;
             case R.id.payment_submit:
+                payment_submit_progress.setVisibility(View.VISIBLE);
                 if (myWalletCb.isChecked()) {
                     // 發起錢包支付，先查看是否有支付密碼0：請求失敗，1：請求成功且有支付密碼，2：請求成功但無支付密碼
                     callNetCheckHasPayPw();
                 } else if (alipayCb.isChecked()){
-
+                    callNetGetAlipayOrderInfo();
                 } else if (wecahtPayCb.isChecked()) {
                     if (wxApi.isWXAppInstalled() && wxApi.isWXAppSupportAPI()) {
                         // 发起微信支付，先请求获取微信的prepay_id
                         callNetGetWechatPrepayId();
                     } else {
+                        payment_submit_progress.setVisibility(View.GONE);
                         Toast.makeText(this, "請先安裝微信客戶端！", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    payment_submit_progress.setVisibility(View.GONE);
                     Toast.makeText(this, "請選擇支付方式", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -226,7 +270,40 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     }
 
     /**
-     * 发起请求，向后台获取预支付Data
+     * 像后台获取支付寶支付的订单详情
+     */
+    private void callNetGetAlipayOrderInfo() {
+        String orderInfo = "666";
+        // 發起支付寶支付，喚起支付寶SDK
+        callAliPay(orderInfo);
+    }
+
+    /**
+     * 發起支付寶支付，喚起支付寶SDK
+     * @param orderInfo
+     */
+    private void callAliPay(final String orderInfo) {
+        Runnable payRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                PayTask alipay = new PayTask(PaymentAcvtivity.this);
+                Map<String, String> result = alipay.payV2(orderInfo, true);
+                Log.i("msp", result.toString());
+
+                Message msg = new Message();
+                msg.what = SDK_PAY_FLAG;
+                msg.obj = result;
+                mHandler.sendMessage(msg);
+            }
+        };
+
+        Thread payThread = new Thread(payRunnable);
+        payThread.start();
+    }
+
+    /**
+     * 发起微信请求，向后台获取预支付Data
      */
     private void callNetGetWechatPrepayId() {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
@@ -280,11 +357,16 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onFinished() {
+                payment_submit_progress.setVisibility(View.GONE);
             }
         });
     }
 
+    /**
+     * 請求確認是否有支付密碼
+     */
     private void callNetCheckHasPayPw() {
+        payment_submit_progress.setVisibility(View.GONE);
         NiceDialog.init()
                 .setLayoutId(R.layout.dialog_loading)
                 .setConvertListener(new ViewConvertListener() {
@@ -389,7 +471,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     }
 
     /**
-     * 請求支付
+     * 請求錢包支付
      * @param enterPw
      */
     private void callNetSubmitPayment(String enterPw, final BaseNiceDialog dialog, final FaceView pay_faceview, final LinearLayout payingLL, final TextView pay_status_tv) {
@@ -415,12 +497,13 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if (startWay == 1) {
+                            /*if (startWay == 1) {
                                 EventBus.getDefault().post("ParkingOrderSuccess");
-                            }
+                            }*/
                             dialog.dismiss();
-                            setResult(RESULT_OK);
-                            finish();
+                            /*setResult(RESULT_OK);
+                            finish();*/
+                            orderPaySuccess();
                         }
                     }, 1500);
                 } else {
@@ -509,7 +592,15 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     public void onEvent(String msg){
         if (msg.equals("WX_PAY_SUCCESS")) {
             Toast.makeText(PaymentAcvtivity.this, "wechat支付成功！", Toast.LENGTH_SHORT).show();
-            finish();
+            orderPaySuccess();
         }
+    }
+
+    /**
+     * 訂單支付成功
+     */
+    private void orderPaySuccess() {
+        startActivity(new Intent(this, HistoryOrderActivity.class));
+        finish();
     }
 }

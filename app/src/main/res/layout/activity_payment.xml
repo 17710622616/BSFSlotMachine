@@ -31,11 +31,11 @@
             android:layout_height="wrap_content"
             android:background="@color/colorWight"
             android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="2dp"
             android:text="08:00"
             android:textColor="@color/colorBlack"
-            android:textSize="36sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="5dp"/>
+            android:textSize="36sp" />
 
         <LinearLayout
             style="@style/MineItemLinearLayout"
@@ -50,11 +50,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="13dp"
-            android:paddingLeft="15dp"
-            android:paddingBottom="3dp"
+            android:layout_marginTop="5dp"
             android:background="@color/colorWight"
-            android:layout_marginTop="5dp">
+            android:paddingBottom="3dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="13dp">
 
             <TextView
                 style="@style/MineItemTextView"
@@ -67,7 +67,7 @@
 
             <ImageView
                 style="@style/PayMentMethodIcon"
-                android:src="@mipmap/wallet_pay"/>
+                android:src="@mipmap/wallet_pay" />
 
             <TextView
                 android:id="@+id/payment_my_wallet"
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -88,7 +88,7 @@
 
             <ImageView
                 style="@style/PayMentMethodIcon"
-                android:src="@mipmap/alipay"/>
+                android:src="@mipmap/alipay" />
 
             <TextView
                 android:id="@+id/payment_alipay"
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -109,7 +109,7 @@
 
             <ImageView
                 style="@style/PayMentMethodIcon"
-                android:src="@mipmap/wechat"/>
+                android:src="@mipmap/wechat" />
 
             <TextView
                 android:id="@+id/payment_wecaht_pay"
@@ -121,22 +121,38 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/payment_submit"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:text="確認支付"
-            android:textSize="20sp"
-            android:textColor="@color/colorWight"
-            android:padding="8dp"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/shape_pay_btn_bg"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/payment_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/shape_pay_btn_bg"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="確認支付"
+                android:textColor="@color/colorWight"
+                android:textSize="20sp" />
+
+            <ProgressBar
+                android:id="@+id/payment_submit_progress"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/shape_pay_btn_bg"
+                android:visibility="gone"/>
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
