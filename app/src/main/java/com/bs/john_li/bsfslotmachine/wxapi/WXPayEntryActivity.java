@@ -65,37 +65,26 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp resp) {
         Log.d(TAG, "onPayFinish, errCode = " + resp.errCode);
-        Toast.makeText(this, "onPayFinish, errCode =" + resp.errCode, Toast.LENGTH_LONG).show();
-
         try {
             if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-            /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("提示");
-            builder.setMessage(getString(R.string.pay_result_callback_msg, String.valueOf(resp.errCode)));
-            builder.show();*/
                 if (resp.errCode == 0) {
-                    wxPayResultTv.setText("付款成功");
                     Toast.makeText(this, "付款成功", Toast.LENGTH_LONG).show();
                     EventBus.getDefault().post("WX_PAY_SUCCESS");
-                    finish();
+                    WXPayEntryActivity.this.finish();
                 } else if (resp.errCode == -2){
-                    wxPayResultTv.setText("您已取消微信付款！");
                     Toast.makeText(this, "您已取消微信付款！", Toast.LENGTH_LONG).show();
-                    finish();
+                    WXPayEntryActivity.this.finish();
                 } else {
-                    wxPayResultTv.setText("微信支付參數錯誤");
                     Toast.makeText(this, "微信支付參數錯誤", Toast.LENGTH_LONG).show();
-                    finish();
+                    WXPayEntryActivity.this.finish();
                 }
             } else {
-                wxPayResultTv.setText("微信支付參數錯誤");
                 Toast.makeText(this, "微信支付參數錯誤", Toast.LENGTH_LONG).show();
-                finish();
+                WXPayEntryActivity.this.finish();
             }
         } catch (Exception e) {
-            wxPayResultTv.setText("微信支付參數錯誤");
             Toast.makeText(this, "微信支付參數錯誤", Toast.LENGTH_LONG).show();
-            finish();
+            WXPayEntryActivity.this.finish();
         }
     }
 }

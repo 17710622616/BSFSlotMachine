@@ -162,7 +162,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     myWalletCb.setChecked(false);
                     wecahtPayCb.setChecked(false);
                     if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())) + "元  確認支付");
+                        submitTv.setText("RMB" + (String.format("%.2f",100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
                     } else {
                         exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
@@ -180,7 +180,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     myWalletCb.setChecked(false);
                     alipayCb.setChecked(false);
                     if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())) + "元  確認支付");
+                        submitTv.setText("RMB" + (String.format("%.2f",100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
                     } else {
                         exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();

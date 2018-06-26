@@ -36,8 +36,13 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
+
+import java.net.SocketTimeoutException;
 
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -52,7 +57,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private BSSMHeadView mineHeadView;
     private RefreshLayout mRefreshLayout;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
-    private TextView nickNameTv, phoneTv;
+    private TextView balanceTv, nickNameTv, phoneTv;
     private ImageView headIv;
 
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
@@ -87,6 +92,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         opinionLL = mineView.findViewById(R.id.mine_opinion);
         serverLL = mineView.findViewById(R.id.mine_server);
         gjlLL = mineView.findViewById(R.id.mine_guojianglong);
+        balanceTv = mineView.findViewById(R.id.mine_wallet_balance);
         nickNameTv = mineView.findViewById(R.id.mine_nickname);
         phoneTv = mineView.findViewById(R.id.mine_info_phone);
         headIv = mineView.findViewById(R.id.personal_setting_head_iv);
@@ -161,6 +167,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         String userInfoJson = (String) SPUtils.get(getActivity(), "UserInfo", "");
         if (!userToken.equals("")){
             if (!userInfoJson.equals("")){
+                callNetGetWalletBalance();
                 mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
                 nickNameTv.setText(mUserInfoModel.getNickname());
                 phoneTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
@@ -180,8 +187,47 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             nickNameTv.setText("立即登錄");
             phoneTv.setText("登錄后獲得更多權限");
         }
-
+        
         mRefreshLayout.finishRefresh(1000);
+    }
+
+    /**
+     * 獲取我的餘額
+     */
+    private void callNetGetWalletBalance() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_WALLET_BALANCE + SPUtils.get(getActivity(), "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    balanceTv.setText(String.format("%.2f", Double.parseDouble(model.getData())).toString() + "蚊");
+                } else {
+                    Toast.makeText(getActivity(), "獲取餘額失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(getActivity(), "獲取餘額" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     @Override
@@ -210,11 +256,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.mine_discount_ll:
-                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), DiscountActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }
+                }*/
+                Toast.makeText(getActivity(), getResources().getString(R.string.not_open), Toast.LENGTH_LONG).show();
                 break;
             case R.id.mine_integral_ll:
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
