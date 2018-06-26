@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -10,21 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
-import com.bs.john_li.bsfslotmachine.BSSMModel.MaxAmountModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
-import com.othershe.nicedialog.BaseNiceDialog;
-import com.othershe.nicedialog.NiceDialog;
-import com.othershe.nicedialog.ViewConvertListener;
-import com.othershe.nicedialog.ViewHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +52,9 @@ public class WalletRechargeActivity extends BaseActivity implements View.OnClick
         rechargeNum = findViewById(R.id.wallet_recharge_num);
         rechargeAgreement = findViewById(R.id.wallet_recharge_agreement);
         rechargeSubmit = findViewById(R.id.wallet_recharge_submit);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

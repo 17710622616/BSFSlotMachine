@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -48,6 +49,9 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
         withdrawDdepositTV = findViewById(R.id.wallet_withdraw_deposit);
         FAQTV = findViewById(R.id.wallet_FAQ);
         balanceTv = findViewById(R.id.wallet_balance);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            walletHead.setHeadHight();
+        }
     }
 
     @Override

@@ -120,6 +120,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         phoneNumTv = findViewById(R.id.personal_phone_tv);
         payPwTv = findViewById(R.id.personal_pay_pw_tv);
         headIv = findViewById(R.id.personal_head_portrait_iv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            personalHead.setHeadHight();
+        }
     }
 
     @Override
@@ -161,7 +164,6 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 finish();
                 break;
             case R.id.personal_head_portrait:   // 頭像
-                //startActivityForResult(new Intent(this, HeadViewActivity.class), 7);
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_photo)
                         .setConvertListener(new ViewConvertListener() {

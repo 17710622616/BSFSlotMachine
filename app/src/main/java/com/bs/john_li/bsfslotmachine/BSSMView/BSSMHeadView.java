@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.bs.john_li.bsfslotmachine.R;
 public class BSSMHeadView extends LinearLayout {
     private ImageView leftIv,rightIv;
     private TextView leftTv,titleTv,rightTv;
+    private LinearLayout headLL;
     private Context mContext;
     public BSSMHeadView(Context context) {
         super(context);
@@ -43,6 +45,7 @@ public class BSSMHeadView extends LinearLayout {
         titleTv = (TextView) this.findViewById(R.id.head_title);
         rightIv = (ImageView) this.findViewById(R.id.head_right);
         rightTv = (TextView) this.findViewById(R.id.head_right_tv);
+        headLL = this.findViewById(R.id.head_ll);
         leftIv.setVisibility(INVISIBLE);
         titleTv.setVisibility(INVISIBLE);
         rightIv.setVisibility(INVISIBLE);
@@ -92,5 +95,15 @@ public class BSSMHeadView extends LinearLayout {
         rightTv.setVisibility(VISIBLE);
         rightTv.setText(str);
         rightTv.setOnClickListener(listener);
+    }
+
+    /**
+     * 右边按钮文字
+     */
+    public void setHeadHight(){
+        headLL.setPadding(0,0,0,0);
+        ViewGroup.LayoutParams lp = headLL.getLayoutParams();
+        lp.height = 90;
+        headLL.setLayoutParams(lp);
     }
 }

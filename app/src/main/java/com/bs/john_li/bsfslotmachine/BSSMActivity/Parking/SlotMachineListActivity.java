@@ -1,9 +1,9 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -16,7 +16,6 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
-import com.bs.john_li.bsfslotmachine.BSSMView.ExpandSwipeRefreshLayout;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -71,6 +70,9 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
         mRefreshLayout = findViewById(R.id.sm_list_swipe);
         //smSwipe = findViewById(R.id.sm_list_swipe);
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
@@ -88,11 +90,14 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
                     intent = new Intent(SlotMachineListActivity.this, ParkingOrderActivity.class);
                     intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_EXIST);
                     intent.putExtra("SlotMachine", new Gson().toJson(smList.get(i)));
+                    startActivity(intent);
+                    finish();
                 } else {    // 有子列表
                     intent = new Intent(SlotMachineListActivity.this, SlotMachineChildListActivity.class);
                     intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(i)));
+                    startActivity(intent);
                 }
-                startActivity(intent);
+
             }
         });
         smLL.setOnClickListener(new View.OnClickListener() {

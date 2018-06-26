@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderPhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
@@ -65,6 +65,9 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         totalAmountTV = findViewById(R.id.order_detial_total_amount);
         returnAmountTV = findViewById(R.id.order_detial_return_amount);
         monthTV = findViewById(R.id.order_detial_month);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

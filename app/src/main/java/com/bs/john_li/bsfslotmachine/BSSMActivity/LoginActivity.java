@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -57,6 +58,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         loginTv = findViewById(R.id.login_tv);
         notLoginTv = findViewById(R.id.not_login_now_tv);
         forgetPwTv = findViewById(R.id.login_forget_pw);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            head.setHeadHight();
+        }
     }
 
     @Override

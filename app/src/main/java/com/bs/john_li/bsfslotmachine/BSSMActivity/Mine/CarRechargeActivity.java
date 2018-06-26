@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -81,6 +82,9 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         quarterlyRb = findViewById(R.id.one_quarterly_rb);
         sixMonthRb = findViewById(R.id.one_sixmonth_rb);
         yearRb = findViewById(R.id.one_year_rb);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

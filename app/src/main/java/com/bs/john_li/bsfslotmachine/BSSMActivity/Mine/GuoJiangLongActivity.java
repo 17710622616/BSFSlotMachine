@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -39,6 +40,9 @@ public class GuoJiangLongActivity extends BaseActivity implements View.OnClickLi
     public void initView() {
         gjlHead = findViewById(R.id.gjl_head);
         gjlGv = findViewById(R.id.gjl_gv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            gjlHead.setHeadHight();
+        }
     }
 
     @Override

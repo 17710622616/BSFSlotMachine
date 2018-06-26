@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -30,6 +31,9 @@ public class AboutUsActivity extends BaseActivity implements View.OnClickListene
     public void initView() {
         headView = findViewById(R.id.about_head);
         vercodeTv = findViewById(R.id.about_vercode);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

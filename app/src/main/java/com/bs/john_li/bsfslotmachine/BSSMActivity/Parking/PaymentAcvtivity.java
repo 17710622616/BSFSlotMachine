@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -141,6 +142,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         alipayCb = findViewById(R.id.payment_alipay_cb);
         wecahtPayCb = findViewById(R.id.payment_wecaht_pay_cb);
         payment_submit_progress = findViewById(R.id.payment_submit_progress);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override
@@ -591,7 +595,6 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     @Subscribe
     public void onEvent(String msg){
         if (msg.equals("WX_PAY_SUCCESS")) {
-            Toast.makeText(PaymentAcvtivity.this, "wechat支付成功！", Toast.LENGTH_SHORT).show();
             orderPaySuccess();
         }
     }
@@ -601,6 +604,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      */
     private void orderPaySuccess() {
         startActivity(new Intent(this, HistoryOrderActivity.class));
+        setResult(RESULT_OK);
         finish();
     }
 }

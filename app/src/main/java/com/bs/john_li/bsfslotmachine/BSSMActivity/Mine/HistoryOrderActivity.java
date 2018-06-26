@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -54,6 +55,9 @@ public class HistoryOrderActivity extends BaseActivity implements View.OnClickLi
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[2]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[3]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[4]));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            historyHead.setHeadHight();
+        }
     }
 
     @Override

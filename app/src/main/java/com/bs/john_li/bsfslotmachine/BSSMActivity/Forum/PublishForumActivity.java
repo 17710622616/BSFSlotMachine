@@ -26,11 +26,7 @@ import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ChooseCarActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.ImgSubmitModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnContentsOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -98,6 +94,9 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         publish_artical_et = findViewById(R.id.publish_artical_et);
         publish_artical_title_et = findViewById(R.id.publish_artical_title_et);
         photoGv = findViewById(R.id.publish_forum_gv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            publish_forum_head.setHeadHight();
+        }
     }
 
     @Override
@@ -335,7 +334,6 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
         // 提交成功的集合
         // 照片數組
         final String[] imgArr = new String[imgUrlList.size() - 1];
-        final Map<String, String> imgStatusMaps = new HashMap<>();
         Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

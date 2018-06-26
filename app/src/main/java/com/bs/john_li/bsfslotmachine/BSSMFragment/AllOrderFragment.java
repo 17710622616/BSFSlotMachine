@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -68,7 +69,6 @@ public class AllOrderFragment extends LazyLoadFragment {
         mRefreshLayout = (RefreshLayout) findViewById(R.id.order_list_srl);
         mRecycleView = (RecyclerView) findViewById(R.id.order_list_lv);
         noOrderLL = (LinearLayout) findViewById(R.id.no_order_ll);
-
         // 设置header的高度
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作

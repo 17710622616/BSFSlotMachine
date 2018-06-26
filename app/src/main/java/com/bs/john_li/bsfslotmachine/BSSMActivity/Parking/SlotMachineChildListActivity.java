@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -43,6 +44,9 @@ public class SlotMachineChildListActivity extends BaseActivity implements View.O
     public void initView() {
         headView = findViewById(R.id.sm_list_head);
         smGv = findViewById(R.id.sm_list_gv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

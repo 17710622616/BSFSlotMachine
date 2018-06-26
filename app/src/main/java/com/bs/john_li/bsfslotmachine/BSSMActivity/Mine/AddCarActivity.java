@@ -1,17 +1,8 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +10,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -27,38 +17,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
-import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
-import com.alibaba.sdk.android.oss.callback.OSSProgressCallback;
-import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
-import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
-import com.alibaba.sdk.android.oss.model.GetObjectRequest;
-import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.OssService;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.ProgressInputStream;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.STSGetter;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.UIDisplayer;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
@@ -70,24 +45,15 @@ import com.othershe.nicedialog.ViewHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
-import org.xutils.common.util.FileUtil;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 添加車輛
@@ -119,6 +85,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             switch (msg.what) {
                 case 0:     // 車輛圖片提交至OSS成功
                     if (startWay.equals("update")) {
+                        // 修改車輛信息
+                        callNetUpdateCar();
                     } else {
                         // 提交車輛信息
                         callNetSubmiteCar();
@@ -127,12 +95,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 case -1:    // 車輛圖片提交至OSS失敗
                     Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
                     break;
-                /*case 2:    // 從OSS車輛圖片獲取成功
-                    carPhotoIv.setImageBitmap((Bitmap) msg.obj);
-                    break;
-                case -2:    // 從OSS車輛圖片獲取失敗
-                    carPhotoIv.setImageResource(R.mipmap.load_img_fail);
-                    break;*/
             }
         }
     };
@@ -164,6 +126,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         outPutTv = findViewById(R.id.add_car_photo_output_tv);
         deleteCarTV = findViewById(R.id.delete_car_tv);
         ivProgress = findViewById(R.id.add_car_photo_bar);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override
@@ -203,8 +168,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     carTypeTv.setText("車輛類型：" + "重型汽車");
                     break;
             }
-            Log.d("CarImagePath", carInsideModel.getImgUrl().toString());
-            //AliyunOSSUtils.downloadImg(carInsideModel.getImgUrl(), oss, carPhotoIv, this, R.mipmap.load_img_fail_list);
             x.image().bind(carPhotoIv, carInsideModel.getImgUrl(), options);
             carNoTv.setText("車牌號碼：" + carInsideModel.getCarNo());
             carModelTv.setText("車      型：" + carInsideModel.getModelForCar());
@@ -271,8 +234,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 if (!carInsideModel.getModelForCar().equals("")) {
                     if (!carInsideModel.getCarBrand().equals("")) {
                         if (!carInsideModel.getCarStyle().equals("")) {
-                            // 修改車輛信息
-                            callNetUpdateCar();
+                            putImg();
                         } else {
                             Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                         }
@@ -325,6 +287,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
+            if (file != null) {
+                carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + file.getName());
+            }
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
             jsonObj.put("ifPerson", carInsideModel.getIfPerson());
@@ -386,7 +351,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            carInsideModel.setImgUrl(file.getName());
+            carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + file.getName());
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
             /*switch (carType) {
                 case "私家車":

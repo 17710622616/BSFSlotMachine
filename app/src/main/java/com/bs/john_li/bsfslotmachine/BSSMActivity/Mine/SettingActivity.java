@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -68,6 +69,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         updateVersion = findViewById(R.id.version_update);
         clearTv = findViewById(R.id.setting_clean_cache_tv);
         loginOutTv = findViewById(R.id.login_out_tv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            settingHead.setHeadHight();
+        }
     }
 
     @Override

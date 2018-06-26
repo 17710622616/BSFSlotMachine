@@ -68,7 +68,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         try {
             if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
                 if (resp.errCode == 0) {
-                    Toast.makeText(this, "付款成功", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "微信付款成功", Toast.LENGTH_LONG).show();
                     EventBus.getDefault().post("WX_PAY_SUCCESS");
                     WXPayEntryActivity.this.finish();
                 } else if (resp.errCode == -2){

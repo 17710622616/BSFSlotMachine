@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -26,6 +27,9 @@ public class WalletFQAActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void initView() {
         headView = findViewById(R.id.wallet_FAQ_head);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

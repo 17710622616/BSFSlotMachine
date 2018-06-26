@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Forum;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -80,6 +81,9 @@ public class CommentsListActivity extends BaseActivity implements View.OnClickLi
         mRefreshLayout = findViewById(R.id.atical_detial_srl);
         noCommentLL = findViewById(R.id.comments_list_ll);
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            commentListHead.setHeadHight();
+        }
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作

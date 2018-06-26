@@ -2,6 +2,7 @@ package com.bs.john_li.bsfslotmachine.BSSMFragment;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -97,6 +98,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         phoneTv = mineView.findViewById(R.id.mine_info_phone);
         headIv = mineView.findViewById(R.id.personal_setting_head_iv);
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            mineHeadView.setHeadHight();
+        }
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作

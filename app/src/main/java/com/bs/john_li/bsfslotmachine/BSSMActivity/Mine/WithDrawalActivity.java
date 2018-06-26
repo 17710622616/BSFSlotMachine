@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -43,6 +44,9 @@ public class WithDrawalActivity extends BaseActivity implements View.OnClickList
         withdrawWay = findViewById(R.id.wallet_withdraw_way);
         withdrawAgreement = findViewById(R.id.wallet_withdraw_agreement);
         withdrawSubmit = findViewById(R.id.wallet_withdraw_submit);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

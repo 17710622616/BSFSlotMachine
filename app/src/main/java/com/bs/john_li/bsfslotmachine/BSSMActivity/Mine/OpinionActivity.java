@@ -91,6 +91,9 @@ public class OpinionActivity extends BaseActivity implements View.OnClickListene
         nameTv = findViewById(R.id.opinion_name);
         telTv = findViewById(R.id.opinion_phone);
         opinionGv = findViewById(R.id.opinion_gv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

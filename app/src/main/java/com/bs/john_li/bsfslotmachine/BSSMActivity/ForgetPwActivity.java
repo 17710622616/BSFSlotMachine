@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -56,6 +57,9 @@ public class ForgetPwActivity extends BaseActivity implements View.OnClickListen
         registerTv = findViewById(R.id.register_tv);
         registerGetVC = findViewById(R.id.register_get_vc);
         registerGetVC.setEnabled(false);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override

@@ -135,6 +135,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         orderAmountTv = findViewById(R.id.parking_order_amount_tv);
         submitTv = findViewById(R.id.parking_order_submit);
         parkingIv = findViewById(R.id.parking_iv);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            headView.setHeadHight();
+        }
     }
 
     @Override
