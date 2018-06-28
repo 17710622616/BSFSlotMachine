@@ -96,6 +96,8 @@ public class BSSMConfigtor {
     public final static String POST_WALLET_PAY = "pay/walletPay?token=";
     // 微信支付获取prepay_id的接口
     public final static String POST_WECHAT_PAY_PRE_PAY_ID = "pay/weixinTrade?token=";
+    // 微信支付获取prepay_id的接口
+    public final static String POST_APLIPAY_ORDER_INFO = "pay/alipayTrade?token=";
     // 錢包餘額的接口
     public final static String GET_WALLET_BALANCE = "pay/getBalance?token=";
     // 錢包餘額的接口
@@ -125,7 +127,7 @@ public class BSSMConfigtor {
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     //軟件版本號對比地址
-    public static final String CHECK_VERSION= "AppVersion/getAppVersion";
+    public static final String CHECK_VERSION= "AppVersion/selectAppVersion";
     //提交意見反饋的接口
     public static final String SUBMIT_OPINION= "feedback/submit?token=";
 }
