@@ -28,6 +28,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.JuheExchangeModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.WechatPrePayIDModel;
@@ -277,9 +278,47 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * 像后台获取支付寶支付的订单详情
      */
     private void callNetGetAlipayOrderInfo() {
-        String orderInfo = "666";
-        // 發起支付寶支付，喚起支付寶SDK
-        callAliPay(orderInfo);
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_APLIPAY_ORDER_INFO + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("orderNo", orderNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonJieModel model = new Gson().fromJson(result.toString(), CommonJieModel.class);
+                if (model.getCode() == 200) {
+                    // 發起支付寶支付，喚起支付寶SDK
+                    callAliPay(model.getData());
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付寶支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付寶支付超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起支付寶支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                payment_submit_progress.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
@@ -341,16 +380,16 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
                     wxApi.sendReq(request);
                 } else {
-                    Toast.makeText(PaymentAcvtivity.this, "發起支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentAcvtivity.this, "發起微信支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof java.net.SocketTimeoutException) {
-                    Toast.makeText(PaymentAcvtivity.this, "發起支付超時，請重試", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentAcvtivity.this, "發起微信支付超時，請重試", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(PaymentAcvtivity.this, "發起支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentAcvtivity.this, "發起微信支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
                 }
             }
 
