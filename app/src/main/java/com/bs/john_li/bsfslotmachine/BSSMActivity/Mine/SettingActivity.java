@@ -143,6 +143,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(SettingActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
                 m_newVerCode = "-1";
             }
 
