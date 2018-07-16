@@ -19,12 +19,12 @@ import java.util.List;
  */
 
 public class OrderPhotoAdapter extends BaseAdapter {
-    private List<Integer> photoList;
+    private List<String> photoList;
     private LayoutInflater inflater;
     private Context mContext;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.load_img_fail).build();
 
-    public OrderPhotoAdapter(Context context, List<Integer> photoList) {
+    public OrderPhotoAdapter(Context context, List<String> photoList) {
         this.photoList = photoList;
         inflater = LayoutInflater.from(context);
         mContext = context;
@@ -57,7 +57,7 @@ public class OrderPhotoAdapter extends BaseAdapter {
             holder = (OrderPhotoAdapter.ViewHolder) convertView.getTag();
         }
 
-        holder.imgPhoto.setImageResource(photoList.get(i));
+        x.image().bind(holder.imgPhoto, photoList.get(i), options);
         return convertView;
     }
 
@@ -65,7 +65,7 @@ public class OrderPhotoAdapter extends BaseAdapter {
         private ImageView imgPhoto;
     }
 
-    public void refreshData(List<Integer> newList) {
+    public void refreshData(List<String> newList) {
         this.photoList = newList;
         notifyDataSetChanged();
     }

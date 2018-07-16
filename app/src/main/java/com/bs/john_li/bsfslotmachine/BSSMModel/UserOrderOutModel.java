@@ -105,9 +105,9 @@ public class UserOrderOutModel {
             private String machineNo;
             private int carId;
             private long startSlotTime;
-            private int totalAmount;
-            private int discountAmount;
-            private int payAmount;
+            private double totalAmount;
+            private double discountAmount;
+            private double payAmount;
             private String couponId;
             private String remark;
             private int monthNum;
@@ -188,23 +188,23 @@ public class UserOrderOutModel {
                 this.startSlotTime = startSlotTime;
             }
 
-            public int getTotalAmount() {
+            public double getTotalAmount() {
                 return totalAmount;
             }
 
-            public void setTotalAmount(int totalAmount) {
+            public void setTotalAmount(double totalAmount) {
                 this.totalAmount = totalAmount;
             }
 
-            public int getDiscountAmount() {
+            public double getDiscountAmount() {
                 return discountAmount;
             }
 
-            public void setDiscountAmount(int discountAmount) {
+            public void setDiscountAmount(double discountAmount) {
                 this.discountAmount = discountAmount;
             }
 
-            public int getPayAmount() {
+            public double getPayAmount() {
                 return payAmount;
             }
 

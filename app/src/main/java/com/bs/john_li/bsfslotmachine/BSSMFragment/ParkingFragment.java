@@ -190,32 +190,34 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onMapReady(GoogleMap googleMap) {//3
         mGoogleMap = googleMap;
-        // 允许获取我的位置
-        try {
-            mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
-            mGoogleMap.setMyLocationEnabled(true);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-
-        // 定位按鈕觸發事件：重新定位
-        mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                //onConnected(null);
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    if (mGoogleMap != null) {
-                        mGoogleMap.clear();
-                    }
-                    onMapReady(mGoogleMap);
-                } else {
-                    Toast.makeText(getActivity(), "親，要打開GPS或網絡才可以定位的哦~", Toast.LENGTH_SHORT).show();
-                }
-                return false;
+        if (mGoogleMap != null) {
+            // 允许获取我的位置
+            try {
+                mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
+                mGoogleMap.setMyLocationEnabled(true);
+            } catch (SecurityException e) {
+                e.printStackTrace();
             }
-        });
+            buildGoogleApiClient();
+            mGoogleApiClient.connect();
+
+            // 定位按鈕觸發事件：重新定位
+            mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                @Override
+                public boolean onMyLocationButtonClick() {
+                    //onConnected(null);
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        if (mGoogleMap != null) {
+                            mGoogleMap.clear();
+                        }
+                        onMapReady(mGoogleMap);
+                    } else {
+                        Toast.makeText(getActivity(), "親，要打開GPS或網絡才可以定位的哦~", Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
 

@@ -32,7 +32,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
     private TextView orderTypeTv, orderNoTv,statusTV,payMoneyTV,startTimeTV,timeTV,machineNoTV,colorTV,addressTV,carTypeTV,carNoTV,carStyleTV,carBrandTV,remarkTV,totalAmountTV,returnAmountTV,monthTV;
 
     private UserOrderOutModel.UserOrderInsideModel.UserOrderModel mUserOrderModel;
-    private List<Integer> imgList;
+    private List<String> imgList;
     private OrderPhotoAdapter mOrderPhotoAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,13 +86,13 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         imgList = new ArrayList<>();
         switch (mUserOrderModel.getOrderType()) {
             case 1: // 充值訂單
-                imgList.add(R.mipmap.top_up);
+                //imgList.add(R.mipmap.top_up);
                 orderTypeTv.setText("訂單類型：充值訂單");
                 totalAmountTV.setVisibility(View.VISIBLE);
                 totalAmountTV.setText("總  金  額：MOP" + mUserOrderModel.getTotalAmount());
                 break;
             case 2: // 會員續費訂單
-                imgList.add(R.mipmap.renewal);
+                //imgList.add(R.mipmap.renewal);
                 orderTypeTv.setText("訂單類型：會員續費訂單");
                 totalAmountTV.setVisibility(View.VISIBLE);
                 totalAmountTV.setText("總  金  額：MOP" + mUserOrderModel.getTotalAmount());
@@ -102,7 +102,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 monthTV.setText("充值月份：" + mUserOrderModel.getMonthNum());
                 break;
             case 3: // 確定投幣機訂單
-                imgList.add(R.mipmap.car_sample);
+                imgList.add(mUserOrderModel.getImg1());
                 orderTypeTv.setText("訂單類型：確定投幣機訂單");
 
                 machineNoTV.setVisibility(View.VISIBLE);
@@ -156,11 +156,21 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 }
                 break;
             case 4: // 未知投幣機訂單
-                imgList.add(R.mipmap.car_sample);
-                imgList.add(R.mipmap.sure_order);
-                imgList.add(R.mipmap.car_recharge);
-                imgList.add(R.mipmap.top_up);
-                imgList.add(R.mipmap.car_sample);
+                if (mUserOrderModel.getImg1() != null) {
+                    imgList.add(mUserOrderModel.getImg1());
+                }
+                if (mUserOrderModel.getImg2() != null) {
+                    imgList.add(mUserOrderModel.getImg2());
+                }
+                if (mUserOrderModel.getImg3() != null) {
+                    imgList.add(mUserOrderModel.getImg3());
+                }
+                if (mUserOrderModel.getImg4() != null) {
+                    imgList.add(mUserOrderModel.getImg4());
+                }
+                if (mUserOrderModel.getImg5() != null) {
+                    imgList.add(mUserOrderModel.getImg5());
+                }
                 orderTypeTv.setText("訂單類型：未知投幣機訂單");
 
                 machineNoTV.setVisibility(View.VISIBLE);
@@ -257,6 +267,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         Intent intent2 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
                         intent2.putExtra("startWay", 2);   // carChargeOrder
                         intent2.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent2.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent2.putExtra("createTime", mUserOrderModel.getCreateTime());
                         startActivityForResult(intent2, 1);
                         break;
@@ -264,6 +275,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         Intent intent3 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
                         intent3.putExtra("startWay", 1);   // parkingOrder
                         intent3.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent3.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent3.putExtra("createTime", mUserOrderModel.getCreateTime());
                         startActivityForResult(intent3, 1);
                         break;
@@ -271,6 +283,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         Intent intent4 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
                         intent4.putExtra("startWay", 1);   // parkingOrder
                         intent4.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent4.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent4.putExtra("createTime", mUserOrderModel.getCreateTime());
                         startActivityForResult(intent4, 1);
                         break;

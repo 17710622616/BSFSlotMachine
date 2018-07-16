@@ -6,11 +6,10 @@ package com.bs.john_li.bsfslotmachine.BSSMModel;
  */
 
 public class OrderModel {
-
     /**
      * code : 200
      * msg :
-     * data : {"orderNo":"C201711052303060450001","createTime":1509894186076}
+     * data : {"orderNo":"S201807161515090730001","createTime":1531725309081,"amount":"40"}
      */
 
     private int code;
@@ -43,12 +42,14 @@ public class OrderModel {
 
     public static class DataBean {
         /**
-         * orderNo : C201711052303060450001
-         * createTime : 1509894186076
+         * orderNo : S201807161515090730001
+         * createTime : 1531725309081
+         * amount : 40
          */
 
         private String orderNo;
         private long createTime;
+        private String amount;
 
         public String getOrderNo() {
             return orderNo;
@@ -64,6 +65,14 @@ public class OrderModel {
 
         public void setCreateTime(long createTime) {
             this.createTime = createTime;
+        }
+
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
         }
     }
 }

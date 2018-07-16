@@ -446,10 +446,6 @@ public class PublishForumActivity extends BaseActivity implements View.OnClickLi
                 ReturnContentsOutModel model = new Gson().fromJson(result.toString(), ReturnContentsOutModel.class);
                 if (model.getCode() ==200) {
                     Intent intent = new Intent();
-                    String contents = model.getData().getContents();
-                    String contents1 = model.getData().getCreator();
-                    String contents2 = model.getData().getTitle();
-                    String content3s = model.getData().getCover();
                     intent.putExtra("return_contents", new Gson().toJson(model.getData()));
                     setResult(RESULT_OK, intent);
                     dialog.dismiss();

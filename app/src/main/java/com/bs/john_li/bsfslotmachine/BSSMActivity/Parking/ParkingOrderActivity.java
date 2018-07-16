@@ -3,12 +3,15 @@ package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
@@ -26,6 +29,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
@@ -99,6 +109,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
+    private OSSClient oss;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -224,6 +235,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         headView.setTitle("下單");
         headView.setLeft(this);
 
+        oss = AliyunOSSUtils.initOSS(this);
+
         // 車輛類
         carInsideModelList = new ArrayList<>();
         // 判断车辆是否选择车辆
@@ -327,12 +340,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
                 loadDialog.show();
                 if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
-                    /*Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
-                    intent.putExtra("orderNo", "123456789");
-                    startActivity(intent);*/
                     if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null) {
                         if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
-                            submitOrderSlotMachineUnKnow(loadDialog);
+                            submitImgToOss(loadDialog);
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
                             loadDialog.dismiss();
@@ -359,6 +369,30 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * 提交位置咪錶的照片
+     * @param loadDialog
+     */
+    private void submitImgToOss(final LoadDialog loadDialog) {
+        // 提交成功的集合
+        // 照片數組
+        final String[] imgArr = new String[imgUrlList.size() - 1];
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case 1:
+                        putNum = 0;
+                        // 提交未知咪錶的訂單
+                        submitOrderSlotMachineUnKnow(loadDialog);
+                        break;
+                }
+            }
+        };
+        putImg(imgArr, handler);
+    }
+
+    /**
      * 提交未知咪錶的訂單
      */
     private void submitOrderSlotMachineUnKnow(final LoadDialog loadDialog) {
@@ -373,7 +407,15 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             jsonObj.put("areaCode",mSlotUnknowOrderModel.getAreaCode());
             jsonObj.put("startSlotTime",mSlotUnknowOrderModel.getStartSlotTime());
             jsonObj.put("remark",mSlotUnknowOrderModel.getRemark());
-            jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(BSSMCommonUtils.deleteDirName(imgUrlList)));
+            //jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(BSSMCommonUtils.deleteDirName(imgUrlList)));
+            List<String> cachList = new ArrayList();
+            for (int i = 0; i < imgUrlList.size(); i++) {
+                if (i != imgUrlList.size() - 1) {
+                    File file = new File(imgUrlList.get(i));
+                    cachList.add(file.getName());
+                }
+            }
+            jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(cachList));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -388,7 +430,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("startWay", 1);   // parkingOrder
-                    intent.putExtra("orderNo", orderNo);
+                    intent.putExtra("orderNo", model.getData().getOrderNo());
+                    intent.putExtra("amount", model.getData().getAmount());
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 4);
                 } else {
@@ -436,10 +479,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             public void onSuccess(String result) {
                 OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
                 if (model.getCode() == 200) {
-                    String orderNo = model.getData().getOrderNo();
                     Intent intent = new Intent(ParkingOrderActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("startWay", 1);   // parkingOrder
-                    intent.putExtra("orderNo", orderNo);
+                    intent.putExtra("orderNo", model.getData().getOrderNo());
+                    intent.putExtra("amount", model.getData().getAmount());
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 3);
                 } else {
@@ -990,9 +1033,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
                     file = new File(imagePath);
                     imgUrlList.add(0, file.getPath());
-                    for(String url : imgUrlList) {
-                        Log.d("imgUrl", url);
-                    }
                     mPhotoAdapter.refreshData(imgUrlList);
                     break;
                 case 3:
@@ -1003,6 +1043,65 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     break;
             }
         }
+    }
+
+    // 提交的照片數量
+    private int putNum;
+
+    /**
+     * 上傳圖片到OSS
+     */
+    private void putImg(final String[] imgArr, final Handler handler) {
+        putNum ++;
+        if (putNum == imgUrlList.size() || imgUrlList.get(putNum - 1).equals("")) {
+            // 结束的处理逻辑，并退出该方法
+            return;
+        }
+
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(imgUrlList.get(putNum - 1), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, imgUrlList.get(putNum - 1));  //按质量压缩图片
+
+        final String fileName = filePut.getName();
+        String filePath = filePut.getPath();
+        // 构造上传请求
+        final PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
+
+        // 異步請求
+        OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                Message msg = new Message();
+                msg.what  = 0;
+                imgArr[putNum - 1] = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileName;
+
+                // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
+                if (putNum <= imgUrlList.size() - 2) {
+                    putImg(imgArr, handler);
+                } else {
+                    Message message = new Message();
+                    message.what = 1;
+                    handler.sendMessage(message);
+                }
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+
+                putNum = 0;
+            }
+        });
     }
 
     @Override

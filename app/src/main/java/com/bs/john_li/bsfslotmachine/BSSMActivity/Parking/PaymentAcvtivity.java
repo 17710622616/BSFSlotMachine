@@ -76,14 +76,17 @@ import java.util.Map;
 
 public class PaymentAcvtivity extends BaseActivity implements View.OnClickListener, ShowTiemTextView.EndPayTimeCallback {
     private BSSMHeadView headView;
-    private TextView orderNoTv, submitTv;
+    private TextView orderNoTv, orderTimeTv, submitTv;
     private ShowTiemTextView mShowTiemTextView;
     private CheckBox myWalletCb, alipayCb, wecahtPayCb;
     private ProgressBar payment_submit_progress;
 
     // 匯率
     private JuheExchangeModel exchangeModel;
+    // 订单号
     private String orderNo;
+    // 订单总金额
+    private double totalAmount;
     private String orderTime;
     private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單
     // 支付金額
@@ -137,6 +140,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     public void initView() {
         headView = findViewById(R.id.payment_head);
         orderNoTv = findViewById(R.id.payment_orderNo);
+        orderTimeTv = findViewById(R.id.payment_orderTime);
         submitTv = findViewById(R.id.payment_submit);
         mShowTiemTextView = findViewById(R.id.payment_showtime_tv);
         myWalletCb = findViewById(R.id.payment_my_wallet_cb);
@@ -156,7 +160,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 if (isChecked) {
                     alipayCb.setChecked(false);
                     wecahtPayCb.setChecked(false);
-                    submitTv.setText("MOP" + "100" + "  確認支付");
+                    submitTv.setText("MOP" + String.format("%.2f", totalAmount).toString() + "  確認支付");
                 }
             }
         });
@@ -167,7 +171,8 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     myWalletCb.setChecked(false);
                     wecahtPayCb.setChecked(false);
                     if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (String.format("%.2f",100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
+
+                        submitTv.setText("RMB" + (String.format("%.2f", totalAmount * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
                     } else {
                         exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
@@ -185,7 +190,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     myWalletCb.setChecked(false);
                     alipayCb.setChecked(false);
                     if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (String.format("%.2f",100 * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
+                        submitTv.setText("RMB" + (String.format("%.2f", totalAmount * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
                     } else {
                         exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
@@ -208,8 +213,17 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         Intent intent = getIntent();
         startWay = intent.getIntExtra("startWay", 0);
         orderNo = intent.getStringExtra("orderNo");
+        try {
+            totalAmount = Double.parseDouble(intent.getStringExtra("amount"));
+        } catch (Exception e) {
+            totalAmount = 0.00;
+        }
         orderTime = String.valueOf(intent.getLongExtra("createTime", 0));
-        orderNoTv.setText("訂單號：" + orderNo);
+        try {
+            orderTimeTv.setText("創建時間：" +BSSMCommonUtils.stampToDate(orderTime));
+        } catch (Exception e) {
+        }
+        orderNoTv.setText("訂  單  號：" + orderNo);
         // 微信註冊APPID
         wxApi = WXAPIFactory.createWXAPI(this, null);
         wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
@@ -220,7 +234,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         try {
             java.util.Date begin=dfs.parse(BSSMCommonUtils.stampToDate(orderTime));
             java.util.Date end = dfs.parse(BSSMCommonUtils.getTimeNoW());
-            between = (end.getTime()-begin.getTime())/1000;
+            between = 1800L - (end.getTime()-begin.getTime())/1000;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -230,6 +230,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
                     intent.putExtra("startWay", 2);   // carChargeOrder
                     intent.putExtra("orderNo", model.getData().getOrderNo());
+                    intent.putExtra("amount", model.getData().getAmount());
                     intent.putExtra("createTime", model.getData().getCreateTime());
                     startActivityForResult(intent, 1);
                 } else {

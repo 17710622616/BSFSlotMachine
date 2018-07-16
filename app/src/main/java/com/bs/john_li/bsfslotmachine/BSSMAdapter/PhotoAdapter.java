@@ -22,7 +22,7 @@ public class PhotoAdapter extends BaseAdapter {
     private List<String> photoList;
     private LayoutInflater inflater;
     private Context mContext;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.load_img_fail).build();
 
     public PhotoAdapter(Context context, List<String> photoList) {
         this.photoList = photoList;

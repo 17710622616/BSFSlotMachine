@@ -103,6 +103,7 @@ public class WalletRechargeActivity extends BaseActivity implements View.OnClick
                                         Intent intent = new Intent(WalletRechargeActivity.this, PaymentAcvtivity.class);
                                         intent.putExtra("startWay", 3);   // parkingOrder
                                         intent.putExtra("orderNo", model.getData().getOrderNo());
+                                        intent.putExtra("amount", model.getData().getAmount());
                                         intent.putExtra("createTime", model.getData().getCreateTime());
                                         startActivityForResult(intent, 3);
                                         loadDialog.dismiss();

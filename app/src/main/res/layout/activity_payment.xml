@@ -44,7 +44,17 @@
             <TextView
                 android:id="@+id/payment_orderNo"
                 style="@style/MineItemTextView"
-                android:text="訂單號：" />
+                android:text="訂  單  號：" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/payment_orderTime"
+                style="@style/MineItemTextView"
+                android:text="創建時間：" />
         </LinearLayout>
 
         <LinearLayout

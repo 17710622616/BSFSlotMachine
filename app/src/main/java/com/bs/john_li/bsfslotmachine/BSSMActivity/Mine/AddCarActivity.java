@@ -841,7 +841,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
         File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
 
-        String fileName = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + filePut.getName();
+        String fileName = filePut.getName();
         String filePath = filePut.getPath();
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
