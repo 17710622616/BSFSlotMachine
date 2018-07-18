@@ -72,6 +72,7 @@
             <TextView
                 android:id="@+id/order_detial_car_type"
                 style="@style/HistoryOrderTextView"
+                android:visibility="gone"
                 android:text="車輛類型：" />
             <TextView
                 android:id="@+id/order_detial_car_no"

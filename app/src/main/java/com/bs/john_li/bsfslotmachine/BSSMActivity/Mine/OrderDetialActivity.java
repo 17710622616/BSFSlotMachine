@@ -262,6 +262,12 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
             case R.id.head_right_tv:
                 switch (mUserOrderModel.getOrderType()) {
                     case 1: // 充值訂單
+                        Intent intent1 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                        intent1.putExtra("startWay", 3);   // carChargeOrder
+                        intent1.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                        intent1.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
+                        intent1.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        startActivityForResult(intent1, 1);
                         break;
                     case 2: // 會員續費訂單
                         Intent intent2 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);

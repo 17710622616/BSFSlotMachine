@@ -80,6 +80,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private ShowTiemTextView mShowTiemTextView;
     private CheckBox myWalletCb, alipayCb, wecahtPayCb;
     private ProgressBar payment_submit_progress;
+    private LinearLayout walletLL;
 
     // 匯率
     private JuheExchangeModel exchangeModel;
@@ -143,6 +144,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         orderTimeTv = findViewById(R.id.payment_orderTime);
         submitTv = findViewById(R.id.payment_submit);
         mShowTiemTextView = findViewById(R.id.payment_showtime_tv);
+        walletLL = findViewById(R.id.payment_my_wallet_ll);
         myWalletCb = findViewById(R.id.payment_my_wallet_cb);
         alipayCb = findViewById(R.id.payment_alipay_cb);
         wecahtPayCb = findViewById(R.id.payment_wecaht_pay_cb);
@@ -171,7 +173,6 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                     myWalletCb.setChecked(false);
                     wecahtPayCb.setChecked(false);
                     if(exchangeModel != null) {
-
                         submitTv.setText("RMB" + (String.format("%.2f", totalAmount * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
                     } else {
                         exchangeMop();
@@ -224,6 +225,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         } catch (Exception e) {
         }
         orderNoTv.setText("訂  單  號：" + orderNo);
+
         // 微信註冊APPID
         wxApi = WXAPIFactory.createWXAPI(this, null);
         wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
@@ -240,7 +242,13 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         }
         mShowTiemTextView.setTime((int)between);
         mShowTiemTextView.beginRun();
-        myWalletCb.setChecked(true);
+
+        // 判斷是否是錢包充值，如果是去除錢包欄
+        if (startWay == 3) {
+            walletLL.setVisibility(View.GONE);
+        } else {
+            myWalletCb.setChecked(true);
+        }
     }
 
     @Override
@@ -619,6 +627,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onSuccess(String result) {
                 exchangeModel = new Gson().fromJson(result, JuheExchangeModel.class);
+                alipayCb.setChecked(true);
             }
 
             @Override

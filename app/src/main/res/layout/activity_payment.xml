@@ -72,6 +72,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/payment_my_wallet_ll"
             style="@style/MineItemLinearLayout"
             android:layout_marginTop="1dp">
 
