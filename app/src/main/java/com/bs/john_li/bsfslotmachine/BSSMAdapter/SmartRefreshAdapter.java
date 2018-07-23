@@ -87,6 +87,7 @@ public class SmartRefreshAdapter extends RecyclerView.Adapter<SmartRefreshAdapte
                 if (coverArr.length > 0) {
                     holder.contentsTitle.setText(list.get(position).getTitle());
                     x.image().bind(holder.contentsIv, coverArr[0], options);
+                    holder.contentsIv.setVisibility(View.VISIBLE);
                 } else {
                     //x.image().bind(holder.contentsIv, "", options);
                     holder.contentsTitle.setText("   " + list.get(position).getTitle());

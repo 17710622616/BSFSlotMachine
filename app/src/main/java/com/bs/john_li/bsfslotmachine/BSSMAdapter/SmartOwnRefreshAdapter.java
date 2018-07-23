@@ -82,12 +82,18 @@ public class SmartOwnRefreshAdapter extends RecyclerView.Adapter<SmartOwnRefresh
         holder.contentsPostID.setText("發佈者：" + list.get(position).getCreator());
         holder.contentsComment.setText(Integer.toString(list.get(position).getCommentcount()) + "條評論");
         try {
-            String[] coverArr = new Gson().fromJson(list.get(position).getCover(), String[].class);
-            if (coverArr.length > 0) {
-                holder.contentsTitle.setText(list.get(position).getTitle());
-                x.image().bind(holder.contentsIv, coverArr[0], options);
+            if (list.get(position).getCover() != null) {
+                String[] coverArr = new Gson().fromJson(list.get(position).getCover(), String[].class);
+                if (coverArr.length > 0) {
+                    holder.contentsTitle.setText(list.get(position).getTitle());
+                    x.image().bind(holder.contentsIv, coverArr[0], options);
+                    holder.contentsIv.setVisibility(View.VISIBLE);
+                } else {
+                    //x.image().bind(holder.contentsIv, "", options);
+                    holder.contentsTitle.setText("   " + list.get(position).getTitle());
+                    holder.contentsIv.setVisibility(View.GONE);
+                }
             } else {
-                //x.image().bind(holder.contentsIv, "", options);
                 holder.contentsTitle.setText("   " + list.get(position).getTitle());
                 holder.contentsIv.setVisibility(View.GONE);
             }
