@@ -234,7 +234,12 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 if (!carInsideModel.getModelForCar().equals("")) {
                     if (!carInsideModel.getCarBrand().equals("")) {
                         if (!carInsideModel.getCarStyle().equals("")) {
-                            putImg();
+                            if (file != null) {
+                                putImg();
+                            } else {
+                                // 修改車輛信息
+                                callNetUpdateCar();
+                            }
                         } else {
                             Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                         }
@@ -300,9 +305,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String urlJson = jsonObj.toString();
-        params.setBodyContent(urlJson);
+        params.setBodyContent(jsonObj.toString());
         params.setConnectTimeout(30 * 1000);
+        String url = params.getUri();
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -315,10 +320,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddCarActivity.this, " 修改車輛信息失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCarActivity.this, " 修改車輛信息！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
 
