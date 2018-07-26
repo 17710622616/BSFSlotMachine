@@ -125,7 +125,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHECK_VERSION);
         String url = params.getUri();
         params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 VersionOutModel model = new Gson().fromJson(result.toString(), VersionOutModel.class);
@@ -169,7 +169,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         int verCode = BSSMCommonUtils.getVerCode(SettingActivity.this.getApplicationContext());
         String verName = BSSMCommonUtils.getVerName(SettingActivity.this.getApplicationContext());
 
-        String str= "當前版本："+verName+" Code:"+verCode+" ,發現新版本："+m_newVerName+
+        String str= "當前版本："+verName+" Code:"+verCode+" ,發現新版本："+
                 " Code:"+m_newVerCode+" ,是否更新？";
         Dialog dialog = new AlertDialog.Builder(SettingActivity.this).setTitle("軟件更新").setMessage(str)
                 // 设置内容
@@ -264,7 +264,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             public void onWaiting() {
                 Log.i("tag", "等待,在onStarted方法之前执行"+Thread.currentThread().getName());
             }
-
         });
     }
 

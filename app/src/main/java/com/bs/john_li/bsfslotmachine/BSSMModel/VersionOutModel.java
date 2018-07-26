@@ -6,16 +6,15 @@ package com.bs.john_li.bsfslotmachine.BSSMModel;
  */
 
 public class VersionOutModel {
-
     /**
      * code : 200
      * msg :
-     * data : {"id":1,"appName":"parkingman","version":"1.0.0","rdUrl":"www.xxxxxx.xxxx.com","createTime":1512744552000,"updateTime":0,"ext":"123131"}
+     * data : {"id":1,"appName":"parkingman","version":"1.0.1","rdUrl":"www.qq.com","createTime":1514819607000,"updateTime":1514819607000,"ext":"123131"}
      */
 
     private int code;
     private String msg;
-    private VersionModel data;
+    private DataBean data;
 
     public int getCode() {
         return code;
@@ -33,22 +32,22 @@ public class VersionOutModel {
         this.msg = msg;
     }
 
-    public VersionModel getData() {
+    public DataBean getData() {
         return data;
     }
 
-    public void setData(VersionModel data) {
+    public void setData(DataBean data) {
         this.data = data;
     }
 
-    public static class VersionModel {
+    public static class DataBean {
         /**
          * id : 1
          * appName : parkingman
-         * version : 1.0.0
-         * rdUrl : www.xxxxxx.xxxx.com
-         * createTime : 1512744552000
-         * updateTime : 0
+         * version : 1.0.1
+         * rdUrl : www.qq.com
+         * createTime : 1514819607000
+         * updateTime : 1514819607000
          * ext : 123131
          */
 
@@ -57,7 +56,7 @@ public class VersionOutModel {
         private String version;
         private String rdUrl;
         private long createTime;
-        private int updateTime;
+        private long updateTime;
         private String ext;
 
         public int getId() {
@@ -100,11 +99,11 @@ public class VersionOutModel {
             this.createTime = createTime;
         }
 
-        public int getUpdateTime() {
+        public long getUpdateTime() {
             return updateTime;
         }
 
-        public void setUpdateTime(int updateTime) {
+        public void setUpdateTime(long updateTime) {
             this.updateTime = updateTime;
         }
 
