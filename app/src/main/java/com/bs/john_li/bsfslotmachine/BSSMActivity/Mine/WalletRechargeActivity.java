@@ -80,7 +80,7 @@ public class WalletRechargeActivity extends BaseActivity implements View.OnClick
                 finish();
                 break;
             case R.id.wallet_recharge_agreement:
-                finish();
+                startActivity(new Intent(this, PaymentAgreementActivity.class));
                 break;
             case R.id.wallet_recharge_submit:
                 final LoadDialog loadDialog = new LoadDialog(this, false, "請求中......");

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -24,9 +25,10 @@ import java.util.List;
 
 public class GuoJiangLongActivity extends BaseActivity implements View.OnClickListener {
     private BSSMHeadView gjlHead;
-    private GridView gjlGv;
-    private List<String> gjlList;
-    private GuoJiangLongAdapter mGuoJiangLongAdapter;
+    //private GridView gjlGv;
+    //private List<String> gjlList;
+    //private GuoJiangLongAdapter mGuoJiangLongAdapter;
+    private WebView backRuleWv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +41,8 @@ public class GuoJiangLongActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void initView() {
         gjlHead = findViewById(R.id.gjl_head);
-        gjlGv = findViewById(R.id.gjl_gv);
+        //gjlGv = findViewById(R.id.gjl_gv);
+        backRuleWv = findViewById(R.id.gjl_webview);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             gjlHead.setHeadHight();
         }
@@ -47,7 +50,7 @@ public class GuoJiangLongActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void setListener() {
-        gjlGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*gjlGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // 使用系统的电话拨号服务，必须去声明权限，在AndroidManifest.xml中进行声明
@@ -56,14 +59,14 @@ public class GuoJiangLongActivity extends BaseActivity implements View.OnClickLi
                 GuoJiangLongActivity.this.startActivity(intent);
                 finish();
             }
-        });
+        });*/
     }
 
     @Override
     public void initData() {
-        gjlHead.setTitle("過江龍服務");
+        gjlHead.setTitle("違章查詢");
         gjlHead.setLeft(this);
-        gjlList = new ArrayList<String>();
+        /*gjlList = new ArrayList<String>();
         gjlList.add("花地玛堂区");
         gjlList.add("圣安多尼堂区");
         gjlList.add("大堂区");
@@ -72,7 +75,9 @@ public class GuoJiangLongActivity extends BaseActivity implements View.OnClickLi
         gjlList.add("嘉模堂区");
         gjlList.add("圣方济各堂区");
         mGuoJiangLongAdapter = new GuoJiangLongAdapter(this, gjlList);
-        gjlGv.setAdapter(mGuoJiangLongAdapter);
+        gjlGv.setAdapter(mGuoJiangLongAdapter);*/
+        //加载一个网页：
+        backRuleWv.loadUrl("https://www.fsm.gov.mo/webticket/");
     }
 
     @Override

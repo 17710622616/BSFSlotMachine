@@ -8,7 +8,7 @@
         android:id="@+id/gjl_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <GridView
+    <!--<GridView
         android:id="@+id/gjl_gv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,5 +19,9 @@
         android:horizontalSpacing="8dp"
         android:columnWidth="130dp"
         android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:gravity="center" />-->
+    <WebView
+        android:id="@+id/gjl_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></WebView>
 </LinearLayout>

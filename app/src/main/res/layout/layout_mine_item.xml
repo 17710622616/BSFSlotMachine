@@ -120,7 +120,7 @@
         style="@style/MineItemLinearLayout">
         <ImageView
             style="@style/MineItemImageView"
-            android:src="@mipmap/guojianglong"/>
+            android:src="@mipmap/break_rules_regulations"/>
 
         <TextView
             style="@style/MineItemTextView"
