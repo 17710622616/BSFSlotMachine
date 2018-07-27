@@ -130,8 +130,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             public void onSuccess(String result) {
                 VersionOutModel model = new Gson().fromJson(result.toString(), VersionOutModel.class);
                 if (model.getCode() == 200) {
-                    model.getData().setRdUrl("https://test-pic-666.oss-cn-hongkong.aliyuncs.com/BSFSlotMachineAPK/app-release.apk");
-                    model.getData().setAppName(m_appNameStr);
                     m_newVerCode = model.getData().getVersion();
                     m_newApkUrl = model.getData().getRdUrl();
                     m_appNameStr = model.getData().getAppName();
