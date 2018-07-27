@@ -121,7 +121,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         m_progressDlg.setTitle("提示");
         m_progressDlg.setMessage("檢查版本號中......");
         m_progressDlg.show();
-        m_appNameStr = "haha.apk";
+        m_appNameStr = "掌泊寶.apk";
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CHECK_VERSION);
         String url = params.getUri();
         params.setConnectTimeout(30 * 1000);
@@ -130,6 +130,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             public void onSuccess(String result) {
                 VersionOutModel model = new Gson().fromJson(result.toString(), VersionOutModel.class);
                 if (model.getCode() == 200) {
+                    model.getData().setRdUrl("https://test-pic-666.oss-cn-hongkong.aliyuncs.com/BSFSlotMachineAPK/app-release.apk");
+                    model.getData().setAppName(m_appNameStr);
                     m_newVerCode = model.getData().getVersion();
                     m_newApkUrl = model.getData().getRdUrl();
                     m_appNameStr = model.getData().getAppName();
@@ -214,7 +216,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         RequestParams params = new RequestParams(m_newApkUrl);
         params.setAutoResume(true);//设置是否在下载是自动断点续传
         params.setAutoRename(false);//设置是否根据头信息自动命名文件
-        params.setSaveFilePath("/sdcard/xutils/xUtils_1.avi");
+        params.setSaveFilePath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/BSSMPictures/" + m_appNameStr);
         params.setExecutor(new PriorityExecutor(2, true));//自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
         params.setCancelFast(true);//是否可以被立即停止.
         //下面的回调都是在主线程中运行的,这里设置的带进度的回调
@@ -281,8 +283,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private void update() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), m_appNameStr)),
-                "application/vnd.android.package-archive");
+        intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/BSSMPictures", m_appNameStr)), "application/vnd.android.package-archive");
         this.startActivity(intent);
     }
 
