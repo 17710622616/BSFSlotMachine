@@ -44,6 +44,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CommentsExpandAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ArticalLikeOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommentListModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ReturnCommentsOutModel;
@@ -98,6 +99,8 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
     private ContentsListModel.DataBean.ContentsModel mContentsModel;
     private List<CommentListModel.CommentsArrayModel.CommentsModel> mCommentsModelList;
     private CommentsExpandAdapter mCommentsExpandAdapter;
+    // 是否是第一次初始化點讚狀態
+    private boolean isInitIsLikeStatus = false;
     // 打開方式，0：帖文列表打開，1：個人列表打開
     private int startway = 0;
     // 提交中的dialog
@@ -131,6 +134,9 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         shareIv = (ImageView) findViewById(R.id.articel_share);
         deleteIv = (ImageView) findViewById(R.id.articel_delete);
         favoriteCb = (CheckBox) findViewById(R.id.articel_favorite);
+        // 默認取消觸發事件，等待獲取完點讚狀態再開啟
+        favoriteCb.setEnabled(false);
+
         appbar = (AppBarLayout) findViewById(R.id.atical_detial_appbar);
         articalToolbar = (Toolbar) findViewById(R.id.atical_detial_toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.atical_detial_collapsing_toolbar);
@@ -258,13 +264,17 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
         favoriteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String token = String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", ""));
-                if (!String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("")) {
-                    callNetSubmitLike(isChecked);
-                } else {
-                    Toast.makeText(ArticleDetialActivity.this, R.string.not_login, Toast.LENGTH_LONG);
-                    startActivity(new Intent(ArticleDetialActivity.this, LoginActivity.class));
-                    finish();
+                if (isInitIsLikeStatus) {   // 當是第一次點讚時取消點讚操作
+                    isInitIsLikeStatus = false;
+                } else {    // 當不是第一次點讚操作時判定為點讚或取消點讚
+                    String token = String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", ""));
+                    if (!String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(ArticleDetialActivity.this, "UserToken", "")).equals("")) {
+                        callNetSubmitLike(isChecked);
+                    } else {
+                        Toast.makeText(ArticleDetialActivity.this, R.string.not_login, Toast.LENGTH_LONG);
+                        startActivity(new Intent(ArticleDetialActivity.this, LoginActivity.class));
+                        finish();
+                    }
                 }
             }
         });
@@ -342,6 +352,9 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             deleteIv.setVisibility(View.VISIBLE);
         }
 
+        // 请求服务器判断是否点赞
+        callNetGetIsLiske(mContentsModel.getId());
+
         // toolbar
         setSupportActionBar(articalToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -406,6 +419,60 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
 
         // 獲取評論列表
         callNetGetCommentList();
+    }
+
+    /**
+     * 请求获取点赞状态
+     * @param id
+     */
+    private void callNetGetIsLiske(int id) {
+        String url = BSSMConfigtor.BASE_URL + BSSMConfigtor.ARTICAL_ISLIKE + SPUtils.get(this, "UserToken", "");
+        RequestParams params = new RequestParams(url);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id",id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result, CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    if (model.getData().equals("true")) {
+                        isInitIsLikeStatus = true;
+                        favoriteCb.setChecked(true);
+                    } else {
+                        favoriteCb.setChecked(false);
+                    }
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "獲取點讚狀態失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(ArticleDetialActivity.this, "獲取點讚狀態超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleDetialActivity.this, "獲取點讚狀態失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                favoriteCb.setEnabled(true);
+            }
+        });
     }
 
     /**

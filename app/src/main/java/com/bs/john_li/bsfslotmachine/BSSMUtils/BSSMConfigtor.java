@@ -121,6 +121,8 @@ public class BSSMConfigtor {
     // 發佈帖子
     public final static String PUBLISH_ARTICLE = "content/publish?token=";
     // 点赞接口
+    public final static String ARTICAL_ISLIKE = "content/isLike?token=";
+    // 点赞接口
     public final static String ARTICAL_LIKE = "content/like?";
     // 取消点赞接口
     public final static String ARTICAL_UNLIKE = "content/unlike?";
