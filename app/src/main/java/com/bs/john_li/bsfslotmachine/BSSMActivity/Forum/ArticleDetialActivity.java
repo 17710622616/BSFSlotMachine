@@ -352,8 +352,10 @@ public class ArticleDetialActivity extends AppCompatActivity implements View.OnC
             deleteIv.setVisibility(View.VISIBLE);
         }
 
-        // 请求服务器判断是否点赞
-        callNetGetIsLiske(mContentsModel.getId());
+        // 当用户登录情况下请求服务器判断是否点赞
+        if (BSSMCommonUtils.isLoginNow(this)) {
+            callNetGetIsLiske(mContentsModel.getId());
+        }
 
         // toolbar
         setSupportActionBar(articalToolbar);
