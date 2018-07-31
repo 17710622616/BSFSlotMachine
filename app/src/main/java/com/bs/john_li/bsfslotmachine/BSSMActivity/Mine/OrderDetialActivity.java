@@ -107,11 +107,11 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
 
                 machineNoTV.setVisibility(View.VISIBLE);
                 machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
-                carNoTV.setVisibility(View.VISIBLE);
+                carNoTV.setVisibility(View.GONE);
                 carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
-                carStyleTV.setVisibility(View.VISIBLE);
+                carStyleTV.setVisibility(View.GONE);
                 carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
-                carBrandTV.setVisibility(View.VISIBLE);
+                carBrandTV.setVisibility(View.GONE);
                 carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
                 startTimeTV.setVisibility(View.VISIBLE);
                 startTimeTV.setText("開始投幣時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mUserOrderModel.getStartSlotTime())));
@@ -175,11 +175,11 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
 
                 machineNoTV.setVisibility(View.VISIBLE);
                 machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
-                carNoTV.setVisibility(View.VISIBLE);
+                carNoTV.setVisibility(View.GONE);
                 carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
-                carStyleTV.setVisibility(View.VISIBLE);
+                carStyleTV.setVisibility(View.GONE);
                 carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
-                carBrandTV.setVisibility(View.VISIBLE);
+                carBrandTV.setVisibility(View.GONE);
                 carBrandTV.setText("車輛品牌：" + mUserOrderModel.getCarId());
                 startTimeTV.setVisibility(View.VISIBLE);
                 startTimeTV.setText("開始投幣時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mUserOrderModel.getStartSlotTime())));

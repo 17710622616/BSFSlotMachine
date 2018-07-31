@@ -22,6 +22,8 @@ public class BSSMConfigtor {
     public static int UPDATE_CAR_RQUEST = 5;
     // add car for result
     public static int ADD_CAR_RESULT = 4;
+    // 运行时权限
+    public static final int MY_PERMISSION_REQUEST_CODE = 10000;
     // 聚合數據APPKEY
     public final static String JUHE_APPKEY = "9dfd4b86e08257c036ef4e5a6558882a";
     // OSS請求token的接口

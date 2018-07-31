@@ -356,7 +356,7 @@ public class BSSMCommonUtils {
      */
     public static int getHour() {
         Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
         return hour;
     }
 

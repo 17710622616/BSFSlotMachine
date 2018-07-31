@@ -11,7 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!--訂單內容-->
+    <TextView
+        android:id="@+id/parking_order_warm_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/warm_prompt"
+        android:textSize="12sp"
+        android:padding="5dp"
+        android:background="@color/aplahOrenge"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,6 +30,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="10dp">
+
             <!--車輛選擇-->
             <LinearLayout
                 android:id="@+id/parking_order_car_manage_ll"
@@ -211,7 +220,6 @@
                 android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
-
 
     <!--訂單金額及提交訂單按鈕-->
     <LinearLayout

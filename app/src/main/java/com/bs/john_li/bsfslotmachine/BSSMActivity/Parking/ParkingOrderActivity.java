@@ -90,7 +90,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private BSSMHeadView headView;
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, voucherLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
-    public TextView carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
+    public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
     private ImageView parkingIv;
     public NoScrollGridView photoGv;
 
@@ -132,6 +132,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         orderColorLL = findViewById(R.id.parking_order_color_ll);
         orderPhotoLL = findViewById(R.id.parking_order_photo_ll);
         carManageRL = findViewById(R.id.parking_order_car_manage_rl);
+        warmPromptTv = findViewById(R.id.parking_order_warm_prompt);
         carManagetv = findViewById(R.id.parking_order_car_manage_tv);
         carBrandTv = findViewById(R.id.parking_order_car_brand);
         carTypeTv = findViewById(R.id.parking_order_car_type);
@@ -242,11 +243,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         // 判断车辆是否选择车辆
         isChooseCar();
         // 現在時間
+        String startTime = (BSSMCommonUtils.getHour() + 1) + ":" + BSSMCommonUtils.getMinute() + ":00";
+        String startTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + startTime;
         Date date = new Date( );
         SimpleDateFormat fdt = new SimpleDateFormat ("hh:mm:ss");
         SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-        startTimeTv.setText("投幣時間[預計" + fdt.format(date) + "]");
-
+        startTimeTv.setText("投幣時間[預計" + startTime + "]");
 
         // 判斷是哪種打開方式
         Intent intent = getIntent();
@@ -254,13 +256,14 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         imgUrlList = new ArrayList<>();
         // 判斷訂單類別
         if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
+            warmPromptTv.setVisibility(View.VISIBLE);
             String imgUri = intent.getStringExtra("imageUri");
             imgUrlList.add(imgUri);
             imgUrlList.add("");
             mPhotoAdapter = new PhotoAdapter(this, imgUrlList);
             // 未知咪錶訂單
             mSlotUnknowOrderModel = new SlotUnknowOrderModel();
-            mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date));
+            mSlotUnknowOrderModel.setStartSlotTime(startTimeForDay);
 
             orderLocationTv.setText("停車位置：未知");
             photoGv.setAdapter(mPhotoAdapter);
@@ -270,9 +273,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderColorLL.setVisibility(View.VISIBLE);
             isAreaAndColorChoose(); // 是否可選擇金額
         } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
+            warmPromptTv.setVisibility(View.GONE);
             // 停車訂單
             mSlotOrderModel = new SlotOrderModel();
-            mSlotOrderModel.setStartSlotTime(yearFdt.format(date));
+            mSlotOrderModel.setStartSlotTime(startTimeForDay);
             mSlotOrderModel.setRemark("");
 
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
@@ -284,11 +288,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             photoGv.setVisibility(View.GONE);
             callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
         } else {    // 咪錶存在，有子列表
+            warmPromptTv.setVisibility(View.GONE);
             String childMachinePosition = intent.getStringExtra("childPosition");
 
             // 停車訂單
             mSlotOrderModel = new SlotOrderModel();
-            mSlotOrderModel.setStartSlotTime(yearFdt.format(date));
+            mSlotOrderModel.setStartSlotTime(startTimeForDay);
             mSlotOrderModel.setRemark("");
 
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
@@ -688,38 +693,52 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 .setLayoutId(R.layout.dialog_choose_time)
                 .setConvertListener(new ViewConvertListener() {
                     @Override
-                    public void convertView(ViewHolder holder, final BaseNiceDialog dialog) {
+                    public void convertView(final ViewHolder holder, final BaseNiceDialog dialog) {
                         final TextView timeTv = holder.getView(R.id.dialog_time_tv);
                         TextView submitTv = holder.getView(R.id.dialog_time_submit);
                         TimePicker timePicker = holder.getView(R.id.dialog_time_picker);
                         timePicker.setIs24HourView(true);
-                        timePicker.setCurrentHour(BSSMCommonUtils.getHour());
+                        timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
                         timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                        timeTv.setText("投幣時間[預計" + (BSSMCommonUtils.getHour()+1) + ":" + BSSMCommonUtils.getMinute() + ":00]");
                         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
                             @Override
                             public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
-                                String hourTime = null;
-                                String minuteTime = null;
-                                if (hourOfDay < 10) {
-                                    hourTime = "0" + hourOfDay;
+                                boolean v = timePicker.is24HourView();
+                                if (hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) {
+                                    timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                    timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                    Toast.makeText(ParkingOrderActivity.this, "請選擇一個小時之後的時間", Toast.LENGTH_LONG).show();
                                 } else {
-                                    hourTime = Integer.toString(hourOfDay);
+                                    if (hourOfDay > 20 || hourOfDay < 9) {
+                                        timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                        timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                        Toast.makeText(ParkingOrderActivity.this, "請選擇規定的時間(9:00-20:00)之間下單！", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        String hourTime = null;
+                                        String minuteTime = null;
+                                        if (hourOfDay < 10) {
+                                            hourTime = "0" + hourOfDay;
+                                        } else {
+                                            hourTime = Integer.toString(hourOfDay);
+                                        }
+                                        if (minute < 10) {
+                                            minuteTime = "0" + minute;
+                                        } else {
+                                            minuteTime = Integer.toString(minute);
+                                        }
+                                        String time = hourTime + ":" + minuteTime + ":00";
+                                        Date date = new Date( );
+                                        SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
+                                        if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                            mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                        } else {
+                                            mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                        }
+                                        timeTv.setText("投幣時間[預計" + time + "]");
+                                        startTimeTv.setText("投幣時間[預計" + time + "]");
+                                    }
                                 }
-                                if (minute < 10) {
-                                    minuteTime = "0" + minute;
-                                } else {
-                                    minuteTime = Integer.toString(minute);
-                                }
-                                String time = hourTime + ":" + minuteTime + ":00";
-                                Date date = new Date( );
-                                SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
-                                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                    mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
-                                } else {
-                                    mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
-                                }
-                                timeTv.setText("投幣時間[預計" + time + "]");
-                                startTimeTv.setText("投幣時間[預計" + time + "]");
                             }
                         });
 
@@ -842,15 +861,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 .setConvertListener(new ViewConvertListener() {
                     @Override
                     protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                        viewHolder.setOnClickListener(R.id.meter_blue, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                meterColorTv.setText("顏      色：" + "藍色");
-                                mSlotUnknowOrderModel.setPillarColor("blue");
-                                isAreaAndColorChoose();
-                                baseNiceDialog.dismiss();
-                            }
-                        });
                         viewHolder.setOnClickListener(R.id.meter_gray, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
