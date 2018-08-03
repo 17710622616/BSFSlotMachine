@@ -299,6 +299,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
             orderLocationTv.setText("停車位置：" + mSlotMachineModel.getAddress() + mSlotMachineModel.getMachineNo() + "號" + mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
+            mSlotOrderModel.setParkingSpace(mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
             orderAreaLL.setVisibility(View.GONE);
             orderColorLL.setVisibility(View.GONE);
             orderPhotoLL.setVisibility(View.GONE);
@@ -474,6 +475,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             jsonObj.put("carId",mSlotOrderModel.getCarId());
             jsonObj.put("startSlotTime",mSlotOrderModel.getStartSlotTime());
             jsonObj.put("remark",mSlotOrderModel.getRemark());
+            jsonObj.put("parkingSpace",mSlotOrderModel.getParkingSpace());
         } catch (JSONException e) {
             e.printStackTrace();
         }

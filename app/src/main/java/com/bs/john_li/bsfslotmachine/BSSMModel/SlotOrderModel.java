@@ -11,6 +11,15 @@ public class SlotOrderModel {
     private long carId;
     private String startSlotTime;
     private String remark;
+    private String parkingSpace;
+
+    public String getParkingSpace() {
+        return parkingSpace;
+    }
+
+    public void setParkingSpace(String parkingSpace) {
+        this.parkingSpace = parkingSpace;
+    }
 
     public String getRemark() {
         return remark;
