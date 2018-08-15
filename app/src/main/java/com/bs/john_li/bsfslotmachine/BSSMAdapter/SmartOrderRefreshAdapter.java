@@ -95,16 +95,25 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter<SmartOrderRef
         holder.item_order_no.setText("訂單編號：" +list.get(position).getOrderNo());
         holder.item_order_money.setText("訂單金額：" + String.valueOf(list.get(position).getTotalAmount()));
         switch (list.get(position).getOrderStatus()) {
-            case 1:
+            case 1: // 待支付
                 holder.item_order_status.setText("訂單狀態：待支付");
                 break;
-            case 3:
+            case 2: // 支付中
+                holder.item_order_status.setText("訂單狀態：支付中");
+                break;
+            case 3: // 已支付
                 holder.item_order_status.setText("訂單狀態：已支付");
                 break;
-            case 4:
+            case 4: // 已接單
                 holder.item_order_status.setText("訂單狀態：已投幣");
                 break;
-            case 9:
+            case 5: // 操作中
+                holder.item_order_status.setText("訂單狀態：操作中");
+                break;
+            case 6: // 已完成
+                holder.item_order_status.setText("訂單狀態：已完成");
+                break;
+            case 9: // 已取消
                 holder.item_order_status.setText("訂單狀態：已取消");
                 break;
         }

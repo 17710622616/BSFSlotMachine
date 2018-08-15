@@ -75,6 +75,7 @@
 
     <!--AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g-->
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
-        AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g
+        <!--AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g-->
+        AIzaSyBlPIwqyBxcArm9zudxctVzle5DMb48rn0
     </string>
 </resources>

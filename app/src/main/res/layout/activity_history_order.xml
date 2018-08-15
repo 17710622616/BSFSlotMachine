@@ -25,8 +25,8 @@
         app:tabSelectedTextColor="@color/colorPrimary"
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabIndicatorHeight="2dp"
-        app:tabGravity="fill"
-        app:tabMode="fixed"/>
+        app:tabGravity="center"
+        app:tabMode="scrollable"/>
     
     <TextView
         android:layout_width="match_parent"

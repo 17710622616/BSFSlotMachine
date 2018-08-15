@@ -244,8 +244,14 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
             case 3: // 已支付
                 statusTV.setText("訂單狀態：已支付");
                 break;
-            case 4: // 已投幣
+            case 4: // 已接單
                 statusTV.setText("訂單狀態：已投幣");
+                break;
+            case 5: // 操作中
+                statusTV.setText("訂單狀態：操作中");
+                break;
+            case 6: // 已完成
+                statusTV.setText("訂單狀態：已完成");
                 break;
             case 9: // 已取消
                 statusTV.setText("訂單狀態：已取消");

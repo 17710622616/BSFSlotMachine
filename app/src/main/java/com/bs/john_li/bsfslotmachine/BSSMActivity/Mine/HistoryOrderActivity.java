@@ -17,8 +17,10 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderFgAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.AllOrderFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderCancelledFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderCompletedFragment;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderInOperationFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderPaidFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderPaymentFragment;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.OrderReceivingFragment;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 
@@ -33,7 +35,7 @@ import java.util.List;
 
 public class HistoryOrderActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView historyHead;
-    public static final String [] sTitle = new String[]{"全部","待支付","已支付", "已投幣", "已取消"};
+    public static final String [] sTitle = new String[]{"全部","待支付","已支付", "已接單", "操作中", "已完成", "已取消"};
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     @Override
@@ -55,6 +57,8 @@ public class HistoryOrderActivity extends BaseActivity implements View.OnClickLi
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[2]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[3]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[4]));
+        mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[5]));
+        mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[6]));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             historyHead.setHeadHight();
         }
@@ -104,16 +108,20 @@ public class HistoryOrderActivity extends BaseActivity implements View.OnClickLi
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[2]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[3]));
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[4]));
+        mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[5]));
+        mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[6]));
         mTabLayout.setupWithViewPager(mViewPager);
         List<Fragment> fgList = new ArrayList<>();
         fgList.add(new AllOrderFragment());
         fgList.add(new OrderPaymentFragment());
         fgList.add(new OrderPaidFragment());
+        fgList.add(new OrderReceivingFragment());
+        fgList.add(new OrderInOperationFragment());
         fgList.add(new OrderCompletedFragment());
         fgList.add(new OrderCancelledFragment());
 
         OrderFgAdapter adapter = new OrderFgAdapter(getSupportFragmentManager(),fgList, Arrays.asList(sTitle));
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(7);
         mViewPager.setAdapter(adapter);
     }
 

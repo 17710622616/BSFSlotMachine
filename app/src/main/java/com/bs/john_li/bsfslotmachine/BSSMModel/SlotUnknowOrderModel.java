@@ -12,7 +12,17 @@ public class SlotUnknowOrderModel {
     private String pillarColor;
     private String areaCode;
     private String startSlotTime;
+    private String unknowMachineno;
+
     private String remark;
+
+    public String getUnknowMachineno() {
+        return unknowMachineno;
+    }
+
+    public void setUnknowMachineno(String unknowMachineno) {
+        this.unknowMachineno = unknowMachineno;
+    }
 
     public String getSlotAmount() {
         return slotAmount;

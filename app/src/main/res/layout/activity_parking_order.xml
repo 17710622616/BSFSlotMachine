@@ -167,13 +167,13 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/parking_order_voucher_ll"
+                android:id="@+id/parking_order_machineno_ll"
                 android:layout_marginTop="1dp"
                 style="@style/ParkingOrderItemLinearLayout">
                 <TextView
-                    android:id="@+id/parking_order_voucher_tv"
+                    android:id="@+id/parking_order_machineno_tv"
                     style="@style/MineItemTextView"
-                    android:text="代金券：超值抵用券" />
+                    android:text="咪錶編號：" />
 
                 <ImageView
                     style="@style/MineItemImageNext"/>
