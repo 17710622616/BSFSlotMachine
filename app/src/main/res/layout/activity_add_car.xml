@@ -87,7 +87,8 @@
         <LinearLayout
             android:id="@+id/add_car_model_ll"
             style="@style/MineItemLinearLayout"
-            android:layout_marginTop="2dp">
+            android:layout_marginTop="2dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/add_car_model_tv"
@@ -98,7 +99,8 @@
         <LinearLayout
             android:id="@+id/add_car_brand_ll"
             style="@style/MineItemLinearLayout"
-            android:layout_marginTop="2dp">
+            android:layout_marginTop="2dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/add_car_brand_tv"
@@ -109,7 +111,8 @@
         <LinearLayout
             android:id="@+id/add_car_style_ll"
             style="@style/MineItemLinearLayout"
-            android:layout_marginTop="2dp">
+            android:layout_marginTop="2dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/add_car_style_tv"

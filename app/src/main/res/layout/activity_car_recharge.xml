@@ -19,7 +19,7 @@
         <ImageView
             android:id="@+id/recharge_car_iv"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="110dp"
             android:layout_weight="1"
             android:background="@color/colorWight"
             android:padding="5dp"
@@ -28,11 +28,12 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/colorWight"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/recharge_car_carno"
@@ -52,7 +53,8 @@
                 android:singleLine="true"
                 android:text="品牌：林肯"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/recharge_car_model"
@@ -62,7 +64,8 @@
                 android:singleLine="true"
                 android:text="車型：SUV"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/recharge_car_style"
@@ -72,7 +75,8 @@
                 android:singleLine="true"
                 android:text="型號：MKC"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/recharge_car_type"

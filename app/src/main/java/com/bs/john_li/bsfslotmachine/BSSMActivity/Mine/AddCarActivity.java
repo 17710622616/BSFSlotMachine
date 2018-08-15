@@ -231,23 +231,15 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private void submitCarData() {
         if (startWay.equals("update")) {
             if (!carInsideModel.getCarNo().equals("")) {
-                if (!carInsideModel.getModelForCar().equals("")) {
-                    if (!carInsideModel.getCarBrand().equals("")) {
-                        if (!carInsideModel.getCarStyle().equals("")) {
-                            if (file != null) {
-                                putImg();
-                            } else {
-                                // 修改車輛信息
-                                callNetUpdateCar();
-                            }
-                        } else {
-                            Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
-                        }
+                if (carInsideModel.getIfPerson() != 0) {
+                    if (file != null) {
+                        putImg();
                     } else {
-                        Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                        // 修改車輛信息
+                        callNetUpdateCar();
                     }
                 } else {
-                    Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "您還沒選擇車輛類型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
@@ -256,20 +248,12 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             if (file != null) {
                 if (!file.getPath().equals("")) {
                     if (!carInsideModel.getCarNo().equals("")) {
-                        if (!carInsideModel.getModelForCar().equals("")) {
-                            if (!carInsideModel.getCarBrand().equals("")) {
-                                if (!carInsideModel.getCarStyle().equals("")) {
-                                    //uploadImage();
-                                    //mOssService.asyncPutImage(file.getName(), file.getPath());
-                                    putImg();
-                                } else {
-                                    Toast.makeText(this, "您還沒填寫車牌型號呢，快去填寫吧", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(this, "您還沒填寫車牌品牌呢，快去填寫吧", Toast.LENGTH_SHORT).show();
-                            }
+                        if (carInsideModel.getIfPerson() != 0) {
+                            //uploadImage();
+                            //mOssService.asyncPutImage(file.getName(), file.getPath());
+                            putImg();
                         } else {
-                            Toast.makeText(this, "您還沒填寫車型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "您還沒選擇車輛類型呢，快去填寫吧", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
@@ -281,7 +265,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 Toast.makeText(this, "您還沒給您的愛車選照片呢，快去選一張吧", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 
     /**

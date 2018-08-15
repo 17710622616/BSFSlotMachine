@@ -3,6 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorDrakGray">
+
+    <TextView
+        android:id="@+id/item_carlist_not_rechrage_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e0707070"
+        android:text="未充值"
+        android:textColor="@color/colorWight"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="5dp"
+        android:layout_marginBottom="0.5dp"/>
+
     <LinearLayout
         android:id="@+id/item_carlist_ll"
         android:layout_width="match_parent"
@@ -24,7 +39,7 @@
         <ImageView
             android:id="@+id/item_carlist_iv"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="110dp"
             android:layout_weight="1"
             android:background="@color/colorWight"
             android:padding="5dp"
@@ -33,9 +48,10 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/colorWight"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="5dp">
 
@@ -57,7 +73,8 @@
                 android:singleLine="true"
                 android:text="品牌：林肯"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/item_carlist_model"
@@ -67,7 +84,8 @@
                 android:singleLine="true"
                 android:text="車型：SUV"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/item_carlist_style"
@@ -77,7 +95,8 @@
                 android:singleLine="true"
                 android:text="型號：MKC"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/item_carlist_car_type"
@@ -101,18 +120,4 @@
             android:scaleType="fitCenter"
             android:src="@mipmap/translation_detial" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/item_carlist_not_rechrage_tv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#e0707070"
-        android:text="未充值"
-        android:textColor="@color/colorWight"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:visibility="gone"
-        android:padding="5dp"
-        android:layout_marginBottom="0.5dp"/>
 </FrameLayout>
