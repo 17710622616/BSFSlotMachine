@@ -44,9 +44,9 @@ public class BSSMConfigtor {
     public final static String WECHAT_APPID = "wxa78767024378b134";
 
     // 正式的IP地址
-    //public final static String BASE_URL = "http://112.74.52.98/parkingman-web/";
+    public final static String BASE_URL = "http://112.74.52.98/parkingman-web/";
     // 測試的IP地址
-    public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
+    //public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
     // 測試的IP地址
     //public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";
     // 獲取驗證碼
