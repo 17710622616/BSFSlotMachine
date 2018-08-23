@@ -92,7 +92,8 @@
             android:gravity="center"
             android:text="論壇"
             android:textColor="@color/colorDrakGray"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            android:visibility="gone"/>
 
         <RadioButton
             android:id="@+id/bottom_main_mine"

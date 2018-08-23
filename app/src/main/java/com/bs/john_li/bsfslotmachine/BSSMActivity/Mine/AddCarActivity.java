@@ -133,9 +133,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void setListener() {
-        carPhotoLL.setOnClickListener(this);
-        carTypeLL.setOnClickListener(this);
-        carNoLL.setOnClickListener(this);
         carModelLL.setOnClickListener(this);
         carBrandLL.setOnClickListener(this);
         carStyleLL.setOnClickListener(this);
@@ -148,7 +145,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         oss = AliyunOSSUtils.initOSS(this);
         // 初始化數據
         headView.setLeft(this);
-        headView.setRight(R.mipmap.ok, this);
         Intent intent = getIntent();
         startWay = intent.getStringExtra("startWay");
         // 判斷打開方式
@@ -174,6 +170,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             carBrandTv.setText("車輛品牌：" + carInsideModel.getCarBrand());
             carStyleTv.setText("車輛型號：" + carInsideModel.getCarStyle());
         } else {
+            headView.setRight(R.mipmap.ok, this);
+            carPhotoLL.setOnClickListener(this);
+            carTypeLL.setOnClickListener(this);
+            carNoLL.setOnClickListener(this);
+
             headView.setTitle("添加車輛");
             carPhotoIv.setImageResource(R.mipmap.car_zhanwei);
             carInsideModel = new CarModel.CarCountAndListModel.CarInsideModel();

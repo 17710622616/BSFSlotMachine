@@ -286,7 +286,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }*/
                 break;
             case R.id.mine_recommend:
-                BSSMCommonUtils.openShare(getActivity(), "博软科技", "http://www.bsmaco.icoc.bz/", "博软科技的网址", "/storage/emulated/0/Pictures/BSSMPictures/icon1.png");
+                BSSMCommonUtils.openShare(getActivity(), "博软科技", "http://www.bsmaco.icoc.bz/", "博软科技的网址", "https://test-pic-666.oss-cn-hongkong.aliyuncs.com/IMG_5002.PNG");
                 break;
             case R.id.mine_opinion:
                 getActivity().startActivity(new Intent(getActivity(), OpinionActivity.class));

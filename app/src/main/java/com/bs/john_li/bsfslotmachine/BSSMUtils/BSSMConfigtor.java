@@ -43,6 +43,8 @@ public class BSSMConfigtor {
     // 微信APP_ID
     public final static String WECHAT_APPID = "wxa78767024378b134";
 
+    // 正式的IP地址
+    //public final static String BASE_URL = "http://112.74.52.98/parkingman-web/";
     // 測試的IP地址
     public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
     // 測試的IP地址
