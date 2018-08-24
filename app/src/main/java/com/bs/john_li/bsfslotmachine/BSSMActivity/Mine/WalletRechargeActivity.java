@@ -109,6 +109,8 @@ public class WalletRechargeActivity extends BaseActivity implements View.OnClick
                                             intent.putExtra("orderNo", model.getData().getOrderNo());
                                             intent.putExtra("amount", model.getData().getAmount());
                                             intent.putExtra("createTime", model.getData().getCreateTime());
+                                            intent.putExtra("exchange", model.getData().getExchange());
+                                            intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                                             startActivityForResult(intent, 3);
                                             finish();
                                         } else {

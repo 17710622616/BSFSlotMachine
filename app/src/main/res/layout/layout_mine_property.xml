@@ -14,7 +14,7 @@
             android:id="@+id/mine_wallet_balance"
             style="@style/MineItemPropertyValueTV"
             android:textColor="@color/colorMineYellow"
-            android:text="350蚊"/>
+            android:text="0.00蚊"/>
 
         <TextView
             style="@style/MineItemPropertyNameTV"

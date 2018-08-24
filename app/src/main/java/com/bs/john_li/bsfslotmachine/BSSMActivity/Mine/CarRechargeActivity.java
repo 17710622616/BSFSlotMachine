@@ -183,6 +183,10 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 CarRechargeWayListModel model = new Gson().fromJson(result.toString(), CarRechargeWayListModel.class);
                 if (model.getCode() ==200) {
                     mCarRechargeWayModelList = model.getData();
+                    monthRb.setText(mCarRechargeWayModelList.get(0).getDescription());
+                    quarterlyRb.setText(mCarRechargeWayModelList.get(1).getDescription());
+                    sixMonthRb.setText(mCarRechargeWayModelList.get(2).getDescription());
+                    yearRb.setText(mCarRechargeWayModelList.get(3).getDescription());
                 } else {
                     Toast.makeText(CarRechargeActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -191,7 +195,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(CarRechargeActivity.this, "充值方式提交失敗！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarRechargeActivity.this, "充值方式獲取失敗！", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
@@ -232,6 +236,8 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     intent.putExtra("orderNo", model.getData().getOrderNo());
                     intent.putExtra("amount", model.getData().getAmount());
                     intent.putExtra("createTime", model.getData().getCreateTime());
+                    intent.putExtra("exchange", model.getData().getExchange());
+                    intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 1);
                 } else {
                     Toast.makeText(CarRechargeActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();

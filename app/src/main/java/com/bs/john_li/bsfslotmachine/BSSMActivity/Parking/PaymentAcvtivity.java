@@ -90,6 +90,8 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private double totalAmount;
     private String orderTime;
     private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單
+    // 汇率换算后的金额
+    private String mExchangeAmountPay;
     // 支付金額
     private double payMoney;
     // 微信API
@@ -172,10 +174,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 if (isChecked) {
                     myWalletCb.setChecked(false);
                     wecahtPayCb.setChecked(false);
-                    if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (String.format("%.2f", totalAmount * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
+                    if(mExchangeAmountPay != null) {
+                        submitTv.setText("RMB" + mExchangeAmountPay + "元  確認支付");
                     } else {
-                        exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
                         myWalletCb.setChecked(true);
                         alipayCb.setChecked(false);
@@ -190,10 +191,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 if (isChecked) {
                     myWalletCb.setChecked(false);
                     alipayCb.setChecked(false);
-                    if(exchangeModel != null) {
-                        submitTv.setText("RMB" + (String.format("%.2f", totalAmount * Double.parseDouble(exchangeModel.getResult().get(0).getExchange())).toString()) + "元  確認支付");
+                    if(mExchangeAmountPay != null) {
+                        submitTv.setText("RMB" + mExchangeAmountPay + "元  確認支付");
                     } else {
-                        exchangeMop();
                         Toast.makeText(PaymentAcvtivity.this, "匯率獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
                         myWalletCb.setChecked(true);
                         alipayCb.setChecked(false);
@@ -214,6 +214,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         Intent intent = getIntent();
         startWay = intent.getIntExtra("startWay", 0);
         orderNo = intent.getStringExtra("orderNo");
+        mExchangeAmountPay = intent.getStringExtra("exchangeAmountPay");
         try {
             totalAmount = Double.parseDouble(intent.getStringExtra("amount"));
         } catch (Exception e) {
@@ -281,7 +282,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 } else if (alipayCb.isChecked()){
                     callNetGetAlipayOrderInfo();
                 } else if (wecahtPayCb.isChecked()) {
-                    if (wxApi.isWXAppInstalled() && wxApi.isWXAppSupportAPI()) {
+                    if (wxApi.isWXAppInstalled()) {    //&& wxApi.isWXAppSupportAPI()
                         // 发起微信支付，先请求获取微信的prepay_id
                         callNetGetWechatPrepayId();
                     } else {

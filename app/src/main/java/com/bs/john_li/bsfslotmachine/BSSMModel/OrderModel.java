@@ -6,10 +6,11 @@ package com.bs.john_li.bsfslotmachine.BSSMModel;
  */
 
 public class OrderModel {
+
     /**
      * code : 200
      * msg :
-     * data : {"orderNo":"S201807161515090730001","createTime":1531725309081,"amount":"40"}
+     * data : {"orderNo":"S201711052303060450001","createTime":1509894186076,"amount":"20","exchange":"0.8756","exchangeAmountPay":"17.01"}
      */
 
     private int code;
@@ -42,14 +43,18 @@ public class OrderModel {
 
     public static class DataBean {
         /**
-         * orderNo : S201807161515090730001
-         * createTime : 1531725309081
-         * amount : 40
+         * orderNo : S201711052303060450001
+         * createTime : 1509894186076
+         * amount : 20
+         * exchange : 0.8756
+         * exchangeAmountPay : 17.01
          */
 
         private String orderNo;
         private long createTime;
         private String amount;
+        private String exchange;
+        private String exchangeAmountPay;
 
         public String getOrderNo() {
             return orderNo;
@@ -73,6 +78,22 @@ public class OrderModel {
 
         public void setAmount(String amount) {
             this.amount = amount;
+        }
+
+        public String getExchange() {
+            return exchange;
+        }
+
+        public void setExchange(String exchange) {
+            this.exchange = exchange;
+        }
+
+        public String getExchangeAmountPay() {
+            return exchangeAmountPay;
+        }
+
+        public void setExchangeAmountPay(String exchangeAmountPay) {
+            this.exchangeAmountPay = exchangeAmountPay;
         }
     }
 }
