@@ -273,6 +273,8 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         intent1.putExtra("orderNo", mUserOrderModel.getOrderNo());
                         intent1.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent1.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        intent1.putExtra("exchange", mUserOrderModel.getExchange());
+                        intent1.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
                         startActivityForResult(intent1, 1);
                         break;
                     case 2: // 會員續費訂單
@@ -281,6 +283,8 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         intent2.putExtra("orderNo", mUserOrderModel.getOrderNo());
                         intent2.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent2.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        intent2.putExtra("exchange", mUserOrderModel.getExchange());
+                        intent2.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
                         startActivityForResult(intent2, 1);
                         break;
                     case 3: // 確定投幣機訂單
@@ -289,6 +293,8 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         intent3.putExtra("orderNo", mUserOrderModel.getOrderNo());
                         intent3.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent3.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        intent3.putExtra("exchange", mUserOrderModel.getExchange());
+                        intent3.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
                         startActivityForResult(intent3, 1);
                         break;
                     case 4: // 未知投幣機訂單
@@ -297,6 +303,8 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         intent4.putExtra("orderNo", mUserOrderModel.getOrderNo());
                         intent4.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
                         intent4.putExtra("createTime", mUserOrderModel.getCreateTime());
+                        intent4.putExtra("exchange", mUserOrderModel.getExchange());
+                        intent4.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
                         startActivityForResult(intent4, 1);
                         break;
                 }

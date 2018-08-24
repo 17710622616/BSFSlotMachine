@@ -787,7 +787,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                     .setBarHighlightColor(getResources().getColor(R.color.colorEndBlue))
                                     .setMinValue(0)
                                     .setMaxValue(amountLimit)
-                                    .setSteps(1)
+                                    .setSteps(0)
                                     .setLeftThumbDrawable(R.mipmap.seekbar_parking1)
                                     .setLeftThumbHighlightDrawable(R.mipmap.seekbar_parking1)
                                     .setDataType(CrystalRangeSeekbar.DataType.INTEGER)

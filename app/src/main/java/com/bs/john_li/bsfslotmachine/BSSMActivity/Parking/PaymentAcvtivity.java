@@ -133,7 +133,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         EventBus.getDefault().register(this);
-        exchangeMop();
+        //exchangeMop();
         initView();
         setListener();
         initData();

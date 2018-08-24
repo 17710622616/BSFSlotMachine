@@ -461,6 +461,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             @Override
             public void onFinished() {
                 loadingLL.setVisibility(View.GONE);
+                dialog.dismiss();
             }
         });
     }

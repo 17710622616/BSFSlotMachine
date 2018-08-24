@@ -123,6 +123,55 @@ public class UserOrderOutModel {
             private String img3;
             private String img4;
             private String img5;
+            private String toushouAmount;
+            private String toushouUserId;
+            private String currency;
+            private String exchange;
+            private String exchangeAmountPay;
+
+            public void setPayAmount(double payAmount) {
+                this.payAmount = payAmount;
+            }
+
+            public String getToushouAmount() {
+                return toushouAmount;
+            }
+
+            public void setToushouAmount(String toushouAmount) {
+                this.toushouAmount = toushouAmount;
+            }
+
+            public String getToushouUserId() {
+                return toushouUserId;
+            }
+
+            public void setToushouUserId(String toushouUserId) {
+                this.toushouUserId = toushouUserId;
+            }
+
+            public String getCurrency() {
+                return currency;
+            }
+
+            public void setCurrency(String currency) {
+                this.currency = currency;
+            }
+
+            public String getExchange() {
+                return exchange;
+            }
+
+            public void setExchange(String exchange) {
+                this.exchange = exchange;
+            }
+
+            public String getExchangeAmountPay() {
+                return exchangeAmountPay;
+            }
+
+            public void setExchangeAmountPay(String exchangeAmountPay) {
+                this.exchangeAmountPay = exchangeAmountPay;
+            }
 
             public int getId() {
                 return id;

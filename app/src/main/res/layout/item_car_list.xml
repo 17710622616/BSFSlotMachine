@@ -107,6 +107,16 @@
                 android:text="車輛類型：私家車"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/item_carlist_expiry_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="到期時間：0000-00-00"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp"
+                android:lines="2"/>
         </LinearLayout>
 
         <ImageView

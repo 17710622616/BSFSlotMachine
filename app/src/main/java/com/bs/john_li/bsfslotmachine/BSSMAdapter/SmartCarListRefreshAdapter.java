@@ -90,6 +90,7 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
         vh.carlistModel = (TextView) view.findViewById(R.id.item_carlist_model);
         vh.carlistStyle = (TextView) view.findViewById(R.id.item_carlist_style);
         vh.carTypeTv = (TextView) view.findViewById(R.id.item_carlist_car_type);
+        vh.expireTimeTv = view.findViewById(R.id.item_carlist_expiry_time);
         vh.carRecharge = (ImageView) view.findViewById(R.id.item_carlist_recharge);
         vh.carListLL = view.findViewById(R.id.item_carlist_ll);
         view.setOnLongClickListener(this);
@@ -117,9 +118,15 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
         if (carList.get(position).getIfPay() == 0) {
             holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
-            holder.carRecharge.setImageResource(R.mipmap.year);
+            holder.carRecharge.setImageResource(R.mipmap.member);
         }
 
+        if (carList.get(position).getExpiryTime()!=null) {
+            holder.expireTimeTv.setVisibility(View.VISIBLE);
+            holder.expireTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
+        } else {
+            holder.expireTimeTv.setVisibility(View.GONE);
+        }
 
         x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
         /*String cover = carList.get(position).getImgUrl();
@@ -269,6 +276,7 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
         public TextView carlistModel;
         public TextView carlistStyle;
         public TextView carTypeTv;
+        public TextView expireTimeTv;
         public ImageView carRecharge;
         public LinearLayout carListLL;
         public SmartRefreshViewHolder(View view){

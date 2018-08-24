@@ -83,6 +83,7 @@ public class CarModel {
              * isDelete : null
              * createTime : null
              * updateTime : null
+             *"expiryTime":1537718400000
              */
 
             private int id;
@@ -97,6 +98,15 @@ public class CarModel {
             private Object isDelete;
             private Object createTime;
             private Object updateTime;
+            private String expiryTime;
+
+            public String getExpiryTime() {
+                return expiryTime;
+            }
+
+            public void setExpiryTime(String expiryTime) {
+                this.expiryTime = expiryTime;
+            }
 
             public int getId() {
                 return id;
