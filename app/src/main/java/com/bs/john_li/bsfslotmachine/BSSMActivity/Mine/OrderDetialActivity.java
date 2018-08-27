@@ -108,7 +108,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 machineNoTV.setVisibility(View.VISIBLE);
                 machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
                 carNoTV.setVisibility(View.GONE);
-                carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
+                //carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarNo());
                 carStyleTV.setVisibility(View.GONE);
                 carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
                 carBrandTV.setVisibility(View.GONE);
@@ -176,7 +176,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 machineNoTV.setVisibility(View.VISIBLE);
                 machineNoTV.setText("咪錶編號：" + mUserOrderModel.getMachineNo());
                 carNoTV.setVisibility(View.GONE);
-                carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarId());
+                //carNoTV.setText("車牌號碼：" + mUserOrderModel.getCarNo());
                 carStyleTV.setVisibility(View.GONE);
                 carStyleTV.setText("車輛型號：" + mUserOrderModel.getCarId());
                 carBrandTV.setVisibility(View.GONE);
@@ -266,47 +266,49 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.head_right_tv:
-                switch (mUserOrderModel.getOrderType()) {
-                    case 1: // 充值訂單
-                        Intent intent1 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
-                        intent1.putExtra("startWay", 3);   // carChargeOrder
-                        intent1.putExtra("orderNo", mUserOrderModel.getOrderNo());
-                        intent1.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
-                        intent1.putExtra("createTime", mUserOrderModel.getCreateTime());
-                        intent1.putExtra("exchange", mUserOrderModel.getExchange());
-                        intent1.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
-                        startActivityForResult(intent1, 1);
-                        break;
-                    case 2: // 會員續費訂單
-                        Intent intent2 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
-                        intent2.putExtra("startWay", 2);   // carChargeOrder
-                        intent2.putExtra("orderNo", mUserOrderModel.getOrderNo());
-                        intent2.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
-                        intent2.putExtra("createTime", mUserOrderModel.getCreateTime());
-                        intent2.putExtra("exchange", mUserOrderModel.getExchange());
-                        intent2.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
-                        startActivityForResult(intent2, 1);
-                        break;
-                    case 3: // 確定投幣機訂單
-                        Intent intent3 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
-                        intent3.putExtra("startWay", 1);   // parkingOrder
-                        intent3.putExtra("orderNo", mUserOrderModel.getOrderNo());
-                        intent3.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
-                        intent3.putExtra("createTime", mUserOrderModel.getCreateTime());
-                        intent3.putExtra("exchange", mUserOrderModel.getExchange());
-                        intent3.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
-                        startActivityForResult(intent3, 1);
-                        break;
-                    case 4: // 未知投幣機訂單
-                        Intent intent4 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
-                        intent4.putExtra("startWay", 1);   // parkingOrder
-                        intent4.putExtra("orderNo", mUserOrderModel.getOrderNo());
-                        intent4.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
-                        intent4.putExtra("createTime", mUserOrderModel.getCreateTime());
-                        intent4.putExtra("exchange", mUserOrderModel.getExchange());
-                        intent4.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
-                        startActivityForResult(intent4, 1);
-                        break;
+                if (BSSMCommonUtils.isFastDoubleClick()) {
+                    switch (mUserOrderModel.getOrderType()) {
+                        case 1: // 充值訂單
+                            Intent intent1 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                            intent1.putExtra("startWay", 3);   // carChargeOrder
+                            intent1.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                            intent1.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
+                            intent1.putExtra("createTime", mUserOrderModel.getCreateTime());
+                            intent1.putExtra("exchange", mUserOrderModel.getExchange());
+                            intent1.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
+                            startActivityForResult(intent1, 1);
+                            break;
+                        case 2: // 會員續費訂單
+                            Intent intent2 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                            intent2.putExtra("startWay", 2);   // carChargeOrder
+                            intent2.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                            intent2.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
+                            intent2.putExtra("createTime", mUserOrderModel.getCreateTime());
+                            intent2.putExtra("exchange", mUserOrderModel.getExchange());
+                            intent2.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
+                            startActivityForResult(intent2, 1);
+                            break;
+                        case 3: // 確定投幣機訂單
+                            Intent intent3 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                            intent3.putExtra("startWay", 1);   // parkingOrder
+                            intent3.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                            intent3.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
+                            intent3.putExtra("createTime", mUserOrderModel.getCreateTime());
+                            intent3.putExtra("exchange", mUserOrderModel.getExchange());
+                            intent3.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
+                            startActivityForResult(intent3, 1);
+                            break;
+                        case 4: // 未知投幣機訂單
+                            Intent intent4 = new Intent(OrderDetialActivity.this, PaymentAcvtivity.class);
+                            intent4.putExtra("startWay", 1);   // parkingOrder
+                            intent4.putExtra("orderNo", mUserOrderModel.getOrderNo());
+                            intent4.putExtra("amount", String.valueOf(mUserOrderModel.getTotalAmount()));
+                            intent4.putExtra("createTime", mUserOrderModel.getCreateTime());
+                            intent4.putExtra("exchange", mUserOrderModel.getExchange());
+                            intent4.putExtra("exchangeAmountPay", mUserOrderModel.getExchangeAmountPay());
+                            startActivityForResult(intent4, 1);
+                            break;
+                    }
                 }
                 break;
         }

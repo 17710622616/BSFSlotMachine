@@ -699,4 +699,18 @@ public class BSSMCommonUtils {
         // 启动分享GUI
         oks.show(context);
     }
+
+    /**
+     * 防止暴力點擊
+     */
+    private static long lastClickTime;
+    public static boolean isFastDoubleClick() {
+        long time = System.currentTimeMillis();
+        if ( time - lastClickTime < 500) {
+            return true;
+        }
+        lastClickTime = time;
+        return false;
+    }
+
 }

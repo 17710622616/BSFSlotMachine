@@ -32,7 +32,7 @@
         <TextView
             style="@style/MineItemPropertyValueTV"
             android:textColor="@color/colorMineOringe"
-            android:text="3張"/>
+            android:text="0張"/>
 
         <TextView
             style="@style/MineItemPropertyNameTV"
@@ -50,7 +50,7 @@
         <TextView
             style="@style/MineItemPropertyValueTV"
             android:textColor="@color/colorMineGreen"
-            android:text="5000積分"/>
+            android:text="0積分"/>
 
         <TextView
             style="@style/MineItemPropertyNameTV"

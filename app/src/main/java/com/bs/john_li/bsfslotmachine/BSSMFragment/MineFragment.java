@@ -20,6 +20,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ServiceActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
@@ -293,9 +294,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.mine_server:
                 // 使用系统的电话拨号服务，必须去声明权限，在AndroidManifest.xml中进行声明
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:65999631"));
+                /*Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:65999631"));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                this.startActivity(intent);
+                this.startActivity(intent);*/
+                startActivity(new Intent(getActivity(), ServiceActivity.class));
                 break;
             case R.id.mine_guojianglong:
                 getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));

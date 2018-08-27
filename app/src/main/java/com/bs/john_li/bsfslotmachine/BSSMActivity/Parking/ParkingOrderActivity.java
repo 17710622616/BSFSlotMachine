@@ -348,36 +348,38 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 editUnkowMachineno();
                 break;
             case R.id.parking_order_submit:
-                LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
-                loadDialog.show();
-                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
-                    if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null && mSlotUnknowOrderModel.getUnknowMachineno() != null) {
-                        if (mSlotUnknowOrderModel.getUnknowMachineno().length() == 6) {
-                            if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
-                                submitImgToOss(loadDialog);
+                if (BSSMCommonUtils.isFastDoubleClick()) {
+                    LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
+                    loadDialog.show();
+                    if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
+                        if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null && mSlotUnknowOrderModel.getUnknowMachineno() != null) {
+                            if (mSlotUnknowOrderModel.getUnknowMachineno().length() == 6) {
+                                if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
+                                    submitImgToOss(loadDialog);
+                                } else {
+                                    Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                                    loadDialog.dismiss();
+                                }
+                            } else {
+                                Toast.makeText(this, "請填寫六位數咪錶編號~", Toast.LENGTH_SHORT).show();
+                                loadDialog.dismiss();
+                            }
+                        } else {
+                            Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                            loadDialog.dismiss();
+                        }
+                    } else {    // 咪錶存在，提交已知訂單
+                        if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
+                            if (!mSlotOrderModel.getSlotAmount().equals("0")) {
+                                submitOrderSlotMachineExist(loadDialog);
                             } else {
                                 Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
                                 loadDialog.dismiss();
                             }
                         } else {
-                            Toast.makeText(this, "請填寫六位數咪錶編號~", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
                             loadDialog.dismiss();
                         }
-                    } else {
-                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
-                        loadDialog.dismiss();
-                    }
-                } else {    // 咪錶存在，提交已知訂單
-                    if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
-                        if (!mSlotOrderModel.getSlotAmount().equals("0")) {
-                            submitOrderSlotMachineExist(loadDialog);
-                        } else {
-                            Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
-                            loadDialog.dismiss();
-                        }
-                    } else {
-                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
-                        loadDialog.dismiss();
                     }
                 }
                 break;
@@ -684,8 +686,18 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         if (carInsideModelList.size() > 0) {
             carManagetv.setText("車輛管理");
             carManageRL.setVisibility(View.VISIBLE);
-            carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
-            carTypeTv.setText("車型：" + carInsideModelList.get(0).getModelForCar());
+            //carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
+            switch (carInsideModelList.get(0).getIfPerson()) {
+                case 1:
+                    carTypeTv.setText("車     型：輕重型電單車");
+                    break;
+                case 2:
+                    carTypeTv.setText("車     型：輕型汽車");
+                    break;
+                case 3:
+                    carTypeTv.setText("車     型：重型汽車");
+                    break;
+            }
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
             //AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
             x.image().bind(parkingIv, carInsideModelList.get(0).getImgUrl(), options);
@@ -787,7 +799,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                     .setBarHighlightColor(getResources().getColor(R.color.colorEndBlue))
                                     .setMinValue(0)
                                     .setMaxValue(amountLimit)
-                                    .setSteps(0)
+                                    .setSteps(1)
                                     .setLeftThumbDrawable(R.mipmap.seekbar_parking1)
                                     .setLeftThumbHighlightDrawable(R.mipmap.seekbar_parking1)
                                     .setDataType(CrystalRangeSeekbar.DataType.INTEGER)

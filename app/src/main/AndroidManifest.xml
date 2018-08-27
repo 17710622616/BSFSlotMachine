@@ -76,6 +76,7 @@
         <activity android:name=".BSSMActivity.ForgetPwActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.AboutUsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.PaymentAgreementActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.ServiceActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

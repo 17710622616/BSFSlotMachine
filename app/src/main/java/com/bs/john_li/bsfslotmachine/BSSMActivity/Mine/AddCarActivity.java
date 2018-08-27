@@ -200,7 +200,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 finish();
                 break;
             case R.id.head_right:
-                submitCarData();
+                if(BSSMCommonUtils.isFastDoubleClick()) {
+                    submitCarData();
+                }
                 break;
             case R.id.add_car_photo_ll:
                 chooseCarPhoto();
@@ -336,6 +338,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 提交車輛信息
      */
     private void callNetSubmiteCar() {
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setTitle("提示");
+        dialog.setMessage("正在刪除車輛......");
+        dialog.setCancelable(false);
+        dialog.show();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ADD_CAR + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
@@ -400,7 +407,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onFinished() {
-
+                dialog.dismiss();
             }
         });
     }
