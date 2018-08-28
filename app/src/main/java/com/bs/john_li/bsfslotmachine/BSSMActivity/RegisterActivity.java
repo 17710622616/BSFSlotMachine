@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.RegisterFQAActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.CountDownButtonHelper;
@@ -35,7 +36,7 @@ import java.net.SocketTimeoutException;
 public class RegisterActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private EditText registerUn, registerVCode,registerPw;
-    private TextView registerGetVC, registerTv;
+    private TextView registerGetVC, registerTv, tipsTv;
     private CountDownButtonHelper helper;
 
     private String verificationCode;
@@ -55,6 +56,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         registerVCode = findViewById(R.id.register_verification_code);
         registerPw = findViewById(R.id.register_pw);
         registerTv = findViewById(R.id.register_tv);
+        tipsTv = findViewById(R.id.register_tips);
         registerGetVC = findViewById(R.id.register_get_vc);
         registerGetVC.setEnabled(false);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -65,6 +67,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void setListener() {
         registerTv.setOnClickListener(this);
+        tipsTv.setOnClickListener(this);
         registerGetVC.setOnClickListener(this);
         registerUn.addTextChangedListener(new TextWatcher() {
             @Override
@@ -115,6 +118,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 });
                 helper.start();
                 callNetGetVerCode();
+                break;
+            case R.id.register_tips:
+                startActivity(new Intent(this, RegisterFQAActivity.class));
                 break;
         }
     }

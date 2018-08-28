@@ -55,18 +55,6 @@
         android:background="@color/colorWight"/>
 
     <TextView
-        android:id="@+id/register_tips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/register_tips"
-        android:layout_marginTop="2dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="5dp"
-        android:textSize="12sp"
-        android:textColor="@color/colorDrakGray"/>
-
-    <TextView
         android:id="@+id/register_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,8 +63,22 @@
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/colorWight"
         android:textSize="22sp"
         android:text="提交"
         android:background="@drawable/shape_btn_bg"/>
+
+    <TextView
+        android:id="@+id/register_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/register_tips"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@color/colorDrakGray"/>
 </LinearLayout>
