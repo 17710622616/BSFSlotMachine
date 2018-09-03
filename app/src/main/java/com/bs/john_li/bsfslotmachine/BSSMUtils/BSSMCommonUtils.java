@@ -705,8 +705,11 @@ public class BSSMCommonUtils {
      */
     private static long lastClickTime;
     public static boolean isFastDoubleClick() {
-        long time = System.currentTimeMillis();
-        if ( time - lastClickTime < 500) {
+        // 当前时间
+        long currentTime = System.currentTimeMillis();
+        // 两次点击的时间差
+        long time = currentTime - lastClickTime;
+        if ( 0 < time && time < 1000) {
             return true;
         }
         lastClickTime = time;

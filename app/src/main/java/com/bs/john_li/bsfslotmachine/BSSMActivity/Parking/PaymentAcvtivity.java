@@ -270,30 +270,32 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
+        if(BSSMCommonUtils.isFastDoubleClick()) {
+            return;
+        }
+
         switch (view.getId()) {
             case R.id.head_left:
                 exitPayment();
                 break;
             case R.id.payment_submit:
-                if (BSSMCommonUtils.isFastDoubleClick()) {
-                    payment_submit_progress.setVisibility(View.VISIBLE);
-                    if (myWalletCb.isChecked()) {
-                        // 發起錢包支付，先查看是否有支付密碼0：請求失敗，1：請求成功且有支付密碼，2：請求成功但無支付密碼
-                        callNetCheckHasPayPw();
-                    } else if (alipayCb.isChecked()){
-                        callNetGetAlipayOrderInfo();
-                    } else if (wecahtPayCb.isChecked()) {
-                        if (wxApi.isWXAppInstalled()) {    //&& wxApi.isWXAppSupportAPI()
-                            // 发起微信支付，先请求获取微信的prepay_id
-                            callNetGetWechatPrepayId();
-                        } else {
-                            payment_submit_progress.setVisibility(View.GONE);
-                            Toast.makeText(this, "請先安裝微信客戶端！", Toast.LENGTH_SHORT).show();
-                        }
+                payment_submit_progress.setVisibility(View.VISIBLE);
+                if (myWalletCb.isChecked()) {
+                    // 發起錢包支付，先查看是否有支付密碼0：請求失敗，1：請求成功且有支付密碼，2：請求成功但無支付密碼
+                    callNetCheckHasPayPw();
+                } else if (alipayCb.isChecked()){
+                    callNetGetAlipayOrderInfo();
+                } else if (wecahtPayCb.isChecked()) {
+                    if (wxApi.isWXAppInstalled()) {    //&& wxApi.isWXAppSupportAPI()
+                        // 发起微信支付，先请求获取微信的prepay_id
+                        callNetGetWechatPrepayId();
                     } else {
                         payment_submit_progress.setVisibility(View.GONE);
-                        Toast.makeText(this, "請選擇支付方式", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "請先安裝微信客戶端！", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    payment_submit_progress.setVisibility(View.GONE);
+                    Toast.makeText(this, "請選擇支付方式", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

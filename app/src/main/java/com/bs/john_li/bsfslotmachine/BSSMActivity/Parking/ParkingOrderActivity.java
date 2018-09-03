@@ -315,6 +315,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
+        if (BSSMCommonUtils.isFastDoubleClick()) {
+            return;
+        }
+
         switch (view.getId()) {
             case R.id.head_left:
                 finish();
@@ -348,38 +352,36 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 editUnkowMachineno();
                 break;
             case R.id.parking_order_submit:
-                if (BSSMCommonUtils.isFastDoubleClick()) {
-                    LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
-                    loadDialog.show();
-                    if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
-                        if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null && mSlotUnknowOrderModel.getUnknowMachineno() != null) {
-                            if (mSlotUnknowOrderModel.getUnknowMachineno().length() == 6) {
-                                if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
-                                    submitImgToOss(loadDialog);
-                                } else {
-                                    Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
-                                    loadDialog.dismiss();
-                                }
-                            } else {
-                                Toast.makeText(this, "請填寫六位數咪錶編號~", Toast.LENGTH_SHORT).show();
-                                loadDialog.dismiss();
-                            }
-                        } else {
-                            Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
-                            loadDialog.dismiss();
-                        }
-                    } else {    // 咪錶存在，提交已知訂單
-                        if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
-                            if (!mSlotOrderModel.getSlotAmount().equals("0")) {
-                                submitOrderSlotMachineExist(loadDialog);
+                LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
+                loadDialog.show();
+                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
+                    if (mSlotUnknowOrderModel.getSlotAmount() != null && mSlotUnknowOrderModel.getStartSlotTime() != null && mSlotUnknowOrderModel.getRemark() != null && mSlotUnknowOrderModel.getUnknowMachineno() != null) {
+                        if (mSlotUnknowOrderModel.getUnknowMachineno().length() == 6) {
+                            if (!mSlotUnknowOrderModel.getSlotAmount().equals("0")) {
+                                submitImgToOss(loadDialog);
                             } else {
                                 Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
                                 loadDialog.dismiss();
                             }
                         } else {
-                            Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "請填寫六位數咪錶編號~", Toast.LENGTH_SHORT).show();
                             loadDialog.dismiss();
                         }
+                    } else {
+                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                        loadDialog.dismiss();
+                    }
+                } else {    // 咪錶存在，提交已知訂單
+                    if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
+                        if (!mSlotOrderModel.getSlotAmount().equals("0")) {
+                            submitOrderSlotMachineExist(loadDialog);
+                        } else {
+                            Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
+                            loadDialog.dismiss();
+                        }
+                    } else {
+                        Toast.makeText(this, "請填寫全訂單信息~", Toast.LENGTH_SHORT).show();
+                        loadDialog.dismiss();
                     }
                 }
                 break;

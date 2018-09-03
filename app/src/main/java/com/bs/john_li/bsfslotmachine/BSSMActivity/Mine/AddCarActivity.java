@@ -195,14 +195,16 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
+        if(BSSMCommonUtils.isFastDoubleClick()) {
+            return;
+        }
+
         switch (view.getId()) {
             case R.id.head_left:
                 finish();
                 break;
             case R.id.head_right:
-                if(BSSMCommonUtils.isFastDoubleClick()) {
-                    submitCarData();
-                }
+                submitCarData();
                 break;
             case R.id.add_car_photo_ll:
                 chooseCarPhoto();
