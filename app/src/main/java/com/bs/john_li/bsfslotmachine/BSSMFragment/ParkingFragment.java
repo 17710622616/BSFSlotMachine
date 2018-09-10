@@ -131,7 +131,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void setListenter() {
         goParlingLL.setOnClickListener(this);
-        loadLL.setOnClickListener(this);
+        loadLL.setOnClickListener(null);
     }
 
     @Override
@@ -334,6 +334,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
 
     private void loadMapFail() {
         loadLL.setVisibility(View.VISIBLE);
+        loadLL.setOnClickListener(this);
         //loadIv.setImageResource(R.mipmap.head_boy);
         loadIv.setVisibility(View.GONE);
         animationDrawable.stop();
@@ -425,6 +426,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                     latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 18));
                     loadLL.setVisibility(View.GONE);
+                    loadLL.setOnClickListener(null);
                     mTvAddress.setText(address);
 
                     mLocationRequest = LocationRequest.create();
