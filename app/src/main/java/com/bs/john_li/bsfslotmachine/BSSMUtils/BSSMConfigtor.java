@@ -42,6 +42,10 @@ public class BSSMConfigtor {
     public final static String SLOT_MACHINE_EXIST = "LOCATION_EXIST";
     // 微信APP_ID
     public final static String WECHAT_APPID = "wxa78767024378b134";
+    // sharesdk的appkey
+    public final static String SHARESDK_APP_KEY = "24f00c70bb6c2";
+    // sharesdk的secret
+    public final static String SHARESDK_APP_SECRET = "e3860e99759647b3ad5e17b2a5c09de6";
 
     // 正式的域名地址
     public final static String BASE_URL = "https://www.easydev.top/parkingman-web/";

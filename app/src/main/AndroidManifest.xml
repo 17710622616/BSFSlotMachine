@@ -116,6 +116,19 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait" />
+
+        <!--7.0以上打開相機兼容-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.bs.john_li.bsfslotmachine.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+
+
         <!-- 填写您从Mob开发者后台中得到的Appkey和AppSecret -->
         <meta-data android:name="Mob-AppKey" android:value="24f00c70bb6c2"/>
         <meta-data android:name="Mob-AppSecret" android:value="e3860e99759647b3ad5e17b2a5c09de6"/>

@@ -37,6 +37,7 @@ import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
@@ -290,7 +291,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderPhotoLL.setVisibility(View.GONE);
             machinenoUnknowLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
-            callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
+            if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+                callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
+            } else {
+                startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+            }
         } else {    // 咪錶存在，有子列表
             warmPromptTv.setVisibility(View.GONE);
             String childMachinePosition = intent.getStringExtra("childPosition");
@@ -309,7 +314,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderPhotoLL.setVisibility(View.GONE);
             machinenoUnknowLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
-            callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
+            if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+                callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
+            } else {
+                startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+            }
         }
     }
 
@@ -374,7 +383,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 } else {    // 咪錶存在，提交已知訂單
                     if (mSlotOrderModel.getMachineNo() != null && mSlotOrderModel.getCarId() != 0 && mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getSlotAmount() != null) {
                         if (!mSlotOrderModel.getSlotAmount().equals("0")) {
-                            submitOrderSlotMachineExist(loadDialog);
+                            if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+                                submitOrderSlotMachineExist(loadDialog);
+                            }  else {
+                                startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                            }
                         } else {
                             Toast.makeText(this, "請選擇訂單金額~", Toast.LENGTH_SHORT).show();
                             loadDialog.dismiss();
@@ -404,7 +417,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     case 1:
                         putNum = 0;
                         // 提交未知咪錶的訂單
-                        submitOrderSlotMachineUnKnow(loadDialog);
+                        if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+                            submitOrderSlotMachineUnKnow(loadDialog);
+                        } else {
+                            startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        }
                         break;
                 }
             }
@@ -456,6 +473,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 4);
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
                 }
@@ -510,6 +530,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 3);
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
                 }
@@ -537,7 +560,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 判断是否选择车辆
      */
     private void isChooseCar() {
-        callNetGetCarList();
+        if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+            callNetGetCarList();
+        } else {
+            startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+        }
     }
 
     /**
@@ -566,6 +593,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                 }
                                 carInsideModelList.add(carModel);
                             }
+                        } else if (model.getCode() == 10001) {
+                            SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
+                            startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                         } else {
                             Toast.makeText(ParkingOrderActivity.this, "車輛獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
                         }
@@ -612,6 +642,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
                     orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
                     orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -656,6 +689,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 amountLimit = 0;
                 if (model.getCode() == 200) {
                     amountLimit = model.getData().getAmountLimit();
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "未查詢到對應的收費標準，請檢查車輛、地區及柱色是否選擇正確！", Toast.LENGTH_LONG).show();
                 }
@@ -1064,7 +1100,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             orderMoneyLL.setClickable(true);
             orderMoneyLL.setBackgroundColor(getResources().getColor(R.color.colorWight));
             orderMoneyTv.setTextColor(getResources().getColor(R.color.colorBlack));
-            callNetGetMaxAmountSMNotExist();
+            if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+                callNetGetMaxAmountSMNotExist();
+            } else {
+                startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+            }
         } else {
             orderMoneyLL.setClickable(false);
             orderMoneyLL.setBackgroundColor(getResources().getColor(R.color.colorLineGray));

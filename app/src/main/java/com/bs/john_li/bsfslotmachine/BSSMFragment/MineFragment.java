@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,11 +40,13 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.xutils.common.Callback;
+import org.xutils.common.util.LogUtil;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.io.File;
 import java.net.SocketTimeoutException;
 
 import cn.sharesdk.onekeyshare.OnekeyShare;
@@ -182,6 +185,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 mUserInfoModel = new UserInfoOutsideModel.UserInfoModel();
                 nickNameTv.setText("立即登錄");
                 phoneTv.setText("登錄后獲得更多權限");
+                balanceTv.setText("0.0蚊");
                 //AliyunOSSUtils.downloadImg("", AliyunOSSUtils.initOSS(getActivity()), headIv, getActivity(), R.mipmap.head_boy);
                 x.image().bind(headIv, "", options);
                 Toast.makeText(getActivity(), "用戶信息錯誤，請重新登錄！", Toast.LENGTH_SHORT).show();
@@ -191,6 +195,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             x.image().bind(headIv, "", options);
             nickNameTv.setText("立即登錄");
             phoneTv.setText("登錄后獲得更多權限");
+            balanceTv.setText("0.0蚊");
         }
         
         mRefreshLayout.finishRefresh(1000);
@@ -209,7 +214,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     balanceTv.setText(String.format("%.2f", Double.parseDouble(model.getData())).toString() + "蚊");
-                } else {
+                } else if (model.getCode().equals("10001")) {
+                    SPUtils.put(getActivity(), "UserToken", "");
+                    SPUtils.put(getActivity(), "UserInfo", "");
+                    refreshUI();
+                }else {
                     Toast.makeText(getActivity(), "獲取餘額失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -279,15 +288,50 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.mine_history_order:
-                getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
-                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), HistoryOrderActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }*/
+                }
                 break;
             case R.id.mine_recommend:
-                BSSMCommonUtils.openShare(getActivity(), "博软科技", "http://www.bsmaco.icoc.bz/", "博软科技的网址", "https://test-pic-666.oss-cn-hongkong.aliyuncs.com/IMG_5002.PNG");
+                String fileName = "IMG_5002.PNG";
+                String dirPath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures").getPath();
+                File filesDir = getActivity().getExternalFilesDir(null);
+                //存到本地的绝对路径
+                final String filePath = dirPath + "/" + fileName;
+                File file = new File(filePath);
+                //如果不存在
+                if (!file.exists()) {
+                    File dirFile = new File(dirPath);
+                    if (dirFile.exists()) {
+                        //创建
+                        dirFile.mkdirs();
+                    }
+                    RequestParams entity = new RequestParams("https://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileName);
+                    entity.setSaveFilePath(filePath);
+                    x.http().get(entity, new Callback.CommonCallback<File>() {
+                        @Override
+                        public void onSuccess(File result) {
+                            //BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
+                        }
+
+                        @Override
+                        public void onError(Throwable ex, boolean isOnCallback) {
+                        }
+
+                        @Override
+                        public void onCancelled(CancelledException cex) {
+                        }
+
+                        @Override
+                        public void onFinished() {
+                            BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
+                        }
+                    });
+                } else {
+                    BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
+                }
                 break;
             case R.id.mine_opinion:
                 getActivity().startActivity(new Intent(getActivity(), OpinionActivity.class));

@@ -28,6 +28,7 @@ import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
@@ -204,7 +205,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 finish();
                 break;
             case R.id.head_right:
-                submitCarData();
+                if (BSSMCommonUtils.isLoginNow(this)) {
+                    submitCarData();
+                } else {
+                    startActivityForResult(new Intent(this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.add_car_photo_ll:
                 chooseCarPhoto();
@@ -225,7 +230,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 chooseCarStyle();
                 break;
             case R.id.delete_car_tv:
-                showCarDeleteDialog();
+                if (BSSMCommonUtils.isLoginNow(this)) {
+                    showCarDeleteDialog();
+                } else {
+                    startActivityForResult(new Intent(this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
         }
     }
@@ -295,7 +304,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         }
         params.setBodyContent(jsonObj.toString());
         params.setConnectTimeout(30 * 1000);
-        String url = params.getUri();
         x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -310,6 +318,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     } else {
                         Toast.makeText(AddCarActivity.this, " 修改車輛信息失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     }
+                } else if (model.getCode().equals("10001")) {
+                    SPUtils.put(AddCarActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(AddCarActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(AddCarActivity.this, " 修改車輛信息！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -388,6 +399,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     intent.putExtra("NEW_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
                     setResult(RESULT_OK, intent);
                     finish();
+                } else if (model.getCode().equals("10001")){
+                    SPUtils.put(AddCarActivity.this, "UserToken", "");
+                    Toast.makeText(AddCarActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(AddCarActivity.this, "添加車輛失敗╮(╯▽╰)╭請重新添加" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -808,6 +822,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     setResult(RESULT_OK, intent);
                     finish();
                     Toast.makeText(AddCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
+                } else if (model.getCode().equals("10001")){
+                    SPUtils.put(AddCarActivity.this, "UserToken", "");
+                    Toast.makeText(AddCarActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(AddCarActivity.this, "刪除失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }

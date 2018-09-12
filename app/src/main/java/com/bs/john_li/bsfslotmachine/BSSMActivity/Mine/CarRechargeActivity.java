@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarRechargeWayListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
@@ -23,6 +24,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CarRechargeWayListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -166,7 +168,11 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             case R.id.recharge_car_submit:
                 LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
                 loadDialog.show();
-                submitRechargeOrder(loadDialog);
+                if (BSSMCommonUtils.isLoginNow(CarRechargeActivity.this)) {
+                    submitRechargeOrder(loadDialog);
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
                 break;
         }
     }
@@ -239,7 +245,10 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 1);
-                } else {
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(CarRechargeActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(CarRechargeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }  else {
                     Toast.makeText(CarRechargeActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }

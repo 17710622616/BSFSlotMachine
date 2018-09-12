@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.AddCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarRechargeActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
@@ -97,7 +98,11 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
             public void onRefresh(RefreshLayout refreshlayout) {
                 carModelList.clear();
                 pageNo = 1;
-                callNetGetCarList();
+                if (BSSMCommonUtils.isLoginNow(ChooseCarActivity.this)) {
+                    callNetGetCarList();
+                } else {
+                    startActivity(new Intent(ChooseCarActivity.this, LoginActivity.class));
+                }
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -109,7 +114,11 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     mRefreshLayout.finishRefresh(true);
                 } else {
                     pageNo ++;
-                    callNetGetCarList();
+                    if (BSSMCommonUtils.isLoginNow(ChooseCarActivity.this)) {
+                        callNetGetCarList();
+                    } else {
+                        startActivity(new Intent(ChooseCarActivity.this, LoginActivity.class));
+                    }
                 }
             }
         });
@@ -122,7 +131,11 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                 noCarLL.setVisibility(View.GONE);
                 carModelList.clear();
                 pageNo = 1;
-                callNetGetCarList();
+                if (BSSMCommonUtils.isLoginNow(ChooseCarActivity.this)) {
+                    callNetGetCarList();
+                } else {
+                    startActivity(new Intent(ChooseCarActivity.this, LoginActivity.class));
+                }
             }
         });
     }
@@ -182,8 +195,9 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     carModelList.addAll(carInsideModelsFromNet);
                     // List去重
                     deWeightListById();
-                } else if (model.getCode() == 10001){
-                    Toast.makeText(ChooseCarActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(ChooseCarActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(ChooseCarActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(ChooseCarActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
                 }

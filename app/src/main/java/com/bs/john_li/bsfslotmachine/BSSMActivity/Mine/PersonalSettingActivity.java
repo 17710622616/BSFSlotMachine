@@ -303,7 +303,11 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                                     String oldPayPw = oldPwEt.getText().toString();
                                                     String payPw = newPwEt.getText().toString();
                                                     loadingLL.setVisibility(View.VISIBLE);
-                                                    callNetUpdatePayPw(oldPayPw, payPw, loadingLL, dialog);
+                                                    if (BSSMCommonUtils.isLoginNow(PersonalSettingActivity.this)) {
+                                                        callNetUpdatePayPw(oldPayPw, payPw, loadingLL, dialog);
+                                                    } else {
+                                                        startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                                                    }
                                                 } else {
                                                     Toast.makeText(PersonalSettingActivity.this, "新舊支付密碼不一致", Toast.LENGTH_LONG).show();
                                                 }
@@ -337,7 +341,11 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                                 if (newPwEt.getText().toString().equals(newPwAffirm.getText().toString())) {
                                                     String payPw = newPwEt.getText().toString();
                                                     loadingLL.setVisibility(View.VISIBLE);
-                                                    callNetCreatePayPw(payPw, loadingLL, dialog);
+                                                    if (BSSMCommonUtils.isLoginNow(PersonalSettingActivity.this)) {
+                                                        callNetCreatePayPw(payPw, loadingLL, dialog);
+                                                    } else {
+                                                        startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                                                    }
                                                 } else {
                                                     Toast.makeText(PersonalSettingActivity.this, "新支付密碼與確認新支付密碼不一致", Toast.LENGTH_LONG).show();
                                                 }
@@ -383,6 +391,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     } else {
                         Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
+                } else if (model.getCode().equals("10001")) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -582,6 +593,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                             nickNameTv.setText(mUserInfoModel.getNickname());
                             break;
                     }
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, "用戶信息更新失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -624,6 +638,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
                     EventBus.getDefault().post("LOGIN");
                     Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, "上傳頭像失敗，請重試！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -678,6 +695,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     getUserInfo(model.getData().toString());
+                } else if (model.getCode().equals("10001")) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_fail) + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -739,6 +759,9 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     Log.d("getUserURI", "獲取用戶信息成功");
                     EventBus.getDefault().post("LOGIN");
                     finish();
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Log.d("getUserURI", "獲取用戶信息失敗");
                 }

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
@@ -282,13 +283,25 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 payment_submit_progress.setVisibility(View.VISIBLE);
                 if (myWalletCb.isChecked()) {
                     // 發起錢包支付，先查看是否有支付密碼0：請求失敗，1：請求成功且有支付密碼，2：請求成功但無支付密碼
-                    callNetCheckHasPayPw();
+                    if (BSSMCommonUtils.isLoginNow(PaymentAcvtivity.this)) {
+                        callNetCheckHasPayPw();
+                    } else {
+                        startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
                 } else if (alipayCb.isChecked()){
-                    callNetGetAlipayOrderInfo();
+                    if (BSSMCommonUtils.isLoginNow(PaymentAcvtivity.this)) {
+                        callNetGetAlipayOrderInfo();
+                    } else {
+                        startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
                 } else if (wecahtPayCb.isChecked()) {
                     if (wxApi.isWXAppInstalled()) {    //&& wxApi.isWXAppSupportAPI()
                         // 发起微信支付，先请求获取微信的prepay_id
-                        callNetGetWechatPrepayId();
+                        if (BSSMCommonUtils.isLoginNow(PaymentAcvtivity.this)) {
+                            callNetGetWechatPrepayId();
+                        } else {
+                            startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        }
                     } else {
                         payment_submit_progress.setVisibility(View.GONE);
                         Toast.makeText(this, "請先安裝微信客戶端！", Toast.LENGTH_SHORT).show();
@@ -322,6 +335,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 if (model.getCode() == 200) {
                     // 發起支付寶支付，喚起支付寶SDK
                     callAliPay(model.getData());
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PaymentAcvtivity.this, "發起支付寶支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -406,6 +422,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
 
                     wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
                     wxApi.sendReq(request);
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(PaymentAcvtivity.this, "發起微信支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -476,7 +495,11 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                                                                 payingLL.setVisibility(View.VISIBLE);
                                                                 String enterPw = editText.getText().toString();
                                                                 if (!enterPw.equals("")) {
-                                                                    callNetSubmitPayment(enterPw, dialog, pay_faceview, payingLL, pay_status_tv);
+                                                                    if (BSSMCommonUtils.isLoginNow(PaymentAcvtivity.this)) {
+                                                                        callNetSubmitPayment(enterPw, dialog, pay_faceview, payingLL, pay_status_tv);
+                                                                    } else {
+                                                                        startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                                                                    }
                                                                 } else {
                                                                     Toast.makeText(PaymentAcvtivity.this, "支付密碼不可為空！！！", Toast.LENGTH_SHORT);
                                                                 }
@@ -507,6 +530,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                                             }
                                         });
                                     }
+                                } else if (model.getCode().equals("10001")) {
+                                    SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
+                                    startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                                 } else {
                                     dialog.dismiss();
                                     Toast.makeText(PaymentAcvtivity.this, "發起支付失敗，" + model.getMsg().toString(), Toast.LENGTH_SHORT);
@@ -576,6 +602,9 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                             orderPaySuccess();
                         }
                     }, 1500);
+                } else if (model.getCode().equals("10001")) {
+                    SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     pay_faceview.setStatus(FaceView.FAILED);
                     pay_status_tv.setText("支付失敗，點我重試");

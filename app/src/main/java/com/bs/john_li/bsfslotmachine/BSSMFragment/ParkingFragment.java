@@ -149,7 +149,11 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.head_left:
-                getActivity().startActivity(new Intent(getActivity(), SearchSlotMachineActivity.class));
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    getActivity().startActivity(new Intent(getActivity(), SearchSlotMachineActivity.class));
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
                 break;
             case R.id.head_right:
                 if (BSSMCommonUtils.isLoginNow(getActivity())) {

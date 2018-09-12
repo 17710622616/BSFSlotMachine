@@ -16,6 +16,7 @@ import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
@@ -107,7 +108,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             public void onRefresh(RefreshLayout refreshlayout) {
                 carModelList.clear();
                 pageNo = 1;
-                callNetGetCarList();
+                if (BSSMCommonUtils.isLoginNow(CarListActivity.this)) {
+                    callNetGetCarList();
+                } else {
+                    startActivityForResult(new Intent(CarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -120,7 +125,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    callNetGetCarList();
+                    if (BSSMCommonUtils.isLoginNow(CarListActivity.this)) {
+                        callNetGetCarList();
+                    } else {
+                        startActivityForResult(new Intent(CarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
                 }
             }
         });
@@ -130,7 +139,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
             public void onClick(View view) {
                 carModelList.clear();
                 pageNo = 1;
-                callNetGetCarList();
+                if (BSSMCommonUtils.isLoginNow(CarListActivity.this)) {
+                    callNetGetCarList();
+                } else {
+                    startActivityForResult(new Intent(CarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
             }
         });
     }
@@ -174,7 +187,11 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                         viewHolder.setOnClickListener(R.id.dialog_normal_yes, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                callNetDeleteCar(position);
+                                if (BSSMCommonUtils.isLoginNow(CarListActivity.this)) {
+                                    callNetDeleteCar(position);
+                                } else {
+                                    startActivityForResult(new Intent(CarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                                }
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -208,6 +225,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     carModelList.remove(position);
                     mSmartCarListRefreshAdapter.refreshListView(carModelList);
                     Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
+                } else if (model.getCode().equals("10001")){
+                    SPUtils.put(CarListActivity.this, "UserToken", "");
+                    Toast.makeText(CarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(CarListActivity.this, "刪除失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -261,6 +281,9 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     // List去重
                     deWeightListById();
                     Log.d("car_list_count", "長度：" + carModelList.size());
+                } else if (model.getCode() == 10001){
+                    SPUtils.put(CarListActivity.this, "UserToken", "");
+                    Toast.makeText(CarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(CarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }

@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.mob.MobSDK;
 
 import org.json.JSONArray;
 import org.xutils.http.annotation.HttpResponse;
@@ -686,11 +687,11 @@ public class BSSMCommonUtils {
         oks.setText(content);   //"博软科技的网址"
         // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         //oks.setImagePath(imgPath);  //确保SDcard下面存在此张图片"/storage/emulated/0/Pictures/BSSMPictures/icon1.png"
-        oks.setImageUrl(imgPath);
+        oks.setImagePath(imgPath);
         // url仅在微信（包括好友和朋友圈）中使用
         oks.setUrl(url);    //"http://www.bsmaco.icoc.bz/"
         // comment是我对这条分享的评论，仅在人人网和QQ空间使用
-        oks.setComment("博软科技的网址的评论");
+        oks.setComment("掌泊寶官網的評論");
         // site是分享此内容的网站名称，仅在QQ空间使用
         oks.setSite(title); //"博软科技"
         // siteUrl是分享此内容的网站地址，仅在QQ空间使用
@@ -701,8 +702,27 @@ public class BSSMCommonUtils {
     }
 
     /**
-     * 防止暴力點擊
+     * 判断文件是否存在
+     * @param fileName
+     * @return
      */
+    public static boolean fileIsExists(String fileName) {
+        try {
+            File f = new File(fileName);
+            if (!f.exists()) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+
+    }
+
+
+     /**
+         * 防止暴力點擊
+         */
     private static long lastClickTime;
     public static boolean isFastDoubleClick() {
         // 当前时间

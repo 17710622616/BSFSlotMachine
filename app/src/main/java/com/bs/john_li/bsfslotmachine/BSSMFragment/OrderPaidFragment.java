@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
@@ -84,7 +85,11 @@ public class OrderPaidFragment extends LazyLoadFragment {
             public void onRefresh(RefreshLayout refreshlayout) {
                 orderList.clear();
                 pageNo = 1;
-                callNetGetCarList();
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    callNetGetCarList();
+                } else {
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -97,7 +102,11 @@ public class OrderPaidFragment extends LazyLoadFragment {
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    callNetGetCarList();
+                    if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                        callNetGetCarList();
+                    } else {
+                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
                 }
             }
         });
@@ -118,7 +127,11 @@ public class OrderPaidFragment extends LazyLoadFragment {
             }
         });
         //mRefreshLayout.autoRefresh();
-        callNetGetCarList();
+        if (BSSMCommonUtils.isLoginNow(getActivity())) {
+            callNetGetCarList();
+        } else {
+            startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+        }
     }
 
     /**
@@ -147,8 +160,9 @@ public class OrderPaidFragment extends LazyLoadFragment {
                     totolCarCount = model.getData().getTotalCount();
                     List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
-                } else if (model.getCode() == 10001){
-                    Toast.makeText(getActivity(), String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else if (model.getCode() == 10001) {
+                    SPUtils.put(getActivity(), "UserToken", "");
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(getActivity(), String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
