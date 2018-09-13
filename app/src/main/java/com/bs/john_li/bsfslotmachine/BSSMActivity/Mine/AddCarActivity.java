@@ -1,7 +1,9 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -10,7 +12,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -34,6 +40,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PhotoUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -440,7 +447,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(BSSMCommonUtils.IsThereAnAppToTakePictures(AddCarActivity.this)) {
+                                /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(AddCarActivity.this)) {
                                     dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                     if (!dir.exists()) {
                                         dir.mkdir();
@@ -454,15 +461,15 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                                     startActivityForResult(intent, TAKE_PHOTO);
                                 } else {
                                     Toast.makeText(AddCarActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                }
-
+                                }*/
+                                autoObtainCameraPermission();
                                 baseNiceDialog.dismiss();
                             }
                         });
                         viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                 if (!dir.exists()) {
                                     dir.mkdir();
                                 }
@@ -473,8 +480,9 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                                 } else {
                                     getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                                 }
-                                getAlbum.setType("image/*");
-                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                getAlbum.setType("image*//*");
+                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
+                                autoObtainStoragePermission();
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -489,6 +497,98 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 .setShowBottom(true)
                 .show(getSupportFragmentManager());
     }
+
+    /**
+     * 自动获取相机权限
+     */
+    private void autoObtainCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                Toast.makeText(AddCarActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+            }
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+        } else {//有权限直接调用系统相机拍照
+            if (hasSdcard()) {
+                imageUri = Uri.fromFile(fileUri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+            } else {
+                Toast.makeText(AddCarActivity.this, "设备没有SD卡", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (hasSdcard()) {
+                        imageUri = Uri.fromFile(fileUri);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                            imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                        PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+                    } else {
+                        Toast.makeText(AddCarActivity.this, "设备没有SD卡", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AddCarActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+
+            }
+            case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+                } else {
+                    Toast.makeText(AddCarActivity.this, "请允许打操作SDCard", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 自动获取sdk权限
+     */
+
+    private void autoObtainStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+        }
+
+    }
+
+    private void showImages(Bitmap bitmap) {
+        carPhotoIv.setImageBitmap(bitmap);
+    }
+
+    /**
+     * 检查设备是否存在SDCard的工具方法
+     */
+    public static boolean hasSdcard() {
+        String state = Environment.getExternalStorageState();
+        return state.equals(Environment.MEDIA_MOUNTED);
+    }
+
+    private File fileUri = new File(Environment.getExternalStorageDirectory().getPath() + "/photo.jpg");
+    private File fileCropUri = new File(Environment.getExternalStorageDirectory().getPath() + "/crop_photo.jpg");
+    private Uri imageUri;
+    private Uri cropImageUri;
+    private int output_X = 480;
+    private int output_Y = 480;
+    private static final int CODE_GALLERY_REQUEST = 0xa0;
+    private static final int CODE_CAMERA_REQUEST = 0xa1;
+    private static final int CODE_RESULT_REQUEST = 0xa2;
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
 
     /**
      * 選擇車輛類型
