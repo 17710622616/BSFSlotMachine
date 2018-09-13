@@ -195,7 +195,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     carModelList.addAll(carInsideModelsFromNet);
                     // List去重
                     deWeightListById();
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(ChooseCarActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ChooseCarActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {

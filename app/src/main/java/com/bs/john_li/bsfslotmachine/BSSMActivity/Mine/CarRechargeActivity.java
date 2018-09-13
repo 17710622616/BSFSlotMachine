@@ -245,7 +245,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 1);
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(CarRechargeActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(CarRechargeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }  else {

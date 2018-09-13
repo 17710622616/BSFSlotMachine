@@ -391,7 +391,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     } else {
                         Toast.makeText(PersonalSettingActivity.this, "修改密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
-                } else if (model.getCode().equals("10001")) {
+                } else if (model.getCode().equals("10000")) {
                     SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -446,7 +446,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     } else {
                         Toast.makeText(PersonalSettingActivity.this, "創建密碼失敗，請重試或聯繫客服！", Toast.LENGTH_SHORT).show();
                     }
-                } else if(model.getCode().equals("10001")) {
+                } else if(model.getCode().equals("10000")) {
                     payPwTv.setText("修改支付密碼");
                     SPUtils.put(PersonalSettingActivity.this, "HasPayPw", "1");
                     dialog.dismiss();
@@ -593,7 +593,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                             nickNameTv.setText(mUserInfoModel.getNickname());
                             break;
                     }
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -638,7 +638,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     SPUtils.put(PersonalSettingActivity.this, "UserInfo", userInfoJson);
                     EventBus.getDefault().post("LOGIN");
                     Toast.makeText(PersonalSettingActivity.this, "上傳頭像成功！", Toast.LENGTH_LONG).show();
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -695,7 +695,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     Toast.makeText(PersonalSettingActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     getUserInfo(model.getData().toString());
-                } else if (model.getCode().equals("10001")) {
+                } else if (model.getCode().equals("10000")) {
                     SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -759,7 +759,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     Log.d("getUserURI", "獲取用戶信息成功");
                     EventBus.getDefault().post("LOGIN");
                     finish();
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(PersonalSettingActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PersonalSettingActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {

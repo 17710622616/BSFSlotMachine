@@ -225,7 +225,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     carModelList.remove(position);
                     mSmartCarListRefreshAdapter.refreshListView(carModelList);
                     Toast.makeText(CarListActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
-                } else if (model.getCode().equals("10001")){
+                } else if (model.getCode().equals("10000")){
                     SPUtils.put(CarListActivity.this, "UserToken", "");
                     Toast.makeText(CarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
@@ -281,7 +281,7 @@ public class CarListActivity extends BaseActivity implements View.OnClickListene
                     // List去重
                     deWeightListById();
                     Log.d("car_list_count", "長度：" + carModelList.size());
-                } else if (model.getCode() == 10001){
+                } else if (model.getCode() == 10000){
                     SPUtils.put(CarListActivity.this, "UserToken", "");
                     Toast.makeText(CarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {

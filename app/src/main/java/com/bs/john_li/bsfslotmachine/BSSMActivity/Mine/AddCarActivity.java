@@ -318,7 +318,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     } else {
                         Toast.makeText(AddCarActivity.this, " 修改車輛信息失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                     }
-                } else if (model.getCode().equals("10001")) {
+                } else if (model.getCode().equals("10000")) {
                     SPUtils.put(AddCarActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(AddCarActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -399,7 +399,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     intent.putExtra("NEW_CAR_FROM_ADD", new Gson().toJson(carInsideModel));
                     setResult(RESULT_OK, intent);
                     finish();
-                } else if (model.getCode().equals("10001")){
+                } else if (model.getCode().equals("10000")){
                     SPUtils.put(AddCarActivity.this, "UserToken", "");
                     Toast.makeText(AddCarActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
@@ -822,7 +822,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     setResult(RESULT_OK, intent);
                     finish();
                     Toast.makeText(AddCarActivity.this, "刪除成功！", Toast.LENGTH_SHORT).show();
-                } else if (model.getCode().equals("10001")){
+                } else if (model.getCode().equals("10000")){
                     SPUtils.put(AddCarActivity.this, "UserToken", "");
                     Toast.makeText(AddCarActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {

@@ -157,7 +157,7 @@ public class AllOrderFragment extends LazyLoadFragment {
                     totolCarCount = model.getData().getTotalCount();
                     List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
-                } else if (model.getCode() == 10001){
+                } else if (model.getCode() == 10000){
                     SPUtils.put(getActivity(), "UserToken", "");
                     Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {

@@ -176,8 +176,6 @@ public class SearchSlotMachineListActivity extends BaseActivity implements View.
                     } else {
                         Toast.makeText(SearchSlotMachineListActivity.this, "獲取咪錶錯誤！", Toast.LENGTH_SHORT).show();
                     }
-                } else if (model.getCode() == 10001){
-                    Toast.makeText(SearchSlotMachineListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(SearchSlotMachineListActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
                 }

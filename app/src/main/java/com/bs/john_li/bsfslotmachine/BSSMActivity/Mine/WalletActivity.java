@@ -9,7 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
@@ -67,7 +69,11 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
         walletHead.setLeft(this);
         walletHead.setRightText("明細", this);
 
-        callNetGetWalletBalance();
+        if (BSSMCommonUtils.isLoginNow(WalletActivity.this)) {
+            callNetGetWalletBalance();
+        } else {
+            startActivityForResult(new Intent(WalletActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+        }
     }
 
     /**
@@ -83,6 +89,9 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     balanceTv.setText("MOP $ " + String.format("%.2f", Double.parseDouble(model.getData())).toString());
+                } else if (model.getCode().equals("10000")) {
+                    SPUtils.put(WalletActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(WalletActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(WalletActivity.this, "獲取餘額失敗" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }

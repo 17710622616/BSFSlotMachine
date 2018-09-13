@@ -335,7 +335,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 if (model.getCode() == 200) {
                     // 發起支付寶支付，喚起支付寶SDK
                     callAliPay(model.getData());
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -422,7 +422,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
 
                     wxApi.registerApp(BSSMConfigtor.WECHAT_APPID);
                     wxApi.sendReq(request);
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -530,7 +530,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                                             }
                                         });
                                     }
-                                } else if (model.getCode().equals("10001")) {
+                                } else if (model.getCode().equals("10000")) {
                                     SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
                                     startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                                 } else {
@@ -602,7 +602,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                             orderPaySuccess();
                         }
                     }, 1500);
-                } else if (model.getCode().equals("10001")) {
+                } else if (model.getCode().equals("10000")) {
                     SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
                     startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {

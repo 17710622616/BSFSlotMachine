@@ -473,7 +473,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 4);
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -530,7 +530,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("exchange", model.getData().getExchange());
                     intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
                     startActivityForResult(intent, 3);
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -593,7 +593,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                 }
                                 carInsideModelList.add(carModel);
                             }
-                        } else if (model.getCode() == 10001) {
+                        } else if (model.getCode() == 10000) {
                             SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
                             startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                         } else {
@@ -642,7 +642,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
                     orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
                     orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
@@ -689,7 +689,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 amountLimit = 0;
                 if (model.getCode() == 200) {
                     amountLimit = model.getData().getAmountLimit();
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {

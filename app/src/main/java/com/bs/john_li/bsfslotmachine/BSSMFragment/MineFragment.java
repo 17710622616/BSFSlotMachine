@@ -214,7 +214,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     balanceTv.setText(String.format("%.2f", Double.parseDouble(model.getData())).toString() + "蚊");
-                } else if (model.getCode().equals("10001")) {
+                } else if (model.getCode().equals("10000")) {
                     SPUtils.put(getActivity(), "UserToken", "");
                     SPUtils.put(getActivity(), "UserInfo", "");
                     refreshUI();

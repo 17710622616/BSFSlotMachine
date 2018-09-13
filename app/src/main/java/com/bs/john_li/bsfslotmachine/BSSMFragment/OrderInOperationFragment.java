@@ -176,7 +176,7 @@ public class OrderInOperationFragment extends LazyLoadFragment {
                     totolCarCount = model.getData().getTotalCount();
                     List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
-                } else if (model.getCode() == 10001) {
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(getActivity(), "UserToken", "");
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {

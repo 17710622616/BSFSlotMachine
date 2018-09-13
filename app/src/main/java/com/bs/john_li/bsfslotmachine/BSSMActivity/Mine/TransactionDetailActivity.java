@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMchineListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartTransactionDetialListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
@@ -87,7 +88,11 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
             public void onRefresh(RefreshLayout refreshlayout) {
                 tdList.clear();
                 pageNo = 1;
-                callNetChangeData();
+                if (BSSMCommonUtils.isLoginNow(TransactionDetailActivity.this)) {
+                    callNetChangeData();
+                } else {
+                    startActivityForResult(new Intent(TransactionDetailActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -100,7 +105,11 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    callNetChangeData();
+                    if (BSSMCommonUtils.isLoginNow(TransactionDetailActivity.this)) {
+                        callNetChangeData();
+                    } else {
+                        startActivityForResult(new Intent(TransactionDetailActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }
                 }
             }
         });
@@ -155,7 +164,10 @@ public class TransactionDetailActivity extends BaseActivity implements View.OnCl
                     List<WalletRecordOutModel.DataBeanX.WalletRecordModel> list = model.getData().getData();
                     totalCount = model.getData().getTotalCount();
                     tdList.addAll(list);
-                } else {
+                }  else if (model.getCode() == 10000) {
+                    SPUtils.put(TransactionDetailActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(TransactionDetailActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                }else {
                     Toast.makeText(TransactionDetailActivity.this, "錢包明細獲取失敗╮(╯▽╰)╭" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
