@@ -1,8 +1,10 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -14,7 +16,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.BoolRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +57,7 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.TestCarListModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PhotoUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
@@ -106,10 +113,14 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     // 拍照的參數
-    public static final int TAKE_PHOTO = 1;
-    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
+    //private File file;  //照片文件
     private File dir; //圖片文件夾路徑
-    private File file;  //照片文件
+    private File fileUri;//照片文件路徑
+    private Uri imageUri;//照片文件路徑
+    private static final int CODE_GALLERY_REQUEST = 2;   //0xa0
+    private static final int CODE_CAMERA_REQUEST = 1;    //0xa1
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
     private OSSClient oss;
 
     @Override
@@ -178,7 +189,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                         viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                if(BSSMCommonUtils.IsThereAnAppToTakePictures(ParkingOrderActivity.this)) {
+                                                /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(ParkingOrderActivity.this)) {
                                                     dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                                     if (!dir.exists()) {
                                                         dir.mkdir();
@@ -192,14 +203,15 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                                     startActivityForResult(intent, TAKE_PHOTO);
                                                 } else {
                                                     Toast.makeText(ParkingOrderActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                                }
+                                                }*/
+                                                autoObtainCameraPermission();
                                                 baseNiceDialog.dismiss();
                                             }
                                         });
                                         viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                                /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                                 if (!dir.exists()) {
                                                     dir.mkdir();
                                                 }
@@ -210,8 +222,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                                 } else {
                                                     getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                                                 }
-                                                getAlbum.setType("image/*");
-                                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                                getAlbum.setType("image*//*");
+                                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
+                                                autoObtainStoragePermission();
                                                 baseNiceDialog.dismiss();
                                             }
                                         });
@@ -320,6 +333,11 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
             }
         }
+
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
     }
 
     @Override
@@ -401,6 +419,71 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+
+    /**
+     * 自动获取相机权限
+     */
+    private void autoObtainCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                Toast.makeText(ParkingOrderActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+            }
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+        } else {//有权限直接调用系统相机拍照
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date = new Date(System.currentTimeMillis());
+            fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+            imageUri = Uri.fromFile(fileUri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+            PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+        }
+    }
+
+    /**
+     * 自动获取相冊权限
+     */
+    private void autoObtainStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+                    imageUri = Uri.fromFile(fileUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                    PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(ParkingOrderActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+
+            }
+            case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+                } else {
+                    Toast.makeText(ParkingOrderActivity.this, "请允许打操作SDCard", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
     /**
      * 提交位置咪錶的照片
      * @param loadDialog
@@ -448,8 +531,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             List<String> cachList = new ArrayList();
             for (int i = 0; i < imgUrlList.size(); i++) {
                 if (i != imgUrlList.size() - 1) {
-                    File file = new File(imgUrlList.get(i));
-                    cachList.add(file.getName());
+                    File fileUri = new File(imgUrlList.get(i));
+                    cachList.add(fileUri.getName());
                 }
             }
             jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(cachList));
@@ -1132,18 +1215,18 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                     carInsideModelList.add(0, carModel);
                     refreshCarChoosed();
                     break;
-                case TAKE_PHOTO:
+                case CODE_CAMERA_REQUEST:
                     Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    Uri contentUri = Uri.fromFile(file);
+                    Uri contentUri = Uri.fromFile(fileUri);
                     mediaScanIntent.setData(contentUri);
                     sendBroadcast(mediaScanIntent);
-                    imgUrlList.add(0, file.getPath());
+                    imgUrlList.add(0, fileUri.getPath());
                     mPhotoAdapter.refreshData(imgUrlList);
                     break;
-                case TAKE_PHOTO_FROM_ALBUM:
+                case CODE_GALLERY_REQUEST:
                     String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
-                    file = new File(imagePath);
-                    imgUrlList.add(0, file.getPath());
+                    fileUri = new File(imagePath);
+                    imgUrlList.add(0, fileUri.getPath());
                     mPhotoAdapter.refreshData(imgUrlList);
                     break;
                 case 3:
@@ -1219,8 +1302,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-        if (file != null){
-            outState.putString("file_path", file.getPath());
+        if (fileUri != null){
+            outState.putString("file_path", fileUri.getPath());
         }
 
         outState.putString("way", way);
@@ -1236,7 +1319,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         if (savedInstanceState.get("file_path") != null) {
             String cacheFileName = savedInstanceState.get("file_path").toString();
             if (!cacheFileName.equals("")) {
-                file = new File(cacheFileName);
+                fileUri = new File(cacheFileName);
             }
         }
 

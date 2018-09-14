@@ -16,6 +16,14 @@
         android:textSize="20sp"
         android:textColor="@color/colorWight"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="因早上9時本服務需要代入大量車輛為確保各位用戶的利益本服務將於8時就會開始代其入錶所以如需早上9時-9時30分開始代入咪錶的客戶將會多扣一小時的入咪錶費用"
+        android:textSize="12sp"
+        android:textColor="@color/colorBlack"/>
+
     <com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
         android:id="@+id/choose_money_sb"
         android:layout_width="match_parent"

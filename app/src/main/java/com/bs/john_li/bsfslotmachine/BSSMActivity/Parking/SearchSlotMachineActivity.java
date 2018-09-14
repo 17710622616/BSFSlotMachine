@@ -1,13 +1,19 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +32,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.SearchSlotMachineAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PhotoUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
@@ -68,10 +75,14 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     // 搜索結果集合
     private List<SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel> smList;
 
-    public static final int TAKE_PHOTO = 1;
-    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
+    private File fileUri;//照片文件路徑
+    private Uri imageUri;//照片文件路徑
+    private static final int CODE_GALLERY_REQUEST = 2;   //0xa0
+    private static final int CODE_CAMERA_REQUEST = 1;    //0xa1
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
     private File dir; //圖片文件夾路徑
-    private File file;  //照片文件
+    //private File fileUri;  //照片文件
     private int pageSize = 10;
     private int pageNo = 1;
     private long totalCount;
@@ -115,7 +126,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                                 viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
+                                        /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
                                             dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                             if (!dir.exists()) {
                                                 dir.mkdir();
@@ -124,19 +135,20 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                                             Date date = new Date(System.currentTimeMillis());
-                                            file = new File(dir, "location" + format.format(date) + ".jpg");
-                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                                            fileUri = new File(dir, "location" + format.format(date) + ".jpg");
+                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileUri));
                                             startActivityForResult(intent, TAKE_PHOTO);
                                         } else {
                                             Toast.makeText(SearchSlotMachineActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                        }
+                                        }*/
+                                        autoObtainCameraPermission();
                                         baseNiceDialog.dismiss();
                                     }
                                 });
                                 viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                        /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                         if (!dir.exists()) {
                                             dir.mkdir();
                                         }
@@ -147,8 +159,9 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                                         } else {
                                             getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                                         }
-                                        getAlbum.setType("image/*");
-                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
+                                        getAlbum.setType("image*//*");
+                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
+                                        autoObtainStoragePermission();
                                         baseNiceDialog.dismiss();
                                     }
                                 });
@@ -241,6 +254,76 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+    }
+
+
+    /**
+     * 自动获取相机权限
+     */
+    private void autoObtainCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                Toast.makeText(SearchSlotMachineActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+            }
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+        } else {//有权限直接调用系统相机拍照
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date = new Date(System.currentTimeMillis());
+            fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+            imageUri = Uri.fromFile(fileUri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                imageUri = FileProvider.getUriForFile(SearchSlotMachineActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+            PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+        }
+    }
+
+    /**
+     * 自动获取相冊权限
+     */
+    private void autoObtainStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+                    imageUri = Uri.fromFile(fileUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        imageUri = FileProvider.getUriForFile(SearchSlotMachineActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                    PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(SearchSlotMachineActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+
+            }
+            case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+                } else {
+                    Toast.makeText(SearchSlotMachineActivity.this, "请允许打操作SDCard", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 
     /**
@@ -430,21 +513,21 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         }
         Intent intent1 = new Intent(this, ParkingOrderActivity.class);
         switch(requestCode) {
-            case TAKE_PHOTO:
+            case CODE_CAMERA_REQUEST:
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(file);
+                Uri contentUri = Uri.fromFile(fileUri);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
                 intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
-                intent1.putExtra("imageUri", file.getPath());
+                intent1.putExtra("imageUri", fileUri.getPath());
                 startActivity(intent1);
                 finish();
                 break;
-            case TAKE_PHOTO_FROM_ALBUM:
+            case CODE_GALLERY_REQUEST:
                 String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
-                file = new File(imagePath);
+                fileUri = new File(imagePath);
                 intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
-                intent1.putExtra("imageUri", file.getPath());
+                intent1.putExtra("imageUri", fileUri.getPath());
                 startActivity(intent1);
                 finish();
                 break;
@@ -456,8 +539,8 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (file != null){
-            outState.putString("file_path", file.getPath());
+        if (fileUri != null){
+            outState.putString("file_path", fileUri.getPath());
         }
     }
 
@@ -467,7 +550,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         String cacheFileName = savedInstanceState.get("file_path").toString();
         if (cacheFileName != null) {
             if (!cacheFileName.equals("")) {
-                file = new File(cacheFileName);
+                fileUri = new File(cacheFileName);
             }
         }
     }

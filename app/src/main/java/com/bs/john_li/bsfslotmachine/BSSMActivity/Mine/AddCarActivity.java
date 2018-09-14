@@ -75,10 +75,13 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv,outPutTv, deleteCarTV;
     private ProgressBar ivProgress;
 
-    public static final int TAKE_PHOTO = 1;
-    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
-    private File file;  //照片文件
+    private File fileUri;//照片文件路徑
+    private Uri imageUri;//照片文件路徑
+    private static final int CODE_GALLERY_REQUEST = 2;   //0xa0
+    private static final int CODE_CAMERA_REQUEST = 1;    //0xa1
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
     private CarModel.CarCountAndListModel.CarInsideModel carInsideModel;
     private String carType, carNo, carModel, carBrand, carStyle;
@@ -199,6 +202,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             carInsideModel.setCreateTime(null);
             carInsideModel.setUpdateTime(null);
         }
+
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
     }
 
     @Override
@@ -253,7 +261,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         if (startWay.equals("update")) {
             if (!carInsideModel.getCarNo().equals("")) {
                 if (carInsideModel.getIfPerson() != 0) {
-                    if (file != null) {
+                    if (fileUri != null) {
                         putImg();
                     } else {
                         // 修改車輛信息
@@ -266,8 +274,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 Toast.makeText(this, "您還沒填寫車牌號碼呢，快去填寫吧", Toast.LENGTH_SHORT).show();
             }
         } else {
-            if (file != null) {
-                if (!file.getPath().equals("")) {
+            if (fileUri != null) {
+                if (!fileUri.getPath().equals("")) {
                     if (!carInsideModel.getCarNo().equals("")) {
                         if (carInsideModel.getIfPerson() != 0) {
                             //uploadImage();
@@ -296,8 +304,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            if (file != null) {
-                carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + file.getName());
+            if (fileUri != null) {
+                carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileUri.getName());
             }
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
@@ -367,22 +375,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + file.getName());
+            carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileUri.getName());
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
-            /*switch (carType) {
-                case "私家車":
-                    jsonObj.put("ifPerson",0);
-                    break;
-                case "輕型摩托車":
-                    jsonObj.put("ifPerson",1);
-                    break;
-                case "重型摩托車":
-                    jsonObj.put("ifPerson",2);
-                    break;
-                case "重型汽車":
-                    jsonObj.put("ifPerson",3);
-                    break;
-            }*/
             jsonObj.put("ifPerson",carInsideModel.getIfPerson());
             jsonObj.put("carNo",carInsideModel.getCarNo());
             jsonObj.put("modelForCar",carInsideModel.getModelForCar());
@@ -417,7 +411,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(AddCarActivity.this, "添加cheliang" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCarActivity.this, "添加車輛" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(AddCarActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
@@ -447,21 +441,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(AddCarActivity.this)) {
-                                    dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                    if (!dir.exists()) {
-                                        dir.mkdir();
-                                    }
-
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                                    Date date = new Date(System.currentTimeMillis());
-                                    file = new File(dir, "car" + format.format(date) + ".jpg");
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                                    startActivityForResult(intent, TAKE_PHOTO);
-                                } else {
-                                    Toast.makeText(AddCarActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                }*/
                                 autoObtainCameraPermission();
                                 baseNiceDialog.dismiss();
                             }
@@ -469,19 +448,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                         viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                if (!dir.exists()) {
-                                    dir.mkdir();
-                                }
-
-                                Intent getAlbum;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    getAlbum = new Intent(Intent.ACTION_PICK);
-                                } else {
-                                    getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
-                                }
-                                getAlbum.setType("image*//*");
-                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
                                 autoObtainStoragePermission();
                                 baseNiceDialog.dismiss();
                             }
@@ -510,14 +476,24 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             }
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
         } else {//有权限直接调用系统相机拍照
-            if (hasSdcard()) {
-                imageUri = Uri.fromFile(fileUri);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
-                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
-            } else {
-                Toast.makeText(AddCarActivity.this, "设备没有SD卡", Toast.LENGTH_SHORT).show();
-            }
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date = new Date(System.currentTimeMillis());
+            fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+            imageUri = Uri.fromFile(fileUri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+            PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+        }
+    }
+
+    /**
+     * 自动获取相冊权限
+     */
+    private void autoObtainStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
         }
     }
 
@@ -528,14 +504,13 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         switch (requestCode) {
             case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (hasSdcard()) {
-                        imageUri = Uri.fromFile(fileUri);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                            imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
-                        PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
-                    } else {
-                        Toast.makeText(AddCarActivity.this, "设备没有SD卡", Toast.LENGTH_SHORT).show();
-                    }
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+                    imageUri = Uri.fromFile(fileUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                    PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
                 } else {
                     Toast.makeText(AddCarActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
                 }
@@ -554,43 +529,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 自动获取sdk权限
-     */
-
-    private void autoObtainStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
-        } else {
-            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
-        }
-
-    }
-
-    private void showImages(Bitmap bitmap) {
-        carPhotoIv.setImageBitmap(bitmap);
-    }
-
-    /**
-     * 检查设备是否存在SDCard的工具方法
-     */
-    public static boolean hasSdcard() {
-        String state = Environment.getExternalStorageState();
-        return state.equals(Environment.MEDIA_MOUNTED);
-    }
-
-    private File fileUri = new File(Environment.getExternalStorageDirectory().getPath() + "/photo.jpg");
-    private File fileCropUri = new File(Environment.getExternalStorageDirectory().getPath() + "/crop_photo.jpg");
-    private Uri imageUri;
-    private Uri cropImageUri;
-    private int output_X = 480;
-    private int output_Y = 480;
-    private static final int CODE_GALLERY_REQUEST = 0xa0;
-    private static final int CODE_CAMERA_REQUEST = 0xa1;
-    private static final int CODE_RESULT_REQUEST = 0xa2;
-    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
-    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
-
-    /**
      * 選擇車輛類型
      */
     private void chooseCarType() {
@@ -603,7 +541,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                             @Override
                             public void onClick(View view) {
                                 carInsideModel.setIfPerson(1);
-                                carTypeTv.setText("車輛類型：輕型摩托車");
+                                carTypeTv.setText("車輛類型：輕重型摩托車");
                                 baseNiceDialog.dismiss();
                             }
                         });
@@ -615,14 +553,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                                 baseNiceDialog.dismiss();
                             }
                         });
-                        /*viewHolder.setOnClickListener(R.id.car_type_heavy, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                carInsideModel.setIfPay(1);
-                                carTypeTv.setText("車輛類型：重型摩托車");
-                                baseNiceDialog.dismiss();
-                            }
-                        });*/
                         viewHolder.setOnClickListener(R.id.car_type_heavy_car, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -786,17 +716,17 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
             return;
         }
         switch(requestCode) {
-            case TAKE_PHOTO:
+            case CODE_CAMERA_REQUEST:
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(file);
+                Uri contentUri = Uri.fromFile(fileUri);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
-                x.image().bind(carPhotoIv, file.getPath(), options);
+                x.image().bind(carPhotoIv, fileUri.getPath(), options);
                 break;
-            case TAKE_PHOTO_FROM_ALBUM:
+            case CODE_GALLERY_REQUEST:
                 String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
-                file = new File(imagePath);
-                x.image().bind(carPhotoIv, file.getPath(), options);
+                fileUri = new File(imagePath);
+                x.image().bind(carPhotoIv, fileUri.getPath(), options);
                 break;
             default:
                 break;
@@ -806,8 +736,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (file != null){
-            outState.putString("file_path", file.getPath());
+        if (fileUri != null){
+            outState.putString("file_path", fileUri.getPath());
         }
 
         if (carType != null){
@@ -843,11 +773,11 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         String cacheFileName = savedInstanceState.get("file_path").toString();
         if (cacheFileName != null) {
             if (!cacheFileName.equals("")) {
-                file = new File(cacheFileName);
+                fileUri = new File(cacheFileName);
             }
         }
 
-        x.image().bind(carPhotoIv, file.getPath(), options);
+        x.image().bind(carPhotoIv, fileUri.getPath(), options);
 
         carType = savedInstanceState.get("carType").toString();
         carNo = savedInstanceState.get("carNo").toString();
@@ -953,8 +883,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 上傳圖片到OSS
      */
     private void putImg() {
-        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
-        File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(fileUri.getPath(), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, fileUri.getPath());  //按质量压缩图片
 
         String fileName = filePut.getName();
         String filePath = filePut.getPath();

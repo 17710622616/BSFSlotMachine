@@ -174,6 +174,7 @@
                 <TextView
                     android:id="@+id/parking_order_machineno_tv"
                     style="@style/MineItemTextView"
+                    android:inputType="number"
                     android:text="咪錶編號：" />
 
                 <ImageView
