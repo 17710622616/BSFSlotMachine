@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <ScrollView
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -29,5 +29,9 @@
 为便于我们及时处理，请準備好你遇到的问题详细描述（问题现象、操作过程、可能原因等）"
                 android:textColor="@color/colorBlack"/>
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
+    <WebView
+        android:id="@+id/wallet_FAQ_wv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>

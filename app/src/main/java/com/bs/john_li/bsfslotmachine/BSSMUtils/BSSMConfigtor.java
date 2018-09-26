@@ -104,6 +104,8 @@ public class BSSMConfigtor {
     public final static String GET_MAX_AMOUNT_SLOT_MACHINE_UNKOWN = "soltMachine/chargeUnkownLimit";
     // 錢包支付的接口
     public final static String POST_WALLET_PAY = "pay/walletPay?token=";
+    // 錢包常見問題的接口
+    public final static String GET_WALLET_FAQ_WEB = "systemProfile/walletIndex";
     // 微信支付获取prepay_id的接口
     public final static String POST_WECHAT_PAY_PRE_PAY_ID = "pay/weixinTrade?token=";
     // 微信支付获取prepay_id的接口
