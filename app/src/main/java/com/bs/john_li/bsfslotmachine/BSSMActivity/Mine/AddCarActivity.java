@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -61,7 +62,9 @@ import org.xutils.x;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 添加車輛
@@ -98,13 +101,16 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     if (startWay.equals("update")) {
                         // 修改車輛信息
                         callNetUpdateCar();
+                        headView.getHeadRight().setEnabled(true);
                     } else {
                         // 提交車輛信息
                         callNetSubmiteCar();
+                        headView.getHeadRight().setEnabled(true);
                     }
                     break;
                 case -1:    // 車輛圖片提交至OSS失敗
                     Toast.makeText(AddCarActivity.this, "車輛圖片上傳失敗，請重試！", Toast.LENGTH_LONG).show();
+                    headView.getHeadRight().setEnabled(true);
                     break;
             }
         }
@@ -258,6 +264,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 提交車輛信息
      */
     private void submitCarData() {
+        headView.getHeadRight().setEnabled(false);
         if (startWay.equals("update")) {
             if (!carInsideModel.getCarNo().equals("")) {
                 if (carInsideModel.getIfPerson() != 0) {
@@ -357,7 +364,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onFinished() {
-
             }
         });
     }
@@ -468,21 +474,27 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 自动获取相机权限
      */
     private void autoObtainCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                Toast.makeText(AddCarActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    Toast.makeText(AddCarActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                }
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+            } else {//有权限直接调用系统相机拍照
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date date = new Date(System.currentTimeMillis());
+                fileUri = new File(dir.getPath() + "/car" + format.format(date) + ".jpg");
+                imageUri = Uri.fromFile(fileUri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                }
+
+                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
             }
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
-        } else {//有权限直接调用系统相机拍照
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-            Date date = new Date(System.currentTimeMillis());
-            fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
-            imageUri = Uri.fromFile(fileUri);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
-            PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+        }catch (Exception e) {
+
         }
     }
 
@@ -490,11 +502,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 自动获取相冊权限
      */
     private void autoObtainStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
-        } else {
-            PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
-        }
+        // 使用意图直接调用手机相册  
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // 打开手机相册,设置请求码  
+        startActivityForResult(intent, CODE_GALLERY_REQUEST);
     }
 
     @Override
@@ -509,7 +520,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                     fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
                     imageUri = Uri.fromFile(fileUri);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                        imageUri = FileProvider.getUriForFile(AddCarActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
                     PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
                 } else {
                     Toast.makeText(AddCarActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
@@ -519,11 +530,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
             }
             case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
-                } else {
-                    Toast.makeText(AddCarActivity.this, "请允许打操作SDCard", Toast.LENGTH_SHORT).show();
-                }
+                // 使用意图直接调用手机相册  
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // 打开手机相册,设置请求码  
+                startActivityForResult(intent, CODE_GALLERY_REQUEST);
                 break;
         }
     }
@@ -724,7 +734,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
                 x.image().bind(carPhotoIv, fileUri.getPath(), options);
                 break;
             case CODE_GALLERY_REQUEST:
-                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                Uri uri = data.getData();
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, uri);
                 fileUri = new File(imagePath);
                 x.image().bind(carPhotoIv, fileUri.getPath(), options);
                 break;

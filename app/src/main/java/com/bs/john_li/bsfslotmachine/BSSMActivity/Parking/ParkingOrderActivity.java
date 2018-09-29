@@ -424,21 +424,27 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 自动获取相机权限
      */
     private void autoObtainCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                Toast.makeText(ParkingOrderActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    Toast.makeText(ParkingOrderActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                }
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+            } else {//有权限直接调用系统相机拍照
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date date = new Date(System.currentTimeMillis());
+                fileUri = new File(dir.getPath() + "/order" + format.format(date) + ".jpg");
+                imageUri = Uri.fromFile(fileUri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                }
+
+                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
             }
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
-        } else {//有权限直接调用系统相机拍照
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-            Date date = new Date(System.currentTimeMillis());
-            fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
-            imageUri = Uri.fromFile(fileUri);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
-            PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+        }catch (Exception e) {
+
         }
     }
 
@@ -446,11 +452,16 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 自动获取相冊权限
      */
     private void autoObtainStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST_CODE);
         } else {
             PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
-        }
+        }*/
+
+        // 使用意图直接调用手机相册  
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // 打开手机相册,设置请求码  
+        startActivityForResult(intent, CODE_GALLERY_REQUEST);
     }
 
     @Override
@@ -462,10 +473,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     Date date = new Date(System.currentTimeMillis());
-                    fileUri = new File(dir.getPath() + "car" + format.format(date) + ".jpg");
+                    fileUri = new File(dir.getPath() + "/order" + format.format(date) + ".jpg");
                     imageUri = Uri.fromFile(fileUri);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.zz.fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                        imageUri = FileProvider.getUriForFile(ParkingOrderActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
                     PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
                 } else {
                     Toast.makeText(ParkingOrderActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();

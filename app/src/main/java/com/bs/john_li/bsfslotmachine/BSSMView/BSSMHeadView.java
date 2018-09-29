@@ -106,4 +106,11 @@ public class BSSMHeadView extends LinearLayout {
         lp.height = 90;
         headLL.setLayoutParams(lp);
     }
+
+    /**
+     * 获取右边按钮
+     */
+    public ImageView getHeadRight() {
+        return rightIv;
+    }
 }

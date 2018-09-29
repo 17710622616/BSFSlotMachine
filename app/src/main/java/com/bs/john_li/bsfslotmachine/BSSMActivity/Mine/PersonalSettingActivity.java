@@ -1,7 +1,9 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,7 +13,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +44,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.DigestUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PhotoUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
@@ -77,8 +84,13 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     private String nickName, phoneNum, loginPw;
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
 
-    public static final int TAKE_PHOTO = 1;
-    public static final int TAKE_PHOTO_FROM_ALBUM = 2;
+    //private File file;  //照片文件
+    private File fileUri;//照片文件路徑
+    private Uri imageUri;//照片文件路徑
+    private static final int CODE_GALLERY_REQUEST = 2;   //0xa0
+    private static final int CODE_CAMERA_REQUEST = 1;    //0xa1
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
     private static final int REQUEST_SMALL_IMAGE_CUTTING = 3;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
@@ -90,7 +102,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:     // 頭像提交至OSS成功
-                    mUserInfoModel.setHeadimg(file.getName());
+                    mUserInfoModel.setHeadimg(fileUri.getName());
                     updateUserHeadImg();
                     break;
                 case -1:    // 頭像提交至OSS失敗
@@ -155,6 +167,11 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         if (hasPayPw.equals("1")) {
             payPwTv.setText("修改支付密碼");
         }
+
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
     }
 
     @Override
@@ -173,7 +190,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                     @Override
                                     public void onClick(View view) {
                                         if(BSSMCommonUtils.IsThereAnAppToTakePictures(PersonalSettingActivity.this)) {
-                                            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                            /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                             if (!dir.exists()) {
                                                 dir.mkdir();
                                             }
@@ -183,7 +200,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                             Date date = new Date(System.currentTimeMillis());
                                             file = new File(dir, "head" + format.format(date) + ".jpg");
                                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                                            startActivityForResult(intent, TAKE_PHOTO);
+                                            startActivityForResult(intent, TAKE_PHOTO);*/
+                                            autoObtainCameraPermission();
                                         } else {
                                             Toast.makeText(PersonalSettingActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
                                         }
@@ -194,7 +212,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                 viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+                                        /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
                                         if (!dir.exists()) {
                                             dir.mkdir();
                                         }
@@ -205,9 +223,10 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                                         } else {
                                             getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                                         }
-                                        getAlbum.setType("image/*");
+                                        getAlbum.setType("image*//*");
                                         //startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);
-                                        startActivityForResult(getAlbum, REQUEST_SMALL_IMAGE_CUTTING);
+                                        startActivityForResult(getAlbum, REQUEST_SMALL_IMAGE_CUTTING);*/
+                                        autoObtainStoragePermission();
                                         baseNiceDialog.dismiss();
                                     }
                                 });
@@ -364,6 +383,80 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     }
 
     /**
+     * 自动获取相机权限
+     */
+    private void autoObtainCameraPermission() {
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    Toast.makeText(PersonalSettingActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                }
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+            } else {//有权限直接调用系统相机拍照
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date date = new Date(System.currentTimeMillis());
+                fileUri = new File(dir.getPath() + "/head" + format.format(date) + ".jpg");
+                imageUri = Uri.fromFile(fileUri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    imageUri = FileProvider.getUriForFile(PersonalSettingActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                }
+
+                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+            }
+        }catch (Exception e) {
+
+        }
+    }
+
+    /**
+     * 自动获取相冊权限
+     */
+    private void autoObtainStoragePermission() {
+        // 使用意图直接调用手机相册  
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // 打开手机相册,设置请求码  
+        startActivityForResult(intent, REQUEST_SMALL_IMAGE_CUTTING);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    fileUri = new File(dir.getPath() + "/head" + format.format(date) + ".jpg");
+                    imageUri = Uri.fromFile(fileUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        imageUri = FileProvider.getUriForFile(PersonalSettingActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                    PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(PersonalSettingActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+
+            }
+            case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
+                /*if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PhotoUtils.openPic(this, CODE_GALLERY_REQUEST);
+                } else {
+                    Toast.makeText(SearchSlotMachineActivity.this, "请允许打操作SDCard", Toast.LENGTH_SHORT).show();
+                }*/
+
+                // 使用意图直接调用手机相册  
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // 打开手机相册,设置请求码  
+                startActivityForResult(intent, REQUEST_SMALL_IMAGE_CUTTING);
+                break;
+        }
+    }
+
+    /**
      * 修改支付密碼
      */
     private void callNetUpdatePayPw(String oldPayPw, String payPw, final LinearLayout loadingLL, final BaseNiceDialog dialog) {
@@ -488,16 +581,16 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 }
                 //finish();
                 break;
-            case TAKE_PHOTO:
+            case CODE_CAMERA_REQUEST:
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(file);
+                Uri contentUri = Uri.fromFile(fileUri);
                 mediaScanIntent.setData(contentUri);
                 sendBroadcast(mediaScanIntent);
                 // 上傳頭像
                 putImg();
-                x.image().bind(headIv, file.getPath(), options);
+                x.image().bind(headIv, fileUri.getPath(), options);
                 break;
-            case TAKE_PHOTO_FROM_ALBUM:
+            case CODE_GALLERY_REQUEST:
                 /*String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
                 file = new File(imagePath);
                 headIv.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));*/
@@ -507,11 +600,11 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                         Bitmap photo = extras.getParcelable("data"); // 直接获得内存中保存的 bitmap
                         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                         Date date = new Date(System.currentTimeMillis());
-                        file = new File(dir, "head" + format.format(date) + ".jpg");
+                        fileUri = new File(dir, "/head" + format.format(date) + ".jpg");
                         // 保存图片
                         FileOutputStream outputStream = null;
                         try {
-                            outputStream = new FileOutputStream(file);
+                            outputStream = new FileOutputStream(fileUri);
                             photo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
                             outputStream.flush();
                             outputStream.close();
@@ -540,7 +633,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     intent.putExtra("outputY", 300);
                     intent.putExtra("scale", true);
                     intent.putExtra("return-data", true);
-                    startActivityForResult(intent, TAKE_PHOTO_FROM_ALBUM);
+                    startActivityForResult(intent, CODE_GALLERY_REQUEST);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -626,6 +719,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
      * 更改用戶头像
      */
     public void updateUserHeadImg() {
+        mUserInfoModel.setHeadimg("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileUri.getName());
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_USER_HEAD_IMG + mUserInfoModel.getHeadimg() + "&token=" + SPUtils.get(this, "UserToken", ""));
         params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {
@@ -821,8 +915,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (file != null){
-            outState.putString("file_path", file.getPath());
+        if (fileUri != null){
+            outState.putString("file_path", fileUri.getPath());
         }
     }
 
@@ -832,7 +926,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         String cacheFileName = savedInstanceState.get("file_path").toString();
         if (cacheFileName != null) {
             if (!cacheFileName.equals("")) {
-                file = new File(cacheFileName);
+                fileUri = new File(cacheFileName);
             }
         }
 
@@ -845,8 +939,8 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
      * 上傳圖片到OSS
      */
     private void putImg() {
-        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(file.getPath(), 1024f);// 按尺寸压缩图片
-        File filePut = BSSMCommonUtils.compressImage(bitmap, file.getPath());  //按质量压缩图片
+        Bitmap bitmap = BSSMCommonUtils.compressImageFromFile(fileUri.getPath(), 1024f);// 按尺寸压缩图片
+        File filePut = BSSMCommonUtils.compressImage(bitmap, fileUri.getPath());  //按质量压缩图片
 
         String fileName = filePut.getName();
         String filePath = filePut.getPath();

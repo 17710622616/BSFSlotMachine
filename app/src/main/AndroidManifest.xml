@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <!--shareSDK的權限-->
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -117,15 +118,16 @@
             android:exported="true"
             android:screenOrientation="portrait" />
 
-        <!--7.0以上打開相機兼容-->
+        <!--版本更新所要用到的 fileProvider 用于兼容7.0通知栏的安装-->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.bs.john_li.bsfslotmachine.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+            <!--元数据-->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths"/>
         </provider>
 
 
