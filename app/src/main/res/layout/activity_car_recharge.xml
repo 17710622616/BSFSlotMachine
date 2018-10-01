@@ -99,6 +99,17 @@
         android:padding="5dp">
 
         <RadioButton
+            android:id="@+id/one_day_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日費:35"
+            android:textSize="20sp"
+            android:textColor="#F45428"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:button="@null"
+            android:background="@drawable/selector_car_recharge_way"/>
+        <RadioButton
             android:id="@+id/one_month_rb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

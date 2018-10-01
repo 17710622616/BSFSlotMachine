@@ -22,6 +22,7 @@
     <!-- 蓝牙分享所需的权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!--android:roundIcon="@mipmap/ic_launcher_round"-->
     <application
@@ -79,6 +80,7 @@
         <activity android:name=".BSSMActivity.Mine.PaymentAgreementActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.ServiceActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.RegisterFQAActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.WithDrawalDeitalActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

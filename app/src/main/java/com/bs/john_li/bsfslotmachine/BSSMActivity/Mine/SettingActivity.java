@@ -1,5 +1,6 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Mine;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -9,7 +10,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -42,7 +46,7 @@ import java.io.File;
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private BSSMHeadView settingHead;
     private LinearLayout clearLL, updateVersion, aboutLL;
-    private TextView clearTv, loginOutTv;
+    private TextView clearTv, loginOutTv, verNameTv;
 
 
     private String m_newVerCode; //最新版的版本号
@@ -69,6 +73,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         updateVersion = findViewById(R.id.version_update);
         clearTv = findViewById(R.id.setting_clean_cache_tv);
         loginOutTv = findViewById(R.id.login_out_tv);
+        verNameTv = findViewById(R.id.setting_ver_name);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             settingHead.setHeadHight();
         }
@@ -86,6 +91,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void initData() {
         settingHead.setTitle("設置");
         settingHead.setLeft(this);
+        verNameTv.setText("ver:" + BSSMCommonUtils.getVerName(SettingActivity.this.getApplicationContext()));
     }
 
     @Override
@@ -272,7 +278,62 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      */
     private void down() {
         m_progressDlg.dismiss();
-        update();
+        //update();
+        openAPKFile(this, new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/BSSMPictures", m_appNameStr).getPath());
+    }
+
+    /**
+     * 打开安装包
+     *
+     * @param mContext
+     * @param fileUri
+     */
+    public void openAPKFile(Activity mContext, String fileUri) {
+        //DataEmbeddingUtil.dataEmbeddingAPPUpdate(fileUri);
+        // 核心是下面几句代码
+        if (null != fileUri) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                File apkFile = new File(fileUri);
+                //兼容7.0
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Uri contentUri = FileProvider.getUriForFile(SettingActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", apkFile);
+                    intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                    //兼容8.0
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        boolean hasInstallPermission = getPackageManager().canRequestPackageInstalls();
+                        if (!hasInstallPermission) {
+                            Toast.makeText(SettingActivity.this, "hasInstallPermission=" + hasInstallPermission, Toast.LENGTH_LONG);
+                            startInstallPermissionSettingActivity();
+                            return;
+                        }
+                    }
+                } else {
+                    intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
+                if (mContext.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    mContext.startActivity(intent);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                //DataEmbeddingUtil.dataEmbeddingAPPUpdate(e.toString());
+                //CommonUtils.makeEventToast(MyApplication.getContext(), MyApplication.getContext().getString(R.string.download_hint), false);
+                Toast.makeText(SettingActivity.this, "版本更新失敗，您亦可以嘗試去Google Play搜索(掌泊寶)更新最新版，謝謝！", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * 跳转到设置-允许安装未知来源-页面
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startInstallPermissionSettingActivity() {
+        //注意这个是8.0新API
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**

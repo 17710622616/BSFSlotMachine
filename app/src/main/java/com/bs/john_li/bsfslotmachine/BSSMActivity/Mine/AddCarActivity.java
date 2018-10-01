@@ -66,6 +66,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor.END_POINT;
+
 /**
  * 添加車輛
  * Created by John_Li on 27/9/2017.
@@ -312,7 +314,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         JSONObject jsonObj = new JSONObject();
         try {
             if (fileUri != null) {
-                carInsideModel.setImgUrl("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileUri.getName());
+                carInsideModel.setImgUrl(BSSMConfigtor.OSS_SERVER_CALLBACK_ADDRESS + fileUri.getName());
+                Toast.makeText(AddCarActivity.this, " 圖片地址：" + carInsideModel.getImgUrl(), Toast.LENGTH_SHORT).show();
             }
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
@@ -899,6 +902,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
         String fileName = filePut.getName();
         String filePath = filePut.getPath();
+        Toast.makeText(AddCarActivity.this, "fileName="+fileName + ",filePath=" + filePath, Toast.LENGTH_LONG);
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
 

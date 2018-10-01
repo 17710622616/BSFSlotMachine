@@ -54,7 +54,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
     private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv,submitTv;
     private ImageView carIv;
     private RadioGroup rechargeWayRg;
-    private RadioButton monthRb, quarterlyRb, sixMonthRb, yearRb;
+    private RadioButton dayRb, monthRb, quarterlyRb, sixMonthRb, yearRb;
 
     private long memberChargeId;
     private CarModel.CarCountAndListModel.CarInsideModel mCarInsideModel;
@@ -80,6 +80,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         submitTv = findViewById(R.id.recharge_car_submit);
         carIv = findViewById(R.id.recharge_car_iv);
         rechargeWayRg = findViewById(R.id.recharge_car_rg);
+        dayRb = findViewById(R.id.one_day_rb);
         monthRb = findViewById(R.id.one_month_rb);
         quarterlyRb = findViewById(R.id.one_quarterly_rb);
         sixMonthRb = findViewById(R.id.one_sixmonth_rb);
@@ -97,33 +98,45 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 if (mCarRechargeWayModelList != null) {
                     switch (i) {
-                        case R.id.one_month_rb:
-                            monthRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
+                        case R.id.one_day_rb:
+                            dayRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
+                            monthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             quarterlyRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             sixMonthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             yearRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             memberChargeId = mCarRechargeWayModelList.get(0).getId();
                             break;
-                        case R.id.one_quarterly_rb:
-                            monthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
-                            quarterlyRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
+                        case R.id.one_month_rb:
+                            dayRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
+                            monthRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
+                            quarterlyRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             sixMonthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             yearRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             memberChargeId = mCarRechargeWayModelList.get(1).getId();
                             break;
+                        case R.id.one_quarterly_rb:
+                            dayRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
+                            monthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
+                            quarterlyRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
+                            sixMonthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
+                            yearRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
+                            memberChargeId = mCarRechargeWayModelList.get(2).getId();
+                            break;
                         case R.id.one_sixmonth_rb:
+                            dayRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             monthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             quarterlyRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             sixMonthRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
                             yearRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
-                            memberChargeId = mCarRechargeWayModelList.get(2).getId();
+                            memberChargeId = mCarRechargeWayModelList.get(3).getId();
                             break;
                         case R.id.one_year_rb:
+                            dayRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             monthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             quarterlyRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             sixMonthRb.setTextColor(getResources().getColor(R.color.colorWayOringe));
                             yearRb.setTextColor(getResources().getColor(R.color.colorSubmitGreen));
-                            memberChargeId = mCarRechargeWayModelList.get(3).getId();
+                            memberChargeId = mCarRechargeWayModelList.get(4).getId();
                             break;
                     }
                 }
@@ -178,7 +191,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 提交車輛充值訂單
+     * 獲取充值訂單的信息
      */
     private void getRechargeWay() {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CAR_CAHRGE_WAY_LIST);
@@ -189,10 +202,11 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 CarRechargeWayListModel model = new Gson().fromJson(result.toString(), CarRechargeWayListModel.class);
                 if (model.getCode() ==200) {
                     mCarRechargeWayModelList = model.getData();
-                    monthRb.setText(mCarRechargeWayModelList.get(0).getDescription());
-                    quarterlyRb.setText(mCarRechargeWayModelList.get(1).getDescription());
-                    sixMonthRb.setText(mCarRechargeWayModelList.get(2).getDescription());
-                    yearRb.setText(mCarRechargeWayModelList.get(3).getDescription());
+                    dayRb.setText(mCarRechargeWayModelList.get(0).getDescription());
+                    monthRb.setText(mCarRechargeWayModelList.get(1).getDescription());
+                    quarterlyRb.setText(mCarRechargeWayModelList.get(2).getDescription());
+                    sixMonthRb.setText(mCarRechargeWayModelList.get(3).getDescription());
+                    yearRb.setText(mCarRechargeWayModelList.get(4).getDescription());
                 } else {
                     Toast.makeText(CarRechargeActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }

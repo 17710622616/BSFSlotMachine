@@ -14,12 +14,52 @@
         android:textColor="@color/colorBlack"/>
 
     <TextView
+        android:id="@+id/item_td_bank_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:layout_below="@id/item_td_remark"
+        android:text="開戶銀行：中國銀行"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/item_td_wd_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:layout_below="@id/item_td_bank_name"
+        android:text="提現人：李*"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/item_td_wd_tel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:layout_below="@id/item_td_bank_name"
+        android:layout_toRightOf="@id/item_td_wd_name"
+        android:text="電話：65555555"
+        android:textSize="16sp"
+        android:textColor="@color/colorBlack"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/item_td_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:paddingBottom="10dp"
-        android:layout_below="@id/item_td_remark"
+        android:paddingBottom="5dp"
+        android:layout_below="@id/item_td_wd_name"
         android:text="2018-03-15 22:27:36"
         android:textSize="12sp"
         android:textColor="@color/colorDrakGray"/>

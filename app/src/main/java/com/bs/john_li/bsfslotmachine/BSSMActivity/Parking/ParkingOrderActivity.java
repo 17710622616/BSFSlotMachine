@@ -1277,8 +1277,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                 Message msg = new Message();
                 msg.what  = 0;
-                imgArr[putNum - 1] = "http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileName;
-
+                imgArr[putNum - 1] = BSSMConfigtor.OSS_SERVER_CALLBACK_ADDRESS + fileName;
+                /*"http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" +*/
                 // 这里进行递归单张图片上传，在外面判断是否进行跳出， 最後一張的添加圖片的空路徑所以-2
                 if (putNum <= imgUrlList.size() - 2) {
                     putImg(imgArr, handler);

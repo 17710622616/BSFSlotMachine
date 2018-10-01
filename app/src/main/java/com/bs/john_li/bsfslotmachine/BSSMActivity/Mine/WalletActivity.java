@@ -133,9 +133,9 @@ public class WalletActivity extends BaseActivity implements View.OnClickListener
                 startActivity(intent1);
                 break;
             case R.id.wallet_withdraw_deposit:
-                /*Intent intent2 = new Intent(this, WithDrawalActivity.class);
-                startActivity(intent2);*/
-                Toast.makeText(this, "請聯繫客服進行提現，謝謝！", Toast.LENGTH_LONG).show();
+                Intent intent2 = new Intent(this, WithDrawalActivity.class);
+                startActivity(intent2);
+                //Toast.makeText(this, "請聯繫客服進行提現，謝謝！", Toast.LENGTH_LONG).show();
                 break;
             case R.id.wallet_FAQ:
                 startActivity(new Intent(this, WalletFQAActivity.class));

@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="15dp">
 
@@ -23,41 +23,16 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="提現至"
-                    android:textColor="@color/colorDrakGray" />
-
-                <TextView
-                    android:id="@+id/wallet_withdraw_way"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="支付寶 >"
-                    android:textColor="@color/colorBlack" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.1dp"
-                android:layout_marginTop="15dp"
-                android:background="@color/colorLineGray" />
-
             <TextView
+                android:id="@+id/wallet_withdraw_handling_fee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
-                android:text="提現金額"
+                android:text="提現金額(手續費3%)"
                 android:textColor="@color/colorDrakGray"/>
 
             <LinearLayout
+                android:id="@+id/wallet_withdraw_num_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -82,23 +57,71 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.1dp"
-                android:layout_marginTop="15dp"
                 android:background="@color/colorLineGray" />
-
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/wallet_withdraw_name_tv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text="本次最多可提現MOP $ 500000"
-                android:textSize="12sp"
-                android:textColor="@color/colorDrakGray"/>
+                android:text="姓        名："
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="center_vertical"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorLineGray" />
+            <TextView
+                android:id="@+id/wallet_withdraw_tel_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="電        話："
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="center_vertical"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorLineGray" />
+            <TextView
+                android:id="@+id/wallet_withdraw_bank_card_number_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="銀行卡號："
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="center_vertical"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorLineGray" />
+            <TextView
+                android:id="@+id/wallet_withdraw_bank_account_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="開戶銀行："
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="center_vertical"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorLineGray" />
+        </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginLeft="10dp">
             <CheckBox
                 android:id="@+id/wallet_withdraw_isagree"
                 android:layout_width="wrap_content"
@@ -124,5 +147,4 @@
             android:text="確認提現"
             android:textColor="@color/colorWight"
             android:background="@drawable/shape_btn_bg"/>
-    </LinearLayout>
 </LinearLayout>

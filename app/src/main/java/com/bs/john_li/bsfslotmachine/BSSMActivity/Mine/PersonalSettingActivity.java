@@ -417,7 +417,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
         // 使用意图直接调用手机相册  
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // 打开手机相册,设置请求码  
-        startActivityForResult(intent, REQUEST_SMALL_IMAGE_CUTTING);
+        startActivityForResult(intent, CODE_GALLERY_REQUEST);
     }
 
     @Override
@@ -451,7 +451,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 // 使用意图直接调用手机相册  
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 // 打开手机相册,设置请求码  
-                startActivityForResult(intent, REQUEST_SMALL_IMAGE_CUTTING);
+                startActivityForResult(intent, CODE_GALLERY_REQUEST);
                 break;
         }
     }
@@ -582,45 +582,60 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                 //finish();
                 break;
             case CODE_CAMERA_REQUEST:
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(fileUri);
-                mediaScanIntent.setData(contentUri);
-                sendBroadcast(mediaScanIntent);
-                // 上傳頭像
-                putImg();
-                x.image().bind(headIv, fileUri.getPath(), options);
+                try {
+                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    Uri contentUri = Uri.fromFile(fileUri);
+                    mediaScanIntent.setData(contentUri);
+                    sendBroadcast(mediaScanIntent);
+                    // 上傳頭像
+                    putImg();
+                    x.image().bind(headIv, fileUri.getPath(), options);
+                } catch (Exception e) {
+                    Toast.makeText(PersonalSettingActivity.this, "錯誤：" + e.toString(), Toast.LENGTH_LONG).show();
+                }
                 break;
             case CODE_GALLERY_REQUEST:
                 /*String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
                 file = new File(imagePath);
                 headIv.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));*/
-                if (data != null) {
-                    Bundle extras = data.getExtras();
-                    if (extras != null){
-                        Bitmap photo = extras.getParcelable("data"); // 直接获得内存中保存的 bitmap
-                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                        Date date = new Date(System.currentTimeMillis());
-                        fileUri = new File(dir, "/head" + format.format(date) + ".jpg");
-                        // 保存图片
-                        FileOutputStream outputStream = null;
-                        try {
-                            outputStream = new FileOutputStream(fileUri);
-                            photo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                            outputStream.flush();
-                            outputStream.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                /*try {
+                    if (data != null) {
+                        Toast.makeText(PersonalSettingActivity.this, "Data = " + data.toString(), Toast.LENGTH_LONG).show();
+                        Bundle extras = data.getExtras();
+                        if (extras != null){
+                            Bitmap photo = extras.getParcelable("data"); // 直接获得内存中保存的 bitmap
+                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                            Date date = new Date(System.currentTimeMillis());
+                            fileUri = new File(dir, "/head" + format.format(date) + ".jpg");
+                            // 保存图片
+                            FileOutputStream outputStream = null;
+                            try {
+                                outputStream = new FileOutputStream(fileUri);
+                                photo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                                outputStream.flush();
+                                outputStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            // 上傳頭像
+                            putImg();
+                            // 在视图中显示图片
+                            headIv.setImageBitmap(photo);
+                        } else {
+                            Toast.makeText(this, "圖片保存失敗1", Toast.LENGTH_LONG).show();
                         }
-                        // 上傳頭像
-                        putImg();
-                        // 在视图中显示图片
-                        headIv.setImageBitmap(photo);
                     } else {
-                        Toast.makeText(this, "圖片保存失敗", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "圖片保存失敗2", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(this, "圖片保存失敗", Toast.LENGTH_LONG).show();
-                }
+                } catch (Exception e) {
+                    Toast.makeText(PersonalSettingActivity.this, "錯誤：" + e.toString(), Toast.LENGTH_LONG).show();
+                }*/
+                Uri uri = data.getData();
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, uri);
+                fileUri = new File(imagePath);
+                // 上傳頭像
+                putImg();
+                x.image().bind(headIv, fileUri.getPath(), options);
                 break;
             case REQUEST_SMALL_IMAGE_CUTTING:
                 try {
@@ -635,7 +650,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
                     intent.putExtra("return-data", true);
                     startActivityForResult(intent, CODE_GALLERY_REQUEST);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Toast.makeText(PersonalSettingActivity.this, "錯誤：" + e.toString(), Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -719,7 +734,7 @@ public class PersonalSettingActivity extends BaseActivity implements View.OnClic
      * 更改用戶头像
      */
     public void updateUserHeadImg() {
-        mUserInfoModel.setHeadimg("http://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileUri.getName());
+        mUserInfoModel.setHeadimg(BSSMConfigtor.OSS_SERVER_CALLBACK_ADDRESS + fileUri.getName());
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UPDATE_USER_HEAD_IMG + mUserInfoModel.getHeadimg() + "&token=" + SPUtils.get(this, "UserToken", ""));
         params.setConnectTimeout(30 * 1000);
         x.http().request(HttpMethod.GET ,params, new Callback.CommonCallback<String>() {

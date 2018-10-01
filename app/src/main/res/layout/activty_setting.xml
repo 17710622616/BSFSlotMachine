@@ -81,6 +81,7 @@
             style="@style/MineItemTextView"
             android:text="@string/version_update"/>
         <TextView
+            android:id="@+id/setting_ver_name"
             style="@style/SettingDetialTv"
             android:text="ver1.0.1"/>
     </LinearLayout>

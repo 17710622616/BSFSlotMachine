@@ -29,11 +29,11 @@ public class BSSMConfigtor {
     // OSS請求token的接口
     public static final String OSS_TOKEN = "oss/stsAuthorize";
     // OSS的应用服务器回調地址
-    public static final String OSS_SERVER_CALLBACK_ADDRESS = "";
+    public static final String OSS_SERVER_CALLBACK_ADDRESS = "https://parkingman-pic.oss-cn-shenzhen.aliyuncs.com/";
     // OSS的BucketName
-    public static final String BucketName = "test-pic-666";
+    public static final String BucketName = "parkingman-pic";
     // OSS的BucketName
-    public static final String END_POINT = "http://oss-cn-hongkong.aliyuncs.com";
+    public static final String END_POINT = "https://oss-cn-shenzhen.aliyuncs.com";
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
     // 咪錶搜索结果
@@ -116,6 +116,12 @@ public class BSSMConfigtor {
     public final static String GET_WALLET_RECORD = "pay/getUserWalletRecord?token=";
     // 钱包充值订单的接口
     public final static String POST_CHARGE_ORDER = "order/chargeOrder?token=";
+    // 钱包提現手續費的接口
+    public final static String GET_SERVICE_CHARGE = "systemProfile/getWithDrawRate?token=";
+    // 钱包提現订单的接口
+    public final static String POST_WITH_DRAWAL = "userCash/createWithDraw?token=";
+    // 钱包提現記錄的接口
+    public final static String GET_WITH_DRAWAL_RECORDE = "userCash/getWithDrawList?token=";
     // 獲取帖文列表
     public final static String GET_CONTENTS = "content/getContentList?nextId=";
     // 獲取評論列表
