@@ -315,7 +315,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         try {
             if (fileUri != null) {
                 carInsideModel.setImgUrl(BSSMConfigtor.OSS_SERVER_CALLBACK_ADDRESS + fileUri.getName());
-                Toast.makeText(AddCarActivity.this, " 圖片地址：" + carInsideModel.getImgUrl(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddCarActivity.this, " 圖片地址：" + carInsideModel.getImgUrl(), Toast.LENGTH_SHORT).show();
             }
             jsonObj.put("id", String.valueOf(carInsideModel.getId()));
             jsonObj.put("imgUrl", carInsideModel.getImgUrl());
@@ -902,7 +902,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
 
         String fileName = filePut.getName();
         String filePath = filePut.getPath();
-        Toast.makeText(AddCarActivity.this, "fileName="+fileName + ",filePath=" + filePath, Toast.LENGTH_LONG);
+        //Toast.makeText(AddCarActivity.this, "fileName="+fileName + ",filePath=" + filePath, Toast.LENGTH_LONG);
         // 构造上传请求
         PutObjectRequest put = new PutObjectRequest(BSSMConfigtor.BucketName, fileName, filePath);
 
