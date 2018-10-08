@@ -29,11 +29,11 @@ public class BSSMConfigtor {
     // OSS請求token的接口
     public static final String OSS_TOKEN = "oss/stsAuthorize";
     // OSS的应用服务器回調地址
-    public static final String OSS_SERVER_CALLBACK_ADDRESS = "https://parkingman-pic.oss-cn-shenzhen.aliyuncs.com/";
+    public static final String OSS_SERVER_CALLBACK_ADDRESS = "https://test-pic-666.oss-cn-hongkong.aliyuncs.com/";
     // OSS的BucketName
-    public static final String BucketName = "parkingman-pic";
+    public static final String BucketName = "test-pic-666";
     // OSS的BucketName
-    public static final String END_POINT = "https://oss-cn-shenzhen.aliyuncs.com";
+    public static final String END_POINT = "oss-cn-hongkong.aliyuncs.com";
     // 咪錶不存在
     public final static String SLOT_MACHINE_NOT_EXIST = "NOT_EXIST";
     // 咪錶搜索结果
