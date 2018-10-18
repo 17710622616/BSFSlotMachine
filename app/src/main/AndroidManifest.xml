@@ -81,6 +81,7 @@
         <activity android:name=".BSSMActivity.Mine.ServiceActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.RegisterFQAActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.WithDrawalDeitalActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Parking.CreditCardActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

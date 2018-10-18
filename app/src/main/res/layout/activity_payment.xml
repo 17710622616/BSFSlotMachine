@@ -135,6 +135,20 @@
                 android:layout_marginRight="15dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/payment_credit_card"
+            style="@style/MineItemLinearLayout"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                style="@style/PayMentMethodIcon"
+                android:src="@mipmap/credit" />
+
+            <TextView
+                style="@style/MineItemTextView"
+                android:text="信用卡支付" />
+        </LinearLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

@@ -26,117 +26,130 @@ import android.widget.Toast;
  */
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
-
-
-    public static final String TAG = "CrashHandler";
-
-    //系统默认的UncaughtException处理类
+    /**
+     * 系统默认UncaughtExceptionHandler
+     */
     private Thread.UncaughtExceptionHandler mDefaultHandler;
-    //CrashHandler实例
-    private static CrashHandler INSTANCE = new CrashHandler();
-    //程序的Context对象
+
+    /**
+     * context
+     */
     private Context mContext;
-    //用来存储设备信息和异常信息
-    private Map<String, String> infos = new HashMap<String, String>();
 
-    //用于格式化日期,作为日志文件名的一部分
-    private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    /**
+     * 存储异常和参数信息
+     */
+    private Map<String, String> paramsMap = new HashMap<>();
 
-    /** 保证只有一个CrashHandler实例 */
+    /**
+     * 格式化时间
+     */
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+    private String TAG = this.getClass().getSimpleName();
+
+    private static CrashHandler mInstance;
+
     private CrashHandler() {
-    }
 
-    /** 获取CrashHandler实例 ,单例模式 */
-    public static CrashHandler getInstance() {
-        return INSTANCE;
     }
 
     /**
-     * 初始化
-     *
-     * @param context
+     * 获取CrashHandler实例
      */
-    public void init(Context context) {
+    public static synchronized CrashHandler getInstance(){
+        if(null == mInstance){
+            mInstance = new CrashHandler();
+        }
+        return mInstance;
+    }
+
+    public void init(Context context){
         mContext = context;
-        //获取系统默认的UncaughtException处理器
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        //设置该CrashHandler为程序的默认处理器
+
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     /**
-     * 当UncaughtException发生时会转入该函数来处理
+     * uncaughtException 回调函数
      */
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            //如果用户没有处理则让系统默认的异常处理器来处理
-            mDefaultHandler.uncaughtException(thread, ex);
-        } else {
+        if(!handleException(ex) && mDefaultHandler != null){
+            mDefaultHandler.uncaughtException(thread,ex);
+        }else{
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
-            //退出程序
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
         }
+
     }
 
     /**
-     * 自定义错误处理,收集错误信息 发送错误报告等操作均在此完成.
-     *
-     * @param ex
-     * @return true:如果处理了该异常信息;否则返回false.
+     * 收集错误信息.发送到服务器
+     * @return 处理了该异常返回true,否则false
      */
     private boolean handleException(Throwable ex) {
         if (ex == null) {
             return false;
         }
-        //使用Toast来显示异常信息
+
+        collectDeviceInfo(mContext);
+
+        addCustomInfo();
+
         new Thread() {
             @Override
             public void run() {
                 Looper.prepare();
-                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "收集到錯誤信息，已提交至工作人員..", Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }
         }.start();
-        //收集设备参数信息
-        collectDeviceInfo(mContext);
-        //保存日志文件
+
         saveCrashInfo2File(ex);
         return true;
     }
+
 
     /**
      * 收集设备参数信息
      * @param ctx
      */
     public void collectDeviceInfo(Context ctx) {
+
         try {
             PackageManager pm = ctx.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
             if (pi != null) {
                 String versionName = pi.versionName == null ? "null" : pi.versionName;
                 String versionCode = pi.versionCode + "";
-                infos.put("versionName", versionName);
-                infos.put("versionCode", versionCode);
+                paramsMap.put("versionName", versionName);
+                paramsMap.put("versionCode", versionCode);
             }
-        } catch (NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "an error occured when collect package info", e);
         }
+
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                infos.put(field.getName(), field.get(null).toString());
-                Log.d(TAG, field.getName() + " : " + field.get(null));
+                paramsMap.put(field.getName(), field.get(null).toString());
             } catch (Exception e) {
                 Log.e(TAG, "an error occured when collect crash info", e);
             }
         }
+    }
+
+    /**
+     * 添加自定义参数
+     */
+    private void addCustomInfo() {
+
     }
 
     /**
@@ -148,9 +161,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private String saveCrashInfo2File(Throwable ex) {
 
         StringBuffer sb = new StringBuffer();
-        for (Map.Entry<String, String> entry : infos.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
+        for (Map.Entry entry : paramsMap.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
             sb.append(key + "=" + value + "\n");
         }
 
@@ -167,13 +180,18 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();
-            String time = formatter.format(new Date());
+            String time = format.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = "/sdcard/crash/";
-                File dir = new File(path);
-                if (!dir.exists()) {
-                    dir.mkdirs();
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/crash/";
+                File dir =null;
+                try{
+                    dir  = new File(path);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                } catch(Exception e) {
+
                 }
                 FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());

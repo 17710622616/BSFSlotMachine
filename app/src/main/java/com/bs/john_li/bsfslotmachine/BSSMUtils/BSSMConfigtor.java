@@ -110,6 +110,8 @@ public class BSSMConfigtor {
     public final static String POST_WECHAT_PAY_PRE_PAY_ID = "pay/weixinTrade?token=";
     // 微信支付获取prepay_id的接口
     public final static String POST_APLIPAY_ORDER_INFO = "pay/alipayTrade?token=";
+    // 信用卡支付获取prepay_id的接口
+    public final static String POST_CREDIT_CARD_ORDER_INFO = "payPalPay/pay?token=";
     // 錢包餘額的接口
     public final static String GET_WALLET_BALANCE = "pay/getBalance?token=";
     // 錢包餘額的接口

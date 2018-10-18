@@ -81,7 +81,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     private ShowTiemTextView mShowTiemTextView;
     private CheckBox myWalletCb, alipayCb, wecahtPayCb;
     private ProgressBar payment_submit_progress;
-    private LinearLayout walletLL;
+    private LinearLayout walletLL, creditLL;
 
     // 匯率
     private JuheExchangeModel exchangeModel;
@@ -151,6 +151,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         myWalletCb = findViewById(R.id.payment_my_wallet_cb);
         alipayCb = findViewById(R.id.payment_alipay_cb);
         wecahtPayCb = findViewById(R.id.payment_wecaht_pay_cb);
+        creditLL = findViewById(R.id.payment_credit_card);
         payment_submit_progress = findViewById(R.id.payment_submit_progress);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             headView.setHeadHight();
@@ -159,6 +160,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void setListener() {
+        creditLL.setOnClickListener(this);
         myWalletCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -279,6 +281,10 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
             case R.id.head_left:
                 exitPayment();
                 break;
+            case R.id.payment_credit_card:
+                payment_submit_progress.setVisibility(View.VISIBLE);
+                callNetGetCreditCardData();
+                break;
             case R.id.payment_submit:
                 payment_submit_progress.setVisibility(View.VISIBLE);
                 if (myWalletCb.isChecked()) {
@@ -312,6 +318,58 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    /**
+     * 向後台獲取信用卡的訂單詳情
+     */
+    private void callNetGetCreditCardData() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CREDIT_CARD_ORDER_INFO + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("orderNo", orderNo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        String uri = params.getUri();
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonJieModel model = new Gson().fromJson(result.toString(), CommonJieModel.class);
+                if (model.getCode() == 200) {
+                    // 請求成功，發起信用卡支付
+                    Intent intent = new Intent(PaymentAcvtivity.this, CreditCardActivity.class);
+                    intent.putExtra("crediUrl", model.getData());
+                    startActivity(intent);
+                } else if (model.getCode() == 10000) {
+                    SPUtils.put(PaymentAcvtivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(PaymentAcvtivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起信用卡支付失敗," + model.getMsg().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(PaymentAcvtivity.this, "發起信用卡支付超時，請重試", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PaymentAcvtivity.this, "發起信用卡支付錯誤，請重新提交", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                payment_submit_progress.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
