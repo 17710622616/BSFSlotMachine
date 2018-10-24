@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.sdk.android.oss.ClientException;
@@ -22,6 +23,7 @@ import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ChooseCarActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -43,7 +45,9 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
     private List<CarModel.CarCountAndListModel.CarInsideModel> carList;
     private final Context mContext;
     private OSSClient oss;
-    private OnItemClickListener mOnitemClickListener = null;
+    //private OnItemClickListener mOnitemClickListener = null;
+    private CarRechargeCallBack mCarRechargeCallBack = null;
+    private CarChooseCallBack mCarChooseCallBack = null;
     private LayoutInflater mInflater;
     private LruCache<String, BitmapDrawable> mMemoryCache;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
@@ -53,6 +57,8 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         mContext = context;
         this.oss = oss;
         mInflater = LayoutInflater.from(context);
+        mCarRechargeCallBack = (ChooseCarActivity)mContext;
+        mCarChooseCallBack = (ChooseCarActivity)mContext;
         //计算内存，并且给Lrucache 设置缓存大小
         int maxMemory = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxMemory/6;
@@ -74,8 +80,10 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         vh.carlistModel = (TextView) view.findViewById(R.id.item_carlist_model);
         vh.carlistStyle = (TextView) view.findViewById(R.id.item_carlist_style);
         vh.carTypeTv = (TextView) view.findViewById(R.id.item_carlist_car_type);
-        vh.notRechrageTv = view.findViewById(R.id.item_carlist_not_rechrage_tv);
+        //vh.notRechrageTv = view.findViewById(R.id.item_carlist_not_rechrage_tv);
+        vh.carListLL = view.findViewById(R.id.item_carlist_ll);
         vh.carRecharge = (ImageView) view.findViewById(R.id.item_carlist_recharge);
+        vh.carExpandeTimeTv = view.findViewById(R.id.item_carlist_expiry_time);
         view.setOnClickListener(this);
         return vh;
     }
@@ -101,26 +109,18 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         }
 
         if (carList.get(position).getIfPay() == 0) {
-            holder.notRechrageTv.setVisibility(View.VISIBLE);
-            holder.carlistCb.setEnabled(false);
             holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
-            holder.notRechrageTv.setVisibility(View.GONE);
-            holder.carlistCb.setEnabled(true);
-            holder.carRecharge.setImageResource(R.mipmap.year);
+            holder.carRecharge.setImageResource(R.mipmap.member);
         }
 
+        holder.carExpandeTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
+        holder.carListLL.setOnClickListener(this);
+        holder.carRecharge.setOnClickListener(this);
         holder.carlistCb.setVisibility(View.GONE);
         holder.carRecharge.setVisibility(View.VISIBLE);
-
-        x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
-        /*String cover = carList.get(position).getImgUrl();
-        BitmapDrawable bitmap = getBitmapDrawableFromMemoryCache(cover);
-        if (bitmap != null) {
-            holder.carlistIv.setImageDrawable(bitmap);
-        } else {
-            downloadImgByTag(cover, oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list, this);
-        }*/
+        holder.carRecharge.setTag(String.valueOf(position));
+        holder.carListLL.setTag(String.valueOf(position));
         holder.itemView.setTag(position);
     }
 
@@ -229,9 +229,18 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
 
     @Override
     public void onClick(View v) {
-        if (mOnitemClickListener != null) {
-            mOnitemClickListener.onItemClick(v, (int)v.getTag());
+        switch (v.getId()) {
+            case R.id.item_carlist_recharge:
+                mCarRechargeCallBack.carRechargeClick(v);
+                break;
+            case R.id.item_carlist_ll:
+                mCarChooseCallBack.carChooseClick(v);
+                break;
         }
+
+        /*if (mOnitemClickListener != null) {
+            mOnitemClickListener.onItemClick(v, (int)v.getTag());
+        }*/
     }
 
     public class SmartRefreshViewHolder extends RecyclerView.ViewHolder {
@@ -242,19 +251,34 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         public TextView carlistModel;
         public TextView carlistStyle;
         public TextView carTypeTv;
-        public TextView notRechrageTv;
+        //public TextView notRechrageTv;
         public ImageView carRecharge;
+        public LinearLayout carListLL;
+        public TextView carExpandeTimeTv;
 
         public SmartRefreshViewHolder(View view){
             super(view);
         }
     }
 
-    public void setOnItemClickListenr(OnItemClickListener listenr) {
+    /*public void setOnItemClickListenr(OnItemClickListener listenr) {
         this.mOnitemClickListener = listenr;
     }
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+    }*/
+
+    /**
+     * 充值圖片點擊接口
+     */
+    public interface CarRechargeCallBack {
+        void carRechargeClick(View view);
+    }
+    /**
+     * 除充值圖片外区域點擊接口
+     */
+    public interface CarChooseCallBack {
+        void carChooseClick(View view);
     }
 }

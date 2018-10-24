@@ -51,7 +51,7 @@ import java.util.List;
 
 public class CarRechargeActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv,submitTv;
+    private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv, carExpandTimeTv, submitTv;
     private ImageView carIv;
     private RadioGroup rechargeWayRg;
     private RadioButton dayRb, monthRb, quarterlyRb, sixMonthRb, yearRb;
@@ -77,6 +77,7 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carStyleTv = findViewById(R.id.recharge_car_style);
         carBrandTv = findViewById(R.id.recharge_car_brand);
         carTypeTv = findViewById(R.id.recharge_car_type);
+        carExpandTimeTv = findViewById(R.id.recharge_car_expandtime);
         submitTv = findViewById(R.id.recharge_car_submit);
         carIv = findViewById(R.id.recharge_car_iv);
         rechargeWayRg = findViewById(R.id.recharge_car_rg);
@@ -155,6 +156,10 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carModelTv.setText("品牌："+mCarInsideModel.getModelForCar());
         carStyleTv.setText("車型："+mCarInsideModel.getCarStyle());
         carBrandTv.setText("型號："+mCarInsideModel.getCarBrand());
+        if (mCarInsideModel.getIfPay() == 1) {
+            carExpandTimeTv.setVisibility(View.VISIBLE);
+            carExpandTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(mCarInsideModel.getExpiryTime()));
+        }
         //AliyunOSSUtils.downloadImg(mCarInsideModel.getImgUrl(), AliyunOSSUtils.initOSS(this), carIv, this, R.mipmap.load_img_fail_list);
         x.image().bind(carIv, mCarInsideModel.getImgUrl(), options);
         switch (mCarInsideModel.getIfPerson()) {

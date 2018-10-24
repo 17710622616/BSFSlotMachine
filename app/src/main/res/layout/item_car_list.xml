@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/colorDrakGray">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/item_carlist_not_rechrage_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,7 +16,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:padding="5dp"
-        android:layout_marginBottom="0.5dp"/>
+        android:layout_marginBottom="0.5dp"/>-->
 
     <LinearLayout
         android:id="@+id/item_carlist_ll"

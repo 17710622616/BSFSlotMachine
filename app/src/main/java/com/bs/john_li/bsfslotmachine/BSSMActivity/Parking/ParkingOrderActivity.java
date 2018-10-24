@@ -99,7 +99,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, machinenoUnknowLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
     public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, machinenoUnknowTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
-    private ImageView parkingIv;
+    private ImageView carRecargeIv, parkingIv;
     public NoScrollGridView photoGv;
 
     private String way;
@@ -149,6 +149,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         carBrandTv = findViewById(R.id.parking_order_car_brand);
         carTypeTv = findViewById(R.id.parking_order_car_type);
         carNumTv = findViewById(R.id.parking_order_car_num);
+        carRecargeIv = findViewById(R.id.parking_order_car_recharge);
         orderLocationTv = findViewById(R.id.parking_order_location_tv);
         orderMoneyTv = findViewById(R.id.parking_order_money_tv);
         remarkTv = findViewById(R.id.parking_order_remark_tv);
@@ -189,21 +190,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                         viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(ParkingOrderActivity.this)) {
-                                                    dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                                    if (!dir.exists()) {
-                                                        dir.mkdir();
-                                                    }
-
-                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                                                    Date date = new Date(System.currentTimeMillis());
-                                                    file = new File(dir, "location" + format.format(date) + ".jpg");
-                                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                                                    startActivityForResult(intent, TAKE_PHOTO);
-                                                } else {
-                                                    Toast.makeText(ParkingOrderActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                                }*/
                                                 autoObtainCameraPermission();
                                                 baseNiceDialog.dismiss();
                                             }
@@ -211,19 +197,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                         viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                                if (!dir.exists()) {
-                                                    dir.mkdir();
-                                                }
-
-                                                Intent getAlbum;
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                                    getAlbum = new Intent(Intent.ACTION_PICK);
-                                                } else {
-                                                    getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
-                                                }
-                                                getAlbum.setType("image*//*");
-                                                startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
                                                 autoObtainStoragePermission();
                                                 baseNiceDialog.dismiss();
                                             }
@@ -833,6 +806,13 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
             //AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
             x.image().bind(parkingIv, carInsideModelList.get(0).getImgUrl(), options);
+
+            if (carInsideModelList.get(0).getIfPay() == 0) {
+                carRecargeIv.setImageResource(R.mipmap.recharge);
+            } else {
+                carRecargeIv.setImageResource(R.mipmap.member);
+            }
+
             if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
                 mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
                 mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());

@@ -377,7 +377,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private void callNetSubmiteCar() {
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setTitle("提示");
-        dialog.setMessage("正在刪除車輛......");
+        dialog.setMessage("正在提交車輛......");
         dialog.setCancelable(false);
         dialog.show();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ADD_CAR + SPUtils.get(this, "UserToken", ""));

@@ -97,9 +97,9 @@ public class SlotMachineListActivity extends BaseActivity implements View.OnClic
                     intent.putExtra("SlotMachineModel", new Gson().toJson(smList.get(i)));
                     startActivity(intent);
                 }
-
             }
         });
+
         smLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

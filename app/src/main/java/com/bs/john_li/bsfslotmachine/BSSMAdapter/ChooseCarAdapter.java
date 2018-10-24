@@ -60,7 +60,7 @@ public class ChooseCarAdapter extends BaseAdapter implements View.OnClickListene
             holder.carlistStyle = convertView.findViewById(R.id.item_carlist_style);
             holder.carTypeTv = convertView.findViewById(R.id.item_carlist_car_type);
             holder.carRecharge = convertView.findViewById(R.id.item_carlist_recharge);
-            holder.notRechrageTv = convertView.findViewById(R.id.item_carlist_not_rechrage_tv);
+            //holder.notRechrageTv = convertView.findViewById(R.id.item_carlist_not_rechrage_tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

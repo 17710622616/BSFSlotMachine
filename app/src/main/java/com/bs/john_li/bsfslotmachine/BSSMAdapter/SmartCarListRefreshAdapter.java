@@ -116,29 +116,20 @@ public class SmartCarListRefreshAdapter extends RecyclerView.Adapter<SmartCarLis
         }
 
         if (carList.get(position).getIfPay() == 0) {
+            holder.expireTimeTv.setVisibility(View.GONE);
             holder.carRecharge.setImageResource(R.mipmap.recharge);
         } else {
+            holder.expireTimeTv.setVisibility(View.VISIBLE);
+            if (carList.get(position).getExpiryTime()!=null) {
+                holder.expireTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
+            }
             holder.carRecharge.setImageResource(R.mipmap.member);
         }
 
-        if (carList.get(position).getExpiryTime()!=null) {
-            holder.expireTimeTv.setVisibility(View.VISIBLE);
-            holder.expireTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
-        } else {
-            holder.expireTimeTv.setVisibility(View.GONE);
-        }
-
         x.image().bind(holder.carlistIv, carList.get(position).getImgUrl(), options);
-        /*String cover = carList.get(position).getImgUrl();
-        BitmapDrawable bitmap = getBitmapDrawableFromMemoryCache(cover);
-        if (bitmap != null) {
-            holder.carlistIv.setImageDrawable(bitmap);
-        } else {
-            downloadImgByTag(cover, oss, holder.carlistIv, mContext, R.mipmap.load_img_fail_list, this);
-        }*/
 
-        holder.carRecharge.setOnClickListener(this);
         holder.carListLL.setOnClickListener(this);
+        holder.carRecharge.setOnClickListener(this);
         holder.carRecharge.setTag(String.valueOf(position));
         holder.carListLL.setTag(String.valueOf(position));
         holder.carlistCb.setVisibility(View.GONE);

@@ -87,6 +87,16 @@
                 android:text="車輛類型：私家車"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp" />
+            <TextView
+                android:id="@+id/recharge_car_expandtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="到期時間：00:00:00"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

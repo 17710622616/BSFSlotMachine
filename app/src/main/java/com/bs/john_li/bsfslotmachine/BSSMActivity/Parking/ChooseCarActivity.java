@@ -17,6 +17,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarRechargeActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.ChooseCarAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartChooseCarRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -46,7 +47,7 @@ import java.util.TreeSet;
  * Created by John_Li on 4/10/2017.
  */
 
-public class ChooseCarActivity extends BaseActivity implements View.OnClickListener, ChooseCarAdapter.CarUpdateCallBack {
+public class ChooseCarActivity extends BaseActivity implements View.OnClickListener, SmartChooseCarRefreshAdapter.CarChooseCallBack, SmartChooseCarRefreshAdapter.CarRechargeCallBack {
     private BSSMHeadView carListHead;
     /*private ListView carLv;
     private ExpandSwipeRefreshLayout mExpandSwipeRefreshLayout;*/
@@ -65,6 +66,8 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     private long totolCarCount;
     // 修改的位置
     private int updatePosition = 0;
+    // 開啟方式
+    private String startWay;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +145,8 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void initData() {
+        startWay = getIntent().getStringExtra("way");
+
         carListHead.setTitle("我的車輛");
         carListHead.setLeft(this);
         carListHead.setRight(R.mipmap.push_invitation, this);
@@ -150,7 +155,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         mSmartChooseCarRefreshAdapter = new SmartChooseCarRefreshAdapter(this, carModelList, AliyunOSSUtils.initOSS(this));
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartChooseCarRefreshAdapter);
-        mSmartChooseCarRefreshAdapter.setOnItemClickListenr(new SmartChooseCarRefreshAdapter.OnItemClickListener() {
+        /*mSmartChooseCarRefreshAdapter.setOnItemClickListenr(new SmartChooseCarRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if (carModelList.get(position).getIfPay() == 0) {  // 未充值
@@ -164,7 +169,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     finish();
                 }
             }
-        });
+        });*/
         mRefreshLayout.autoRefresh();
     }
 
@@ -194,7 +199,7 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
                     List<CarModel.CarCountAndListModel.CarInsideModel> carInsideModelsFromNet = model.getData().getData();
                     carModelList.addAll(carInsideModelsFromNet);
                     // List去重
-                    deWeightListById();
+                    //deWeightListById();
                 } else if (model.getCode() == 10000) {
                     SPUtils.put(ChooseCarActivity.this, "UserToken", "");
                     startActivityForResult(new Intent(ChooseCarActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
@@ -267,11 +272,11 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
         switch (requestCode) {
             case 3: // 添加車輛的返回
                 carModelList.add(0, new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
-                mCarListAdapter.refreshListView(carModelList);
+                mRefreshLayout.autoRefresh();
                 break;
             case 4: // 修改車輛的返回
                 carModelList.set(updatePosition,new Gson().fromJson(data.getStringExtra("NEW_CAR_FROM_ADD"), CarModel.CarCountAndListModel.CarInsideModel.class));
-                mCarListAdapter.refreshListView(carModelList);
+                mRefreshLayout.autoRefresh();
                 break;
         }
     }
@@ -294,11 +299,36 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 修改車輛
+     * 车辆选择
      * @param view
      */
     @Override
-    public void carUpdateClick(View view) {
+    public void carChooseClick(View view) {
+        int position = Integer.parseInt((String) view.getTag());
+        if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+            Intent intent = new Intent(this, ChooseOrderTimeActivity.class);
+            intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+            intent.putExtra("SlotMachine", getIntent().getStringArrayExtra("SlotMachine"));
+            intent.putExtra("childPosition", getIntent().getStringArrayExtra("childPosition"));
+            intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+            setResult(RESULT_OK, intent);
+        }
+        finish();
+    }
 
+    /**
+     * 车辆充值
+     * @param view
+     */
+    @Override
+    public void carRechargeClick(View view) {
+        int position = Integer.parseInt((String) view.getTag());
+        Intent intent = new Intent(ChooseCarActivity.this, CarRechargeActivity.class);
+        intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+        startActivity(intent);
     }
 }
