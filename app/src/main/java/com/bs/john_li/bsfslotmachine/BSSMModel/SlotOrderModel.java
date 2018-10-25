@@ -13,6 +13,16 @@ public class SlotOrderModel {
     private String remark;
     private String parkingSpace;
 
+    public String getEndSlotTime() {
+        return endSlotTime;
+    }
+
+    public void setEndSlotTime(String endSlotTime) {
+        this.endSlotTime = endSlotTime;
+    }
+
+    private String endSlotTime;
+
     public String getParkingSpace() {
         return parkingSpace;
     }

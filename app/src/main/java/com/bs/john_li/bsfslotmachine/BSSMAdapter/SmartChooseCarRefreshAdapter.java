@@ -113,8 +113,10 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
         } else {
             holder.carRecharge.setImageResource(R.mipmap.member);
         }
-
-        holder.carExpandeTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
+        if (carList.get(position).getExpiryTime() != null) {
+            holder.carExpandeTimeTv.setVisibility(View.VISIBLE);
+            holder.carExpandeTimeTv.setText("到期時間：" + BSSMCommonUtils.stampToDate(carList.get(position).getExpiryTime()));
+        }
         holder.carListLL.setOnClickListener(this);
         holder.carRecharge.setOnClickListener(this);
         holder.carlistCb.setVisibility(View.GONE);

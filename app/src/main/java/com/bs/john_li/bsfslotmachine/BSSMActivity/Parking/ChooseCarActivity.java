@@ -306,10 +306,11 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     public void carChooseClick(View view) {
         int position = Integer.parseInt((String) view.getTag());
         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+            String childMachinePosition = getIntent().getStringExtra("childPosition");
             Intent intent = new Intent(this, ChooseOrderTimeActivity.class);
             intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
-            intent.putExtra("SlotMachine", getIntent().getStringArrayExtra("SlotMachine"));
-            intent.putExtra("childPosition", getIntent().getStringArrayExtra("childPosition"));
+            intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
+            intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
             intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
             startActivity(intent);
         } else {

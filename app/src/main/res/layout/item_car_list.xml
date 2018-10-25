@@ -116,7 +116,8 @@
                 android:text="到期時間：0000-00-00"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"
-                android:lines="2"/>
+                android:lines="2"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <ImageView

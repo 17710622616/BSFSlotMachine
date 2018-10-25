@@ -382,7 +382,7 @@ public class BSSMCommonUtils {
     }
 
     /*
-     * 将时间转换为时间戳
+     * 将當前时间转换为时间戳
      */
     public static String dateToStamp() {
         String res = "";
@@ -408,6 +408,53 @@ public class BSSMCommonUtils {
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;
+    }
+
+    /*
+     * 将时间转换为时间戳
+     */
+    public static long dateToStamp(String time) {
+        long res = 0L;
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            date = simpleDateFormat.parse(time);
+            long ts = date.getTime();
+            res = ts;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * 比較兩個時間大小
+     * @param time1
+     * @param time2
+     * @return
+     * @throws ParseException
+     */
+    public static boolean compareTwoTime(String time1, String time2) throws ParseException {
+        //如果想比较日期则写成"yyyy-MM-dd"就可以了
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        //将字符串形式的时间转化为Date类型的时间
+        Date a = sdf.parse(time1);
+        Date b = sdf.parse(time2);
+        //Date类的一个方法，如果a早于b返回false，否则返回true
+        if(a.before(b))
+            return false;
+        else
+            return true;
+    }
+
+    /**
+     * 比较两个时间  單位分鐘
+     * @param endtime    原始时间
+     */
+    public static long compareTimestamps(String starttime, String endtime) {
+        //获取当前时间
+        Long s = (dateToStamp(endtime) - dateToStamp(starttime)) / (1000 * 60);
+        return s;
     }
 
     /**

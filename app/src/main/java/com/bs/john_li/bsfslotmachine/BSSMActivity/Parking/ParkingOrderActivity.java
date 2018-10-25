@@ -106,7 +106,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private List<String> imgUrlList;
     private List<TestCarListModel.CarModel> carInsideModelList;
     private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
-    public SlotOrderModel mSlotOrderModel;
+    public SlotOrderModel mSlotOrderModel;//已知咪錶的訂單
     public SlotUnknowOrderModel mSlotUnknowOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
     private PhotoAdapter mPhotoAdapter;
     private int amountLimit;
