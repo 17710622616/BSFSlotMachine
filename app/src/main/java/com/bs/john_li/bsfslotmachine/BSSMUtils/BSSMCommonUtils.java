@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -381,6 +382,20 @@ public class BSSMCommonUtils {
         return second;
     }
 
+    /**
+     * 获取明天时间
+     * @return
+     */
+    public static String getTomorrowDate() {
+        Date date=new Date();//取时间
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(calendar.DATE,1);//把日期往后增加一天.整数往后推,负数往前移动
+        date=calendar.getTime(); //这个时间就是日期往后推一天的结果
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
+
     /*
      * 将當前时间转换为时间戳
      */
@@ -440,11 +455,12 @@ public class BSSMCommonUtils {
         //将字符串形式的时间转化为Date类型的时间
         Date a = sdf.parse(time1);
         Date b = sdf.parse(time2);
-        //Date类的一个方法，如果a早于b返回false，否则返回true
-        if(a.before(b))
-            return false;
-        else
+        //Date类的一个方法，如果a早于b返回true，否则返回false
+        if(a.before(b)) {
             return true;
+        } else {
+            return false;
+        }
     }
 
     /**
