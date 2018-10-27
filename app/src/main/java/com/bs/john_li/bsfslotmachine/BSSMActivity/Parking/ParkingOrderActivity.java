@@ -96,14 +96,15 @@ import java.util.List;
 
 public class ParkingOrderActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private LinearLayout carManageLL, startTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, machinenoUnknowLL, orderColorLL, orderPhotoLL;
+    private LinearLayout carManageLL, startTimeLL, endTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, machinenoUnknowLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
-    public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, machinenoUnknowTv, remarkTv, areaTv, startTimeTv, submitTv,meterColorTv, orderAmountTv;
+    public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, machinenoUnknowTv, remarkTv, areaTv, startTimeTv, endTimeTv, submitTv,meterColorTv, orderAmountTv;
     private ImageView carRecargeIv, parkingIv;
     public NoScrollGridView photoGv;
 
     private String way;
     private List<String> imgUrlList;
+    private CarModel.CarCountAndListModel.CarInsideModel mCarInsideModel;
     private List<TestCarListModel.CarModel> carInsideModelList;
     private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
     public SlotOrderModel mSlotOrderModel;//已知咪錶的訂單
@@ -138,6 +139,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         photoGv = findViewById(R.id.parking_order_gv);
         carManageLL = findViewById(R.id.parking_order_car_manage_ll);
         startTimeLL = findViewById(R.id.parking_order_starttime_ll);
+        endTimeLL = findViewById(R.id.parking_order_endtime_ll);
         orderMoneyLL = findViewById(R.id.parking_order_money_ll);
         orderRemarkLL = findViewById(R.id.parking_order_remark_ll);
         orderAreaLL = findViewById(R.id.parking_order_area_ll);
@@ -158,6 +160,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         machinenoUnknowLL = findViewById(R.id.parking_order_machineno_ll);
         meterColorTv = findViewById(R.id.parking_order_color_tv);
         startTimeTv = findViewById(R.id.parking_order_starttime_tv);
+        endTimeTv = findViewById(R.id.parking_order_endtime_tv);
         orderAmountTv = findViewById(R.id.parking_order_amount_tv);
         submitTv = findViewById(R.id.parking_order_submit);
         parkingIv = findViewById(R.id.parking_iv);
@@ -170,6 +173,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     public void setListener() {
         carManageLL.setOnClickListener(this);
         startTimeLL.setOnClickListener(this);
+        endTimeLL.setOnClickListener(this);
         orderMoneyLL.setOnClickListener(this);
         orderRemarkLL.setOnClickListener(this);
         orderAreaLL.setOnClickListener(this);
@@ -229,14 +233,14 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         // 車輛類
         carInsideModelList = new ArrayList<>();
         // 判断车辆是否选择车辆
-        isChooseCar();
+        //isChooseCar();
         // 現在時間
         String startTime = (BSSMCommonUtils.getHour() + 1) + ":" + BSSMCommonUtils.getMinute() + ":00";
         String startTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + startTime;
         Date date = new Date( );
         SimpleDateFormat fdt = new SimpleDateFormat ("hh:mm:ss");
         SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-        startTimeTv.setText("投幣時間[預計" + startTime + "]");
+        //startTimeTv.setText("投幣時間[預計" + startTime + "]");
 
         // 判斷是哪種打開方式
         Intent intent = getIntent();
@@ -284,27 +288,33 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             }
         } else {    // 咪錶存在，有子列表
             warmPromptTv.setVisibility(View.GONE);
+            // 子車位
             String childMachinePosition = intent.getStringExtra("childPosition");
-
+            // 車輛
+            mCarInsideModel = new Gson().fromJson("carModel", CarModel.CarCountAndListModel.CarInsideModel.class);
             // 停車訂單
-            mSlotOrderModel = new SlotOrderModel();
-            mSlotOrderModel.setStartSlotTime(startTimeForDay);
-            mSlotOrderModel.setRemark("");
-
+            mSlotOrderModel = new Gson().fromJson("SlotOrder", SlotOrderModel.class);
+            //mSlotOrderModel.setStartSlotTime(startTimeForDay);
+            //mSlotOrderModel.setRemark("");
+            // 咪錶
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
-            mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
+            //mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
             orderLocationTv.setText("停車位置：" + mSlotMachineModel.getAddress() + mSlotMachineModel.getMachineNo() + "號" + mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
-            mSlotOrderModel.setParkingSpace(mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
+            //mSlotOrderModel.setParkingSpace(mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childMachinePosition)));
+            startTimeTv.setText("開始投幣時間：" + mSlotOrderModel.getStartSlotTime());
+            endTimeTv.setText("結束投幣時間：" + mSlotOrderModel.getEndSlotTime());
+            orderMoneyTv.setText("總金額：MOP" + mSlotOrderModel.getSlotAmount());
+            refreshCarChoosed();
             orderAreaLL.setVisibility(View.GONE);
             orderColorLL.setVisibility(View.GONE);
             orderPhotoLL.setVisibility(View.GONE);
             machinenoUnknowLL.setVisibility(View.GONE);
             photoGv.setVisibility(View.GONE);
-            if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
+            /*if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
                 callNetGetMaxAmount(mSlotMachineModel.getMachineNo());
             } else {
                 startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-            }
+            }*/
         }
 
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
@@ -335,6 +345,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.parking_order_starttime_ll:
                 chooseOrderStartTime();
+                break;
+            case R.id.parking_order_endtime_ll:
+                chooseOrderEndTime();
                 break;
             case R.id.parking_order_money_ll:
                 chooseOrderMoney();
@@ -391,7 +404,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 break;
         }
     }
-
 
     /**
      * 自动获取相机权限
@@ -788,7 +800,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
      * 刷新車輛信息
      */
     private void refreshCarChoosed() {
-        if (carInsideModelList.size() > 0) {
+        /*if (carInsideModelList.size() > 0) {
             carManagetv.setText("車輛管理");
             carManageRL.setVisibility(View.VISIBLE);
             //carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
@@ -822,6 +834,29 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         } else {
             carManagetv.setText("未選擇車輛，請先選擇車輛");
             carManageRL.setVisibility(View.GONE);
+        }*/
+        carManagetv.setText("車輛管理");
+        carManageRL.setVisibility(View.VISIBLE);
+        //carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
+        switch (mCarInsideModel.getIfPerson()) {
+            case 1:
+                carTypeTv.setText("車     型：輕重型電單車");
+                break;
+            case 2:
+                carTypeTv.setText("車     型：輕型汽車");
+                break;
+            case 3:
+                carTypeTv.setText("車     型：重型汽車");
+                break;
+        }
+        carNumTv.setText("車牌號：" + mCarInsideModel.getCarNo());
+        //AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
+        x.image().bind(parkingIv, mCarInsideModel.getImgUrl(), options);
+
+        if (mCarInsideModel.getIfPay() == 0) {
+            carRecargeIv.setImageResource(R.mipmap.recharge);
+        } else {
+            carRecargeIv.setImageResource(R.mipmap.member);
         }
     }
 
@@ -894,6 +929,74 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 .show(getSupportFragmentManager());
     }
 
+    /**
+     * 选择订单結束时间
+     */
+    private void chooseOrderEndTime() {
+        NiceDialog.init()
+                .setLayoutId(R.layout.dialog_choose_time)
+                .setConvertListener(new ViewConvertListener() {
+                    @Override
+                    public void convertView(final ViewHolder holder, final BaseNiceDialog dialog) {
+                        final TextView timeTv = holder.getView(R.id.dialog_time_tv);
+                        TextView submitTv = holder.getView(R.id.dialog_time_submit);
+                        TimePicker timePicker = holder.getView(R.id.dialog_time_picker);
+                        timePicker.setIs24HourView(true);
+                        timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                        timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                        timeTv.setText("投幣時間[預計" + (BSSMCommonUtils.getHour()+1) + ":" + BSSMCommonUtils.getMinute() + ":00]");
+                        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                            @Override
+                            public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
+                                boolean v = timePicker.is24HourView();
+                                if (hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) {
+                                    timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                    timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                    Toast.makeText(ParkingOrderActivity.this, "請選擇一個小時之後的時間", Toast.LENGTH_LONG).show();
+                                } else {
+                                    if (hourOfDay > 20 || hourOfDay < 9) {
+                                        timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                        timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                        Toast.makeText(ParkingOrderActivity.this, "請選擇規定的時間(9:00-20:00)之間下單！", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        String hourTime = null;
+                                        String minuteTime = null;
+                                        if (hourOfDay < 10) {
+                                            hourTime = "0" + hourOfDay;
+                                        } else {
+                                            hourTime = Integer.toString(hourOfDay);
+                                        }
+                                        if (minute < 10) {
+                                            minuteTime = "0" + minute;
+                                        } else {
+                                            minuteTime = Integer.toString(minute);
+                                        }
+                                        String time = hourTime + ":" + minuteTime + ":00";
+                                        Date date = new Date( );
+                                        SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
+                                        if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                                            mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                        } else {
+                                            mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                        }
+                                        timeTv.setText("投幣時間[預計" + time + "]");
+                                        startTimeTv.setText("投幣時間[預計" + time + "]");
+                                    }
+                                }
+                            }
+                        });
+
+                        holder.setOnClickListener(R.id.dialog_time_submit, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setWidth(285)
+                .show(getSupportFragmentManager());
+    }
     /**
      * 选择订单金额
      */

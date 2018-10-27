@@ -155,7 +155,20 @@
                 <TextView
                     android:id="@+id/parking_order_starttime_tv"
                     style="@style/MineItemTextView"
-                    android:text="投幣時間[預計15:30]" />
+                    android:text="開始投幣時間[預計15:30]" />
+
+                <ImageView
+                    style="@style/MineItemImageNext"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parking_order_endtime_ll"
+                android:layout_marginTop="1dp"
+                style="@style/ParkingOrderItemLinearLayout">
+                <TextView
+                    android:id="@+id/parking_order_endtime_tv"
+                    style="@style/MineItemTextView"
+                    android:text="結束投幣時間[預計15:30]" />
 
                 <ImageView
                     style="@style/MineItemImageNext"/>
