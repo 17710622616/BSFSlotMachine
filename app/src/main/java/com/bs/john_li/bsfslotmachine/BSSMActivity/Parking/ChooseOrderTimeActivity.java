@@ -390,6 +390,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                         intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
                         intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
                         intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
+                        intent.putExtra("isTomorrow", tomorrowCb.isChecked());
                         startActivity(intent);
                     } else {
                         Toast.makeText(this, "請選擇開始投幣時間及結束投幣時間！", Toast.LENGTH_SHORT).show();

@@ -95,7 +95,7 @@ public class BSSMConfigtor {
     // 車輛充值價格的列表
     public final static String SUBMIT_CAR_CAHRGE_ORDER = "order/memberOrder?token=";
     // 提交已知咪錶訂單
-    public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/slotOrder?token=";
+    public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/newslotOrder?token=";
     // 提交未知咪錶訂單
     public final static String SUBMIT_ORDER_SLOT_MACHINE_UNKOWN = "order/unkownSlotOrder?token=";
     // 獲取收費標準
