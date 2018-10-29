@@ -10,193 +10,202 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <!--車輛選擇-->
         <LinearLayout
-            android:id="@+id/choose_order_time_car_manage_ll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
             android:orientation="vertical">
 
+            <!--車輛選擇-->
+            <LinearLayout
+                android:id="@+id/choose_order_time_car_manage_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/choose_order_time_car_manage_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="車輛管理"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_vertical"
+                    android:background="@color/colorWight"/>
+                <RelativeLayout
+                    android:id="@+id/choose_order_time_car_manage_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_marginTop="0.5dp"
+                    android:background="@color/colorWight">
+
+                    <ImageView
+                        android:id="@+id/choose_order_time_parking_iv"
+                        android:layout_width="160dp"
+                        android:layout_height="120dp"
+                        android:src="@mipmap/car_sample"
+                        android:scaleType="fitXY"/>
+                    <TextView
+                        android:id="@+id/choose_order_time_car_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="車型："
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_toRightOf="@id/choose_order_time_parking_iv"/>
+
+                    <TextView
+                        android:id="@+id/choose_order_time_car_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="車牌號："
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/choose_order_time_car_type"
+                        android:layout_toRightOf="@id/choose_order_time_parking_iv"/>
+
+                    <ImageView
+                        android:id="@+id/choose_order_time_car_recharge"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorWight"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="3dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/recharge"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWight">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="開始投幣時間"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_vertical"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="10dp"
+                    android:text="(最快一個鐘后)"
+                    android:textSize="8sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_vertical"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="結束投幣時間"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWight"
+                android:layout_marginTop="0.5dp">
+                <TimePicker
+                    android:id="@+id/time_picker_start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:timePickerMode="spinner">
+                    <requestFocus/>
+                </TimePicker>
+                <TimePicker
+                    android:id="@+id/time_picker_end"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:timePickerMode="spinner">
+                    <requestFocus/>
+                </TimePicker>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWight"
+                android:gravity="center">
+                <CheckBox
+                    android:id="@+id/choose_order_time_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="是否預約聽日訂單，過00:00則算第二日"/>
+            </LinearLayout>
+
             <TextView
-                android:id="@+id/choose_order_time_car_manage_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="2dp"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
-                android:text="車輛管理"
+                android:layout_marginTop="10dp"
+                android:text="訂單金額"
                 android:textSize="16sp"
                 android:textColor="@color/colorBlack"
                 android:gravity="center_vertical"
                 android:background="@color/colorWight"/>
-            <RelativeLayout
-                android:id="@+id/choose_order_time_car_manage_rl"
+
+            <TextView
+                android:id="@+id/choose_order_amount_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingBottom="2dp"
+                android:paddingTop="10dp"
                 android:layout_marginTop="0.5dp"
-                android:background="@color/colorWight">
-
-                <ImageView
-                    android:id="@+id/choose_order_time_parking_iv"
-                    android:layout_width="160dp"
-                    android:layout_height="120dp"
-                    android:src="@mipmap/car_sample"
-                    android:scaleType="fitXY"/>
-                <TextView
-                    android:id="@+id/choose_order_time_car_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="車型："
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@id/choose_order_time_parking_iv"/>
-
-                <TextView
-                    android:id="@+id/choose_order_time_car_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="車牌號："
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@id/choose_order_time_car_type"
-                    android:layout_toRightOf="@id/choose_order_time_parking_iv"/>
-
-                <ImageView
-                    android:id="@+id/choose_order_time_car_recharge"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@color/colorWight"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="3dp"
-                    android:scaleType="fitCenter"
-                    android:src="@mipmap/recharge"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorWight">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:paddingTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="開始投幣時間"
-                android:textSize="16sp"
+                android:text="MOP0.0"
+                android:textSize="32sp"
                 android:textColor="@color/colorBlack"
-                android:gravity="center_vertical"/>
+                android:gravity="center"
+                android:background="@color/colorWight"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:paddingTop="10dp"
-                android:text="(最快一個鐘后)"
-                android:textSize="8sp"
+                android:paddingBottom="10dp"
+                android:text="(非會員訂單，每個鐘收取5蚊代入服務費)"
+                android:textSize="12sp"
                 android:textColor="@color/colorBlack"
-                android:gravity="center_vertical"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingBottom="2dp"
-                android:paddingTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="結束投幣時間"
-                android:textSize="16sp"
-                android:textColor="@color/colorBlack"
-                android:gravity="center_vertical|right"
-                android:paddingRight="10dp"/>
+                android:gravity="center"
+                android:background="@color/colorWight"/>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorWight"
-            android:layout_marginTop="0.5dp">
-            <TimePicker
-                android:id="@+id/time_picker_start"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:timePickerMode="spinner"/>
-            <TimePicker
-                android:id="@+id/time_picker_end"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:timePickerMode="spinner"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorWight"
-            android:gravity="center">
-            <CheckBox
-                android:id="@+id/choose_order_time_cb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="是否預約聽日訂單"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="2dp"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:text="訂單金額"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:gravity="center_vertical"
-            android:background="@color/colorWight"/>
-
-        <TextView
-            android:id="@+id/choose_order_amount_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="2dp"
-            android:paddingTop="10dp"
-            android:layout_marginTop="0.5dp"
-            android:text="MOP0.0"
-            android:textSize="32sp"
-            android:textColor="@color/colorBlack"
-            android:gravity="center"
-            android:background="@color/colorWight"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:text="(非會員訂單，每個鐘收取5蚊代入服務費)"
-            android:textSize="12sp"
-            android:textColor="@color/colorBlack"
-            android:gravity="center"
-            android:background="@color/colorWight"/>
-    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

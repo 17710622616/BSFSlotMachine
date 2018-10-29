@@ -50,7 +50,7 @@ public class BSSMConfigtor {
     // 正式的域名地址
     public final static String BASE_URL = "https://www.easydev.top/parkingman-web/";
     // 正式的IP地址
-    //public final static String BASE_URL = "http://112.74.52.98/parkingman-web/";
+    //public final static String BASE_URL = "http://120.77.84.40/parkingman-web/";
     // 測試的IP地址
     //public final static String BASE_URL = "http://47.75.5.50/parkingman-web/";
     // 測試的IP地址
@@ -97,7 +97,7 @@ public class BSSMConfigtor {
     // 提交已知咪錶訂單
     public final static String SUBMIT_ORDER_SLOT_MACHINE_EXIST = "order/newslotOrder?token=";
     // 提交未知咪錶訂單
-    public final static String SUBMIT_ORDER_SLOT_MACHINE_UNKOWN = "order/unkownSlotOrder?token=";
+    public final static String SUBMIT_ORDER_SLOT_MACHINE_UNKOWN = "order/newUnkownSlotOrder?token=";
     // 獲取收費標準
     public final static String GET_ORDER_RATES = "systemProfile/machineProfile?token=";
     // 獲取已知咪表最大金额

@@ -118,7 +118,7 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
         noresultLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NiceDialog.init()
+                /*NiceDialog.init()
                         .setLayoutId(R.layout.dialog_photo)
                         .setConvertListener(new ViewConvertListener() {
                             @Override
@@ -126,21 +126,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                                 viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        /*if(BSSMCommonUtils.IsThereAnAppToTakePictures(SearchSlotMachineActivity.this)) {
-                                            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                            if (!dir.exists()) {
-                                                dir.mkdir();
-                                            }
-
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                                            Date date = new Date(System.currentTimeMillis());
-                                            fileUri = new File(dir, "location" + format.format(date) + ".jpg");
-                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileUri));
-                                            startActivityForResult(intent, TAKE_PHOTO);
-                                        } else {
-                                            Toast.makeText(SearchSlotMachineActivity.this,"您的照相機不可用哦，請檢測相機先！",Toast.LENGTH_SHORT).show();
-                                        }*/
                                         autoObtainCameraPermission();
                                         baseNiceDialog.dismiss();
                                     }
@@ -148,19 +133,6 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                                 viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        /*dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
-                                        if (!dir.exists()) {
-                                            dir.mkdir();
-                                        }
-
-                                        Intent getAlbum;
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                            getAlbum = new Intent(Intent.ACTION_PICK);
-                                        } else {
-                                            getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
-                                        }
-                                        getAlbum.setType("image*//*");
-                                        startActivityForResult(getAlbum, TAKE_PHOTO_FROM_ALBUM);*/
                                         autoObtainStoragePermission();
                                         baseNiceDialog.dismiss();
                                     }
@@ -174,7 +146,8 @@ public class SearchSlotMachineActivity extends AppCompatActivity {
                             }
                         })
                         .setShowBottom(true)
-                        .show(getSupportFragmentManager());
+                        .show(getSupportFragmentManager());*/
+            startActivity(new Intent(SearchSlotMachineActivity.this, InputUnknowSlotMachineActivity.class));
             }
         });
     }

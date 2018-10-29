@@ -305,12 +305,18 @@ public class ChooseCarActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void carChooseClick(View view) {
         int position = Integer.parseInt((String) view.getTag());
-        if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+        if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {  // 咪錶存在
             String childMachinePosition = getIntent().getStringExtra("childPosition");
             Intent intent = new Intent(this, ChooseOrderTimeActivity.class);
             intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
             intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
             intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
+            intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
+            startActivity(intent);
+        } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，拍照
+            Intent intent = new Intent(this, ChooseOrderTimeActivity.class);
+            intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
+            intent.putExtra("unknowSlotOrder", getIntent().getStringExtra("unknowSlotOrder"));
             intent.putExtra("carModel", new Gson().toJson(carModelList.get(position)));
             startActivity(intent);
         } else {

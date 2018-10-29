@@ -1,10 +1,19 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -23,10 +32,15 @@ import com.bs.john_li.bsfslotmachine.BSSMModel.SlotOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotUnknowOrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.PhotoUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +50,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,6 +69,14 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
     private ImageView carIv, carRechargeIv;
     private TimePicker startTimePicker, endTimePicker;
     private CheckBox tomorrowCb;
+
+    private File fileUri;//照片文件路徑
+    private Uri imageUri;//照片文件路徑
+    private static final int CODE_GALLERY_REQUEST = 2;   //0xa0
+    private static final int CODE_CAMERA_REQUEST = 1;    //0xa1
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 0x04;
+    private File dir; //圖片文件夾路徑
 
     private String startWay;
     private String childPosition;
@@ -129,7 +152,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                         }
                         String time = hourTime + ":" + minuteTime + ":00";
                         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                            //mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                            mSlotUnknowOrderModel.setStartSlotTime(BSSMCommonUtils.getTomorrowDate() + " " +time);
                         } else {
                             mSlotOrderModel.setStartSlotTime(BSSMCommonUtils.getTomorrowDate() + " " +time);
                         }
@@ -161,7 +184,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                             Date date = new Date( );
                             SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
                             if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                //mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
                             } else {
                                 mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
                             }
@@ -198,12 +221,22 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                     endSlotTime = yearFdt.format(date);
                 }
                 try {
-                    if (BSSMCommonUtils.compareTwoTime(endSlotTime + " " +time, mSlotOrderModel.getStartSlotTime())){  // 判斷不小於開始時間
-                        timePicker.setCurrentHour(startTimePicker.getHour() + 1);
-                        timePicker.setCurrentMinute(startTimePicker.getMinute());
-                        Toast.makeText(ChooseOrderTimeActivity.this, "結束投幣時間不可小於開始投幣時間！", Toast.LENGTH_SHORT).show();
+                    if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                        if (BSSMCommonUtils.compareTwoTime(endSlotTime + " " +time, mSlotUnknowOrderModel.getStartSlotTime())){  // 判斷不小於開始時間
+                            timePicker.setCurrentHour(startTimePicker.getCurrentHour() + 1);
+                            timePicker.setCurrentMinute(startTimePicker.getCurrentMinute());
+                            Toast.makeText(ChooseOrderTimeActivity.this, "結束投幣時間不可小於開始投幣時間！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            mSlotUnknowOrderModel.setEndSlotTime(endSlotTime + " " +time);
+                        }
                     } else {
-                        mSlotOrderModel.setEndSlotTime(endSlotTime + " " +time);
+                        if (BSSMCommonUtils.compareTwoTime(endSlotTime + " " +time, mSlotOrderModel.getStartSlotTime())){  // 判斷不小於開始時間
+                            timePicker.setCurrentHour(startTimePicker.getCurrentHour() + 1);
+                            timePicker.setCurrentMinute(startTimePicker.getCurrentMinute());
+                            Toast.makeText(ChooseOrderTimeActivity.this, "結束投幣時間不可小於開始投幣時間！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            mSlotOrderModel.setEndSlotTime(endSlotTime + " " +time);
+                        }
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -218,41 +251,70 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
      * 計算訂單金額
      */
     private void calculationOrderAmount() {
-        String startTime = mSlotOrderModel.getStartSlotTime();
-        String endtTime = mSlotOrderModel.getEndSlotTime();
-
         if (mRatesModel != null) {
             double orderAmount = 0.0;
             double hourCost = new BigDecimal(mRatesModel.getData().getHourCost()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue(); //
             double noVipHoursPay = new BigDecimal(mRatesModel.getData().getNoVipHoursPay()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue();
-            long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getEndSlotTime());
 
-            if (mCarModel.getIfPay() == 0) {    // 非會員
-                try {
-                    if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
-                        orderAmount = Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*10000)/10000.0000;    // 小於早上九點半
-                    } else {
-                        orderAmount = Math.round((hourCost + noVipHoursPay) * timeDiff*10000)/10000.0000;    // 大於早上九點半
+            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                // 未知咪錶
+                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotUnknowOrderModel.getStartSlotTime(), mSlotUnknowOrderModel.getEndSlotTime());
+                if (mCarModel.getIfPay() == 0) {    // 非會員
+                    try {
+                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
+                            orderAmount = Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00;    // 小於早上九點半
+                        } else {
+                            orderAmount = Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00;    // 大於早上九點半
+                        }
+                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                    mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                    amountTv.setText("MOP" + String.valueOf(orderAmount));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                } else {    // 會員
+                    try {
+                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
+                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), time930)) {
+                            orderAmount = Math.round(hourCost * (timeDiff + 60)*100)/100.00;// 小於早上九點半
+                        } else {
+                            orderAmount = Math.round(hourCost * timeDiff*100)/100.00;     // 大於早上九點半
+                        }
+                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {    // 會員
-                try {
-                    String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
-                    if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), time930)) {
-                        orderAmount = Math.round(hourCost * (timeDiff + 60)*10000)/10000.0000;// 小於早上九點半
-                    } else {
-                        orderAmount = Math.round(hourCost * timeDiff*10000)/10000.0000;     // 大於早上九點半
+            } else {    // 已知咪錶
+                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getEndSlotTime());
+                if (mCarModel.getIfPay() == 0) {    // 非會員
+                    try {
+                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
+                            orderAmount = Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00;    // 小於早上九點半
+                        } else {
+                            orderAmount = Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00;    // 大於早上九點半
+                        }
+                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                    mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                    amountTv.setText("MOP" + String.valueOf(orderAmount));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                } else {    // 會員
+                    try {
+                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
+                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), time930)) {
+                            orderAmount = Math.round(hourCost * (timeDiff + 60)*100)/100.00;// 小於早上九點半
+                        } else {
+                            orderAmount = Math.round(hourCost * timeDiff*100)/100.00;     // 大於早上九點半
+                        }
+                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+
         }
     }
 
@@ -261,16 +323,29 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         Intent intent = getIntent();
         headView.setTitle("選擇訂單時間");
         headView.setLeft(this);
-        headView.setRightText("下一步", this);
 
         // 獲取傳遞數據
         startWay = intent.getStringExtra("way");
-        childPosition = intent.getStringExtra("childPosition");
         mCarModel = new Gson().fromJson(intent.getStringExtra("carModel"), CarModel.CarCountAndListModel.CarInsideModel.class);
-        mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
         // 填充車輛信息
         x.image().bind(carIv, mCarModel.getImgUrl(), options);
-        if (mCarModel.getIfPay() != 0) {
+        if (mCarModel.getVipType() == 0) {
+            if (mCarModel.getIfPay() == 0) {
+                carRechargeIv.setImageResource(R.mipmap.recharge);
+            } else {
+                carRechargeIv.setImageResource(R.mipmap.member);
+            }
+        } else if (mCarModel.getVipType() == 1) {   // 日費費
+            carRechargeIv.setImageResource(R.mipmap.member);
+        } else if (mCarModel.getVipType() == 2) {   // 月費
+            carRechargeIv.setImageResource(R.mipmap.recharge_mouth);
+        } else if (mCarModel.getVipType() == 3) {   // 季度費
+            carRechargeIv.setImageResource(R.mipmap.recharge_quarter);
+        } else if (mCarModel.getVipType() == 4) {   // 半年費
+            carRechargeIv.setImageResource(R.mipmap.recharge_halfyear);
+        } else if (mCarModel.getVipType() == 5) {   // 年費
+            carRechargeIv.setImageResource(R.mipmap.year);
+        } else {
             carRechargeIv.setImageResource(R.mipmap.member);
         }
         carNoTv.setText(mCarModel.getCarNo());
@@ -292,27 +367,37 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         String endTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + endTime;
 
         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
-
-        } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
+            headView.setRightText("拍照", this);
+            mSlotUnknowOrderModel = new Gson().fromJson(intent.getStringExtra("unknowSlotOrder"), SlotUnknowOrderModel.class);
+            mSlotUnknowOrderModel.setStartSlotTime(startTimeForDay);
+            mSlotUnknowOrderModel.setEndSlotTime(endTimeForDay);
+            mSlotUnknowOrderModel.setCarId(String.valueOf(mCarModel.getId()));
+            mSlotUnknowOrderModel.setCarType(mCarModel.getIfPerson());
+            mSlotUnknowOrderModel.setSlotAmount("0");
+        } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，唔子列表
 
         } else {    // 咪錶存在，有子列表
-            String childMachinePosition = intent.getStringExtra("childPosition");
-
+            headView.setRightText("下一步", this);
+            // 子車位的數字下標
+            childPosition = intent.getStringExtra("childPosition");
+            // 咪錶
+            mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             // 停車訂單
             mSlotOrderModel = new SlotOrderModel();
             mSlotOrderModel.setStartSlotTime(startTimeForDay);
             mSlotOrderModel.setEndSlotTime(endTimeForDay);
             mSlotOrderModel.setRemark("");
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
-            mSlotOrderModel.setParkingSpace(childMachinePosition);
+            mSlotOrderModel.setParkingSpace(childPosition);
             mSlotOrderModel.setCarId((long) mCarModel.getId());
             mSlotOrderModel.setSlotAmount("0");
-            if (BSSMCommonUtils.isLoginNow(ChooseOrderTimeActivity.this)) {
-                // 獲取收費標準
-                callNetGetRates();
-            } else {
-                startActivityForResult(new Intent(ChooseOrderTimeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-            }
+        }
+
+        if (BSSMCommonUtils.isLoginNow(ChooseOrderTimeActivity.this)) {
+            // 獲取收費標準
+            callNetGetRates();
+        } else {
+            startActivityForResult(new Intent(ChooseOrderTimeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
         }
 
         // 初始化時間選擇器
@@ -322,6 +407,11 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         endTimePicker.setIs24HourView(true);
         endTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 2);
         endTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+
+        dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
     }
 
     /**
@@ -332,9 +422,15 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("carType",mSlotMachineModel.getCarType());
-            jsonObj.put("pillarColor",mSlotMachineModel.getPillarColor());
-            jsonObj.put("areaCode",mSlotMachineModel.getAreaCode());
+            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+                jsonObj.put("carType",mSlotMachineModel.getCarType());
+                jsonObj.put("pillarColor",mSlotMachineModel.getPillarColor());
+                jsonObj.put("areaCode",mSlotMachineModel.getAreaCode());
+            } else {
+                jsonObj.put("carType",mSlotUnknowOrderModel.getCarType());
+                jsonObj.put("pillarColor",mSlotUnknowOrderModel.getPillarColor());
+                jsonObj.put("areaCode",mSlotUnknowOrderModel.getAreaCode());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -379,8 +475,36 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.head_right_tv:
                 if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
-
-                } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，定位停車
+                    NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_photo)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        autoObtainCameraPermission();
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        autoObtainStoragePermission();
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
+                } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，無子列表
 
                 } else {
                     if (mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getEndSlotTime() != null) {
@@ -390,6 +514,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                         intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
                         intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
                         intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
+                        intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
                         intent.putExtra("isTomorrow", tomorrowCb.isChecked());
                         startActivity(intent);
                     } else {
@@ -399,6 +524,114 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.choose_order_time_car_manage_ll:
                 finish();
+                break;
+        }
+    }
+
+    /**
+     * 自动获取相机权限
+     */
+    private void autoObtainCameraPermission() {
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    Toast.makeText(ChooseOrderTimeActivity.this, "您已经拒绝过一次", Toast.LENGTH_SHORT).show();
+                }
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERMISSIONS_REQUEST_CODE);
+            } else {//有权限直接调用系统相机拍照
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date date = new Date(System.currentTimeMillis());
+                fileUri = new File(dir.getPath() + "/order" + format.format(date) + ".jpg");
+                imageUri = Uri.fromFile(fileUri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    imageUri = FileProvider.getUriForFile(ChooseOrderTimeActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                }
+
+                PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+            }
+        }catch (Exception e) {
+
+        }
+    }
+
+    /**
+     * 自动获取相冊权限
+     */
+    private void autoObtainStoragePermission() {
+        // 使用意图直接调用手机相册  
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // 打开手机相册,设置请求码  
+        startActivityForResult(intent, CODE_GALLERY_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST_CODE: {//调用系统相机申请拍照权限回调
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    Date date = new Date(System.currentTimeMillis());
+                    fileUri = new File(dir.getPath() + "/order" + format.format(date) + ".jpg");
+                    imageUri = Uri.fromFile(fileUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        imageUri = FileProvider.getUriForFile(ChooseOrderTimeActivity.this, "com.bs.john_li.bsfslotmachine" + ".fileprovider", fileUri);//通过FileProvider创建一个content类型的Uri
+                    PhotoUtils.takePicture(this, imageUri, CODE_CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(ChooseOrderTimeActivity.this, "请允许打开相机", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+
+            }
+            case STORAGE_PERMISSIONS_REQUEST_CODE://调用系统相册申请Sdcard权限回调
+                // 使用意图直接调用手机相册  
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // 打开手机相册,设置请求码  
+                startActivityForResult(intent, CODE_GALLERY_REQUEST);
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(ChooseOrderTimeActivity.this, "影相失敗！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent1 = new Intent(this, ParkingOrderActivity.class);
+        switch(requestCode) {
+            case CODE_CAMERA_REQUEST:
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(fileUri);
+                mediaScanIntent.setData(contentUri);
+                sendBroadcast(mediaScanIntent);
+                intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
+                intent1.putExtra("imageUri", fileUri.getPath());
+                intent1.putExtra("unknowSlotOrder", new Gson().toJson(mSlotUnknowOrderModel));
+                intent1.putExtra("carModel", getIntent().getStringExtra("carModel"));
+                intent1.putExtra("RatesModel", new Gson().toJson(mRatesModel));
+                intent1.putExtra("isTomorrow", tomorrowCb.isChecked());
+                startActivity(intent1);
+                finish();
+                break;
+            case CODE_GALLERY_REQUEST:
+                String imagePath = BSSMCommonUtils.getRealFilePath(this, data.getData());
+                fileUri = new File(imagePath);
+                intent1.putExtra("way", BSSMConfigtor.SLOT_MACHINE_NOT_EXIST);
+                intent1.putExtra("imageUri", fileUri.getPath());
+                intent1.putExtra("unknowSlotOrder", new Gson().toJson(mSlotUnknowOrderModel));
+                intent1.putExtra("carModel", getIntent().getStringExtra("carModel"));
+                intent1.putExtra("RatesModel", new Gson().toJson(mRatesModel));
+                intent1.putExtra("isTomorrow", tomorrowCb.isChecked());
+                startActivity(intent1);
+                finish();
+                break;
+            default:
                 break;
         }
     }

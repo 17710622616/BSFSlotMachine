@@ -108,8 +108,22 @@ public class SmartChooseCarRefreshAdapter extends RecyclerView.Adapter<SmartChoo
                 break;
         }
 
-        if (carList.get(position).getIfPay() == 0) {
-            holder.carRecharge.setImageResource(R.mipmap.recharge);
+        if (carList.get(position).getVipType() == 0) {
+            if (carList.get(position).getIfPay() == 0) {
+                holder.carRecharge.setImageResource(R.mipmap.recharge);
+            } else {
+                holder.carRecharge.setImageResource(R.mipmap.member);
+            }
+        } else if (carList.get(position).getVipType() == 1) {   // 日費費
+            holder.carRecharge.setImageResource(R.mipmap.member);
+        } else if (carList.get(position).getVipType() == 2) {   // 月費
+            holder.carRecharge.setImageResource(R.mipmap.recharge_mouth);
+        } else if (carList.get(position).getVipType() == 3) {   // 季度費
+            holder.carRecharge.setImageResource(R.mipmap.recharge_quarter);
+        } else if (carList.get(position).getVipType() == 4) {   // 半年費
+            holder.carRecharge.setImageResource(R.mipmap.recharge_halfyear);
+        } else if (carList.get(position).getVipType() == 5) {   // 年費
+            holder.carRecharge.setImageResource(R.mipmap.year);
         } else {
             holder.carRecharge.setImageResource(R.mipmap.member);
         }

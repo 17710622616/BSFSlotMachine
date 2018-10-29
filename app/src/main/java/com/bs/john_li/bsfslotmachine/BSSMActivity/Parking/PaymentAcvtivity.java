@@ -240,7 +240,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
         try {
             java.util.Date begin=dfs.parse(BSSMCommonUtils.stampToDate(orderTime));
             java.util.Date end = dfs.parse(BSSMCommonUtils.getTimeNoW());
-            between = 1800L - (end.getTime()-begin.getTime())/1000;
+            between = 900L - (end.getTime()-begin.getTime())/1000;
         } catch (Exception e) {
             e.printStackTrace();
         }

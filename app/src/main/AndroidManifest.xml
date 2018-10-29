@@ -121,6 +121,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait" />
+        <activity android:name=".BSSMActivity.Parking.InputUnknowSlotMachineActivity" />
 
         <!--版本更新所要用到的 fileProvider 用于兼容7.0通知栏的安装-->
         <provider

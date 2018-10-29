@@ -13,8 +13,17 @@ public class SlotUnknowOrderModel {
     private String areaCode;
     private String startSlotTime;
     private String unknowMachineno;
-
+    private String endSlotTime;
     private String remark;
+
+    public String getEndSlotTime() {
+        return endSlotTime;
+    }
+
+    public void setEndSlotTime(String endSlotTime) {
+        this.endSlotTime = endSlotTime;
+    }
+
 
     public String getUnknowMachineno() {
         return unknowMachineno;

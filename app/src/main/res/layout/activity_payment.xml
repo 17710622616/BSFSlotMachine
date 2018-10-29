@@ -138,7 +138,8 @@
         <LinearLayout
             android:id="@+id/payment_credit_card"
             style="@style/MineItemLinearLayout"
-            android:layout_marginTop="1dp">
+            android:layout_marginTop="1dp"
+            android:visibility="gone">
 
             <ImageView
                 style="@style/PayMentMethodIcon"

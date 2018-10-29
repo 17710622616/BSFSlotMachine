@@ -95,6 +95,16 @@ public class CarModel {
             private String carBrand;
             private String carStyle;
             private int ifPay;
+            private int vipType;
+
+            public int getVipType() {
+                return vipType;
+            }
+
+            public void setVipType(int vipType) {
+                this.vipType = vipType;
+            }
+
             private Object isDelete;
             private Object createTime;
             private Object updateTime;

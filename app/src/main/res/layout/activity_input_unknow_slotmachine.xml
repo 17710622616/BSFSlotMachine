@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/input_unknow_sm_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/input_unknow_sm_no"
+            style="@style/HistoryOrderTextView"
+            android:text="咪錶編號："/>
+
+        <View
+            style="@style/UnderLineTextView"/>
+
+        <TextView
+            android:id="@+id/input_unknow_sm_color"
+            style="@style/HistoryOrderTextView"
+            android:text="咪錶顏色："/>
+
+        <View
+            style="@style/UnderLineTextView"/>
+
+        <TextView
+            android:id="@+id/input_unknow_sm_area"
+            style="@style/HistoryOrderTextView"
+            android:text="地      區："/>
+
+        <View
+            style="@style/UnderLineTextView"/>
+
+        <TextView
+            android:id="@+id/input_unknow_sm_address"
+            style="@style/HistoryOrderTextView"
+            android:text="地      址："/>
+
+        <View
+            style="@style/UnderLineTextView"/>
+    </LinearLayout>
+</LinearLayout>
