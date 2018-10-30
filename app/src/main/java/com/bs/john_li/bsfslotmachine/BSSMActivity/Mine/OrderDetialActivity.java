@@ -7,17 +7,34 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.OrderPhotoAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +46,7 @@ import java.util.List;
 public class OrderDetialActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private NoScrollGridView orderImgGv;
-    private TextView orderTypeTv, orderNoTv,statusTV,payMoneyTV,startTimeTV,timeTV,machineNoTV,colorTV,addressTV,carTypeTV,carNoTV,carStyleTV,carBrandTV,remarkTV,totalAmountTV,returnAmountTV,monthTV;
+    private TextView orderTypeTv, orderNoTv,statusTV,payMoneyTV,startTimeTV,timeTV,machineNoTV,colorTV,addressTV,carTypeTV,carNoTV,carStyleTV,carBrandTV,remarkTV,totalAmountTV,returnAmountTV,monthTV, cancellationOfOrderTv;
 
     private UserOrderOutModel.UserOrderInsideModel.UserOrderModel mUserOrderModel;
     private List<String> imgList;
@@ -65,6 +82,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
         totalAmountTV = findViewById(R.id.order_detial_total_amount);
         returnAmountTV = findViewById(R.id.order_detial_return_amount);
         monthTV = findViewById(R.id.order_detial_month);
+        cancellationOfOrderTv = findViewById(R.id.cancellation_of_order);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             headView.setHeadHight();
         }
@@ -72,7 +90,7 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void setListener() {
-
+        cancellationOfOrderTv.setOnClickListener(this);
     }
 
     @Override
@@ -154,6 +172,9 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         carTypeTV.setText("車輛類型：重型貨車");
                         break;
                 }
+                if (mUserOrderModel.getOrderStatus() == 1 || mUserOrderModel.getOrderStatus() == 2 || mUserOrderModel.getOrderStatus() == 3 || mUserOrderModel.getOrderStatus() == 4 || mUserOrderModel.getOrderStatus() == 5) {
+                    cancellationOfOrderTv.setVisibility(View.VISIBLE);
+                }
                 break;
             case 4: // 未知投幣機訂單
                 if (mUserOrderModel.getImg1() != null) {
@@ -220,6 +241,9 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                 case 3:
                     carTypeTV.setText("車輛類型：重型貨車");
                     break;
+                }
+                if (mUserOrderModel.getOrderStatus() == 1 || mUserOrderModel.getOrderStatus() == 2 || mUserOrderModel.getOrderStatus() == 3 || mUserOrderModel.getOrderStatus() == 4 || mUserOrderModel.getOrderStatus() == 5) {
+                    cancellationOfOrderTv.setVisibility(View.VISIBLE);
                 }
                 break;
         }
@@ -313,7 +337,85 @@ public class OrderDetialActivity extends BaseActivity implements View.OnClickLis
                         break;
                 }
                 break;
+            case R.id.cancellation_of_order:
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_normal)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                TextView msgTv = viewHolder.getView(R.id.dialog_normal_msg);
+                                msgTv.setText("是否取消訂單，取消訂單只會返還下個時間段嘅錢！");
+                                viewHolder.setOnClickListener(R.id.dialog_normal_no, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                                viewHolder.setOnClickListener(R.id.dialog_normal_yes, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (BSSMCommonUtils.isLoginNow(OrderDetialActivity.this)) {
+                                            callNetCancelOrder();
+                                        } else {
+                                            startActivityForResult(new Intent(OrderDetialActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                                        }
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setWidth(210)
+                        .show(getSupportFragmentManager());
+                break;
         }
+    }
+    /**
+     * 修改車輛信息
+     */
+    private void callNetCancelOrder() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.CANCELLATION_OF_ORDER + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("orderNo",mUserOrderModel.getOrderNo());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.setBodyContent(jsonObj.toString());
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode().equals("200")) {
+                    Toast.makeText(OrderDetialActivity.this, " 取消訂單成功！", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (model.getCode().equals("10000")) {
+                    SPUtils.put(OrderDetialActivity.this, "UserToken", "");
+                    startActivityForResult(new Intent(OrderDetialActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                } else {
+                    Toast.makeText(OrderDetialActivity.this, " 取消訂單失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(OrderDetialActivity.this, "取消訂單失敗" + getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(OrderDetialActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     @Override

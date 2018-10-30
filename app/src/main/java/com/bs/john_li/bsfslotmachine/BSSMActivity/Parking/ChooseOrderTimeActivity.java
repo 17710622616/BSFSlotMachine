@@ -369,11 +369,11 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
             headView.setRightText("拍照", this);
             mSlotUnknowOrderModel = new Gson().fromJson(intent.getStringExtra("unknowSlotOrder"), SlotUnknowOrderModel.class);
+            mSlotUnknowOrderModel.setSlotAmount("0");
             mSlotUnknowOrderModel.setStartSlotTime(startTimeForDay);
             mSlotUnknowOrderModel.setEndSlotTime(endTimeForDay);
             mSlotUnknowOrderModel.setCarId(String.valueOf(mCarModel.getId()));
             mSlotUnknowOrderModel.setCarType(mCarModel.getIfPerson());
-            mSlotUnknowOrderModel.setSlotAmount("0");
         } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，唔子列表
 
         } else {    // 咪錶存在，有子列表
@@ -384,13 +384,13 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             mSlotMachineModel = new Gson().fromJson(intent.getStringExtra("SlotMachine"), SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel.class);
             // 停車訂單
             mSlotOrderModel = new SlotOrderModel();
+            mSlotOrderModel.setSlotAmount("0");
             mSlotOrderModel.setStartSlotTime(startTimeForDay);
             mSlotOrderModel.setEndSlotTime(endTimeForDay);
             mSlotOrderModel.setRemark("");
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
             mSlotOrderModel.setParkingSpace(childPosition);
             mSlotOrderModel.setCarId((long) mCarModel.getId());
-            mSlotOrderModel.setSlotAmount("0");
         }
 
         if (BSSMCommonUtils.isLoginNow(ChooseOrderTimeActivity.this)) {

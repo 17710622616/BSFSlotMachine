@@ -108,6 +108,18 @@
                 style="@style/HistoryOrderTextView"
                 android:visibility="gone"
                 android:text="充值月份：" />
+
+            <TextView
+                android:id="@+id/cancellation_of_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="取消訂單"
+                android:textColor="@color/colorWight"
+                android:background="@drawable/shape_recharge_bg"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
