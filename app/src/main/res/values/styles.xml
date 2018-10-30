@@ -20,7 +20,7 @@
     <!--欢迎页面主题-->
     <style name="BaseTheme.FullScreen">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@mipmap/wellcome_splash</item>
+        <item name="android:windowBackground">@mipmap/wellcome</item>
     </style>
 
     <style name="ParkingOrderItemLinearLayout">
