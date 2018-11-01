@@ -78,14 +78,15 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(Thread thread, Throwable ex) {
         if(!handleException(ex) && mDefaultHandler != null){
             mDefaultHandler.uncaughtException(thread,ex);
+            System.exit(0);
         }else{
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
+            System.exit(0);
         }
-
     }
 
     /**
