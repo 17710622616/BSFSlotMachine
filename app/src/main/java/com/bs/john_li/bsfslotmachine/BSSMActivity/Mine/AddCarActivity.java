@@ -79,6 +79,7 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
     private ImageView carPhotoIv;
     private TextView carTypeTv, carNoTv, carModelTv, carBrandTv, carStyleTv,outPutTv, deleteCarTV;
     private ProgressBar ivProgress;
+    ProgressDialog dialog;
 
     private File dir; //圖片文件夾路徑
     private File fileUri;//照片文件路徑
@@ -166,6 +167,8 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
         headView.setLeft(this);
         Intent intent = getIntent();
         startWay = intent.getStringExtra("startWay");
+        //
+        dialog = new ProgressDialog(this);
         // 判斷打開方式
         if (startWay.equals("update")){
             headView.setTitle("修改車輛");
@@ -266,6 +269,10 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 提交車輛信息
      */
     private void submitCarData() {
+        dialog.setTitle("提示");
+        dialog.setMessage("正在提交車輛......");
+        dialog.setCancelable(false);
+        dialog.show();
         headView.getHeadRight().setEnabled(false);
         if (startWay.equals("update")) {
             if (!carInsideModel.getCarNo().equals("")) {
@@ -375,11 +382,6 @@ public class AddCarActivity extends BaseActivity implements View.OnClickListener
      * 提交車輛信息
      */
     private void callNetSubmiteCar() {
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setTitle("提示");
-        dialog.setMessage("正在提交車輛......");
-        dialog.setCancelable(false);
-        dialog.show();
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.ADD_CAR + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();

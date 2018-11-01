@@ -19,7 +19,7 @@ public class BSSMApplication extends MultiDexApplication {
         x.Ext.init(this);
         // 初始化sharesdk
         //MobSDK.init(this, BSSMConfigtor.SHARESDK_APP_KEY, BSSMConfigtor.SHARESDK_APP_SECRET);
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
+        //CrashHandler crashHandler = CrashHandler.getInstance();
+        //crashHandler.init(getApplicationContext());
     }
 }

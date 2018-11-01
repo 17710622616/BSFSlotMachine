@@ -168,14 +168,14 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                             }
                         }
                     } else {    // 未选中代表当天
-                        if (hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) {
+                        if ((hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) && BSSMCommonUtils.getHour() != 23) {
                             timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
                             timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
                             Toast.makeText(ChooseOrderTimeActivity.this, "請選擇一個小時之後的時間", Toast.LENGTH_SHORT).show();
                         } else {
                             if (hourOfDay > 20 || hourOfDay < 9) {
-                                timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
-                                timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                timePicker.setCurrentHour(9);
+                                timePicker.setCurrentMinute(1);
                                 Toast.makeText(ChooseOrderTimeActivity.this, "請選擇規定的時間(9:00-20:00)之間下單！", Toast.LENGTH_SHORT).show();
                             } else {
                                 String hourTime = null;
@@ -191,16 +191,14 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                                     minuteTime = Integer.toString(minute);
                                 }
                                 String time = hourTime + ":" + minuteTime + ":00";
-                                Date date = new Date( );
-                                SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
                                 if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                    mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                    mSlotUnknowOrderModel.setStartSlotTime(BSSMCommonUtils.getTodayDate() + " " +time);
                                     if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
                                         endTimePicker.setCurrentHour(startTimePicker.getCurrentHour() + 1);
                                         endTimePicker.setCurrentMinute(startTimePicker.getCurrentMinute());
                                     }
                                 } else {
-                                    mSlotOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                    mSlotOrderModel.setStartSlotTime(BSSMCommonUtils.getTodayDate() + " " +time);
                                     if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
                                         endTimePicker.setCurrentHour(startTimePicker.getCurrentHour() + 1);
                                         endTimePicker.setCurrentMinute(startTimePicker.getCurrentMinute());
@@ -237,9 +235,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 if (tomorrowCb.isChecked()) {
                     endSlotTime = BSSMCommonUtils.getTomorrowDate();
                 } else {
-                    Date date = new Date( );
-                    SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
-                    endSlotTime = yearFdt.format(date);
+                    endSlotTime = BSSMCommonUtils.getTodayDate();
                 }
                 try {
                     if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
@@ -383,9 +379,9 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         }
         // 現在時間
         String startTime = (BSSMCommonUtils.getHour() + 1) + ":" + BSSMCommonUtils.getMinute() + ":00";
-        String startTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + startTime;
+        String startTimeForDay = BSSMCommonUtils.getTodayDate() + " " + startTime;
         String endTime = (BSSMCommonUtils.getHour() + 2) + ":" + BSSMCommonUtils.getMinute() + ":00";
-        String endTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + endTime;
+        String endTimeForDay = BSSMCommonUtils.getTodayDate() + " " + endTime;
 
         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
             headView.setRightText("拍照", this);
@@ -497,48 +493,64 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.head_right_tv:
                 if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
-                    NiceDialog.init()
-                        .setLayoutId(R.layout.dialog_photo)
-                        .setConvertListener(new ViewConvertListener() {
-                            @Override
-                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        autoObtainCameraPermission();
-                                        baseNiceDialog.dismiss();
-                                    }
-                                });
-                                viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        autoObtainStoragePermission();
-                                        baseNiceDialog.dismiss();
-                                    }
-                                });
-                                viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        baseNiceDialog.dismiss();
-                                    }
-                                });
-                            }
-                        })
-                        .setShowBottom(true)
-                        .show(getSupportFragmentManager());
+                    try {
+                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime().substring(0, 10) + " 08:59:00", mSlotUnknowOrderModel.getStartSlotTime()) && BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), mSlotUnknowOrderModel.getStartSlotTime().substring(0, 10) + " 20:01:00")) {
+                            NiceDialog.init()
+                                    .setLayoutId(R.layout.dialog_photo)
+                                    .setConvertListener(new ViewConvertListener() {
+                                        @Override
+                                        protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                            viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    autoObtainCameraPermission();
+                                                    baseNiceDialog.dismiss();
+                                                }
+                                            });
+                                            viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    autoObtainStoragePermission();
+                                                    baseNiceDialog.dismiss();
+                                                }
+                                            });
+                                            viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    baseNiceDialog.dismiss();
+                                                }
+                                            });
+                                        }
+                                    })
+                                    .setShowBottom(true)
+                                    .show(getSupportFragmentManager());
+                        } else {
+                            Toast.makeText(this, "開始投幣時間不得超過9:00-20:00！", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，無子列表
 
                 } else {
                     if (mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getEndSlotTime() != null) {
-                        Intent intent = new Intent(this, ParkingOrderActivity.class);
-                        intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
-                        intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
-                        intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
-                        intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
-                        intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
-                        intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
-                        intent.putExtra("isTomorrow", tomorrowCb.isChecked());
-                        startActivity(intent);
+                        try {
+                            if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime().substring(0, 10) + " 08:59:00", mSlotOrderModel.getStartSlotTime()) && BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getStartSlotTime().substring(0, 10) + " 20:01:00")) {
+                                Intent intent = new Intent(this, ParkingOrderActivity.class);
+                                intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                                intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
+                                intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
+                                intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
+                                intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
+                                intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
+                                intent.putExtra("isTomorrow", tomorrowCb.isChecked());
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(this, "開始投幣時間不得超過9:00-20:00！", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (ParseException e) {
+                            //e.printStackTrace();
+                        }
                     } else {
                         Toast.makeText(this, "請選擇開始投幣時間及結束投幣時間！", Toast.LENGTH_SHORT).show();
                     }

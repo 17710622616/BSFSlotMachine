@@ -317,6 +317,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             endTimeTv.setText("結束投幣時間[預計" + mSlotUnknowOrderModel.getEndSlotTime() + "]");
             orderMoneyTv.setText("總金額：MOP" + mSlotUnknowOrderModel.getSlotAmount());
             orderAmountTv.setText("金額：MOP" + mSlotUnknowOrderModel.getSlotAmount());
+            machinenoUnknowTv.setText("咪錶編號：" + mSlotUnknowOrderModel.getRemark().substring(5, 10));
             refreshCarChoosed();
         } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，無子列表
             /*warmPromptTv.setVisibility(View.GONE);
@@ -403,10 +404,12 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 startActivityForResult(intent, 6);
                 break;
             case R.id.parking_order_starttime_ll:
-                chooseOrderStartTime();
+                finish();
+                //chooseOrderStartTime();
                 break;
             case R.id.parking_order_endtime_ll:
-                chooseOrderEndTime();
+                finish();
+                //chooseOrderEndTime();
                 break;
             case R.id.parking_order_money_ll:
                 //chooseOrderMoney();
@@ -958,6 +961,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                             timePicker.setCurrentMinute(Integer.parseInt(mSlotUnknowOrderModel.getStartSlotTime().substring(14, 16)));
                             timeTv.setText("開始投幣時間[預計" + mSlotUnknowOrderModel.getStartSlotTime()+ "]");
                         } else {
+                            String start = mSlotOrderModel.getStartSlotTime();
                             timePicker.setCurrentHour(Integer.parseInt(mSlotOrderModel.getStartSlotTime().substring(11, 13)));
                             timePicker.setCurrentMinute(Integer.parseInt(mSlotOrderModel.getStartSlotTime().substring(14, 16)));
                             timeTv.setText("開始投幣時間[預計" + mSlotOrderModel.getStartSlotTime()+ "]");
@@ -989,10 +993,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                             minuteTime = Integer.toString(minute);
                                         }
                                         String time = hourTime + ":" + minuteTime + ":00";
-                                        Date date = new Date( );
-                                        SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
                                         if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                                            mSlotUnknowOrderModel.setStartSlotTime(yearFdt.format(date) + " " +time);
+                                            mSlotUnknowOrderModel.setStartSlotTime(mSlotOrderModel.getStartSlotTime().substring(0,10) + " " +time);
                                             timeTv.setText("開始投幣時間[預計" + mSlotUnknowOrderModel.getStartSlotTime() + "]");
                                             startTimeTv.setText("開始投幣時間[預計" + mSlotUnknowOrderModel.getStartSlotTime() + "]");
                                         } else {
@@ -1061,9 +1063,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                 if (isTomorrow) {
                                     endSlotTime = BSSMCommonUtils.getTomorrowDate();
                                 } else {
-                                    Date date = new Date();
-                                    SimpleDateFormat yearFdt = new SimpleDateFormat ("yyyy-MM-dd");
-                                    endSlotTime = yearFdt.format(date);
+                                    endSlotTime = BSSMCommonUtils.getTodayDate();
                                 }
                                 try {
                                     if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
@@ -1076,7 +1076,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                                         if (BSSMCommonUtils.compareTwoTime(endSlotTime + " " +time, mSlotOrderModel.getStartSlotTime())){  // 判斷不小於開始時間
                                             Toast.makeText(ParkingOrderActivity.this, "結束投幣時間不可小於開始投幣時間！", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            mSlotOrderModel.setEndSlotTime("結束投幣時間[預計" + endSlotTime + " " +time + "]");
+                                            mSlotOrderModel.setEndSlotTime(endSlotTime + " " +time);
                                         }
                                     }
                                 } catch (ParseException e) {

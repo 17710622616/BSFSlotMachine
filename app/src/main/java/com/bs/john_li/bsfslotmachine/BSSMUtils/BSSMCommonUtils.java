@@ -396,6 +396,19 @@ public class BSSMCommonUtils {
         return formatter.format(date);
     }
 
+    /**
+     * 获取当天时间
+     * @return
+     */
+    public static String getTodayDate() {
+        Date date=new Date();//取时间
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        date=calendar.getTime(); //这个时间就是日期往后推一天的结果
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
+
     /*
      * 将當前时间转换为时间戳
      */

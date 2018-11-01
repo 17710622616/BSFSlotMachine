@@ -235,57 +235,60 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
      *提交車輛充值訂單
      */
     private void submitRechargeOrder(final LoadDialog loadDialog) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_CAR_CAHRGE_ORDER + SPUtils.get(this, "UserToken", ""));
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("memberChargeId",memberChargeId);
-            jsonObj.put("carId",mCarInsideModel.getId());
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (monthRb.isChecked() || quarterlyRb.isChecked() || sixMonthRb.isChecked() || yearRb.isChecked()) {
+            RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_CAR_CAHRGE_ORDER + SPUtils.get(this, "UserToken", ""));
+            params.setAsJsonContent(true);
+            JSONObject jsonObj = new JSONObject();
+            try {
+                jsonObj.put("memberChargeId",memberChargeId);
+                jsonObj.put("carId",mCarInsideModel.getId());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            params.setBodyContent(jsonObj.toString());
+            String uri = params.getUri();
+            params.setConnectTimeout(30 * 1000);
+            x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
+                    if (model.getCode() == 200) {
+                        Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
+                        intent.putExtra("startWay", 2);   // carChargeOrder
+                        intent.putExtra("orderNo", model.getData().getOrderNo());
+                        intent.putExtra("amount", model.getData().getAmount());
+                        intent.putExtra("createTime", model.getData().getCreateTime());
+                        intent.putExtra("exchange", model.getData().getExchange());
+                        intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
+                        startActivityForResult(intent, 1);
+                    } else if (model.getCode() == 10000) {
+                        SPUtils.put(CarRechargeActivity.this, "UserToken", "");
+                        startActivityForResult(new Intent(CarRechargeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    }  else {
+                        Toast.makeText(CarRechargeActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                //请求异常后的回调方法
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+                    if (ex instanceof SocketTimeoutException) {
+                        Toast.makeText(CarRechargeActivity.this, "提交充值訂單超時", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                //主动调用取消请求的回调方法
+                @Override
+                public void onCancelled(CancelledException cex) {
+                }
+                @Override
+                public void onFinished() {
+                    loadDialog.dismiss();
+                }
+            });
+        } else {
+            Toast.makeText(CarRechargeActivity.this, "請選擇充值方式！", Toast.LENGTH_SHORT).show();
         }
-        params.setBodyContent(jsonObj.toString());
-        String uri = params.getUri();
-        params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                OrderModel model = new Gson().fromJson(result.toString(), OrderModel.class);
-                if (model.getCode() == 200) {
-                    Intent intent = new Intent(CarRechargeActivity.this, PaymentAcvtivity.class);
-                    intent.putExtra("startWay", 2);   // carChargeOrder
-                    intent.putExtra("orderNo", model.getData().getOrderNo());
-                    intent.putExtra("amount", model.getData().getAmount());
-                    intent.putExtra("createTime", model.getData().getCreateTime());
-                    intent.putExtra("exchange", model.getData().getExchange());
-                    intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
-                    startActivityForResult(intent, 1);
-                } else if (model.getCode() == 10000) {
-                    SPUtils.put(CarRechargeActivity.this, "UserToken", "");
-                    startActivityForResult(new Intent(CarRechargeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }  else {
-                    Toast.makeText(CarRechargeActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //请求异常后的回调方法
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(CarRechargeActivity.this, "提交充值訂單超時", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(CarRechargeActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //主动调用取消请求的回调方法
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-            @Override
-            public void onFinished() {
-                loadDialog.dismiss();
-            }
-        });
-
     }
 
     @Override
