@@ -22,5 +22,4 @@ public class BSSMApplication extends MultiDexApplication {
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
     }
-
 }
