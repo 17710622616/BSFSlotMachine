@@ -168,14 +168,18 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                             }
                         }
                     } else {    // 未选中代表当天
-                        if ((hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) && BSSMCommonUtils.getHour() != 23) {
-                            timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
-                            timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
-                            Toast.makeText(ChooseOrderTimeActivity.this, "請選擇一個小時之後的時間", Toast.LENGTH_SHORT).show();
+                        if (hourOfDay < BSSMCommonUtils.getHour() + 1 || minute < BSSMCommonUtils.getMinute()) {    //BSSMCommonUtils.compareTwoTime(timePicker.get, new Date(new Date().getTime() - 1 * 60 * 60 * 1000))
+                            if(hourOfDay < 20){
+                                timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                                Toast.makeText(ChooseOrderTimeActivity.this, "請選擇一個小時之後的時間", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                            }
                         } else {
                             if (hourOfDay > 20 || hourOfDay < 9) {
-                                timePicker.setCurrentHour(9);
-                                timePicker.setCurrentMinute(1);
+                                timePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
+                                timePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
                                 Toast.makeText(ChooseOrderTimeActivity.this, "請選擇規定的時間(9:00-20:00)之間下單！", Toast.LENGTH_SHORT).show();
                             } else {
                                 String hourTime = null;
