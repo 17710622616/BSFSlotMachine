@@ -410,7 +410,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             mSlotOrderModel.setEndSlotTime(endTimeForDay);
             mSlotOrderModel.setRemark("");
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
-            mSlotOrderModel.setParkingSpace(childPosition);
+            mSlotOrderModel.setParkingSpace(mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childPosition)));
             mSlotOrderModel.setCarId((long) mCarModel.getId());
         }
 
