@@ -136,7 +136,7 @@
                 android:orientation="horizontal"
                 android:background="@color/colorWight"
                 android:layout_marginTop="0.5dp">
-                <TimePicker
+                <!--<TimePicker
                     android:id="@+id/time_picker_start"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -153,7 +153,29 @@
                     android:layout_weight="1"
                     android:timePickerMode="spinner">
                     <requestFocus/>
-                </TimePicker>
+                </TimePicker>-->
+                <TextView
+                    android:id="@+id/time_start_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="09:00"
+                    android:textSize="24sp"
+                    android:textColor="@color/colorBlack"/>
+                <TextView
+                    android:id="@+id/time_end_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="10:00"
+                    android:textSize="24sp"
+                    android:textColor="@color/colorBlack"/>
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"

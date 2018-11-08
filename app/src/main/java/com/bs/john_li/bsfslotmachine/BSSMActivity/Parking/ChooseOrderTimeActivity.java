@@ -1,6 +1,8 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,13 +12,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMInterface.EndTimeDataCallBack;
+import com.bs.john_li.bsfslotmachine.BSSMInterface.StartTimeDataCallBack;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.RatesModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
@@ -54,21 +58,23 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by John_Li on 24/10/2018.
  */
 
-public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClickListener {
+public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClickListener, StartTimeDataCallBack , EndTimeDataCallBack{
     private BSSMHeadView headView;
     private LinearLayout carManageLL;
     private TextView carTypeTv, carNoTv, amountTv,serviceChargeTv;
     private ImageView carIv, carRechargeIv;
-    private TimePicker startTimePicker, endTimePicker;
+    //private TimePicker startTimePicker, endTimePicker;
+    private TextView startTimeTv, endTimeTv;
     private CheckBox tomorrowCb;
+    private StartTimePickerFragment mStartTimePicker;
+    private EndTimePickerFragment mEndTimePicker;
 
     private File fileUri;//照片文件路徑
     private Uri imageUri;//照片文件路徑
@@ -105,15 +111,19 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         carRechargeIv = findViewById(R.id.choose_order_time_car_recharge);
         amountTv = findViewById(R.id.choose_order_amount_tv);
         serviceChargeTv = findViewById(R.id.choose_order_service_charge_tv);
-        startTimePicker = findViewById(R.id.time_picker_start);
-        endTimePicker = findViewById(R.id.time_picker_end);
+        /*startTimePicker = findViewById(R.id.time_picker_start);
+        endTimePicker = findViewById(R.id.time_picker_end);*/
+        startTimeTv = findViewById(R.id.time_start_tv);
+        endTimeTv = findViewById(R.id.time_end_tv);
         tomorrowCb = findViewById(R.id.choose_order_time_cb);
     }
 
     @Override
     public void setListener() {
         carManageLL.setOnClickListener(this);
-        tomorrowCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        startTimeTv.setOnClickListener(this);
+        endTimeTv.setOnClickListener(this);
+        /*tomorrowCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -265,7 +275,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 }
                 calculationOrderAmount();
             }
-        });
+        });*/
     }
 
     /**
@@ -382,10 +392,13 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 break;
         }
         // 現在時間
-        String startTime = (BSSMCommonUtils.getHour() + 1) + ":" + BSSMCommonUtils.getMinute() + ":00";
-        String startTimeForDay = BSSMCommonUtils.getTodayDate() + " " + startTime;
-        String endTime = (BSSMCommonUtils.getHour() + 2) + ":" + BSSMCommonUtils.getMinute() + ":00";
-        String endTimeForDay = BSSMCommonUtils.getTodayDate() + " " + endTime;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.add(Calendar.MINUTE, 60);//60分钟后的时间
+        String startTimeForDay = sdf.format(nowTime.getTime());
+        Calendar nowTime2 = Calendar.getInstance();
+        nowTime2.add(Calendar.MINUTE, 120);//120分钟后的时间
+        String endTimeForDay =  sdf.format(nowTime2.getTime());
 
         if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
             headView.setRightText("拍照", this);
@@ -395,6 +408,11 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             mSlotUnknowOrderModel.setEndSlotTime(endTimeForDay);
             mSlotUnknowOrderModel.setCarId(String.valueOf(mCarModel.getId()));
             mSlotUnknowOrderModel.setCarType(mCarModel.getIfPerson());
+
+            mStartTimePicker = new StartTimePickerFragment(mSlotUnknowOrderModel.getStartSlotTime());
+            mEndTimePicker = new EndTimePickerFragment(mSlotUnknowOrderModel.getEndSlotTime());
+            startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
+            endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
         } else if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，唔子列表
 
         } else {    // 咪錶存在，有子列表
@@ -412,6 +430,11 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             mSlotOrderModel.setMachineNo(mSlotMachineModel.getMachineNo());
             mSlotOrderModel.setParkingSpace(mSlotMachineModel.getParkingSpaces().get(Integer.parseInt(childPosition)));
             mSlotOrderModel.setCarId((long) mCarModel.getId());
+
+            mStartTimePicker = new StartTimePickerFragment(mSlotOrderModel.getStartSlotTime());
+            mEndTimePicker = new EndTimePickerFragment(mSlotOrderModel.getEndSlotTime());
+            startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
+            endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
         }
 
         if (BSSMCommonUtils.isLoginNow(ChooseOrderTimeActivity.this)) {
@@ -422,12 +445,12 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         }
 
         // 初始化時間選擇器
-        startTimePicker.setIs24HourView(true);
+        /*startTimePicker.setIs24HourView(true);
         startTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
         startTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
         endTimePicker.setIs24HourView(true);
         endTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 2);
-        endTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+        endTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());*/
 
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
         if (!dir.exists()) {
@@ -563,6 +586,173 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             case R.id.choose_order_time_car_manage_ll:
                 finish();
                 break;
+            case R.id.time_start_tv:
+                mStartTimePicker.show(getSupportFragmentManager(), "time_picker");
+                break;
+            case R.id.time_end_tv:
+                mEndTimePicker.show(getSupportFragmentManager(), "time_picker");
+                break;
+        }
+    }
+
+    @Override
+    public void getStarttImeData(String data) {
+        //data即为fragment调用该函数传回的日期时间
+        try {
+            String date = BSSMCommonUtils.getTodayDate();
+            if (tomorrowCb.isChecked()) {
+                date = BSSMCommonUtils.getTomorrowDate();
+            }
+
+            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                mSlotUnknowOrderModel.setStartSlotTime(date + " " + data);
+                    if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
+                        Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
+                        mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
+                    }
+
+                startTimeTv.setText(mSlotUnknowOrderModel.getStartSlotTime().substring(11,19));
+                endTimeTv.setText(mSlotUnknowOrderModel.getEndSlotTime().substring(11,19));
+            } else {
+                mSlotOrderModel.setStartSlotTime(date + " " + data);
+                if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
+                    Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
+                    mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
+                }
+
+                startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
+                endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getEndImeData(String data) {
+        //data即为fragment调用该函数传回的日期时间
+        try {
+            String date = BSSMCommonUtils.getTodayDate();
+            if (tomorrowCb.isChecked()) {
+                date = BSSMCommonUtils.getTomorrowDate();
+            }
+
+            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                mSlotUnknowOrderModel.setEndSlotTime(date + " " + data);
+                if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
+                    Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
+                    mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
+                }
+
+                startTimeTv.setText(mSlotUnknowOrderModel.getStartSlotTime().substring(11,19));
+                endTimeTv.setText(mSlotUnknowOrderModel.getEndSlotTime());
+            } else {
+                mSlotOrderModel.setEndSlotTime(date + " " + data);
+                if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
+                    Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
+                    mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
+                }
+
+                startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
+                endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //实现开始时间OnTimeSetListener接口
+    public static class StartTimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
+        String startTime;
+        public StartTimePickerFragment (String startTime) {
+            this.startTime = startTime;
+        }
+        private String time = "";
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            //返回TimePickerDialog对象
+            //因为实现了OnTimeSetListener接口，所以第二个参数直接传入this
+            String sh = startTime.substring(11, 13);
+            String sm = startTime.substring(14, 16);
+            return new TimePickerDialog(getActivity(), this, Integer.parseInt(sh), Integer.parseInt(sm), DateFormat.is24HourFormat(getActivity()));
+        }
+
+        //实现OnTimeSetListener的onTimeSet方法
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            //判断activity是否是DataCallBack(这是自己定义的一个接口)的一个实例
+            if(getActivity() instanceof StartTimeDataCallBack){
+                //将activity强转为DataCallBack
+                StartTimeDataCallBack dataCallBack = (StartTimeDataCallBack) getActivity();
+                String hourTime = null;
+                String minuteTime = null;
+                if (hourOfDay < 10) {
+                    hourTime = "0" + hourOfDay;
+                } else {
+                    hourTime = Integer.toString(hourOfDay);
+                }
+                if (minute < 10) {
+                    minuteTime = "0" + minute;
+                } else {
+                    minuteTime = Integer.toString(minute);
+                }
+                time = hourTime + ":" + minuteTime + ":00";
+                //调用activity的getData方法将数据传回activity显示
+                dataCallBack.getStarttImeData(time);
+            }
+        }
+
+        public void setTime(String date){
+            time += date;
+        }
+    }
+
+    //实现结束时间OnTimeSetListener接口
+    public static class EndTimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
+        private String time = "";
+        String endTime;
+        public EndTimePickerFragment (String endTime) {
+            this.endTime = endTime;
+        }
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            //新建日历类用于获取当前时间
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MINUTE, 120);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            //返回TimePickerDialog对象
+            //因为实现了OnTimeSetListener接口，所以第二个参数直接传入this
+            return new TimePickerDialog(getActivity(), this, Integer.parseInt(endTime.substring(11, 13)), Integer.parseInt(endTime.substring(14, 16)), DateFormat.is24HourFormat(getActivity()));
+        }
+
+        //实现OnTimeSetListener的onTimeSet方法
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            //判断activity是否是DataCallBack(这是自己定义的一个接口)的一个实例
+            if(getActivity() instanceof StartTimeDataCallBack){
+                //将activity强转为DataCallBack
+                EndTimeDataCallBack dataCallBack = (EndTimeDataCallBack) getActivity();
+                String hourTime = null;
+                String minuteTime = null;
+                if (hourOfDay < 10) {
+                    hourTime = "0" + hourOfDay;
+                } else {
+                    hourTime = Integer.toString(hourOfDay);
+                }
+                if (minute < 10) {
+                    minuteTime = "0" + minute;
+                } else {
+                    minuteTime = Integer.toString(minute);
+                }
+                time = hourTime + ":" + minuteTime + ":00";
+                //调用activity的getData方法将数据传回activity显示
+                dataCallBack.getEndImeData(time);
+            }
+        }
+
+        public void setTime(String date){
+            time += date;
         }
     }
 

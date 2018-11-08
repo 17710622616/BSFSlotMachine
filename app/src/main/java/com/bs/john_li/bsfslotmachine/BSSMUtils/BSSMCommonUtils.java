@@ -397,6 +397,25 @@ public class BSSMCommonUtils {
     }
 
     /**
+     * 获取一个小时后时间
+     * @return
+     */
+    public static String getHalfHourTime(String time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatter.parse(time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(calendar.MINUTE, 5);//把日期往后增加一天.整数往后推,负数往前移动
+            date=calendar.getTime(); //这个时间就是日期往后推一天的结果
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return formatter.format(date);
+    }
+
+    /**
      * 获取当天时间
      * @return
      */
