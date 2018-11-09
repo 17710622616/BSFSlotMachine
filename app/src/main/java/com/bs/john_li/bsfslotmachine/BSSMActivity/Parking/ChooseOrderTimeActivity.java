@@ -14,11 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -123,23 +126,35 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         carManageLL.setOnClickListener(this);
         startTimeTv.setOnClickListener(this);
         endTimeTv.setOnClickListener(this);
-        /*tomorrowCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        tomorrowCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    startTimePicker.setCurrentHour(9);
-                    startTimePicker.setCurrentMinute(1);
-                    endTimePicker.setCurrentHour(9);
-                    endTimePicker.setCurrentMinute(30);
+                    if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+                        mSlotOrderModel.setStartSlotTime(BSSMCommonUtils.getTomorrowDate() + " " + mSlotOrderModel.getStartSlotTime().substring(11, 19));
+                        mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getTomorrowDate() + " " + mSlotOrderModel.getEndSlotTime().substring(11, 19));
+                        //Toast.makeText(ChooseOrderTimeActivity.this, "开始时间：" + mSlotOrderModel.getStartSlotTime() + ",结束时间：" + mSlotOrderModel.getEndSlotTime(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        mSlotUnknowOrderModel.setStartSlotTime(BSSMCommonUtils.getTomorrowDate() + " " + mSlotUnknowOrderModel.getStartSlotTime().substring(11, 19));
+                        mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getTomorrowDate() + " " + mSlotUnknowOrderModel.getEndSlotTime().substring(11, 19));
+                        //Toast.makeText(ChooseOrderTimeActivity.this, "开始时间：" + mSlotUnknowOrderModel.getStartSlotTime() + ",结束时间：" + mSlotUnknowOrderModel.getEndSlotTime(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    startTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
-                    startTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
-                    endTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 2);
-                    endTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
+                    if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH)) {
+                        mSlotOrderModel.setStartSlotTime(BSSMCommonUtils.getTodayDate() + " " + mSlotOrderModel.getStartSlotTime().substring(11, 19));
+                        mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getTodayDate() + " " + mSlotOrderModel.getEndSlotTime().substring(11, 19));
+                        //Toast.makeText(ChooseOrderTimeActivity.this, "开始时间：" + mSlotOrderModel.getStartSlotTime() + ",结束时间：" + mSlotOrderModel.getEndSlotTime(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        mSlotUnknowOrderModel.setStartSlotTime(BSSMCommonUtils.getTodayDate() + " " + mSlotUnknowOrderModel.getStartSlotTime().substring(11, 19));
+                        mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getTodayDate() + " " + mSlotUnknowOrderModel.getEndSlotTime().substring(11, 19));
+                        //Toast.makeText(ChooseOrderTimeActivity.this, "开始时间：" + mSlotUnknowOrderModel.getStartSlotTime() + ",结束时间：" + mSlotUnknowOrderModel.getEndSlotTime(), Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+                calculationOrderAmount();
             }
         });
-        startTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+        /*startTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
                 boolean v = timePicker.is24HourView();
@@ -278,77 +293,6 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
         });*/
     }
 
-    /**
-     * 計算訂單金額
-     */
-    private void calculationOrderAmount() {
-        if (mRatesModel != null) {
-            double orderAmount = 0.0;
-            double hourCost = new BigDecimal(mRatesModel.getData().getHourCost()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue(); //
-            double noVipHoursPay = new BigDecimal(mRatesModel.getData().getNoVipHoursPay()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue();
-
-            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                // 未知咪錶
-                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotUnknowOrderModel.getStartSlotTime(), mSlotUnknowOrderModel.getEndSlotTime());
-                if (mCarModel.getIfPay() == 0) {    // 非會員
-                    try {
-                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
-                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00);    // 小於早上九點半
-                        } else {
-                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00);    // 大於早上九點半
-                        }
-                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                        amountTv.setText("MOP" + String.valueOf(orderAmount));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else {    // 會員
-                    try {
-                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
-                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), time930)) {
-                            orderAmount = Math.ceil(Math.round(hourCost * (timeDiff + 60)*100)/100.00);// 小於早上九點半
-                        } else {
-                            orderAmount = Math.ceil(Math.round(hourCost * timeDiff*100)/100.00);     // 大於早上九點半
-                        }
-                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                        amountTv.setText("MOP" + String.valueOf(orderAmount));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {    // 已知咪錶
-                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getEndSlotTime());
-                if (mCarModel.getIfPay() == 0) {    // 非會員
-                    try {
-                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
-                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00);    // 小於早上九點半
-                        } else {
-                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00);    // 大於早上九點半
-                        }
-                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                        amountTv.setText("MOP" + String.valueOf(orderAmount));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else {    // 會員
-                    try {
-                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
-                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), time930)) {
-                            orderAmount = Math.ceil(Math.round(hourCost * (timeDiff + 60)*100)/100.00);// 小於早上九點半
-                        } else {
-                            orderAmount = Math.ceil(Math.round(hourCost * timeDiff*100)/100.00);     // 大於早上九點半
-                        }
-                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
-                        amountTv.setText("MOP" + String.valueOf(orderAmount));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }
-    }
-
     @Override
     public void initData() {
         Intent intent = getIntent();
@@ -444,17 +388,81 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             startActivityForResult(new Intent(ChooseOrderTimeActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
         }
 
-        // 初始化時間選擇器
-        /*startTimePicker.setIs24HourView(true);
-        startTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 1);
-        startTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());
-        endTimePicker.setIs24HourView(true);
-        endTimePicker.setCurrentHour(BSSMCommonUtils.getHour() + 2);
-        endTimePicker.setCurrentMinute(BSSMCommonUtils.getMinute());*/
-
         dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures");
         if (!dir.exists()) {
             dir.mkdir();
+        }
+    }
+
+
+    /**
+     * 計算訂單金額
+     */
+    private void calculationOrderAmount() {
+        if (mRatesModel != null) {
+            double orderAmount = 0.0;
+            double hourCost = new BigDecimal(mRatesModel.getData().getHourCost()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue(); //
+            double noVipHoursPay = new BigDecimal(mRatesModel.getData().getNoVipHoursPay()).divide(new BigDecimal(60), 4, BigDecimal.ROUND_UP).doubleValue();
+
+            if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
+                // 未知咪錶
+                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotUnknowOrderModel.getStartSlotTime(), mSlotUnknowOrderModel.getEndSlotTime());
+                if (mCarModel.getIfPay() == 0) {    // 非會員
+                    try {
+                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
+                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00);    // 小於早上九點半
+                        } else {
+                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00);    // 大於早上九點半
+                        }
+                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {    // 會員
+                    try {
+                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
+                        if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), time930)) {
+                            orderAmount = Math.ceil(Math.round(hourCost * (timeDiff + 60)*100)/100.00);// 小於早上九點半
+                        } else {
+                            orderAmount = Math.ceil(Math.round(hourCost * timeDiff*100)/100.00);     // 大於早上九點半
+                        }
+                        mSlotUnknowOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {    // 已知咪錶
+                long timeDiff = BSSMCommonUtils.compareTimestamps(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getEndSlotTime());
+                if (mCarModel.getIfPay() == 0) {    // 非會員
+                    try {
+                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00")) {
+                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * (timeDiff + 60)*100)/100.00);    // 小於早上九點半
+                        } else {
+                            orderAmount = Math.ceil(Math.round((hourCost + noVipHoursPay) * timeDiff*100)/100.00);    // 大於早上九點半
+                        }
+                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {    // 會員
+                    try {
+                        String time930 = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " 09:30:00";
+                        if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), time930)) {
+                            orderAmount = Math.ceil(Math.round(hourCost * (timeDiff + 60)*100)/100.00);// 小於早上九點半
+                        } else {
+                            orderAmount = Math.ceil(Math.round(hourCost * timeDiff*100)/100.00);     // 大於早上九點半
+                        }
+                        mSlotOrderModel.setSlotAmount(String.valueOf(orderAmount));
+                        amountTv.setText("MOP" + String.valueOf(orderAmount));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
         }
     }
 
@@ -596,7 +604,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
     }
 
     @Override
-    public void getStarttImeData(String data) {
+    public void getStarttImeData(String time) {
         //data即为fragment调用该函数传回的日期时间
         try {
             String date = BSSMCommonUtils.getTodayDate();
@@ -605,7 +613,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             }
 
             if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                mSlotUnknowOrderModel.setStartSlotTime(date + " " + data);
+                mSlotUnknowOrderModel.setStartSlotTime(date + " " + time);
                     if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
                         Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
                         mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
@@ -614,7 +622,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 startTimeTv.setText(mSlotUnknowOrderModel.getStartSlotTime().substring(11,19));
                 endTimeTv.setText(mSlotUnknowOrderModel.getEndSlotTime().substring(11,19));
             } else {
-                mSlotOrderModel.setStartSlotTime(date + " " + data);
+                mSlotOrderModel.setStartSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
                     Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
                     mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
@@ -623,13 +631,15 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
                 endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
             }
+
+            calculationOrderAmount();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getEndImeData(String data) {
+    public void getEndImeData(String time) {
         //data即为fragment调用该函数传回的日期时间
         try {
             String date = BSSMCommonUtils.getTodayDate();
@@ -638,7 +648,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             }
 
             if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
-                mSlotUnknowOrderModel.setEndSlotTime(date + " " + data);
+                mSlotUnknowOrderModel.setEndSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
                     Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
                     mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
@@ -647,7 +657,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 startTimeTv.setText(mSlotUnknowOrderModel.getStartSlotTime().substring(11,19));
                 endTimeTv.setText(mSlotUnknowOrderModel.getEndSlotTime());
             } else {
-                mSlotOrderModel.setEndSlotTime(date + " " + data);
+                mSlotOrderModel.setEndSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
                     Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
                     mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
@@ -656,6 +666,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 startTimeTv.setText(mSlotOrderModel.getStartSlotTime().substring(11,19));
                 endTimeTv.setText(mSlotOrderModel.getEndSlotTime().substring(11,19));
             }
+            calculationOrderAmount();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -700,6 +711,12 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 //调用activity的getData方法将数据传回activity显示
                 dataCallBack.getStarttImeData(time);
             }
+        }
+
+        @Override
+        public void show(FragmentManager manager, String tag) {
+            super.show(manager, tag);
+            Log.d("", "");
         }
 
         public void setTime(String date){
@@ -749,6 +766,12 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 //调用activity的getData方法将数据传回activity显示
                 dataCallBack.getEndImeData(time);
             }
+        }
+
+        @Override
+        public void show(FragmentManager manager, String tag) {
+            super.show(manager, tag);
+            Log.d("", "");
         }
 
         public void setTime(String date){
