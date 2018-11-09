@@ -245,6 +245,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 m_progressDlg.dismiss();
             }
 
+            @RequiresApi(api = 26)
             @Override
             public void onSuccess(File arg0) {
                 Log.i("tag", "下载成功的时候执行"+Thread.currentThread().getName());
@@ -276,6 +277,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     /**
      * 下載完成關閉進度條
      */
+    @RequiresApi(api = 26)
     private void down() {
         m_progressDlg.dismiss();
         //update();
@@ -288,6 +290,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      * @param mContext
      * @param fileUri
      */
+    @RequiresApi(api = 26)
     public void openAPKFile(Activity mContext, String fileUri) {
         //DataEmbeddingUtil.dataEmbeddingAPPUpdate(fileUri);
         // 核心是下面几句代码
@@ -351,13 +354,13 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         //创建进度条对话框
         m_progressDlg = new ProgressDialog(this);
         //设置标题
-        m_progressDlg.setTitle("下载文件");
+        m_progressDlg.setTitle("下載安裝包");
         //设置信息
-        m_progressDlg.setMessage("玩命下载中...");
+        m_progressDlg.setMessage("玩命下載中...");
         //设置显示的格式
         m_progressDlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         //设置按钮
-        m_progressDlg.setButton(ProgressDialog.BUTTON_NEGATIVE, "暂停",new DialogInterface.OnClickListener(){
+        m_progressDlg.setButton(ProgressDialog.BUTTON_NEGATIVE, "暫停",new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //点击取消正在下载的操作
