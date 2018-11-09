@@ -29,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.mob.MobSDK;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.xutils.http.annotation.HttpResponse;
 
@@ -407,7 +408,7 @@ public class BSSMCommonUtils {
             date = formatter.parse(time);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
-            calendar.add(calendar.MINUTE, 5);//把日期往后增加一天.整数往后推,负数往前移动
+            calendar.add(calendar.MINUTE, 30);//把日期往后增加一天.整数往后推,负数往前移动
             date=calendar.getTime(); //这个时间就是日期往后推一天的结果
         } catch (ParseException e) {
             e.printStackTrace();
@@ -483,16 +484,19 @@ public class BSSMCommonUtils {
      */
     public static boolean compareTwoTime(String time1, String time2) throws ParseException {
         //如果想比较日期则写成"yyyy-MM-dd"就可以了
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date  date1 = sdf.parse(time1);
+        Date  date2 = sdf.parse(time2);
+        return date1.before(date2);
         //将字符串形式的时间转化为Date类型的时间
-        long a = sdf.parse(time1).getTime();
+        /*long a = sdf.parse(time1).getTime();
         long b = sdf.parse(time2).getTime();
         //Date类的一个方法，如果a早于b返回true，否则返回false
         if(a <= b) {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
 
     private static boolean isSameDate(Date date1, Date date2) {

@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -530,35 +531,76 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                 if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
                     try {
                         if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime().substring(0, 10) + " 08:59:00", mSlotUnknowOrderModel.getStartSlotTime()) && BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), mSlotUnknowOrderModel.getStartSlotTime().substring(0, 10) + " 20:01:00")) {
-                            NiceDialog.init()
-                                    .setLayoutId(R.layout.dialog_photo)
-                                    .setConvertListener(new ViewConvertListener() {
-                                        @Override
-                                        protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                            viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                            if (!tomorrowCb.isChecked()) {
+                                // 現在時間
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                Calendar nowTime = Calendar.getInstance();
+                                nowTime.add(Calendar.MINUTE, 58);//60分钟后的时间
+                                String startTimeForDay = sdf.format(nowTime.getTime());
+                                if (!BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getStartSlotTime(), startTimeForDay)) {
+                                    NiceDialog.init()
+                                            .setLayoutId(R.layout.dialog_photo)
+                                            .setConvertListener(new ViewConvertListener() {
                                                 @Override
-                                                public void onClick(View view) {
-                                                    autoObtainCameraPermission();
-                                                    baseNiceDialog.dismiss();
+                                                protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                                    viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            autoObtainCameraPermission();
+                                                            baseNiceDialog.dismiss();
+                                                        }
+                                                    });
+                                                    viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            autoObtainStoragePermission();
+                                                            baseNiceDialog.dismiss();
+                                                        }
+                                                    });
+                                                    viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            baseNiceDialog.dismiss();
+                                                        }
+                                                    });
                                                 }
-                                            });
-                                            viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    autoObtainStoragePermission();
-                                                    baseNiceDialog.dismiss();
-                                                }
-                                            });
-                                            viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    baseNiceDialog.dismiss();
-                                                }
-                                            });
-                                        }
-                                    })
-                                    .setShowBottom(true)
-                                    .show(getSupportFragmentManager());
+                                            })
+                                            .setShowBottom(true)
+                                            .show(getSupportFragmentManager());
+                                } else {
+                                    Toast.makeText(this, "请选择一个钟后嘅时间！", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                NiceDialog.init()
+                                        .setLayoutId(R.layout.dialog_photo)
+                                        .setConvertListener(new ViewConvertListener() {
+                                            @Override
+                                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                                viewHolder.setOnClickListener(R.id.photo_camare, new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        autoObtainCameraPermission();
+                                                        baseNiceDialog.dismiss();
+                                                    }
+                                                });
+                                                viewHolder.setOnClickListener(R.id.photo_album, new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        autoObtainStoragePermission();
+                                                        baseNiceDialog.dismiss();
+                                                    }
+                                                });
+                                                viewHolder.setOnClickListener(R.id.photo_cancel, new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        baseNiceDialog.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        .setShowBottom(true)
+                                        .show(getSupportFragmentManager());
+                            }
                         } else {
                             Toast.makeText(this, "開始投幣時間不得超過9:00-20:00！", Toast.LENGTH_SHORT).show();
                         }
@@ -571,20 +613,41 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
                     if (mSlotOrderModel.getStartSlotTime() != null && mSlotOrderModel.getEndSlotTime() != null) {
                         try {
                             if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime().substring(0, 10) + " 08:59:00", mSlotOrderModel.getStartSlotTime()) && BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), mSlotOrderModel.getStartSlotTime().substring(0, 10) + " 20:01:00")) {
-                                Intent intent = new Intent(this, ParkingOrderActivity.class);
-                                intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
-                                intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
-                                intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
-                                intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
-                                intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
-                                intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
-                                intent.putExtra("isTomorrow", tomorrowCb.isChecked());
-                                startActivity(intent);
+                                if (!tomorrowCb.isChecked()) {
+                                    // 現在時間
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    Calendar nowTime = Calendar.getInstance();
+                                    nowTime.add(Calendar.MINUTE, 58);//60分钟后的时间
+                                    String startTimeForDay = sdf.format(nowTime.getTime());
+                                    if (!BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getStartSlotTime(), startTimeForDay)) {
+                                        Intent intent = new Intent(this, ParkingOrderActivity.class);
+                                        intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                                        intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
+                                        intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
+                                        intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
+                                        intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
+                                        intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
+                                        intent.putExtra("isTomorrow", tomorrowCb.isChecked());
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(this, "请选择一个钟后嘅时间！", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Intent intent = new Intent(this, ParkingOrderActivity.class);
+                                    intent.putExtra("way", BSSMConfigtor.SLOT_MACHINE_FROM_SEARCH);
+                                    intent.putExtra("SlotMachine", getIntent().getStringExtra("SlotMachine"));
+                                    intent.putExtra("childPosition", getIntent().getStringExtra("childPosition"));
+                                    intent.putExtra("carModel", getIntent().getStringExtra("carModel"));
+                                    intent.putExtra("SlotOrder", new Gson().toJson(mSlotOrderModel));
+                                    intent.putExtra("RatesModel", new Gson().toJson(mRatesModel));
+                                    intent.putExtra("isTomorrow", tomorrowCb.isChecked());
+                                    startActivity(intent);
+                                }
                             } else {
                                 Toast.makeText(this, "開始投幣時間不得超過9:00-20:00！", Toast.LENGTH_SHORT).show();
                             }
                         } catch (ParseException e) {
-                            //e.printStackTrace();
+                            e.printStackTrace();
                         }
                     } else {
                         Toast.makeText(this, "請選擇開始投幣時間及結束投幣時間！", Toast.LENGTH_SHORT).show();
@@ -614,17 +677,17 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
 
             if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
                 mSlotUnknowOrderModel.setStartSlotTime(date + " " + time);
-                    if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
-                        Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
-                        mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
-                    }
+                if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
+                    Toast.makeText(this, "結束時間唔可以大過開始時間！", Toast.LENGTH_SHORT).show();
+                    mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
+                }
 
                 startTimeTv.setText(mSlotUnknowOrderModel.getStartSlotTime().substring(11,19));
                 endTimeTv.setText(mSlotUnknowOrderModel.getEndSlotTime().substring(11,19));
             } else {
                 mSlotOrderModel.setStartSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
-                    Toast.makeText(this, "结束时间不可大于开始时间！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "結束時間唔可以大過開始時間！", Toast.LENGTH_SHORT).show();
                     mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
                 }
 
@@ -650,7 +713,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             if (startWay.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)){
                 mSlotUnknowOrderModel.setEndSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotUnknowOrderModel.getEndSlotTime(), mSlotUnknowOrderModel.getStartSlotTime())) {
-                    Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "結束時間唔可以大過開始時間！", Toast.LENGTH_SHORT).show();
                     mSlotUnknowOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotUnknowOrderModel.getStartSlotTime()));
                 }
 
@@ -659,7 +722,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             } else {
                 mSlotOrderModel.setEndSlotTime(date + " " + time);
                 if (BSSMCommonUtils.compareTwoTime(mSlotOrderModel.getEndSlotTime(), mSlotOrderModel.getStartSlotTime())) {
-                    Toast.makeText(this, "结束时间不可小于开始时间！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "結束時間唔可以大過開始時間！", Toast.LENGTH_SHORT).show();
                     mSlotOrderModel.setEndSlotTime(BSSMCommonUtils.getHalfHourTime(mSlotOrderModel.getStartSlotTime()));
                 }
 
@@ -685,7 +748,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             //因为实现了OnTimeSetListener接口，所以第二个参数直接传入this
             String sh = startTime.substring(11, 13);
             String sm = startTime.substring(14, 16);
-            return new TimePickerDialog(getActivity(), this, Integer.parseInt(sh), Integer.parseInt(sm), DateFormat.is24HourFormat(getActivity()));
+            return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, Integer.parseInt(sh), Integer.parseInt(sm), true);
         }
 
         //实现OnTimeSetListener的onTimeSet方法
@@ -740,7 +803,7 @@ public class ChooseOrderTimeActivity extends BaseActivity implements View.OnClic
             int minute = calendar.get(Calendar.MINUTE);
             //返回TimePickerDialog对象
             //因为实现了OnTimeSetListener接口，所以第二个参数直接传入this
-            return new TimePickerDialog(getActivity(), this, Integer.parseInt(endTime.substring(11, 13)), Integer.parseInt(endTime.substring(14, 16)), DateFormat.is24HourFormat(getActivity()));
+            return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, Integer.parseInt(endTime.substring(11, 13)), Integer.parseInt(endTime.substring(14, 16)), true);
         }
 
         //实现OnTimeSetListener的onTimeSet方法
