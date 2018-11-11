@@ -7,4 +7,65 @@
         android:id="@+id/car_service_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/car_service_srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/loading_caffe_small"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorMineGray"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
+                <!--<android.support.v4.view.ViewPager
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                </android.support.v4.view.ViewPager>-->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/bannar"
+                    android:layout_marginTop="2dp"/>
+
+                <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView
+                    android:id="@+id/car_service_gv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:horizontalSpacing="1dp"
+                    android:verticalSpacing="1dp"
+                    android:padding="5dp"
+                    android:numColumns="4"
+                    android:layout_marginTop="3.5dp"
+                    android:background="@color/colorWight"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:padding="5dp"
+                    android:background="@color/colorWight"
+                    android:text="為您定制"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp"/>
+                <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView
+                    android:id="@+id/car_service_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorBlack"/>
+            </LinearLayout>
+        </ScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

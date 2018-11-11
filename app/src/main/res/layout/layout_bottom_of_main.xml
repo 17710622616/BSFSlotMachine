@@ -90,10 +90,9 @@
             android:button="@null"
             android:drawableTop="@drawable/selector_forum"
             android:gravity="center"
-            android:text="論壇"
+            android:text="汽車服務"
             android:textColor="@color/colorDrakGray"
-            android:textSize="10sp"
-            android:visibility="gone"/>
+            android:textSize="10sp"/>
 
         <RadioButton
             android:id="@+id/bottom_main_mine"

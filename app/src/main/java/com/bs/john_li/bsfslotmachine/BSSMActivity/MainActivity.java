@@ -31,6 +31,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMFragment.CarServiceFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.MineFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ParkingFragment;
@@ -229,7 +230,8 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
                 park_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
                 forum_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
                 mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
-                switchPages(ForumFragment.class,ForumFragment.TAG);
+                //switchPages(ForumFragment.class,ForumFragment.TAG);
+                switchPages(CarServiceFragment.class,CarServiceFragment.TAG);
                 break;
             case R.id.bottom_main_mine:
                 park_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
