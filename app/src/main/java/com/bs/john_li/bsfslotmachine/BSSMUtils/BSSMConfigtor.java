@@ -156,4 +156,9 @@ public class BSSMConfigtor {
     public static final String CHECK_VERSION= "AppVersion/selectAppVersion";
     //提交意見反饋的接口
     public static final String SUBMIT_OPINION= "feedback/submit?token=";
+    /*-------------------------------------------------汽車服務-----------------------------------------------------------------------------------------*/
+    //提交意見反饋的接口
+    public static final String GET_SELLER_LIST= "seller/getSellerList";
+    //提交意見反饋的接口
+    public static final String GET_MERCHART_SET= "seller/selectSellerById";
 }

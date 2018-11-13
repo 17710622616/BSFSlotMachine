@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/item_cwm_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:layout_margin="5dp"
+        android:layout_gravity="center_vertical"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/item_cwm_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="商家名稱"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/item_cwm_sold_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已售0件"
+            android:textSize="13sp"
+            android:textColor="@color/colorDrakGray"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/item_cwm_address_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地址"
+            android:textSize="13sp"
+            android:textColor="@color/colorBlack"
+            android:layout_marginTop="5dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_cwm_distance_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginRight="5dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/navigation"/>
+
+        <TextView
+            android:id="@+id/item_cwm_distance_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0km"
+            android:textSize="13sp"
+            android:textColor="@color/colorDrakGray"/>
+    </LinearLayout>
+</LinearLayout>

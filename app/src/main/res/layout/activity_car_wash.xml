@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/car_wash_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/bannar"
+        android:layout_marginTop="2dp"/>
+
+    <RadioGroup
+        android:id="@+id/car_wash_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/distance_nearest_rb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="距離最近"
+            android:checked="true"
+            android:button="@null"
+            android:gravity="center"/>
+
+        <RadioButton
+            android:id="@+id/highest_sales_rb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="銷量最高"
+            android:button="@null"
+            android:gravity="center"/>
+    </RadioGroup>
+
+    <View
+        style="@style/UnderLineTextView"/>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/car_wash_list_srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff">
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@mipmap/loading_caffe_small"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/car_wash_list_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:background="#fff" />
+            <LinearLayout
+                android:id="@+id/no_merchant_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="120dp"
+                android:background="@color/colorWight"
+                android:visibility="gone">
+                <ImageView
+                    android:background="@mipmap/no_data"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerInside"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="沒加載到數據，下拉刷新試試吧~"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    <ListView
+        android:id="@+id/car_wash_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

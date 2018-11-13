@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarServiceAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -81,6 +82,7 @@ public class CarServiceFragment extends BaseFragment {
                         getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));
                         break;
                     case 1:
+                        getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
                         break;
                     case 2:
                         break;
