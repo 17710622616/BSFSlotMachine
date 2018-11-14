@@ -26,7 +26,7 @@ import java.util.List;
  */
 
 public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<SmartCarWashMerchatRefreshAdapter.SmartRefreshViewHolder> implements View.OnClickListener {
-    private List<CarWashMerchantOutModel.CarWashMerchatModel> list;
+    private List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> list;
     private final Context mContext;
     private OSSClient oss;
     private LayoutInflater mInflater;
@@ -34,7 +34,7 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
     private OnItemClickListener mOnitemClickListener = null;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
-    public SmartCarWashMerchatRefreshAdapter(Context context, List<CarWashMerchantOutModel.CarWashMerchatModel> list, OSSClient oss) {
+    public SmartCarWashMerchatRefreshAdapter(Context context, List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> list, OSSClient oss) {
         this.list = list;
         this.oss = oss;
         mContext = context;
@@ -101,7 +101,7 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
         void onItemClick(View view, int position);
     }
 
-    public void refreshListView(List<CarWashMerchantOutModel.CarWashMerchatModel> newList) {
+    public void refreshListView(List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> newList) {
         list = newList;
         notifyDataSetChanged();
     }

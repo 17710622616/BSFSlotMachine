@@ -7,4 +7,130 @@
         android:id="@+id/merchar_set_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWight"
+                android:padding="5dp">
+                <ImageView
+                    android:id="@+id/merchart_iv"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitXY"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center_vertical"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:id="@+id/item_cwm_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="商家名稱"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBlack"/>
+
+                    <TextView
+                        android:id="@+id/merchart_business_hours_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10:30-18:00"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorDrakGray"
+                        android:layout_marginTop="5dp"/>
+
+                    <TextView
+                        android:id="@+id/merchart_sold_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="已售3350"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_marginTop="5dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/merchart_distance_ll"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/navigation"/>
+            </LinearLayout>
+
+            <View
+                style="@style/UnderLineTextView"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:background="@color/colorWight">
+                <TextView
+                    android:id="@+id/merchart_address_ll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5dp"
+                    android:text="地址"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="13sp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/navigation"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        style="@style/UnderLineTextView"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorWight">
+        <TextView
+            android:id="@+id/ms_order_amount"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="MOP0.0"
+            android:textSize="20sp"
+            android:textColor="@color/colorWayOringe"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/submit_ms_order"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/colorWayOringe"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="去支付"
+            android:textSize="20sp"
+            android:textColor="@color/colorWight"/>
+    </LinearLayout>
 </LinearLayout>

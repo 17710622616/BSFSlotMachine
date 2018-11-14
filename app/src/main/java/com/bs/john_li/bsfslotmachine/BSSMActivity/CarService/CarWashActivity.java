@@ -56,7 +56,7 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
     private LinearLayout noMerchatLL;
 
     private String orderBy = "nearBy";
-    private List<CarWashMerchantOutModel.CarWashMerchatModel> merchatList;
+    private List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> merchatList;
     private SmartCarWashMerchatRefreshAdapter mSmartCarWashMerchatRefreshAdapter;
     //定位都要通过LocationManager这个类实现
     private LocationManager locationManager;
@@ -67,7 +67,7 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
     // 頁數
     private int pageNo = 1;
     // 車輛總數
-    private long totolCarCount = 100;
+    private long totolCarCount = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,7 +188,7 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(CarWashActivity.this, MerchatSetActivity.class);
-                intent.putExtra("merchatId", String.valueOf(merchatList.get(position)));
+                intent.putExtra("merchatId", String.valueOf(merchatList.get(position).getId()));
                 startActivity(intent);
             }
         });
@@ -221,7 +221,8 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
             public void onSuccess(String result) {
                 CarWashMerchantOutModel model = new Gson().fromJson(result.toString(), CarWashMerchantOutModel.class);
                 if (model.getCode() ==200) {
-                    List<CarWashMerchantOutModel.CarWashMerchatModel> carWashMerchatModels = model.getData();
+                    totolCarCount = model.getData().getTotalCount();
+                    List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> carWashMerchatModels = model.getData().getData();
                     merchatList.addAll(carWashMerchatModels);
                 } else if (model.getCode() == 10000){
                     SPUtils.put(CarWashActivity.this, "UserToken", "");
