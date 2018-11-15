@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarWashMerchantOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.HotSellerOutModel;
 import com.bs.john_li.bsfslotmachine.R;
 
 import org.xutils.image.ImageOptions;
@@ -25,8 +25,8 @@ import java.util.List;
  * Created by John_Li on 28/11/2017.
  */
 
-public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<SmartCarWashMerchatRefreshAdapter.SmartRefreshViewHolder> implements View.OnClickListener {
-    private List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> list;
+public class SmartHotSellerRefreshAdapter extends RecyclerView.Adapter<SmartHotSellerRefreshAdapter.SmartRefreshViewHolder> implements View.OnClickListener {
+    private List<HotSellerOutModel.HotSellerModel.DataBean> list;
     private final Context mContext;
     private OSSClient oss;
     private LayoutInflater mInflater;
@@ -34,7 +34,7 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
     private OnItemClickListener mOnitemClickListener = null;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
-    public SmartCarWashMerchatRefreshAdapter(Context context, List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> list, OSSClient oss) {
+    public SmartHotSellerRefreshAdapter(Context context, List<HotSellerOutModel.HotSellerModel.DataBean> list, OSSClient oss) {
         this.list = list;
         this.oss = oss;
         mContext = context;
@@ -50,26 +50,23 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
         };
     }
     @Override
-    public SmartCarWashMerchatRefreshAdapter.SmartRefreshViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_car_wash_merchat, parent, false);
+    public SmartHotSellerRefreshAdapter.SmartRefreshViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.item_hot_seller, parent, false);
         SmartRefreshViewHolder vh = new SmartRefreshViewHolder(view);
-        vh.item_cwm_iv = (ImageView) view.findViewById(R.id.item_cwm_iv);
-        vh.item_cwm_name_tv = (TextView) view.findViewById(R.id.item_cwm_name_tv);
-        vh.item_cwm_sold_tv = (TextView) view.findViewById(R.id.item_cwm_sold_tv);
-        vh.item_cwm_address_tv = (TextView) view.findViewById(R.id.item_cwm_address_tv);
-        vh.item_cwm_distance_tv = (TextView) view.findViewById(R.id.item_cwm_distance_tv);
-        vh.item_cwm_distance_ll = (LinearLayout) view.findViewById(R.id.item_cwm_distance_ll);
+        vh.item_hot_seller_iv = (ImageView) view.findViewById(R.id.item_hot_seller_iv);
+        vh.item_hot_seller_name_tv = (TextView) view.findViewById(R.id.item_hot_seller_name_tv);
+        vh.item_hot_seller_sold_tv = (TextView) view.findViewById(R.id.item_hot_seller_sold_tv);
+        vh.item_hot_seller_distance_tv = (TextView) view.findViewById(R.id.item_hot_seller_distance_tv);
         view.setOnClickListener(this);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(SmartCarWashMerchatRefreshAdapter.SmartRefreshViewHolder holder, int position) {
-        x.image().bind(holder.item_cwm_iv, list.get(position).getSellerLogo(), options);
-        holder.item_cwm_name_tv.setText(list.get(position).getSellerName());
-        holder.item_cwm_sold_tv.setText("已售" + list.get(position).getOrderCount());
-        holder.item_cwm_address_tv.setText(list.get(position).getAddress());
-        holder.item_cwm_distance_tv.setText(list.get(position).getMeter());
+    public void onBindViewHolder(SmartHotSellerRefreshAdapter.SmartRefreshViewHolder holder, int position) {
+        x.image().bind(holder.item_hot_seller_iv, list.get(position).getSellerLogo(), options);
+        holder.item_hot_seller_name_tv.setText(list.get(position).getSellerName());
+        holder.item_hot_seller_sold_tv.setText("已售" + list.get(position).getOrderCount());
+        holder.item_hot_seller_sold_tv.setText("距離" + list.get(position).getMeter());
         holder.itemView.setTag(position);
     }
 
@@ -86,12 +83,10 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
     }
 
     public class SmartRefreshViewHolder extends RecyclerView.ViewHolder {
-        public ImageView item_cwm_iv;
-        public TextView item_cwm_name_tv;
-        public TextView item_cwm_sold_tv;
-        public TextView item_cwm_address_tv;
-        public TextView item_cwm_distance_tv;
-        public LinearLayout item_cwm_distance_ll;
+        public ImageView item_hot_seller_iv;
+        public TextView item_hot_seller_name_tv;
+        public TextView item_hot_seller_sold_tv;
+        public TextView item_hot_seller_distance_tv;
         public SmartRefreshViewHolder(View view){
             super(view);
         }
@@ -105,7 +100,7 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
         void onItemClick(View view, int position);
     }
 
-    public void refreshListView(List<CarWashMerchantOutModel.DataBeanX.CarWashMerchatModel> newList) {
+    public void refreshListView(List<HotSellerOutModel.HotSellerModel.DataBean> newList) {
         list = newList;
         notifyDataSetChanged();
     }

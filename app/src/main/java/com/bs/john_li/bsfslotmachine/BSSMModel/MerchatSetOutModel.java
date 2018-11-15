@@ -282,6 +282,15 @@ public class MerchatSetOutModel {
             private String description;
             private long createTime;
             private String updateTime;
+            private boolean isSelected = false;
+
+            public boolean isSelected() {
+                return isSelected;
+            }
+
+            public void setSelected(boolean selected) {
+                isSelected = selected;
+            }
 
             public int getId() {
                 return id;

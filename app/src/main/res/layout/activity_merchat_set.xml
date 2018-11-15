@@ -11,7 +11,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/colorMineGray">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,79 +22,81 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="@color/colorWight"
+                android:orientation="horizontal"
                 android:padding="5dp">
+
                 <ImageView
                     android:id="@+id/merchart_iv"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:scaleType="fitXY"
+                    android:layout_width="110dp"
+                    android:layout_height="87dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_margin="5dp"
-                    android:layout_gravity="center_vertical"/>
+                    android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp">
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/item_cwm_name_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="商家名稱"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorBlack"/>
+                        android:textColor="@color/colorBlack"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/merchart_business_hours_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:text="10:30-18:00"
-                        android:textSize="13sp"
                         android:textColor="@color/colorDrakGray"
-                        android:layout_marginTop="5dp"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/merchart_sold_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:text="已售3350"
-                        android:textSize="13sp"
                         android:textColor="@color/colorBlack"
-                        android:layout_marginTop="5dp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/merchart_distance_ll"
+                    android:id="@+id/merchart_tel_ll"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/navigation"/>
+                    android:src="@mipmap/tel" />
             </LinearLayout>
 
-            <View
-                style="@style/UnderLineTextView"/>
+            <View style="@style/UnderLineTextView" />
 
             <LinearLayout
+                android:id="@+id/merchart_address_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:background="@color/colorWight">
+                android:background="@color/colorWight"
+                android:padding="5dp">
+
                 <TextView
-                    android:id="@+id/merchart_address_ll"
+                    android:id="@+id/merchart_address_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
                     android:text="地址"
                     android:textColor="@color/colorDrakGray"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -100,8 +104,14 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/navigation"/>
+                    android:src="@mipmap/navigation" />
             </LinearLayout>
+            <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView
+                android:id="@+id/merchart_set_lv1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWight" />
         </LinearLayout>
     </ScrollView>
 

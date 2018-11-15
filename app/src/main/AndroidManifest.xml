@@ -87,6 +87,7 @@
         <activity android:name=".BSSMActivity.Parking.ChooseOrderTimeActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.MerchatSetActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.SecondHandCarListActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

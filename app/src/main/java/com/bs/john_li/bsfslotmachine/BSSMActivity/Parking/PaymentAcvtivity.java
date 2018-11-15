@@ -90,7 +90,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     // 订单总金额
     private double totalAmount;
     private String orderTime;
-    private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單
+    private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單, 4洗車訂單
     // 汇率换算后的金额
     private String mExchangeAmountPay;
     // 支付金額
@@ -376,7 +376,12 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * 像后台获取支付寶支付的订单详情
      */
     private void callNetGetAlipayOrderInfo() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_APLIPAY_ORDER_INFO + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = null;
+        if (startWay == 4) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_ALIPAY_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_APLIPAY_ORDER_INFO + SPUtils.get(this, "UserToken", ""));
+        }
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
@@ -450,7 +455,12 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * 发起微信请求，向后台获取预支付Data
      */
     private void callNetGetWechatPrepayId() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = null;
+        if (startWay == 4) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        }
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
@@ -629,7 +639,12 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * @param enterPw
      */
     private void callNetSubmitPayment(String enterPw, final BaseNiceDialog dialog, final FaceView pay_faceview, final LinearLayout payingLL, final TextView pay_status_tv) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WALLET_PAY + SPUtils.get(this, "UserToken", ""));
+        RequestParams params = null;
+        if (startWay == 4) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_WALLET_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WALLET_PAY + SPUtils.get(this, "UserToken", ""));
+        }
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {

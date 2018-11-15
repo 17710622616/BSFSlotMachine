@@ -6,8 +6,8 @@
     android:gravity="center">
     <ImageView
         android:id="@+id/item_cs_iv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:scaleType="fitXY"/>
 
     <TextView

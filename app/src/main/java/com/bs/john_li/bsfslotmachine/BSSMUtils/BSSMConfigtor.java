@@ -112,7 +112,7 @@ public class BSSMConfigtor {
     public final static String GET_WALLET_FAQ_WEB = "systemProfile/walletIndex";
     // 微信支付获取prepay_id的接口
     public final static String POST_WECHAT_PAY_PRE_PAY_ID = "pay/weixinTrade?token=";
-    // 微信支付获取prepay_id的接口
+    // 支付寶支付获取prepay_id的接口
     public final static String POST_APLIPAY_ORDER_INFO = "pay/alipayTrade?token=";
     // 信用卡支付获取prepay_id的接口
     public final static String POST_CREDIT_CARD_ORDER_INFO = "payPalPay/pay?token=";
@@ -157,8 +157,18 @@ public class BSSMConfigtor {
     //提交意見反饋的接口
     public static final String SUBMIT_OPINION= "feedback/submit?token=";
     /*-------------------------------------------------汽車服務-----------------------------------------------------------------------------------------*/
-    //提交意見反饋的接口
+    //商家列表的接口
     public static final String GET_SELLER_LIST= "seller/getSellerList";
-    //提交意見反饋的接口
+    //推薦商家列表的接口
+    public static final String GET_HOT_SELLER_LIST= "seller/hotSellerList";
+    //商家套餐列表的接口
     public static final String GET_MERCHART_SET= "seller/selectSellerById";
+    //洗車訂單下單的接口
+    public static final String SUBMIT_CAR_WASH_ORDER = "sellerOrder/createOrder?token=";
+    //洗車訂單微信的接口
+    public static final String POST_CW_WECHAT_PAY_PRE_PAY_ID = "sellerPay/weixinTrade?token=";
+    //洗車訂單支付寶的接口
+    public static final String POST_CW_ALIPAY_PAY_PRE_PAY_ID = "sellerPay/alipayTrade?token=";
+    //洗車訂單支付寶的接口
+    public static final String POST_CW_WALLET_PAY_PRE_PAY_ID = "sellerPay/walletPay?token=";
 }
