@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,4 +8,84 @@
         android:id="@+id/shcl_headview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mine_srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@mipmap/loading_caffe_small"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView
+                    android:id="@+id/shcl_head_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/seekbar_parking"/>
+                    <TextView
+                        android:id="@+id/publish_car_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="點我發佈車輛"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBlack"
+                        android:paddingLeft="5dp"
+                        android:layout_gravity="center_vertical"/>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/sure_order"/>
+                    <TextView
+                        android:id="@+id/car_list_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="查看車輛列表"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorBlack"
+                        android:paddingLeft="5dp"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/order_tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWight"
+                    app:tabTextColor="@color/colorBlack"
+                    app:tabSelectedTextColor="@color/colorPrimary"
+                    app:tabIndicatorColor="@color/colorPrimary"
+                    app:tabIndicatorHeight="2dp"
+                    app:tabGravity="center"
+                    app:tabMode="scrollable"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/shcl_recycle_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+        </ScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>
