@@ -171,4 +171,6 @@ public class BSSMConfigtor {
     public static final String POST_CW_ALIPAY_PAY_PRE_PAY_ID = "sellerPay/alipayTrade?token=";
     //洗車訂單支付寶的接口
     public static final String POST_CW_WALLET_PAY_PRE_PAY_ID = "sellerPay/walletPay?token=";
+    //洗車訂單列表的接口
+    public static final String GET_CW_ORDER_LIST = "sellerOrder/getUserOrderList?token=";
 }

@@ -1,11 +1,9 @@
-package com.bs.john_li.bsfslotmachine.BSSMFragment;
+package com.bs.john_li.bsfslotmachine.BSSMFragment.BSSMCarWashFragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +14,10 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCWOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.BaseFragment;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -40,44 +41,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 待支付洗車訂單
  * Created by John_Li on 5/1/2018.
  */
 
-public class AllOrderFragment extends LazyLoadFragment {
+public class CWOrderPaymentFragment extends BaseFragment {
     private View view;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
-    private List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderList;
-    private SmartOrderRefreshAdapter mSmartOrderRefreshAdapter;
+    private List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderList;
+    private SmartCWOrderRefreshAdapter mSmartOrderRefreshAdapter;
     private LinearLayout noOrderLL;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
     private int pageNo = 1;
     // 車輛總數
-    private long totolCarCount = 30;
-
+    private long totolCarCount;
+    @Nullable
     @Override
-    protected void onCreateViewLazy(Bundle savedInstanceState) {
-        super.onCreateViewLazy(savedInstanceState);
-        setContentView(R.layout.fragment_orderlist);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_orderlist, null);
         initView();
-        setListener();
+        setListenter();
         initData();
+        return view;
     }
 
-    private void initView() {
-        mRefreshLayout = (RefreshLayout) findViewById(R.id.order_list_srl);
-        mRecycleView = (RecyclerView) findViewById(R.id.order_list_lv);
-        noOrderLL = (LinearLayout) findViewById(R.id.no_order_ll);
-        // 设置header的高度
+    @Override
+    public void initView() {
+        mRefreshLayout = view.findViewById(R.id.order_list_srl);
+        mRecycleView = view.findViewById(R.id.order_list_lv);
+        noOrderLL = view.findViewById(R.id.no_order_ll);
+
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+        // 设置header的高度
         mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
-    private void setListener() {
+    @Override
+    public void setListenter() {
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
@@ -110,36 +115,35 @@ public class AllOrderFragment extends LazyLoadFragment {
         });
     }
 
-    private void initData() {
+    @Override
+    public void initData() {
         orderList = new ArrayList<>();
-        mSmartOrderRefreshAdapter = new SmartOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
+        mSmartOrderRefreshAdapter = new SmartCWOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
         mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycleView.setAdapter(mSmartOrderRefreshAdapter);
 
-        mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartOrderRefreshAdapter.OnItemClickListener() {
+        mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartCWOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
-                intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
-                if (orderList.get(position).getOrderStatus() == 1) {
-                    // 如果是待支付
-                    startActivityForResult(intent, 1);
-                } else {
-                    startActivity(intent);
-                }
+                intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
+                startActivityForResult(intent, 1);
             }
         });
         mRefreshLayout.autoRefresh();
+        if (BSSMCommonUtils.isLoginNow(getActivity())) {
+            callNetGetCarList();
+        } else {
+            startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+        }
     }
 
-    /**
-     * 请求网络刷新数据
-     */
     private void callNetGetCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CW_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
+            jsonObj.put("orderStatus",1);
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
         } catch (JSONException e) {
@@ -152,23 +156,23 @@ public class AllOrderFragment extends LazyLoadFragment {
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                UserOrderOutModel model = new Gson().fromJson(result.toString(), UserOrderOutModel.class);
+                CWUserOrderOutModel model = new Gson().fromJson(result.toString(), CWUserOrderOutModel.class);
                 if (model.getCode() ==200) {
                     totolCarCount = model.getData().getTotalCount();
-                    List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
+                    List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
-                } else if (model.getCode() == 10000){
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(getActivity(), "UserToken", "");
-                    Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 } else {
-                    Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(getActivity(), "請求超時，請重試！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "連接超時，請重試！", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
@@ -179,16 +183,20 @@ public class AllOrderFragment extends LazyLoadFragment {
             }
             @Override
             public void onFinished() {
-                if (orderList.size() > 0) {
-                    noOrderLL.setVisibility(View.GONE);
-                } else {
-                    noOrderLL.setVisibility(View.VISIBLE);
-                }
-                mSmartOrderRefreshAdapter.refreshListView(orderList);
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadmore();
+                refreshView();
             }
         });
+    }
+
+    private void refreshView() {
+        if (orderList.size() > 0) {
+            noOrderLL.setVisibility(View.GONE);
+        } else {
+            noOrderLL.setVisibility(View.VISIBLE);
+        }
+        mSmartOrderRefreshAdapter.refreshListView(orderList);
+        mRefreshLayout.finishRefresh();
+        mRefreshLayout.finishLoadmore();
     }
 
     @Override

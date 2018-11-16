@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/car_wash_order_detial_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorMineGray">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/car_wash_set_iv"
+                    android:layout_width="110dp"
+                    android:layout_height="87dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/car_wash_set_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="套餐名稱"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/car_wash_set_business_hours_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="10:30-18:00"
+                        android:textColor="@color/colorDrakGray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/car_wash_set_sold_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="已售3350"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/next_black"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:layout_marginTop="5dp"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/cwod_coupon_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/car_wash_coupon"/>
+
+                <TextView
+                    android:id="@+id/cwod_coupon_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="洗車券"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"/>
+
+                <TextView
+                    android:id="@+id/cwod_expiration_time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="有效期：2020-01-31"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"
+                    android:layout_below="@id/cwod_coupon_tv"/>
+
+                <TextView
+                    android:id="@+id/cwod_apply_for_refund_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="申請退款"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_alignParentRight="true"/>
+
+                <View
+                    android:id="@+id/cwod_coupon_under_line"
+                    style="@style/UnderLineTextView"
+                    android:layout_below="@id/cwod_expiration_time_tv"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"/>
+
+                <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView
+                    android:id="@+id/cwod_coupon_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cwod_coupon_under_line"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:layout_marginTop="5dp"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/cwod_merchant_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/bussiness"/>
+
+                <TextView
+                    android:id="@+id/cwod_merchant_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="商家信息"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/cwod_merchant_iv"/>
+
+                <View
+                    android:id="@+id/cwod_merchant_under_line"
+                    style="@style/UnderLineTextView"
+                    android:layout_below="@id/cwod_merchant_tv"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/cwod_merchant_iv"/>
+
+                <TextView
+                    android:id="@+id/cwod_merchant_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="商家名稱"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/cwod_merchant_under_line"
+                    android:layout_toRightOf="@id/cwod_merchant_iv"/>
+
+                <TextView
+                    android:id="@+id/cwod_merchant_address_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="商家地址"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/cwod_merchant_name_tv"
+                    android:layout_toRightOf="@id/cwod_merchant_iv"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/tel"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/cwod_merchant_under_line"
+                    android:layout_marginTop="15dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

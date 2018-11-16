@@ -1,22 +1,21 @@
-package com.bs.john_li.bsfslotmachine.BSSMFragment;
+package com.bs.john_li.bsfslotmachine.BSSMFragment.BSSMCarWashFragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCWOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMFragment.LazyLoadFragment;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -40,15 +39,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 全部洗車訂單
  * Created by John_Li on 5/1/2018.
  */
 
-public class AllOrderFragment extends LazyLoadFragment {
+public class AllCWOrderFragment extends LazyLoadFragment {
     private View view;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
-    private List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderList;
-    private SmartOrderRefreshAdapter mSmartOrderRefreshAdapter;
+    private List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderList;
+    private SmartCWOrderRefreshAdapter mSmartOrderRefreshAdapter;
     private LinearLayout noOrderLL;
     // 每頁加載數量
     private int pageSize = 10;
@@ -112,15 +112,15 @@ public class AllOrderFragment extends LazyLoadFragment {
 
     private void initData() {
         orderList = new ArrayList<>();
-        mSmartOrderRefreshAdapter = new SmartOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
+        mSmartOrderRefreshAdapter = new SmartCWOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
         mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycleView.setAdapter(mSmartOrderRefreshAdapter);
 
-        mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartOrderRefreshAdapter.OnItemClickListener() {
+        mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartCWOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
-                intent.putExtra("OrderModel", new Gson().toJson(orderList.get(position)));
+                Intent intent = new Intent(getActivity(), CarWashOrderDetialActivity.class);
+                intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
                 if (orderList.get(position).getOrderStatus() == 1) {
                     // 如果是待支付
                     startActivityForResult(intent, 1);
@@ -136,7 +136,7 @@ public class AllOrderFragment extends LazyLoadFragment {
      * 请求网络刷新数据
      */
     private void callNetGetCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CW_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
@@ -152,10 +152,10 @@ public class AllOrderFragment extends LazyLoadFragment {
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                UserOrderOutModel model = new Gson().fromJson(result.toString(), UserOrderOutModel.class);
-                if (model.getCode() ==200) {
+                CWUserOrderOutModel model = new Gson().fromJson(result.toString(), CWUserOrderOutModel.class);
+                if (model.getCode() == 200) {
                     totolCarCount = model.getData().getTotalCount();
-                    List<UserOrderOutModel.UserOrderInsideModel.UserOrderModel> orderModelsFromNet = model.getData().getData();
+                    List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
                 } else if (model.getCode() == 10000){
                     SPUtils.put(getActivity(), "UserToken", "");

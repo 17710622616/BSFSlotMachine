@@ -90,7 +90,7 @@ public class OrderReceivingFragment extends LazyLoadFragment {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 //和最大的数据比较
-                if (pageSize * (pageNo + 1) > totolCarCount){
+                if (pageSize * (pageNo) > totolCarCount){
                     Toast.makeText(getActivity(), "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();

@@ -68,7 +68,7 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
         headView = findViewById(R.id.merchar_set_head);
         merchartIv = findViewById(R.id.merchart_iv);
         telIv = findViewById(R.id.merchart_tel_ll);
-        nameTv = findViewById(R.id.item_cwm_name_tv);
+        nameTv = findViewById(R.id.merchart_name_tv);
         businessHoursTv = findViewById(R.id.merchart_business_hours_tv);
         soldTv = findViewById(R.id.merchart_sold_tv);
         addressTv = findViewById(R.id.merchart_address_tv);

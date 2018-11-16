@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondHandCarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
@@ -122,8 +123,6 @@ public class CarServiceFragment extends BaseFragment {
             return;
         }
         mLocation = locationManager.getLastKnownLocation(provider);
-        // 獲取為您推薦
-        callNetGetRecommend();
     }
 
     @Override
@@ -145,12 +144,6 @@ public class CarServiceFragment extends BaseFragment {
 
     @Override
     public void setListenter() {
-        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-
-            }
-        });
         mGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -165,6 +158,7 @@ public class CarServiceFragment extends BaseFragment {
                         getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
                         break;
                     case 3:
+                        getActivity().startActivity(new Intent(getActivity(), CarWashOrderListActivity.class));
                         break;
                 }
             }
@@ -225,6 +219,8 @@ public class CarServiceFragment extends BaseFragment {
         //设置布局管理器
         mLv.setLayoutManager(linearLayoutManager);
         mLv.setAdapter(mSmartHotSellerRefreshAdapter);
+
+        mRefreshLayout.autoRefresh();
     }
 
     private void callNetGetRecommend() {
