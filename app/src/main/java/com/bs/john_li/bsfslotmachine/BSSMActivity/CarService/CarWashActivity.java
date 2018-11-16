@@ -204,8 +204,13 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("type",2);
-            jsonObj.put("longitude",mLocation.getLongitude());
-            jsonObj.put("latitude",mLocation.getLatitude());
+            if (mLocation != null) {
+                jsonObj.put("longitude",mLocation.getLongitude());
+                jsonObj.put("latitude",mLocation.getLatitude());
+            } else {
+                jsonObj.put("longitude","113.548331");
+                jsonObj.put("latitude","22.205702");
+            }
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
             jsonObj.put("orderBy",orderBy);

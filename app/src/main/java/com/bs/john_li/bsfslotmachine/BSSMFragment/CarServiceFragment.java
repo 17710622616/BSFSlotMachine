@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondHandCarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarServiceAdapter;
@@ -121,6 +122,8 @@ public class CarServiceFragment extends BaseFragment {
             return;
         }
         mLocation = locationManager.getLastKnownLocation(provider);
+        // 獲取為您推薦
+        callNetGetRecommend();
     }
 
     @Override
@@ -156,6 +159,7 @@ public class CarServiceFragment extends BaseFragment {
                         getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));
                         break;
                     case 1:
+                        getActivity().startActivity(new Intent(getActivity(), SecondHandCarListActivity.class));
                         break;
                     case 2:
                         getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
@@ -221,8 +225,6 @@ public class CarServiceFragment extends BaseFragment {
         //设置布局管理器
         mLv.setLayoutManager(linearLayoutManager);
         mLv.setAdapter(mSmartHotSellerRefreshAdapter);
-        // 獲取為您推薦
-        callNetGetRecommend();
     }
 
     private void callNetGetRecommend() {
@@ -230,8 +232,13 @@ public class CarServiceFragment extends BaseFragment {
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("longitude",mLocation.getLongitude());
-            jsonObj.put("latitude",mLocation.getLatitude());
+            if (mLocation != null) {
+                jsonObj.put("longitude",mLocation.getLongitude());
+                jsonObj.put("latitude",mLocation.getLatitude());
+            } else {
+                jsonObj.put("longitude","113.548331");
+                jsonObj.put("latitude","22.205702");
+            }
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
         } catch (JSONException e) {

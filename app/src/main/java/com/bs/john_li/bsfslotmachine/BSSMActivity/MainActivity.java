@@ -370,7 +370,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         if(m_newVerCode.equals("-1")) {
             //Toast.makeText(MainActivity.this, "獲取版本號失敗，請重試！", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(MainActivity.this, "當前版本:"+verName+" Code:"+verCode+",已經是最新版本!", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "當前版本:"+verName+" Code:"+verCode+",已經是最新版本!", Toast.LENGTH_SHORT).show();
         }
     }
 

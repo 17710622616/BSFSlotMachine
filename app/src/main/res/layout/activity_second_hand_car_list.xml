@@ -77,7 +77,7 @@
                     app:tabTextColor="@color/colorBlack"
                     app:tabSelectedTextColor="@color/colorPrimary"
                     app:tabIndicatorColor="@color/colorPrimary"
-                    app:tabIndicatorHeight="2dp"
+                    app:tabIndicatorHeight="0.5dp"
                     app:tabGravity="center"
                     app:tabMode="scrollable"/>
 
