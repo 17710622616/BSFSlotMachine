@@ -171,6 +171,8 @@ public class CarServiceFragment extends BaseFragment {
                 if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     callNetGetRecommend();
                 } else {
+                    mRefreshLayout.finishLoadmore();
+                    mRefreshLayout.finishRefresh();
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
             }
@@ -188,6 +190,8 @@ public class CarServiceFragment extends BaseFragment {
                     if (BSSMCommonUtils.isLoginNow(getActivity())) {
                         callNetGetRecommend();
                     } else {
+                        mRefreshLayout.finishLoadmore();
+                        mRefreshLayout.finishRefresh();
                         startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                     }
                 }

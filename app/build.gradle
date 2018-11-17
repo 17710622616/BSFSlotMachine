@@ -79,4 +79,5 @@ dependencies {
     compile files('libs/MobCommons-2018.0322.1145.jar')
     compile files('libs/alipaySdk-20180601.jar')
     compile 'net.danlew:android.joda:2.9.5'
+    compile 'com.google.zxing:core:3.3.0'
 }

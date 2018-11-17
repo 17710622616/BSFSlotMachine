@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OrderDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCWOrderRefreshAdapter;
@@ -118,7 +119,7 @@ public class CWOrderPaidFragment extends LazyLoadFragment {
         mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartCWOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
+                Intent intent = new Intent(getActivity(), CarWashOrderDetialActivity.class);
                 intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
                 startActivity(intent);
             }

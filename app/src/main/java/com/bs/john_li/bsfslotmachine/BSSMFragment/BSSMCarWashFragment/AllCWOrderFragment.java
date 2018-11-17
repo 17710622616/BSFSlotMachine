@@ -121,12 +121,7 @@ public class AllCWOrderFragment extends LazyLoadFragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), CarWashOrderDetialActivity.class);
                 intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
-                if (orderList.get(position).getOrderStatus() == 1) {
-                    // 如果是待支付
-                    startActivityForResult(intent, 1);
-                } else {
-                    startActivity(intent);
-                }
+                startActivity(intent);
             }
         });
         mRefreshLayout.autoRefresh();
