@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMAdapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,17 +53,25 @@ public class CWCouponAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.item_cw_coupon, null);
             holder.cw_coupon_num_tv = convertView.findViewById(R.id.cw_coupon_num_tv);
+            holder.cw_coupon_num_iv = convertView.findViewById(R.id.cw_coupon_num_iv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         holder.cw_coupon_num_tv.setText("券號：" + list.get(i).getCouponCode());
+        if (list.get(i).getStatus() == 1) {
+            holder.cw_coupon_num_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.cw_coupon_num_iv.setVisibility(View.GONE);
+        } else {
+            holder.cw_coupon_num_iv.setVisibility(View.VISIBLE);
+        }
         return convertView;
     }
 
     class ViewHolder {
         public TextView cw_coupon_num_tv;
+        public ImageView cw_coupon_num_iv;
     }
 
     public void refreshListView(List<CWUserOrderDetialOutModel.DataBean.CouponListBean> newList){

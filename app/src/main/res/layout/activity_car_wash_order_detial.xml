@@ -121,7 +121,8 @@
                     android:textColor="@color/colorDrakGray"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"/>
 
                 <View
                     android:id="@+id/cwod_coupon_under_line"

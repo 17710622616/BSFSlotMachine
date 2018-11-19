@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderDetialActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.MainActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.HistoryOrderActivity;
@@ -772,7 +774,11 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * 訂單支付成功
      */
     private void orderPaySuccess() {
-        startActivity(new Intent(this, HistoryOrderActivity.class));
+        if (startWay != 4) {
+            startActivity(new Intent(this, HistoryOrderActivity.class));
+        } else {
+            startActivity(new Intent(this, CarWashOrderListActivity.class));
+        }
         setResult(RESULT_OK);
         finish();
     }

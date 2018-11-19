@@ -216,6 +216,8 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("chargeId", merchatId);
+            jsonObj.put("remark", merchatId);
+            jsonObj.put("num", 1);
         } catch (JSONException e) {
             e.printStackTrace();
         }

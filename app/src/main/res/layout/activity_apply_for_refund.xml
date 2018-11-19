@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+
+    <com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView
+        android:id="@+id/apply_for_refund_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="退款金額："
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/refund_money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:padding="8dp"
+                android:text="現金：MOP0.0"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="退還方式："
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/refund_way"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:padding="8dp"
+                android:text="退返賬戶餘額(1-7個工作日內)"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="退款原因："
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:id="@+id/apply_for_refund_rg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWight"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/apply_refund_booking_less_than"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="預約唔到" />
+                <RadioButton
+                    android:id="@+id/apply_refund_not_receive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="商家營業但唔接待" />
+                <RadioButton
+                    android:id="@+id/apply_refund_more_favorable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="店內活動更優惠" />
+                <RadioButton
+                    android:id="@+id/apply_refund_have_been_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="去過了，不太滿意" />
+                <RadioButton
+                    android:id="@+id/apply_refund_buy_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="買多做/買錯左" />
+                <RadioButton
+                    android:id="@+id/apply_refund_regret"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="後悔了，唔想要" />
+                <RadioButton
+                    android:id="@+id/apply_refund_additionl_charge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="商家額外收費" />
+                <RadioButton
+                    android:id="@+id/apply_refund_direct_consumption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="商家話可以直接比優惠價系店鋪消費" />
+                <RadioButton
+                    android:id="@+id/apply_refund_contact_leass_than"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="聯絡唔到商家" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/submit_refund_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="申請退款"
+                android:textSize="20sp"
+                android:textColor="@color/colorWight"
+                android:background="@color/colorWayOringe"
+                android:gravity="center"
+                android:layout_margin="15dp"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

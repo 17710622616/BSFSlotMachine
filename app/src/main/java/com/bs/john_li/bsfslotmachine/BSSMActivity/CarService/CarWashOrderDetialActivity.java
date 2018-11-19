@@ -18,6 +18,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CWCouponAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderDetialOutModel;
@@ -117,6 +118,7 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
                                 });
                             }
                         })
+                        .setWidth(250)
                         .show(getSupportFragmentManager());
             }
         });
@@ -124,9 +126,13 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
 
     @Override
     public void initData() {
+        mCWUserOrderModel = new Gson().fromJson(getIntent().getStringExtra("CWOrderModel"), CWUserOrderOutModel.DataBeanX.CWUserOrderModel.class);
         headView.setLeft(this);
         headView.setTitle("洗車訂單");
-        mCWUserOrderModel = new Gson().fromJson(getIntent().getStringExtra("CWOrderModel"), CWUserOrderOutModel.DataBeanX.CWUserOrderModel.class);
+        if (mCWUserOrderModel.getOrderStatus() == 1) {
+            headView.setRightText("支付", this);
+        }
+
         setName.setText(mCWUserOrderModel.getChargeRemark());
         setPriceTv.setText("MOP" + mCWUserOrderModel.getTotalAmount());
 
@@ -201,6 +207,9 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
         orderNoTv.setText("訂單編號：" + mSellerOrderBean.getOrderNo());
         createTimeTv.setText("創建時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mSellerOrderBean.getCreateTime())));
         totalPriceTv.setText("支付金額：" + mSellerOrderBean.getPayAmount());
+        if (mSellerOrderBean.getOrderStatus() == 3) {
+            applyForRefundTv.setVisibility(View.VISIBLE);
+        }
         mCWCouponAdapter.notifyDataSetChanged();
     }
 
@@ -209,6 +218,16 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
         switch (v.getId()) {
             case R.id.head_left:
                 finish();
+                break;
+            case R.id.head_right_tv:
+                Intent intent2 = new Intent(CarWashOrderDetialActivity.this, PaymentAcvtivity.class);
+                intent2.putExtra("startWay", 4);   // carWashOrder
+                intent2.putExtra("orderNo", mSellerOrderBean.getOrderNo());
+                intent2.putExtra("amount", String.valueOf(mSellerOrderBean.getPayAmount()));
+                intent2.putExtra("createTime", mSellerOrderBean.getCreateTime());
+                intent2.putExtra("exchange", mSellerOrderBean.getExchange());
+                intent2.putExtra("exchangeAmountPay", mSellerOrderBean.getExchangeAmountPay());
+                startActivityForResult(intent2, 1);
                 break;
             case R.id.cwod_tel_iv:
                 if (mSellerBean != null){
@@ -219,6 +238,25 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
                 break;
             case R.id.cwod_navigation_iv:
                 break;
+            case R.id.cwod_apply_for_refund_tv:
+                if (mSellerOrderBean != null) {
+                    Intent intent = new Intent(this, ApplyForRefundActivity.class);
+                    intent.putExtra("mSellerOrderBean", new Gson().toJson(mSellerOrderBean));
+                    startActivityForResult(intent, 1);
+                } else {
+                    Toast.makeText(this, "訂單信息獲取失敗，請重試！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                finish();
+            }
         }
     }
 }
