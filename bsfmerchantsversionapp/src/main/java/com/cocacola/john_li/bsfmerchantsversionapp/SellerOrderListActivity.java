@@ -10,6 +10,16 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.cocacola.john_li.bsfmerchantsversionapp.Adapter.OrderFgAdapter;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.AllCWOrderFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderCancelledFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderCompletedFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderFailureFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderPaidFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderPaymentFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderRefundFragment;
+import com.cocacola.john_li.bsfmerchantsversionapp.Fragment.CWOrderRefundingFragment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

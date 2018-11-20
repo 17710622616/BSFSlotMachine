@@ -89,12 +89,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case 1:
+                        startActivity(new Intent(MainActivity.this, SellerOrderListActivity.class));
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.this, "item", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(MainActivity.this, SellerSetListActivity.class));
                         break;
                     case 3:
-                        Toast.makeText(MainActivity.this, "item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "此功能暫沒開放，敬請期待！", Toast.LENGTH_SHORT).show();
                         break;
                     case 4:
                         new AlertDialog.Builder(MainActivity.this).setTitle("提醒")

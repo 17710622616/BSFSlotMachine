@@ -51,7 +51,7 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
     private ImageView leftIv;
     private TextView orderNoTv, couponNoTv, checkOrderTv;
 
-    private SellerOrderDetialOutModel.SellerOrderDetialModel mSellerOrderDetialModel;
+    private SellerOrderDetialOutModel.DataBean.SellerOrderBean mSellerOrderDetialModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +117,7 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
             public void onSuccess(String result) {
                 SellerOrderDetialOutModel model = new Gson().fromJson(result.toString(), SellerOrderDetialOutModel.class);
                 if (model.getCode() == 200) {
-                    mSellerOrderDetialModel = model.getData();
+                    mSellerOrderDetialModel = model.getData().getSellerOrder();
                 } else {
                     Toast.makeText(OrderCheckActivity.this, "獲取訂單詳情失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -195,9 +195,9 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
                         e.printStackTrace();
                         //接⼝调⽤异常
                     }
-                    Toast.makeText(OrderCheckActivity.this, "訂單消費成功！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrderCheckActivity.this, "訂單消費成功！" + String.valueOf(model.getMsg().toString()), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(OrderCheckActivity.this, "訂單消費失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrderCheckActivity.this, "訂單消費失敗！" + String.valueOf(model.getMsg().toString()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法

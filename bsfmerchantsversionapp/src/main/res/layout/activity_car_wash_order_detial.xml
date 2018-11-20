@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/order_detial_back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/back"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="訂單詳情"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:gravity="center"/>
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorMineGray">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/order_detial_iv"
+                    android:layout_width="110dp"
+                    android:layout_height="87dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/order_detial_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="套餐名稱"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/order_detial_price_tv1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="MOP0.0"
+                        android:textColor="@color/colorDrakGray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/order_detial_sold_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="已售3350"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:layout_marginTop="5dp"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/cwod_coupon_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/car_wash_coupon"/>
+
+                <TextView
+                    android:id="@+id/cwod_coupon_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="洗車券"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"/>
+
+                <TextView
+                    android:id="@+id/cwod_expiration_time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="有效期：2020-01-31"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"
+                    android:layout_below="@id/cwod_coupon_tv"/>
+
+                <TextView
+                    android:id="@+id/cwod_status_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已消費"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/cwod_coupon_tv"/>
+
+                <View
+                    android:id="@+id/cwod_coupon_under_line"
+                    style="@style/UnderLineTextView"
+                    android:layout_below="@id/cwod_expiration_time_tv"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"/>
+
+                <com.cocacola.john_li.bsfmerchantsversionapp.BSFView.NoScrollListView
+                    android:id="@+id/cwod_coupon_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cwod_coupon_under_line"
+                    android:layout_toRightOf="@id/cwod_coupon_iv"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWight"
+                android:layout_marginTop="5dp"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/order_detial_order_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/order"/>
+
+                <TextView
+                    android:id="@+id/order_detial_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="訂單信息"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+
+                <View
+                    android:id="@+id/order_detial_under_line"
+                    style="@style/UnderLineTextView"
+                    android:layout_below="@id/order_detial_tv"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+
+                <TextView
+                    android:id="@+id/order_detialno_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="訂單編號："
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/order_detial_under_line"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+
+                <TextView
+                    android:id="@+id/order_detial_createtime_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="創建時間："
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/order_detialno_tv"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+
+                <TextView
+                    android:id="@+id/order_detial_finishtime_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="消費時間："
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/order_detial_createtime_tv"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+
+                <TextView
+                    android:id="@+id/order_detial_total_price_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="總        價："
+                    android:textSize="12sp"
+                    android:textColor="@color/colorDrakGray"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/order_detial_finishtime_tv"
+                    android:layout_toRightOf="@id/order_detial_order_iv"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

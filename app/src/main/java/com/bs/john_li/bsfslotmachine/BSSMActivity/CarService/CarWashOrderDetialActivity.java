@@ -198,10 +198,6 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
         businessHoursTv.setText("營業時間：" + mSellerBean.getBusinessHours());
         soldTv.setText("已        售：" + mSellerBean.getOrderCount());
         expirationTimeTv.setText("有效時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mSellerOrderBean.getExprieTime())));
-        switch (mSellerOrderBean.getOrderStatus()) {
-            case 1:
-                break;
-        }
         sellerNameTv.setText(mSellerBean.getSellerName());
         addressTv.setText(mSellerBean.getAddress());
         orderNoTv.setText("訂單編號：" + mSellerOrderBean.getOrderNo());

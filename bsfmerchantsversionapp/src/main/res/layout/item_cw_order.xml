@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@color/colorWight">
+
+    <ImageView
+        android:id="@+id/item_cworder_iv"
+        android:layout_width="110dp"
+        android:layout_height="78dp"
+        android:scaleType="fitXY"/>
+
+    <TextView
+        android:id="@+id/item_cworder_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="套餐名"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        android:layout_toRightOf="@id/item_cworder_iv"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_cworder_expiration_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="到期時間：2018-11-15"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/item_cworder_iv"
+        android:layout_below="@id/item_cworder_name"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_cworder_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="訂單金額：MOP0.0"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/item_cworder_iv"
+        android:layout_below="@id/item_cworder_expiration_time"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_cworder_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="已完成"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:padding="5dp"/>
+</RelativeLayout>

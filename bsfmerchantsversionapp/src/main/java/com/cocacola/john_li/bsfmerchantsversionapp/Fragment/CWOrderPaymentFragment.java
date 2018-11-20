@@ -12,17 +12,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderDetialActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCWOrderRefreshAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMFragment.BaseFragment;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
-import com.bs.john_li.bsfslotmachine.R;
+import com.cocacola.john_li.bsfmerchantsversionapp.Adapter.SmartCWOrderRefreshAdapter;
+import com.cocacola.john_li.bsfmerchantsversionapp.LoginActivity;
+import com.cocacola.john_li.bsfmerchantsversionapp.OrderDetialActivity;
+import com.cocacola.john_li.bsfmerchantsversionapp.R;
 import com.cocacola.john_li.bsfmerchantsversionapp.Model.SellerOrderOutModel;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.AliyunOSSUtils;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.BSFCommonUtils;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.BSFMerchantConfigtor;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.SPUtils;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -44,7 +42,7 @@ import java.util.List;
  * Created by John_Li on 5/1/2018.
  */
 
-public class CWOrderPaymentFragment extends BaseFragment {
+public class CWOrderPaymentFragment extends LazyLoadFragment {
     private View view;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
@@ -57,40 +55,38 @@ public class CWOrderPaymentFragment extends BaseFragment {
     private int pageNo = 1;
     // 車輛總數
     private long totolCarCount;
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_orderlist, null);
+    protected void onCreateViewLazy(Bundle savedInstanceState) {
+        super.onCreateViewLazy(savedInstanceState);
+        setContentView(R.layout.fragment_orderlist);
         initView();
         setListenter();
         initData();
-        return view;
     }
 
-    @Override
     public void initView() {
-        mRefreshLayout = view.findViewById(R.id.order_list_srl);
-        mRecycleView = view.findViewById(R.id.order_list_lv);
-        noOrderLL = view.findViewById(R.id.no_order_ll);
+        mRefreshLayout = (RefreshLayout) findViewById(R.id.order_list_srl);
+        mRecycleView = (RecyclerView) findViewById(R.id.order_list_lv);
+        noOrderLL = (LinearLayout) findViewById(R.id.no_order_ll);
 
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
         // 设置header的高度
-        mRefreshLayout.setHeaderHeightPx((int)(BSSMCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
+        mRefreshLayout.setHeaderHeightPx((int)(BSFCommonUtils.getDeviceWitdh(getActivity()) / 4.05));//Header标准高度（显示下拉高度>=标准高度 触发刷新）
     }
 
-    @Override
     public void setListenter() {
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 orderList.clear();
                 pageNo = 1;
-                if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                if (BSFCommonUtils.isLoginNow(getActivity())) {
                     callNetGetCarList();
                 } else {
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSFMerchantConfigtor.LOGIN_FOR_RQUEST);
                 }
             }
         });
@@ -104,17 +100,16 @@ public class CWOrderPaymentFragment extends BaseFragment {
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                    if (BSFCommonUtils.isLoginNow(getActivity())) {
                         callNetGetCarList();
                     } else {
-                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSFMerchantConfigtor.LOGIN_FOR_RQUEST);
                     }
                 }
             }
         });
     }
-
-    @Override
+    
     public void initData() {
         orderList = new ArrayList<>();
         mSmartOrderRefreshAdapter = new SmartCWOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
@@ -124,27 +119,28 @@ public class CWOrderPaymentFragment extends BaseFragment {
         mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartCWOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), CarWashOrderDetialActivity.class);
-                intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
+                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
+                intent.putExtra("orderModel", new Gson().toJson(orderList.get(position)));
                 startActivityForResult(intent, 1);
             }
         });
         mRefreshLayout.autoRefresh();
-        if (BSSMCommonUtils.isLoginNow(getActivity())) {
+        if (BSFCommonUtils.isLoginNow(getActivity())) {
             callNetGetCarList();
         } else {
-            startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+            startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSFMerchantConfigtor.LOGIN_FOR_RQUEST);
         }
     }
 
     private void callNetGetCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CW_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
+        RequestParams params = new RequestParams(BSFMerchantConfigtor.BASE_URL + BSFMerchantConfigtor.SELLER_ORDER_LIST);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("orderStatus",1);
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
+            jsonObj.put("sellerToken", SPUtils.get(getActivity().getApplicationContext(), "SellerUserToken", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -155,14 +151,14 @@ public class CWOrderPaymentFragment extends BaseFragment {
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CWUserOrderOutModel model = new Gson().fromJson(result.toString(), CWUserOrderOutModel.class);
+                SellerOrderOutModel model = new Gson().fromJson(result.toString(), SellerOrderOutModel.class);
                 if (model.getCode() ==200) {
                     totolCarCount = model.getData().getTotalCount();
-                    List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderModelsFromNet = model.getData().getData();
+                    List<SellerOrderOutModel.DataBeanX.SellerOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
                 } else if (model.getCode() == 10000) {
                     SPUtils.put(getActivity(), "UserToken", "");
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSFMerchantConfigtor.LOGIN_FOR_RQUEST);
                 } else {
                     Toast.makeText(getActivity(), String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }

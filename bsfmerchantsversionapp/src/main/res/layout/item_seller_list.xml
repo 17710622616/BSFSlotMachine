@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@color/colorWight">
+
+    <ImageView
+        android:id="@+id/item_seller_set_iv"
+        android:layout_width="110dp"
+        android:layout_height="78dp"
+        android:scaleType="fitXY"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/item_seller_set_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="套餐名"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        android:layout_toRightOf="@id/item_seller_set_iv"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_seller_set_expiration_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="到期時間：2018-11-15"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/item_seller_set_iv"
+        android:layout_below="@id/item_seller_set_name"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_seller_set_market_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="市面金額：MOP0.0"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/item_seller_set_iv"
+        android:layout_below="@id/item_seller_set_expiration_time"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_seller_set_cost_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="套 餐 價：MOP0.0"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/item_seller_set_expiration_time"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/item_seller_set_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="介        紹：無"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:padding="5dp"
+        android:layout_toRightOf="@id/item_seller_set_iv"
+        android:layout_below="@id/item_seller_set_market_price" />
+
+    <TextView
+        android:id="@+id/item_seller_set_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="審核中"
+        android:textColor="@color/colorDrakGray"
+        android:textSize="12sp"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorMineGray"
+        android:layout_below="@id/item_seller_set_des"/>
+</RelativeLayout>

@@ -8,7 +8,8 @@ import java.util.Objects;
 
 public class CommonModel {
     private int code;
-    private String msg;
+    private Object msg;
+    private Object data;
 
     public int getCode() {
         return code;
@@ -18,21 +19,20 @@ public class CommonModel {
         this.code = code;
     }
 
-    public String getMsg() {
+    public Object getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
+    public void setMsg(Object msg) {
         this.msg = msg;
     }
 
-    public Objects getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(Objects data) {
+    public void setData(Object data) {
         this.data = data;
     }
 
-    private Objects data;
 }

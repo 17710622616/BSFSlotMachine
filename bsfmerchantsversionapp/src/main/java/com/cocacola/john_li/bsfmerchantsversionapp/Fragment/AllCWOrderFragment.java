@@ -9,16 +9,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderDetialActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCWOrderRefreshAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMFragment.LazyLoadFragment;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.BSFCommonUtils;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
+import com.cocacola.john_li.bsfmerchantsversionapp.Adapter.SmartCWOrderRefreshAdapter;
+import com.cocacola.john_li.bsfmerchantsversionapp.LoginActivity;
 import com.cocacola.john_li.bsfmerchantsversionapp.Model.SellerOrderOutModel;
+import com.cocacola.john_li.bsfmerchantsversionapp.OrderDetialActivity;
+import com.cocacola.john_li.bsfmerchantsversionapp.R;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.AliyunOSSUtils;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.BSFCommonUtils;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.BSFMerchantConfigtor;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.SPUtils;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -83,7 +82,7 @@ public class AllCWOrderFragment extends LazyLoadFragment {
                 if (BSFCommonUtils.isLoginNow(getActivity())) {
                     callNetGetCarList();
                 } else {
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), 1);
                 }
             }
         });
@@ -100,7 +99,7 @@ public class AllCWOrderFragment extends LazyLoadFragment {
                     if (BSFCommonUtils.isLoginNow(getActivity())) {
                         callNetGetCarList();
                     } else {
-                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), 1);
                     }
                 }
             }
@@ -116,8 +115,8 @@ public class AllCWOrderFragment extends LazyLoadFragment {
         mSmartOrderRefreshAdapter.setOnItemClickListenr(new SmartCWOrderRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), CarWashOrderDetialActivity.class);
-                intent.putExtra("CWOrderModel", new Gson().toJson(orderList.get(position)));
+                Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
+                intent.putExtra("orderM", new Gson().toJson(orderList.get(position)));
                 startActivity(intent);
             }
         });
@@ -128,12 +127,13 @@ public class AllCWOrderFragment extends LazyLoadFragment {
      * 请求网络刷新数据
      */
     private void callNetGetCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CW_ORDER_LIST + SPUtils.get(getActivity().getApplicationContext(), "UserToken", ""));
+        RequestParams params = new RequestParams(BSFMerchantConfigtor.BASE_URL + BSFMerchantConfigtor.SELLER_ORDER_LIST);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
+            jsonObj.put("sellerToken", SPUtils.get(getActivity().getApplicationContext(), "SellerUserToken", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -144,13 +144,13 @@ public class AllCWOrderFragment extends LazyLoadFragment {
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                CWUserOrderOutModel model = new Gson().fromJson(result.toString(), CWUserOrderOutModel.class);
+                SellerOrderOutModel model = new Gson().fromJson(result.toString(), SellerOrderOutModel.class);
                 if (model.getCode() == 200) {
                     totolCarCount = model.getData().getTotalCount();
-                    List<CWUserOrderOutModel.DataBeanX.CWUserOrderModel> orderModelsFromNet = model.getData().getData();
+                    List<SellerOrderOutModel.DataBeanX.SellerOrderModel> orderModelsFromNet = model.getData().getData();
                     orderList.addAll(orderModelsFromNet);
                 } else if (model.getCode() == 10000){
-                    SPUtils.put(getActivity(), "UserToken", "");
+                    SPUtils.put(getActivity(), "SellerUserToken", "");
                     Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMineGray">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+        <ImageView
+            android:id="@+id/seller_add_set_back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/back"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="添加套餐"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:gravity="center"/>
+
+        <ImageView
+            android:id="@+id/seller_add_set_submit"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/ok"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:background="@color/colorWight">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="套餐名稱："
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_gravity="center_vertical"/>
+
+                <EditText
+                    android:id="@+id/seller_add_set_name_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:background="@color/colorWight"
+                android:layout_marginTop="2dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="市面價格："
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_gravity="center_vertical"/>
+
+                <EditText
+                    android:id="@+id/seller_add_set_market_price_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:background="@color/colorWight"
+                android:layout_marginTop="2dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="套餐價格："
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_gravity="center_vertical"/>
+
+                <EditText
+                    android:id="@+id/seller_add_set_cost_price_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:background="@color/colorWight"
+                android:layout_marginTop="2dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="描述："
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"
+                    android:layout_gravity="center_vertical"/>
+
+                <EditText
+                    android:id="@+id/seller_add_set_des_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="過期時間："
+                android:textSize="18sp"
+                android:padding="5dp"
+                android:textColor="@color/colorBlack"
+                android:background="@color/colorWight"
+                android:layout_marginTop="2dp"/>
+
+            <DatePicker
+                android:id="@+id/seller_add_set_exprie_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:calendarViewShown="false"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
