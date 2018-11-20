@@ -65,7 +65,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 Toast.makeText(SecondHandCarListActivity.this, "1", Toast.LENGTH_SHORT).show();
                 switch (tab.getPosition()) {
                     case 0:
-                        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        /*LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
                         popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -86,7 +86,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu.dismiss();
                             }
                         });
-                        popMenu.showAsDropDown(mTabLayout, 0, 0);
+                        popMenu.showAsDropDown(mTabLayout, 0, 0);*/
                         break;
                     case 1:
                         break;
@@ -137,6 +137,37 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     public void initData() {
         headView.setLeft(this);
         headView.setTitle("二手車買賣");
+
+        for (int i = 0; i < mTabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab=mTabLayout.getTabAt(i);
+            if (tab!=null){
+                tab.setCustomView(mTabLayout.getChildAt(i));
+                if (tab.getCustomView()!=null){
+                    View tabView=  (View)tab.getCustomView().getParent();
+                    tabView.setTag(i);
+                    tabView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int position= (int) v.getTag();
+                            if (position==0 &&mTabLayout.getTabAt(position).isSelected()==true){
+                                Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
+                            }else if (position==1 && mTabLayout.getTabAt(position).isSelected()==true){
+                                Toast.makeText(SecondHandCarListActivity.this, "点击了第二个tab", Toast.LENGTH_SHORT).show();
+                            }else {
+                                TabLayout.Tab tab = mTabLayout.getTabAt(position);
+                                if (tab != null) {
+                                    tab.select();
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

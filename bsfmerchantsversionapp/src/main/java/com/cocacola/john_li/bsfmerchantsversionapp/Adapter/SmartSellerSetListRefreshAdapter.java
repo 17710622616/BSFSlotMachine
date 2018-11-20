@@ -69,7 +69,6 @@ public class SmartSellerSetListRefreshAdapter extends RecyclerView.Adapter<Smart
         //x.image().bind(holder.item_seller_set_iv, list.get(position).getSellerLogo(),options);
         holder.item_seller_set_name.setText(list.get(position).getChargeName());
         holder.item_seller_set_expiration_time.setText("到期時間：" + BSFCommonUtils.stampToDate(String.valueOf(list.get(position).getExprieTime())));
-        holder.item_seller_set_expiration_time.setText("到期時間：" + BSFCommonUtils.stampToDate(String.valueOf(list.get(position).getExprieTime())));
         holder.item_seller_set_market_price.setText("市面金額：MOP" + String.valueOf(list.get(position).getMarketPrice()));
         holder.item_seller_set_cost_price.setText("套 餐 價：MOP" + String.valueOf(list.get(position).getCostPrice()));
         holder.item_seller_set_des.setText("介       紹：" + String.valueOf(list.get(position).getDescription()));

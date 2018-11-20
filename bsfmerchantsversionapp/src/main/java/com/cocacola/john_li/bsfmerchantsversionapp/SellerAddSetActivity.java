@@ -81,10 +81,7 @@ public class SellerAddSetActivity extends FragmentActivity  implements View.OnCl
             }
         });
         Calendar nowTime = Calendar.getInstance();
-        nowTime.add(Calendar.MONTH, 1);//1個月后的时间
-        exprieTimeDP.setMinDate(nowTime.getTime().getTime());
-        nowTime.add(Calendar.YEAR, 2);//2年后的时间
-        exprieTimeDP.setMaxDate(nowTime.getTime().getTime());
+        exprieTimeDP.setMinDate(nowTime.getTimeInMillis()-1000);
     }
 
     @Override

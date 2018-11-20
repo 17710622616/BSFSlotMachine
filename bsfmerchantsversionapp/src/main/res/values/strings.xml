@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BSFMerchantsVersionAPP</string>
+    <string name="no_net">請求網絡失敗，請檢查網絡！</string>
 </resources>
