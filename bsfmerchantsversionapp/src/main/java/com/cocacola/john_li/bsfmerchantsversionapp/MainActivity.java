@@ -2,13 +2,18 @@ package com.cocacola.john_li.bsfmerchantsversionapp;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -16,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.cocacola.john_li.bsfmerchantsversionapp.Adapter.MyMenuAdapter;
 import com.cocacola.john_li.bsfmerchantsversionapp.Utils.PrinterCallback;
+import com.cocacola.john_li.bsfmerchantsversionapp.Utils.SPUtils;
 import com.sunmi.peripheral.printer.ICallback;
 import com.sunmi.peripheral.printer.ILcdCallback;
 import com.sunmi.peripheral.printer.ITax;
@@ -35,13 +41,19 @@ public class MainActivity extends AppCompatActivity {
     private GridView mGv;
 
     private static final int START_SCAN = 0x0001;
+    private static Boolean isQuit = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
-        setListener();
-        initData();
+        String SellerUserToken = SPUtils.get(this, "SellerUserToken", "").toString();
+        if (!SellerUserToken.equals("")) {
+            initView();
+            setListener();
+            initData();
+        } else {
+            startActivityForResult(new Intent(this, LoginActivity.class), 1);
+        }
     }
 
     private void initView() {
@@ -85,7 +97,23 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "item", Toast.LENGTH_SHORT).show();
                         break;
                     case 4:
-                        Toast.makeText(MainActivity.this, "item", Toast.LENGTH_SHORT).show();
+                        new AlertDialog.Builder(MainActivity.this).setTitle("提醒")
+                                .setIconAttribute(android.R.attr.alertDialogIcon)
+                                .setMessage("確認要登出賬戶？")
+                                .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        SPUtils.put(MainActivity.this, "qsUserToken", "");
+                                        dialog.dismiss();
+                                        String qsUserToken = (String) SPUtils.get(MainActivity.this, "qsUserToken", "");
+                                        if (qsUserToken.equals("")) {
+                                            System.exit(0);
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "登出失敗！", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }})
+                                .setNegativeButton("取消", null)
+                                .create().show();
                         break;
                 }
             }
@@ -93,13 +121,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        Binding();
-        try {
-            InnerPrinterManager.getInstance().bindService(MainActivity.this, innerPrinterCallback);
-        } catch (InnerPrinterException e) {
-            e.printStackTrace();
-        }
-
         mGv.setAdapter(new MyMenuAdapter(this));
     }
 
@@ -109,55 +130,53 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = data.getExtras();
             ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle .getSerializable("data");
             Iterator<HashMap<String, String>> it = result.iterator();
-            String qrcodeStr = "";
+            String scanReturnStr = "";
             while (it.hasNext()) {
                 HashMap<String, String> hashMap = it.next();
-                qrcodeStr = qrcodeStr + hashMap.get("VALUE");
+                scanReturnStr = scanReturnStr + hashMap.get("VALUE");
             }
-            Toast.makeText(MainActivity.this, qrcodeStr, Toast.LENGTH_SHORT).show();
-            try {
-                sunmiPrinterService.printText("訂單內容\n" + qrcodeStr + "\n\n\n\n\n\n\n", new InnerResultCallbcak() {
-                    @Override
-                    public void onRunResult(boolean isSuccess) throws RemoteException {
-                        //返回接⼝执⾏的情况 成功/失败
-                        Toast.makeText(MainActivity.this, "返回接⼝执⾏的情况 成功/失败", Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onReturnString(String result) throws RemoteException {
-                        //部分接⼝会异步返回查询数据
-                        Toast.makeText(MainActivity.this, "部分接⼝会异步返回查询数据", Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onRaiseException(int code, String msg) throws RemoteException {
-                        //接⼝执⾏失败时，返回的异常状态
-                        Toast.makeText(MainActivity.this, "接⼝执⾏失败时，返回的异常状态", Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onPrintResult(int code, String msg) throws RemoteException {
-                        //事务模式下的打印结果返回
-                        Toast.makeText(MainActivity.this, "事务模式下的打印结果返回", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                //接⼝调⽤异常
+            Toast.makeText(MainActivity.this, scanReturnStr, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this,OrderCheckActivity.class);
+            intent.putExtra("scanReturnStr", scanReturnStr);
+            startActivity(intent);
+        }
+
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    initView();
+                    setListener();
+                    initData();
+                    break;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    //innerPrinterCallback即服务绑定回调
-    InnerPrinterCallback innerPrinterCallback = new InnerPrinterCallback(){
+    Handler mHandler = new Handler() {
         @Override
-        protected void onConnected(SunmiPrinterService service) {
-
-        }
-
-        @Override
-        protected void onDisconnected() {
-
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            isQuit = false;
         }
     };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!isQuit) {
+                isQuit = true;
+                Toast.makeText(getApplicationContext(), "再按一次退出程序",
+                        Toast.LENGTH_SHORT).show();
+                // 利用handler延迟发送更改状态信息
+                mHandler.sendEmptyMessageDelayed(0, 2000);
+            } else {
+                finish();
+                System.exit(0);
+            }
+        }
+        return false;
+    }
 
     SunmiPrinterService sunmiPrinterService = new SunmiPrinterService() {
         @Override

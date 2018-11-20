@@ -2,6 +2,8 @@ package com.cocacola.john_li.bsfmerchantsversionapp.Utils;
 
 import android.app.Application;
 
+import org.xutils.x;
+
 /**
  * Created by John_Li on 17/11/2018.
  */
@@ -21,6 +23,7 @@ public class BSFMerchantsApp extends Application {
     public void onCreate() {
         super.onCreate();
         isAidl = true;
+        x.Ext.init(this);
         //AidlUtil.getInstance().connectPrinterService(this);
     }
 }

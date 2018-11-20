@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="UnderLineTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.1dp</item>
+        <item name="android:background">@color/colorLineGray</item>
+    </style>
 </resources>
