@@ -23,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.CWCouponAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderDetialOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CWUserOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.QrcodeReturnModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.QRCodeUtil;
@@ -108,7 +109,10 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
                             @Override
                             public void convertView(final ViewHolder holder, final BaseNiceDialog dialog) {
                                 final ImageView qrcodeIv = holder.getView(R.id.dialog_qrcode_iv);
-                                Bitmap mBitmap = QRCodeUtil.createQRCodeBitmap(mCouponList.get(i).getCouponCode(), 250, 250);
+                                QrcodeReturnModel model = new QrcodeReturnModel();
+                                model.setOrderNo(mSellerOrderBean.getOrderNo());
+                                model.setCouponCode(mCouponList.get(i).getCouponCode());
+                                Bitmap mBitmap = QRCodeUtil.createQRCodeBitmap(new Gson().toJson(model), 250, 250);
                                 qrcodeIv.setImageBitmap(mBitmap);
                                 qrcodeIv.setOnClickListener(new View.OnClickListener() {
                                     @Override

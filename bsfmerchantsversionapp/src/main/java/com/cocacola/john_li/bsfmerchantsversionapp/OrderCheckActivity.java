@@ -196,6 +196,7 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
                         //接⼝调⽤异常
                     }
                     Toast.makeText(OrderCheckActivity.this, "訂單消費成功！" + String.valueOf(model.getMsg().toString()), Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
                     Toast.makeText(OrderCheckActivity.this, "訂單消費失敗！" + String.valueOf(model.getMsg().toString()), Toast.LENGTH_SHORT).show();
                 }

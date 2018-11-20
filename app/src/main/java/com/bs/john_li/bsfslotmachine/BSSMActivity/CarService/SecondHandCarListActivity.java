@@ -21,6 +21,7 @@ import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     public void initView() {
         headView = findViewById(R.id.shcl_headview);
 
-        mTabLayout = (TabLayout) findViewById(R.id.order_tabLayout);
+        mTabLayout = (TabLayout) findViewById(R.id.second_car_tabLayout);
         mTabLayout.addTab(mTabLayout.newTab().setText("車廠"));
         mTabLayout.addTab(mTabLayout.newTab().setText("車種"));
         mTabLayout.addTab(mTabLayout.newTab().setText("傳動"));
@@ -62,53 +63,14 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(SecondHandCarListActivity.this, "1", Toast.LENGTH_SHORT).show();
-                switch (tab.getPosition()) {
-                    case 0:
-                        /*LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
-                        popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.MATCH_PARENT);
-                        popMenu.setOutsideTouchable(true);
-                        //popMenu.setFocusable(true);
-                        popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                        popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            public void onDismiss() {
-                                Toast.makeText(SecondHandCarListActivity.this, "關閉pop", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
-                        SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
-                        lv.setAdapter(adapter);
-                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                popMenu.dismiss();
-                            }
-                        });
-                        popMenu.showAsDropDown(mTabLayout, 0, 0);*/
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                Toast.makeText(SecondHandCarListActivity.this, "2", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Toast.makeText(SecondHandCarListActivity.this, "3", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -118,54 +80,102 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         list.add("1");
         list.add("2");
         list.add("3");
-        list.add("4");
-        list.add("5");
-        list.add("6");
-        list.add("7");
-        list.add("8");
-        list.add("9");
-        list.add("10");
-        list.add("11");
-        list.add("12");
-        list.add("13");
-        list.add("14");
-        list.add("15");
         return list;
     }
 
     @Override
     public void initData() {
         headView.setLeft(this);
-        headView.setTitle("二手車買賣");
+        headView.setTitle("汽車買賣");
 
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab=mTabLayout.getTabAt(i);
-            if (tab!=null){
-                tab.setCustomView(mTabLayout.getChildAt(i));
-                if (tab.getCustomView()!=null){
-                    View tabView=  (View)tab.getCustomView().getParent();
-                    tabView.setTag(i);
-                    tabView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            int position= (int) v.getTag();
-                            if (position==0 &&mTabLayout.getTabAt(position).isSelected()==true){
-                                Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
-                            }else if (position==1 && mTabLayout.getTabAt(position).isSelected()==true){
-                                Toast.makeText(SecondHandCarListActivity.this, "点击了第二个tab", Toast.LENGTH_SHORT).show();
-                            }else {
-                                TabLayout.Tab tab = mTabLayout.getTabAt(position);
-                                if (tab != null) {
-                                    tab.select();
+            TabLayout.Tab tab = mTabLayout.getTabAt(i);
+            if (tab == null) return;
+            //这里使用到反射，拿到Tab对象后获取Class
+            Class c = tab.getClass();
+            try {
+                //Filed “字段、属性”的意思,c.getDeclaredField 获取私有属性。
+                //"mView"是Tab的私有属性名称(可查看TabLayout源码),类型是 TabView,TabLayout私有内部类。
+                Field field = c.getDeclaredField("mView");
+                //值为 true 则指示反射的对象在使用时应该取消 Java 语言访问检查。值为 false 则指示反射的对象应该实施 Java 语言访问检查。
+                //如果不这样会报如下错误
+                // java.lang.IllegalAccessException:
+                //Class com.test.accessible.Main
+                //can not access
+                //a member of class com.test.accessible.AccessibleTest
+                //with modifiers "private"
+                field.setAccessible(true);
+                final View view = (View) field.get(tab);
+                if (view == null) return;
+                view.setTag(i);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) view.getTag();
+                        //这里就可以根据业务需求处理点击事件了。
+                        TabLayout.Tab tab = mTabLayout.getTabAt(position);
+                        if (!tab.isSelected()) {
+                            tab.select();
+
+                            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                            popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                            //popMenu.setFocusable(true);
+                            //popMenu.setOutsideTouchable(true);
+                            //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                            popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                public void onDismiss() {
+                                    Toast.makeText(SecondHandCarListActivity.this, "關閉pop", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                            SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
+                            lv.setAdapter(adapter);
+                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    popMenu.dismiss();
+                                }
+                            });
+                            popMenu.showAsDropDown(mTabLayout, 0, 0);
+                        } else {
+                            int position1 = (int) v.getTag();
+                            if (popMenu != null) {
+                                if (popMenu.isShowing()) {
+                                    popMenu.dismiss();
                                 }
                             }
+
+                            TabLayout.Tab tab1 = mTabLayout.getTabAt(position1);
+                            tab1.select();
+                            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                            popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                            //popMenu.setFocusable(true);
+                            //popMenu.setOutsideTouchable(true);
+                            //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                            popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                public void onDismiss() {
+                                    Toast.makeText(SecondHandCarListActivity.this, "關閉pop", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                            SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
+                            lv.setAdapter(adapter);
+                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    popMenu.dismiss();
+                                }
+                            });
+                            popMenu.showAsDropDown(mTabLayout, 0, 0);
                         }
-                    });
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(SecondHandCarListActivity.this, "点击了第一个tab", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
