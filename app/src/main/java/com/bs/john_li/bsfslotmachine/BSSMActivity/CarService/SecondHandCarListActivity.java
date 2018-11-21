@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -31,6 +32,8 @@ import java.util.List;
 
 public class SecondHandCarListActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
+    private ImageView sellerIv1, sellerIv2, sellerIv3, sellerIv4, sellerIv5, sellerIv6, sellerIv7, sellerIv8;
+    private ImageView hotCarIv1, hotCarIv2, hotCarIv3, hotCarIv4, hotCarIv5, hotCarIv6;
     private TabLayout mTabLayout;
     private PopupWindow popMenu;
     @Override
@@ -45,6 +48,21 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     @Override
     public void initView() {
         headView = findViewById(R.id.shcl_headview);
+        sellerIv1 = findViewById(R.id.second_car_seller_iv1);
+        sellerIv2 = findViewById(R.id.second_car_seller_iv2);
+        sellerIv3 = findViewById(R.id.second_car_seller_iv3);
+        sellerIv4 = findViewById(R.id.second_car_seller_iv4);
+        sellerIv5 = findViewById(R.id.second_car_seller_iv5);
+        sellerIv6 = findViewById(R.id.second_car_seller_iv6);
+        sellerIv7 = findViewById(R.id.second_car_seller_iv7);
+        sellerIv8 = findViewById(R.id.second_car_seller_iv8);
+
+        hotCarIv1 = findViewById(R.id.second_car_hot_car_iv1);
+        hotCarIv2 = findViewById(R.id.second_car_hot_car_iv2);
+        hotCarIv3 = findViewById(R.id.second_car_hot_car_iv3);
+        hotCarIv4 = findViewById(R.id.second_car_hot_car_iv4);
+        hotCarIv5 = findViewById(R.id.second_car_hot_car_iv5);
+        hotCarIv6 = findViewById(R.id.second_car_hot_car_iv6);
 
         mTabLayout = (TabLayout) findViewById(R.id.second_car_tabLayout);
         mTabLayout.addTab(mTabLayout.newTab().setText("車廠"));
