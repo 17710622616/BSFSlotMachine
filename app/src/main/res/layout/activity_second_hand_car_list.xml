@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"/>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/mine_srl"
+        android:id="@+id/second_car_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <pl.droidsonroids.gif.GifImageView
@@ -42,49 +42,56 @@
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv2"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv3"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv4"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv5"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv6"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
                         <ImageView
                             android:id="@+id/second_car_seller_iv7"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
 
 
                         <ImageView
@@ -92,57 +99,189 @@
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:scaleType="fitXY"
+                            android:layout_margin="0.5dp"/>
                     </LinearLayout>
 
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_weight="2">
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv1"
-                            android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
 
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv2"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv3"
-                            android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
 
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv4"
-                            android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
 
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv5"
-                            android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
 
-                        <ImageView
-                            android:id="@+id/second_car_hot_car_iv6"
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
+
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl4"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
+
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl5"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
+
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:id="@+id/second_car_hot_car_fl6"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <ImageView
+                                    android:id="@+id/second_car_hot_car_iv6"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:src="@mipmap/second_ad"
+                                    android:scaleType="fitXY"
+                                    android:layout_margin="0.5dp"/>
+
+                                <TextView
+                                    android:id="@+id/second_car_hot_car_tv6"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="人氣:999999"
+                                    android:textColor="@color/colorWight"
+                                    android:textSize="12sp"
+                                    android:padding="3dp"
+                                    android:gravity="center"
+                                    android:background="@color/aplahBlack"
+                                    android:layout_gravity="bottom"
+                                    android:singleLine="true"/>
+                            </FrameLayout>
+                        </LinearLayout>
+
+                        <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:src="@mipmap/second_ad"
-                            android:scaleType="fitXY"/>
-                    </LinearLayout>
+                            android:layout_height="wrap_content"
+                            android:text="熱門車輛"
+                            android:textColor="@color/colorWight"
+                            android:textSize="12sp"
+                            android:padding="3dp"
+                            android:gravity="center"
+                            android:background="@color/aplahBlack"/>
+                    </FrameLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -151,10 +290,11 @@
                     android:orientation="horizontal"
                     android:padding="5dp">
                     <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/seekbar_parking"/>
+                        android:src="@mipmap/seekbar_parking"
+                        android:layout_gravity="center_vertical"/>
                     <TextView
                         android:id="@+id/publish_car_tv"
                         android:layout_width="0dp"
@@ -163,13 +303,13 @@
                         android:text="點我發佈車輛"
                         android:textSize="18sp"
                         android:textColor="@color/colorBlack"
-                        android:paddingLeft="5dp"
-                        android:layout_gravity="center_vertical"/>
+                        android:padding="5dp"/>
                     <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/sure_order"/>
+                        android:src="@mipmap/sure_order"
+                        android:layout_gravity="center_vertical"/>
                     <TextView
                         android:id="@+id/car_list_tv"
                         android:layout_width="0dp"
@@ -178,9 +318,11 @@
                         android:text="查看車輛列表"
                         android:textSize="18sp"
                         android:textColor="@color/colorBlack"
-                        android:paddingLeft="5dp"
-                        android:layout_gravity="center_vertical"/>
+                        android:padding="5dp"/>
                 </LinearLayout>
+
+                <View
+                    style="@style/UnderLineTextView"/>
 
                 <android.support.design.widget.TabLayout
                     android:id="@+id/second_car_tabLayout"
@@ -194,8 +336,11 @@
                     app:tabGravity="center"
                     app:tabMode="scrollable"/>
 
+                <View
+                    style="@style/UnderLineTextView"/>
+
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/shcl_recycle_lv"
+                    android:id="@+id/second_car_recycle_lv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </LinearLayout>

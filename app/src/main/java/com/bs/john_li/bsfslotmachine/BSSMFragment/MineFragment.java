@@ -52,7 +52,7 @@ import java.net.SocketTimeoutException;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
- * 首页停车的碎片
+ * 首页我的的碎片
  * Created by John_Li on 28/7/2017.
  */
 

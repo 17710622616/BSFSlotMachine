@@ -91,6 +91,8 @@
         <activity android:name=".BSSMActivity.CarService.CarWashOrderListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashOrderDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.ApplyForRefundActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.OwnCarListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.PublishOwnSecondCarActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

@@ -177,4 +177,12 @@ public class BSSMConfigtor {
     public static final String GET_CW_ORDER_DETIAL = "sellerOrder/orderDetial?token=";
     //取消洗車訂單的接口
     public static final String POST_REFUND_CAR_WASH_ORDER = "sellerOrder/withDrawApply?token=";
+    //获取轮播图的接口
+    public static final String GET_SECONDE_CAR_SIDESHOW = "seller/selectSellerCarouselByType";
+    //获取热门车辆的接口
+    public static final String GET_HOT_CAR = "sellerCar/hotCarlList";
+    //获取二手車车辆的接口
+    public static final String GET_OLD_CAR_LIST = "sellerCar/sellerCarlList?token=";
+    //获取用戶二手車车辆列表的接口
+    public static final String GET_OWN_OLD_CAR_LIST = "sellerCar/myCarlList?token=";
 }
