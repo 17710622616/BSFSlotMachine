@@ -167,7 +167,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 callNetGetSecondCarSellerList();
                 callNetGetHotCarList();
                 //和最大的数据比较
-                if (pageSize * (pageNo + 1) > totolCarCount){
+                if (pageSize * (pageNo) > totolCarCount){
                     Toast.makeText(SecondHandCarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();
@@ -535,7 +535,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 finish();
                 break;
             case R.id.publish_car_tv:
-                finish();
+                startActivity(new Intent(SecondHandCarListActivity.this, PublishOwnSecondCarActivity.class));
                 break;
             case R.id.car_list_tv:
                 startActivity(new Intent(SecondHandCarListActivity.this, OwnCarListActivity.class));
