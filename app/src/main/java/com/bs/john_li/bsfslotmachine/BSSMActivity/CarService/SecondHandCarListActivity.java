@@ -29,6 +29,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartSecondCarListRefreshAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarBrandOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.HotCarOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.RequestSecondCarModel;
@@ -42,6 +43,10 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FullyLinearLayoutManager;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -81,6 +86,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     // 請求列表的類
     private RequestSecondCarModel mRequestSecondCarModel;
 
+    private List<CarBrandOutModel.CarBrandModel> mCarBrandModelList;
     private List<ImageView> hotSecondCarIvList;
     private List<ImageView> secondCarSellerList;
     private List<TextView> hotSecondCarTvList;
@@ -185,9 +191,9 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
 
     private ArrayList<String> getData() {
         ArrayList<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
+        for (CarBrandOutModel.CarBrandModel model : mCarBrandModelList) {
+            list.add(model.getName());
+        }
         return list;
     }
 
@@ -198,6 +204,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mSideShowList = new ArrayList<>();
         mHotCarModelList = new ArrayList<>();
         mSecondCarList = new ArrayList<>();
+        mCarBrandModelList = new ArrayList<>();
         mRequestSecondCarModel = new RequestSecondCarModel();
         mRequestSecondCarModel.setCarGears(-1);
         mRequestSecondCarModel.setCarType(-1);
@@ -213,7 +220,9 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mSmartSecondCarListRefreshAdapter.setOnItemClickListenr(new SmartSecondCarListRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
-                Toast.makeText(SecondHandCarListActivity.this, "item" + position, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
+                intent.putExtra("seoncdeCarId", String.valueOf(mSecondCarList.get(position).getId()));
+                startActivity(intent);
             }
         });
 
@@ -245,30 +254,214 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                         TabLayout.Tab tab = mTabLayout.getTabAt(position);
                         if (!tab.isSelected()) {
                             tab.select();
+                        }
 
-                            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
-                            popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT);
-                            popMenu.setFocusable(true);
-                            popMenu.setOutsideTouchable(false);
-                            //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                            popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                public void onDismiss() {
-                                    pageNo = 1;
-
+                        switch (position) {
+                            case 0:
+                                if (mCarBrandModelList.size() > 0) {
+                                    LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                                    popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    popMenu.setFocusable(true);
+                                    popMenu.setOutsideTouchable(false);
+                                    //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                    popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                        public void onDismiss() {
+                                            pageNo = 1;
+                                        }
+                                    });
+                                    ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                                    SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
+                                    lv.setAdapter(adapter);
+                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
+                                            callNetGetOldeCarList();
+                                            popMenu.dismiss();
+                                        }
+                                    });
+                                    popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                } else {
+                                    callNetGetCarBrand();
                                 }
-                            });
-                            ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
-                            SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
-                            lv.setAdapter(adapter);
-                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    popMenu.dismiss();
-                                }
-                            });
-                            popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
+                            case 1:
+                                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                popMenu.setFocusable(true);
+                                popMenu.setOutsideTouchable(false);
+                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                                final ArrayList<String> list = new ArrayList<>();
+                                list.add("私家車");
+                                list.add("客貨車");
+                                list.add("貨車");
+                                list.add("電單車");
+                                list.add("房車");
+                                list.add("房跑車");
+                                list.add("跑車");
+                                list.add("敞篷車");
+                                list.add("越野車");
+                                list.add("旅行車");
+                                list.add("小型車");
+                                list.add("7/8人車");
+                                list.add("其他");
+                                SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list);
+                                lv.setAdapter(adapter);
+                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        mRequestSecondCarModel.setType(list.get(position));
+                                        callNetGetOldeCarList();
+                                        popMenu.dismiss();
+                                    }
+                                });
+                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
+                            case 2:
+                                LayoutInflater inflater1 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View contentView1 = inflater1.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView1, LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                popMenu.setFocusable(true);
+                                popMenu.setOutsideTouchable(false);
+                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                ListView lv1 = contentView1.findViewById(R.id.pop_second_car_option_lv);
+                                final ArrayList<String> list1 = new ArrayList<>();
+                                list1.add("全部");
+                                list1.add("手動擋");
+                                list1.add("自動擋");
+                                SecondCarOptionListAdapter adapter1 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list1);
+                                lv1.setAdapter(adapter1);
+                                lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        switch (position) {
+                                            case 0:
+                                                mRequestSecondCarModel.setCarGears(-1);
+                                                break;
+                                            case 1:
+                                                mRequestSecondCarModel.setCarGears(0);
+                                                break;
+                                            case 2:
+                                                mRequestSecondCarModel.setCarGears(1);
+                                                break;
+                                        }
+                                        callNetGetOldeCarList();
+                                        popMenu.dismiss();
+                                    }
+                                });
+                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
+                            case 3:
+                                LayoutInflater inflater2 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View contentView2 = inflater2.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView2, LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                popMenu.setFocusable(true);
+                                popMenu.setOutsideTouchable(false);
+                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                ListView lv2 = contentView2.findViewById(R.id.pop_second_car_option_lv);
+                                final ArrayList<String> list2 = new ArrayList<>();
+                                list2.add("全部");
+                                list2.add("手動擋");
+                                list2.add("自動擋");
+                                SecondCarOptionListAdapter adapter2 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list2);
+                                lv2.setAdapter(adapter2);
+                                lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        switch (position) {
+                                            case 0:
+                                                mRequestSecondCarModel.setCarGears(-1);
+                                                break;
+                                            case 1:
+                                                mRequestSecondCarModel.setCarGears(0);
+                                                break;
+                                            case 2:
+                                                mRequestSecondCarModel.setCarGears(1);
+                                                break;
+                                        }
+                                        callNetGetOldeCarList();
+                                        popMenu.dismiss();
+                                    }
+                                });
+                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
+                            case 4:
+                                LayoutInflater inflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View contentView3 = inflater3.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                popMenu.setFocusable(true);
+                                popMenu.setOutsideTouchable(false);
+                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                ListView lv3 = contentView3.findViewById(R.id.pop_second_car_option_lv);
+                                final ArrayList<String> list3 = new ArrayList<>();
+                                list3.add("全部");
+                                list3.add("手動擋");
+                                list3.add("自動擋");
+                                SecondCarOptionListAdapter adapter3 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list3);
+                                lv3.setAdapter(adapter3);
+                                lv3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        switch (position) {
+                                            case 0:
+                                                mRequestSecondCarModel.setCarGears(-1);
+                                                break;
+                                            case 1:
+                                                mRequestSecondCarModel.setCarGears(0);
+                                                break;
+                                            case 2:
+                                                mRequestSecondCarModel.setCarGears(1);
+                                                break;
+                                        }
+                                        callNetGetOldeCarList();
+                                        popMenu.dismiss();
+                                    }
+                                });
+                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
+                            case 5:
+                                LayoutInflater inflater4 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View contentView4 = inflater4.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView4, LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                popMenu.setFocusable(true);
+                                popMenu.setOutsideTouchable(false);
+                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
+                                ListView lv4 = contentView4.findViewById(R.id.pop_second_car_option_lv);
+                                final ArrayList<String> list4 = new ArrayList<>();
+                                list4.add("全部");
+                                list4.add("商家");
+                                list4.add("個人");
+                                SecondCarOptionListAdapter adapter4 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list4);
+                                lv4.setAdapter(adapter4);
+                                lv4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        switch (position) {
+                                            case 0:
+                                                mRequestSecondCarModel.setIfperson(0);
+                                                break;
+                                            case 1:
+                                                mRequestSecondCarModel.setIfperson(1);
+                                                break;
+                                            case 2:
+                                                mRequestSecondCarModel.setIfperson(2);
+                                                break;
+                                        }
+                                        callNetGetOldeCarList();
+                                        popMenu.dismiss();
+                                    }
+                                });
+                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                break;
                         }
                     }
                 });
@@ -278,6 +471,45 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         }
 
         mRefreshLayout.autoRefresh();
+    }
+
+    /**
+     * 獲取車輛品牌列表
+     */
+    private void callNetGetCarBrand() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_BRAND_LIST + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CarBrandOutModel model = new Gson().fromJson(result.toString(), CarBrandOutModel.class);
+                if (model.getCode() == 200) {
+                    mCarBrandModelList.addAll(model.getData());
+                } else if (model.getCode() == 10000){
+                    SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
+                    Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SecondHandCarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     /**
@@ -310,10 +542,15 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv6));
 
         for (int i = 0; i < hotSecondCarIvList.size(); i++) {
+            final int finalI = i;
             hotSecondCarIvList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if (mHotCarModelList.size() > 0) {
+                        Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
+                        intent.putExtra("seoncdeCarId", String.valueOf(mHotCarModelList.get(finalI).getId()));
+                        startActivity(intent);
+                    }
                 }
             });
         }
@@ -472,12 +709,12 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("type", mRequestSecondCarModel.getCarType());
             }
-            if (mRequestSecondCarModel.getYear() != -1) {
+            if (mRequestSecondCarModel.getYear() != 0) {
                 jsonObj.put("year", mRequestSecondCarModel.getYear());
+            } else {
+                jsonObj.put("year", "2010");
             }
-            if (mRequestSecondCarModel.getCarGears() != -1) {
-                jsonObj.put("carGears", mRequestSecondCarModel.getCarGears());
-            }
+            jsonObj.put("carGears", mRequestSecondCarModel.getCarGears());
             if (mRequestSecondCarModel.getStartPrice() != -1) {
                 jsonObj.put("startPrice", mRequestSecondCarModel.getStartPrice());
             }
@@ -499,6 +736,9 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 if (model.getCode() == 200) {
                     totolCarCount = model.getData().getTotalCount();
                     mSecondCarList.addAll(model.getData().getData());
+                    if (totolCarCount == 0){
+                        Toast.makeText(SecondHandCarListActivity.this,  "沒有搵到該類數據！", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (model.getCode() == 10000){
                     SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
                     Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
@@ -535,11 +775,21 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 finish();
                 break;
             case R.id.publish_car_tv:
-                startActivity(new Intent(SecondHandCarListActivity.this, PublishOwnSecondCarActivity.class));
+                startActivityForResult(new Intent(SecondHandCarListActivity.this, PublishOwnSecondCarActivity.class), 1);
                 break;
             case R.id.car_list_tv:
                 startActivity(new Intent(SecondHandCarListActivity.this, OwnCarListActivity.class));
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                mRefreshLayout.autoRefresh();
+            }
         }
     }
 }

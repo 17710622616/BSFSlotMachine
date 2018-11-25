@@ -187,4 +187,8 @@ public class BSSMConfigtor {
     public static final String GET_OWN_OLD_CAR_LIST = "sellerCar/myCarlList?token=";
     //获取車輛品牌列表的接口
     public static final String GET_CAR_BRAND_LIST = "sellerCar/carBrandList?token=";
+    //提交二手車的接口
+    public static final String SUBMIT_OLD_CAR = "sellerCar/addCar?token=";
+    //獲取汽車詳情的接口
+    public static final String GET_CAR_DETIAL = "sellerCar/carDetial ";
 }

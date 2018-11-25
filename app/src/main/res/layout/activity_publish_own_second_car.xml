@@ -185,29 +185,31 @@
 
             <View
                 style="@style/UnderLineTextView"/>
-            <LinearLayout
-                android:id="@+id/publish_own_second_car_gears_ll"
+
+            <RadioGroup
+                android:id="@+id/publish_own_second_car_gears_rg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="8dp"
+                android:paddingLeft="8dp"
                 android:background="@color/colorWight">
-                <TextView
+                <RadioButton
+                    android:id="@+id/publish_own_second_car_gears_auto_rb"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="排        擋"
+                    android:text="自動擋"
                     android:textSize="16sp"
                     android:textColor="@color/colorBlack"/>
-
-                <TextView
-                    android:id="@+id/publish_own_second_car_gears_tv"
-                    android:layout_width="wrap_content"
+                <RadioButton
+                    android:id="@+id/publish_own_second_car_gears_handle_rb"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="請選擇排擋"
+                    android:layout_weight="1"
+                    android:text="手動擋"
                     android:textSize="16sp"
-                    android:textColor="@color/colorDrakGray"/>
-            </LinearLayout>
+                    android:textColor="@color/colorBlack"/>
+            </RadioGroup>
 
             <View
                 style="@style/UnderLineTextView"/>
@@ -520,8 +522,23 @@
                     android:textSize="16sp"
                     android:textColor="@color/colorDrakGray"/>
             </LinearLayout>
+
             <View
                 style="@style/UnderLineTextView"/>
+
+            <com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView
+                android:id="@+id/publish_forum_gv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:padding="8dp"
+                android:numColumns="auto_fit"
+                android:verticalSpacing="8dp"
+                android:horizontalSpacing="8dp"
+                android:columnWidth="90dp"
+                android:stretchMode="columnWidth"
+                android:gravity="center"
+                android:background="@color/colorWight"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

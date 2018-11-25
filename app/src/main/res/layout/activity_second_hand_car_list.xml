@@ -19,7 +19,8 @@
         android:scaleType="fitXY"
         android:src="@mipmap/loading_caffe_small"/>
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -342,8 +343,10 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/second_car_recycle_lv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
             </LinearLayout>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>
