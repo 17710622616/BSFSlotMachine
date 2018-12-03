@@ -163,16 +163,25 @@ public class CarServiceFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
-                        getActivity().startActivity(new Intent(getActivity(), GuoJiangLongActivity.class));
+                        getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
                         break;
                     case 1:
                         getActivity().startActivity(new Intent(getActivity(), SecondHandCarListActivity.class));
                         break;
                     case 2:
-                        getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
+                        Toast.makeText(getActivity(), "暫未開放，敬請期待！", Toast.LENGTH_SHORT).show();
                         break;
                     case 3:
                         getActivity().startActivity(new Intent(getActivity(), CarWashOrderListActivity.class));
+                        break;
+                    case 4:
+                        Toast.makeText(getActivity(), "暫未開放，敬請期待！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 5:
+                        Toast.makeText(getActivity(), "暫未開放，敬請期待！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 6:
+                        Toast.makeText(getActivity(), "暫未開放，敬請期待！", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -182,13 +191,7 @@ public class CarServiceFragment extends BaseFragment {
             public void onRefresh(RefreshLayout refreshlayout) {
                 mHotSellerList.clear();
                 pageNo = 1;
-                if (BSSMCommonUtils.isLoginNow(getActivity())) {
-                    callNetGetRecommend();
-                } else {
-                    mRefreshLayout.finishLoadmore();
-                    mRefreshLayout.finishRefresh();
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }
+                callNetGetRecommend();
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
@@ -201,13 +204,7 @@ public class CarServiceFragment extends BaseFragment {
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    if (BSSMCommonUtils.isLoginNow(getActivity())) {
-                        callNetGetRecommend();
-                    } else {
-                        mRefreshLayout.finishLoadmore();
-                        mRefreshLayout.finishRefresh();
-                        startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                    }
+                    callNetGetRecommend();
                 }
             }
         });

@@ -57,6 +57,7 @@ public class SmartHotSellerRefreshAdapter extends RecyclerView.Adapter<SmartHotS
         vh.item_hot_seller_name_tv = (TextView) view.findViewById(R.id.item_hot_seller_name_tv);
         vh.item_hot_seller_sold_tv = (TextView) view.findViewById(R.id.item_hot_seller_sold_tv);
         vh.item_hot_seller_distance_tv = (TextView) view.findViewById(R.id.item_hot_seller_distance_tv);
+        vh.item_hot_seller_address_tv = (TextView) view.findViewById(R.id.item_hot_seller_address_tv);
         view.setOnClickListener(this);
         return vh;
     }
@@ -65,8 +66,9 @@ public class SmartHotSellerRefreshAdapter extends RecyclerView.Adapter<SmartHotS
     public void onBindViewHolder(SmartHotSellerRefreshAdapter.SmartRefreshViewHolder holder, int position) {
         x.image().bind(holder.item_hot_seller_iv, list.get(position).getSellerLogo(), options);
         holder.item_hot_seller_name_tv.setText(list.get(position).getSellerName());
-        holder.item_hot_seller_sold_tv.setText("已售" + list.get(position).getOrderCount());
-        holder.item_hot_seller_sold_tv.setText("距離" + list.get(position).getMeter());
+        holder.item_hot_seller_sold_tv.setVisibility(View.GONE);
+        holder.item_hot_seller_distance_tv.setText("距離：" + list.get(position).getMeter());
+        holder.item_hot_seller_address_tv.setText("地址：" + list.get(position).getAddress());
         holder.itemView.setTag(position);
     }
 
@@ -87,6 +89,7 @@ public class SmartHotSellerRefreshAdapter extends RecyclerView.Adapter<SmartHotS
         public TextView item_hot_seller_name_tv;
         public TextView item_hot_seller_sold_tv;
         public TextView item_hot_seller_distance_tv;
+        public TextView item_hot_seller_address_tv;
         public SmartRefreshViewHolder(View view){
             super(view);
         }

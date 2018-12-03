@@ -89,7 +89,6 @@ public class OwnCarListActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void setListener() {
-
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
@@ -139,6 +138,7 @@ public class OwnCarListActivity extends BaseActivity implements View.OnClickList
     public void initData() {
         headView.setLeft(this);
         headView.setTitle("發佈車輛列表");
+        headView.setRightText("發車", this);
 
         carModelList = new ArrayList<>();
         mSmartOwnCarListRefreshAdapter = new SmartOwnCarListRefreshAdapter(this, carModelList, AliyunOSSUtils.initOSS(this));
@@ -225,6 +225,19 @@ public class OwnCarListActivity extends BaseActivity implements View.OnClickList
             case R.id.head_left:
                 finish();
                 break;
+            case R.id.head_right_tv:
+                startActivityForResult(new Intent(OwnCarListActivity.this, PublishOwnSecondCarActivity.class), 1);
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                mRefreshLayout.autoRefresh();
+            }
         }
     }
 }

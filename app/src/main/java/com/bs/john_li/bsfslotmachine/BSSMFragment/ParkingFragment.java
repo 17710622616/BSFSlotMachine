@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
@@ -71,6 +72,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     private ImageView loadFailIv;
     private TextView loadTv;
     private TextView mTvAddress;
+    private LinearLayout goCarWashLL;
 
     private AnimationDrawable animationDrawable = null;
     private LocationRequest mLocationRequest;
@@ -111,6 +113,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         mTvAddress = (TextView) parkingView.findViewById(R.id.parking_location_info);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_view);
         goParlingLL = parkingView.findViewById(R.id.go_parling_ll);
+        goCarWashLL = parkingView.findViewById(R.id.go_car_wash_ll);
         mMapFragment.getMapAsync(this);
         View mapView = mMapFragment.getView();
         // 調整按鈕位置
@@ -133,6 +136,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void setListenter() {
         goParlingLL.setOnClickListener(this);
+        goCarWashLL.setOnClickListener(this);
         loadLL.setOnClickListener(null);
     }
 
@@ -174,6 +178,9 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 } else {
                     Toast.makeText(getActivity(), "您還沒定位呢，請先定位~", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.go_car_wash_ll:
+                getActivity().startActivity(new Intent(getActivity(), CarWashActivity.class));
                 break;
             case R.id.parking_load_ll:
                 animationDrawable.start();

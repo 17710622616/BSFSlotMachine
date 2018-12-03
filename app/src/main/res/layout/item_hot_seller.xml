@@ -41,7 +41,7 @@
             android:id="@+id/item_hot_seller_distance_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已售0件"
+            android:text="距離"
             android:textSize="13sp"
             android:textColor="@color/colorDrakGray"
             android:layout_marginTop="5dp"/>

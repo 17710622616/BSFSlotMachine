@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ import java.util.List;
 public class CarWashActivity extends BaseActivity implements View.OnClickListener {
     private BSSMHeadView headView;
     private RadioGroup mRg;
+    private RadioButton distanceRb, salesRb;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
     private LinearLayout noMerchatLL;
@@ -114,6 +116,8 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
     public void initView() {
         headView = findViewById(R.id.car_wash_head);
         mRg = findViewById(R.id.car_wash_rg);
+        distanceRb = findViewById(R.id.distance_nearest_rb);
+        salesRb = findViewById(R.id.highest_sales_rb);
         mRefreshLayout = (RefreshLayout) findViewById(R.id.car_wash_list_srl);
         mRecycleView = (RecyclerView) findViewById(R.id.car_wash_list_lv);
         noMerchatLL = (LinearLayout) findViewById(R.id.no_merchant_ll);
@@ -131,10 +135,14 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 switch (i) {
                     case R.id.distance_nearest_rb:
+                        distanceRb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+                        salesRb.setTextColor(getResources().getColor(R.color.colorBlack));
                         orderBy = "nearBy";
                         mRefreshLayout.autoRefresh();
                         break;
                     case R.id.highest_sales_rb:
+                        distanceRb.setTextColor(getResources().getColor(R.color.colorBlack));
+                        salesRb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
                         orderBy = "sale";
                         mRefreshLayout.autoRefresh();
                         break;
@@ -192,6 +200,7 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
                 startActivity(intent);
             }
         });
+
         mRefreshLayout.autoRefresh();
     }
 
@@ -203,7 +212,7 @@ public class CarWashActivity extends BaseActivity implements View.OnClickListene
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("type",2);
+            jsonObj.put("type",1);
             if (mLocation != null) {
                 jsonObj.put("longitude",mLocation.getLongitude());
                 jsonObj.put("latitude",mLocation.getLatitude());

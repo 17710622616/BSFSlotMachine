@@ -19,8 +19,8 @@ import java.util.List;
  */
 
 public class CarServiceAdapter extends BaseAdapter {
-    private int[] serviceImgArr = {R.mipmap.violation, R.mipmap.old_car, R.mipmap.car_wash, R.mipmap.history_order};
-    private String[] serviceTitleArr = {"違章查詢", "二手車", "特價洗車", "洗車訂單"};
+    private int[] serviceImgArr = {R.mipmap.car_service_wash, R.mipmap.car_service_deal, R.mipmap.car_service_maintain, R.mipmap.car_service_order, R.mipmap.car_service_license, R.mipmap.car_service_insurance1, R.mipmap.car_service_validate};
+    private String[] serviceTitleArr = {"特價洗車", "汽車買賣", "汽車零件", "洗車訂單", "代辦駕照", "車險服務", "上門驗車"};
     private LayoutInflater inflater;
     public CarServiceAdapter(Context context) {
         inflater = LayoutInflater.from(context);

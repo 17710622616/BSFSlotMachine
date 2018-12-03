@@ -67,8 +67,8 @@ public class SmartCarWashMerchatRefreshAdapter extends RecyclerView.Adapter<Smar
     public void onBindViewHolder(SmartCarWashMerchatRefreshAdapter.SmartRefreshViewHolder holder, int position) {
         x.image().bind(holder.item_cwm_iv, list.get(position).getSellerLogo(), options);
         holder.item_cwm_name_tv.setText(list.get(position).getSellerName());
-        holder.item_cwm_sold_tv.setText("已售" + list.get(position).getOrderCount());
-        holder.item_cwm_address_tv.setText(list.get(position).getAddress());
+        holder.item_cwm_sold_tv.setText("已售：" + list.get(position).getOrderCount());
+        holder.item_cwm_address_tv.setText("地址：" +list.get(position).getAddress());
         holder.item_cwm_distance_tv.setText(list.get(position).getMeter());
         holder.itemView.setTag(position);
     }

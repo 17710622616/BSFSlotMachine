@@ -248,7 +248,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
-                                            callNetGetSellerCarList();
+                                            mRefreshLayout.autoRefresh();
                                             popMenu.dismiss();
                                         }
                                     });
@@ -286,7 +286,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setType(list.get(position));
-                                        callNetGetSellerCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -321,7 +321,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetSellerCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -362,7 +362,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
-                                        callNetGetSellerCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -402,7 +402,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetSellerCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -437,7 +437,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                                 mRequestSecondCarModel.setIfperson(2);
                                                 break;
                                         }
-                                        callNetGetSellerCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });

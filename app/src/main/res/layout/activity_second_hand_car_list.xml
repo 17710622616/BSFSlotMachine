@@ -20,9 +20,10 @@
         android:src="@mipmap/loading_caffe_small"/>
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/second__handle_car_sv"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -291,6 +292,12 @@
                     android:orientation="horizontal"
                     android:padding="5dp">
                     <ImageView
+                        android:id="@+id/car_list_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/publish_old_car"/>
+                    <!--<ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:scaleType="fitXY"
@@ -319,7 +326,7 @@
                         android:text="查看車輛列表"
                         android:textSize="18sp"
                         android:textColor="@color/colorBlack"
-                        android:padding="5dp"/>
+                        android:padding="5dp"/>-->
                 </LinearLayout>
 
                 <View

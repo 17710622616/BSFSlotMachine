@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -72,11 +73,12 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     private BSSMHeadView headView;
     private ImageView sellerIv1, sellerIv2, sellerIv3, sellerIv4, sellerIv5, sellerIv6, sellerIv7, sellerIv8;
     private ImageView hotCarIv1, hotCarIv2, hotCarIv3, hotCarIv4, hotCarIv5, hotCarIv6;
-    private TextView publishCarTv, carListTv;
+    private ImageView carListTv;
     private TabLayout mTabLayout;
     private PopupWindow popMenu;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
+    private NestedScrollView mSv;
     // 廣告位商家
     private List<SideShowModel.DataBean> mSideShowList;
     // 廣告位熱門車輛
@@ -111,8 +113,9 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
     @Override
     public void initView() {
         headView = findViewById(R.id.shcl_headview);
-        publishCarTv = findViewById(R.id.publish_car_tv);
-        carListTv = findViewById(R.id.car_list_tv);
+        //publishCarTv = findViewById(R.id.publish_car_tv);
+        carListTv = findViewById(R.id.car_list_iv);
+        mSv = findViewById(R.id.second__handle_car_sv);
         initADData();
 
         mTabLayout = (TabLayout) findViewById(R.id.second_car_tabLayout);
@@ -137,7 +140,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void setListener() {
-        publishCarTv.setOnClickListener(this);
+        //publishCarTv.setOnClickListener(this);
         carListTv.setOnClickListener(this);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -155,11 +158,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                mSideShowList.clear();
-                mHotCarModelList.clear();
                 mSecondCarList.clear();
-                callNetGetSecondCarSellerList();
-                callNetGetHotCarList();
                 pageNo = 1;
                 if (BSSMCommonUtils.isLoginNow(SecondHandCarListActivity.this)) {
                     callNetGetOldeCarList();
@@ -171,8 +170,6 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                callNetGetSecondCarSellerList();
-                callNetGetHotCarList();
                 //和最大的数据比较
                 if (pageSize * (pageNo) > totolCarCount){
                     Toast.makeText(SecondHandCarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
@@ -233,16 +230,8 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             //这里使用到反射，拿到Tab对象后获取Class
             Class c = tab.getClass();
             try {
-                //Filed “字段、属性”的意思,c.getDeclaredField 获取私有属性。
                 //"mView"是Tab的私有属性名称(可查看TabLayout源码),类型是 TabView,TabLayout私有内部类。
                 Field field = c.getDeclaredField("mView");
-                //值为 true 则指示反射的对象在使用时应该取消 Java 语言访问检查。值为 false 则指示反射的对象应该实施 Java 语言访问检查。
-                //如果不这样会报如下错误
-                // java.lang.IllegalAccessException:
-                //Class com.test.accessible.Main
-                //can not access
-                //a member of class com.test.accessible.AccessibleTest
-                //with modifiers "private"
                 field.setAccessible(true);
                 final View view = (View) field.get(tab);
                 if (view == null) return;
@@ -259,13 +248,14 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
 
                         switch (position) {
                             case 0:
+                                mSv.scrollTo(0, 600);
                                 if (mCarBrandModelList.size() > 0) {
                                     LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                     View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
                                     popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
                                             LinearLayout.LayoutParams.WRAP_CONTENT);
                                     popMenu.setFocusable(true);
-                                    popMenu.setOutsideTouchable(false);
+                                    popMenu.setOutsideTouchable(true);
                                     //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                     popMenu.setOnDismissListener(new PopupWindow.OnDismissListener() {
                                         public void onDismiss() {
@@ -279,7 +269,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
-                                            callNetGetOldeCarList();
+                                            mRefreshLayout.autoRefresh();
                                             popMenu.dismiss();
                                         }
                                     });
@@ -294,7 +284,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list = new ArrayList<>();
@@ -317,7 +307,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setType(list.get(position));
-                                        callNetGetOldeCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -329,7 +319,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu = new PopupWindow(contentView1, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv1 = contentView1.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list1 = new ArrayList<>();
@@ -352,7 +342,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -364,7 +354,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu = new PopupWindow(contentView2, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv2 = contentView2.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list2 = new ArrayList<>();
@@ -393,7 +383,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
-                                        callNetGetOldeCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -405,7 +395,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv3 = contentView3.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list3 = new ArrayList<>();
@@ -433,7 +423,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -445,7 +435,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu = new PopupWindow(contentView4, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv4 = contentView4.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list4 = new ArrayList<>();
@@ -468,7 +458,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setIfperson(2);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -483,6 +473,8 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         }
 
         mRefreshLayout.autoRefresh();
+        callNetGetSecondCarSellerList();
+        callNetGetHotCarList();
     }
 
     /**
@@ -790,10 +782,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             case R.id.head_left:
                 finish();
                 break;
-            case R.id.publish_car_tv:
+            /*case R.id.publish_car_tv:
                 startActivityForResult(new Intent(SecondHandCarListActivity.this, PublishOwnSecondCarActivity.class), 1);
                 break;
             case R.id.car_list_tv:
+                startActivity(new Intent(SecondHandCarListActivity.this, OwnCarListActivity.class));
+                break;*/
+            case R.id.car_list_iv:
                 startActivity(new Intent(SecondHandCarListActivity.this, OwnCarListActivity.class));
                 break;
         }

@@ -85,7 +85,7 @@ public class MerchartSetAdapter extends BaseAdapter {
 
         holder.item_ms_original_price_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         holder.item_ms_original_price_tv.setText("原價:" + list.get(i).getMarketPrice());
-        holder.item_ms_price_tv.setText("MOP" + list.get(i).getMarketPrice());
+        holder.item_ms_price_tv.setText("MOP" + list.get(i).getCostPrice());
         holder.item_ms_name_tv.setText(list.get(i).getChargeName());
 
         sellerChargeBean = (MerchatSetOutModel.MerchatSetModel.SellerChargeBean) getItem(i);

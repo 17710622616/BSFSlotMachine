@@ -90,7 +90,7 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 merchartSetAdapter.select(position);
-                orderAmountTv.setText("MOP" + setList.get(position).getMarketPrice());
+                orderAmountTv.setText("MOP" + setList.get(position).getCostPrice());
             }
         });
     }

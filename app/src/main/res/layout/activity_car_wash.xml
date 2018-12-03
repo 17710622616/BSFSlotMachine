@@ -28,6 +28,8 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="距離最近"
+            android:textSize="18sp"
+            android:textColor="@color/colorSkyBlue"
             android:checked="true"
             android:button="@null"
             android:gravity="center"/>
@@ -39,6 +41,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="銷量最高"
+            android:textSize="18sp"
             android:button="@null"
             android:gravity="center"/>
     </RadioGroup>
