@@ -1,40 +1,34 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartSecondCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarBrandOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.HotCarOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.RequestSecondCarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SecondCarOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.SideShowModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SellerDetialOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -43,10 +37,6 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FullyLinearLayoutManager;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
-import com.othershe.nicedialog.BaseNiceDialog;
-import com.othershe.nicedialog.NiceDialog;
-import com.othershe.nicedialog.ViewConvertListener;
-import com.othershe.nicedialog.ViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -65,44 +55,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by John_Li on 15/11/2018.
+ * Created by John on 28/11/2018.
  */
 
-public class SecondHandCarListActivity extends BaseActivity implements View.OnClickListener{
+public class SellerDetialActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private ImageView sellerIv1, sellerIv2, sellerIv3, sellerIv4, sellerIv5, sellerIv6, sellerIv7, sellerIv8;
-    private ImageView hotCarIv1, hotCarIv2, hotCarIv3, hotCarIv4, hotCarIv5, hotCarIv6;
-    private TextView publishCarTv, carListTv;
     private TabLayout mTabLayout;
     private PopupWindow popMenu;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
-    // 廣告位商家
-    private List<SideShowModel.DataBean> mSideShowList;
-    // 廣告位熱門車輛
-    private List<HotCarOutModel.DataBeanX.HotCarModel> mHotCarModelList;
-    // 二手車列表
-    private List<SecondCarOutModel.DataBeanX.SecondCarModel> mSecondCarList;
-    // 請求列表的類
-    private RequestSecondCarModel mRequestSecondCarModel;
+    private ImageView sellerIv, telIv;
+    private TextView nameTv, distanceTv, addressTv;
+    private LinearLayout sellerDetialLL;
 
-    private List<CarBrandOutModel.CarBrandModel> mCarBrandModelList;
-    private List<ImageView> hotSecondCarIvList;
-    private List<ImageView> secondCarSellerList;
-    private List<TextView> hotSecondCarTvList;
-    private SmartSecondCarListRefreshAdapter mSmartSecondCarListRefreshAdapter;
+    // 商家ID
+    private long sellerId;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
     private int pageNo = 1;
     // 車輛總數
     private long totolCarCount;
+    // 汽车品牌列表
+    private List<CarBrandOutModel.CarBrandModel> mCarBrandModelList;
+    // 二手車列表
+    private List<SecondCarOutModel.DataBeanX.SecondCarModel> mSecondCarList;
+    // 商家详情
+    private SellerDetialOutModel.SellerDetialModel mSellerDetialModel;
+    // 請求列表的類
+    private RequestSecondCarModel mRequestSecondCarModel;
+    //
+    private SmartSecondCarListRefreshAdapter mSmartSecondCarListRefreshAdapter;
     //private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
-    private ImageOptions options1 = new ImageOptions.Builder().setSize(0, 0).setPlaceholderScaleType(ImageView.ScaleType.FIT_XY).setImageScaleType(ImageView.ScaleType.FIT_XY).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
+    private ImageOptions options1 = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.FIT_XY).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second_hand_car_list);
+        setContentView(R.layout.activity_seller_detial);
         initView();
         setListener();
         initData();
@@ -110,12 +100,15 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void initView() {
-        headView = findViewById(R.id.shcl_headview);
-        publishCarTv = findViewById(R.id.publish_car_tv);
-        carListTv = findViewById(R.id.car_list_tv);
-        initADData();
+        headView = findViewById(R.id.seller_detial_head);
+        sellerIv = findViewById(R.id.seller_iv);
+        telIv = findViewById(R.id.merchart_tel_ll);
+        nameTv = findViewById(R.id.seller_name_tv);
+        distanceTv = findViewById(R.id.seller_distance_tv);
+        addressTv = findViewById(R.id.seller_address_tv);
+        sellerDetialLL = findViewById(R.id.seller_detial_ll);
 
-        mTabLayout = (TabLayout) findViewById(R.id.second_car_tabLayout);
+        mTabLayout = (TabLayout) findViewById(R.id.seller_tabLayout);
         mTabLayout.addTab(mTabLayout.newTab().setText("車廠"));
         mTabLayout.addTab(mTabLayout.newTab().setText("車種"));
         mTabLayout.addTab(mTabLayout.newTab().setText("傳動"));
@@ -126,8 +119,8 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             headView.setHeadHight();
         }
 
-        mRecycleView = findViewById(R.id.second_car_recycle_lv);
-        mRefreshLayout = findViewById(R.id.second_car_srl);
+        mRecycleView = findViewById(R.id.seller_recycle_lv);
+        mRefreshLayout = findViewById(R.id.seller_srl);
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         mRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
@@ -137,81 +130,53 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void setListener() {
-        publishCarTv.setOnClickListener(this);
-        carListTv.setOnClickListener(this);
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                mSideShowList.clear();
-                mHotCarModelList.clear();
                 mSecondCarList.clear();
-                callNetGetSecondCarSellerList();
-                callNetGetHotCarList();
                 pageNo = 1;
-                if (BSSMCommonUtils.isLoginNow(SecondHandCarListActivity.this)) {
-                    callNetGetOldeCarList();
+                if (BSSMCommonUtils.isLoginNow(SellerDetialActivity.this)) {
+                    callNetGetSellerCarList();
                 } else {
-                    startActivityForResult(new Intent(SecondHandCarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(SellerDetialActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
             }
         });
         mRefreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                callNetGetSecondCarSellerList();
-                callNetGetHotCarList();
                 //和最大的数据比较
                 if (pageSize * (pageNo) > totolCarCount){
-                    Toast.makeText(SecondHandCarListActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SellerDetialActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    if (BSSMCommonUtils.isLoginNow(SecondHandCarListActivity.this)) {
-                        callNetGetOldeCarList();
+                    if (BSSMCommonUtils.isLoginNow(SellerDetialActivity.this)) {
+                        callNetGetSellerCarList();
                     } else {
-                        startActivityForResult(new Intent(SecondHandCarListActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        startActivityForResult(new Intent(SellerDetialActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                     }
                 }
             }
         });
-    }
-
-    private ArrayList<String> getData() {
-        ArrayList<String> list = new ArrayList<>();
-        for (CarBrandOutModel.CarBrandModel model : mCarBrandModelList) {
-            list.add(model.getName());
-        }
-        return list;
+        sellerDetialLL.setOnClickListener(this);
     }
 
     @Override
     public void initData() {
+        sellerId = getIntent().getIntExtra("sellerId", -1);
         headView.setLeft(this);
-        headView.setTitle("汽車買賣");
-        mSideShowList = new ArrayList<>();
-        mHotCarModelList = new ArrayList<>();
-        mSecondCarList = new ArrayList<>();
-        mCarBrandModelList = new ArrayList<>();
+        headView.setTitle("商家詳情");
+
         mRequestSecondCarModel = new RequestSecondCarModel();
         mRequestSecondCarModel.setCarGears(-1);
         mRequestSecondCarModel.setCarType(-1);
         mRequestSecondCarModel.setStartPrice(-1);
         mRequestSecondCarModel.setEndPrice(-1);
-        mRequestSecondCarModel.setSellerId(-1);
+        mRequestSecondCarModel.setSellerId((int) sellerId);
+        mCarBrandModelList = new ArrayList<>();
+        mSecondCarList = new ArrayList<>();
         mSmartSecondCarListRefreshAdapter = new SmartSecondCarListRefreshAdapter(this, mSecondCarList, AliyunOSSUtils.initOSS(this));
         FullyLinearLayoutManager linearLayoutManager = new FullyLinearLayoutManager(this);
         mRecycleView.setNestedScrollingEnabled(false);
@@ -221,12 +186,16 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mSmartSecondCarListRefreshAdapter.setOnItemClickListenr(new SmartSecondCarListRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
-                Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
+                Intent intent = new Intent(SellerDetialActivity.this, SecondCarDetailActivity.class);
                 intent.putExtra("seoncdeCarId", String.valueOf(mSecondCarList.get(position).getId()));
                 startActivity(intent);
             }
         });
 
+        // 获取商家详情
+        callNetGetSellerDetial();
+
+        // 初始化菜单列表
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
             if (tab == null) return;
@@ -273,13 +242,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         }
                                     });
                                     ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
-                                    SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, getData());
+                                    SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SellerDetialActivity.this, getData());
                                     lv.setAdapter(adapter);
                                     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
-                                            callNetGetOldeCarList();
+                                            callNetGetSellerCarList();
                                             popMenu.dismiss();
                                         }
                                     });
@@ -311,13 +280,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 list.add("小型車");
                                 list.add("7/8人車");
                                 list.add("其他");
-                                SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list);
+                                SecondCarOptionListAdapter adapter = new SecondCarOptionListAdapter(SellerDetialActivity.this, list);
                                 lv.setAdapter(adapter);
                                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setType(list.get(position));
-                                        callNetGetOldeCarList();
+                                        callNetGetSellerCarList();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -336,7 +305,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 list1.add("全部");
                                 list1.add("手動擋");
                                 list1.add("自動擋");
-                                SecondCarOptionListAdapter adapter1 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list1);
+                                SecondCarOptionListAdapter adapter1 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list1);
                                 lv1.setAdapter(adapter1);
                                 lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
@@ -352,7 +321,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        callNetGetSellerCarList();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -387,13 +356,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 list2.add("2002");
                                 list2.add("2001");
                                 list2.add("2000");
-                                SecondCarOptionListAdapter adapter2 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list2);
+                                SecondCarOptionListAdapter adapter2 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list2);
                                 lv2.setAdapter(adapter2);
                                 lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
-                                        callNetGetOldeCarList();
+                                        callNetGetSellerCarList();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -417,7 +386,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 list3.add("30-50");
                                 list3.add("50-100");
                                 list3.add("100以上");
-                                SecondCarOptionListAdapter adapter3 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list3);
+                                SecondCarOptionListAdapter adapter3 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list3);
                                 lv3.setAdapter(adapter3);
                                 lv3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
@@ -433,7 +402,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setCarGears(1);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        callNetGetSellerCarList();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -452,7 +421,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 list4.add("全部");
                                 list4.add("商家");
                                 list4.add("個人");
-                                SecondCarOptionListAdapter adapter4 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list4);
+                                SecondCarOptionListAdapter adapter4 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list4);
                                 lv4.setAdapter(adapter4);
                                 lv4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
@@ -468,7 +437,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                                 mRequestSecondCarModel.setIfperson(2);
                                                 break;
                                         }
-                                        callNetGetOldeCarList();
+                                        callNetGetSellerCarList();
                                         popMenu.dismiss();
                                     }
                                 });
@@ -485,240 +454,33 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mRefreshLayout.autoRefresh();
     }
 
-    /**
-     * 獲取車輛品牌列表
-     */
-    private void callNetGetCarBrand() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_BRAND_LIST + SPUtils.get(this, "UserToken", ""));
-        params.setAsJsonContent(true);
-        params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                CarBrandOutModel model = new Gson().fromJson(result.toString(), CarBrandOutModel.class);
-                if (model.getCode() == 200) {
-                    mCarBrandModelList.addAll(model.getData());
-                } else if (model.getCode() == 10000){
-                    SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
-                    Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //请求异常后的回调方法
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //主动调用取消请求的回调方法
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-            @Override
-            public void onFinished() {
-            }
-        });
+
+    private ArrayList<String> getData() {
+        ArrayList<String> list = new ArrayList<>();
+        for (CarBrandOutModel.CarBrandModel model : mCarBrandModelList) {
+            list.add(model.getName());
+        }
+        return list;
     }
 
     /**
-     * 初始化广告位信息
+     * 获取商家二手车列表
      */
-    private void initADData() {
-        secondCarSellerList = new ArrayList<>();
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv1));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv2));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv3));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv4));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv5));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv6));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv7));
-        secondCarSellerList.add((ImageView) findViewById(R.id.second_car_seller_iv8));
-        hotSecondCarIvList = new ArrayList<>();
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv1));
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv2));
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv3));
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv4));
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv5));
-        hotSecondCarIvList.add((ImageView) findViewById(R.id.second_car_hot_car_iv6));
-
-        hotSecondCarTvList = new ArrayList<>();
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv1));
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv2));
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv3));
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv4));
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv5));
-        hotSecondCarTvList.add((TextView) findViewById(R.id.second_car_hot_car_tv6));
-
-        for (int i = 0; i < hotSecondCarIvList.size(); i++) {
-            final int finalI = i;
-            hotSecondCarIvList.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mHotCarModelList.size() > 0) {
-                        Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
-                        intent.putExtra("seoncdeCarId", String.valueOf(mHotCarModelList.get(finalI).getId()));
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        for (int i = 0; i < secondCarSellerList.size(); i++) {
-            final int finalI = i;
-            secondCarSellerList.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (secondCarSellerList.size() > 0) {
-                        Intent intent = new Intent(SecondHandCarListActivity.this, SellerDetialActivity.class);
-                        intent.putExtra("sellerId", String.valueOf(secondCarSellerList.get(finalI).getId()));
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * 获取广告位商家信息
-     */
-    private void callNetGetSecondCarSellerList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_SECONDE_CAR_SIDESHOW);
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("type",1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String urlJson = jsonObj.toString();
-        params.setBodyContent(urlJson);
-        String uri = params.getUri();
-        params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                SideShowModel model = new Gson().fromJson(result.toString(), SideShowModel.class);
-                if (model.getCode() ==200) {
-                    mSideShowList.addAll(model.getData());
-                    if (mSideShowList.size() > 8) {
-                        for (int i = 0; i < 8; i++) {
-                            x.image().bind(secondCarSellerList.get(i), mSideShowList.get(i).getPic(), options1);
-                        }
-                    } else {
-                        for (int i = 0; i < mSideShowList.size(); i++) {
-                            x.image().bind(secondCarSellerList.get(i), mSideShowList.get(i).getPic(), options1);
-                        }
-                    }
-                } else if (model.getCode() == 10000){
-                    SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
-                    Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //请求异常后的回调方法
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //主动调用取消请求的回调方法
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-            @Override
-            public void onFinished() {
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadmore();
-            }
-        });
-    }
-
-    /**
-     * 获取熱門車信息
-     */
-    private void callNetGetHotCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_HOT_CAR);
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("pageSize",6);
-            jsonObj.put("pageNo",1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String urlJson = jsonObj.toString();
-        params.setBodyContent(urlJson);
-        String uri = params.getUri();
-        params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                HotCarOutModel model = new Gson().fromJson(result.toString(), HotCarOutModel.class);
-                if (model.getCode() ==200) {
-                    mHotCarModelList.addAll(model.getData().getData());
-                    if (mHotCarModelList.size() > 6) {
-                        for (int i = 0; i < 6; i++) {
-                            x.image().bind(hotSecondCarIvList.get(i), mHotCarModelList.get(i).getCarImg(), options1);
-                            hotSecondCarTvList.get(i).setText("人氣:" + mHotCarModelList.get(i).getPageView());
-                        }
-                    } else {
-                        for (int i = 0; i < mHotCarModelList.size(); i++) {
-                            x.image().bind(hotSecondCarIvList.get(i), mHotCarModelList.get(i).getCarImg(), options1);
-                            hotSecondCarTvList.get(i).setText("人氣:" + mHotCarModelList.get(i).getPageView());
-                        }
-                    }
-                } else if (model.getCode() == 10000){
-                    SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
-                    Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //请求异常后的回调方法
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
-                }
-            }
-            //主动调用取消请求的回调方法
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-            @Override
-            public void onFinished() {
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadmore();
-            }
-        });
-    }
-
-
-    /**
-     * 获取二手車車列表
-     */
-    private void callNetGetOldeCarList() {
+    private void callNetGetSellerCarList() {
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_OLD_CAR_LIST + SPUtils.get(this, "UserToken", ""));
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("pageSize", pageSize);
             jsonObj.put("pageNo", pageNo);
-            if (mRequestSecondCarModel.getCarType() != -1) {
-                jsonObj.put("carType", mRequestSecondCarModel.getCarType());
+            if (mRequestSecondCarModel.getSellerId() != -1) {
+                jsonObj.put("sellerid", mRequestSecondCarModel.getSellerId());
             }
             if (mRequestSecondCarModel.getCarBrand() != null) {
                 jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
+            }
+            if (mRequestSecondCarModel.getCarType() != -1) {
+                jsonObj.put("carType", mRequestSecondCarModel.getCarType());
             }
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("type", mRequestSecondCarModel.getCarType());
@@ -753,22 +515,22 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                     totolCarCount = model.getData().getTotalCount();
                     mSecondCarList.addAll(model.getData().getData());
                     if (totolCarCount == 0){
-                        Toast.makeText(SecondHandCarListActivity.this,  "沒有搵到該類數據！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SellerDetialActivity.this,  "沒有搵到該類數據！", Toast.LENGTH_SHORT).show();
                     }
                 } else if (model.getCode() == 10000){
-                    SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
-                    Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    SPUtils.put(SellerDetialActivity.this, "UserToken", "");
+                    Toast.makeText(SellerDetialActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(SecondHandCarListActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SellerDetialActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(SecondHandCarListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
             }
             //主动调用取消请求的回调方法
@@ -784,28 +546,129 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.head_left:
-                finish();
-                break;
-            case R.id.publish_car_tv:
-                startActivityForResult(new Intent(SecondHandCarListActivity.this, PublishOwnSecondCarActivity.class), 1);
-                break;
-            case R.id.car_list_tv:
-                startActivity(new Intent(SecondHandCarListActivity.this, OwnCarListActivity.class));
-                break;
+    /**
+     * 獲取商家详情列表
+     */
+    private void callNetGetSellerDetial() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_SELLER_DETIAL);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id", sellerId);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                SellerDetialOutModel model = new Gson().fromJson(result.toString(), SellerDetialOutModel.class);
+                if (model.getCode() == 200) {
+                    mSellerDetialModel = model.getData();
+                    refreshUI();
+                } else if (model.getCode() == 10000){
+                    SPUtils.put(SellerDetialActivity.this, "UserToken", "");
+                    Toast.makeText(SellerDetialActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerDetialActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
+    private void refreshUI() {
+        x.image().bind(sellerIv, mSellerDetialModel.getSellerLogo(), options1);
+        nameTv.setText(mSellerDetialModel.getSellerName());
+        distanceTv.setText(mSellerDetialModel.getMeter());
+        addressTv.setText(mSellerDetialModel.getAddress());
+    }
+
+    /**
+     * 獲取車輛品牌列表
+     */
+    private void callNetGetCarBrand() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_BRAND_LIST + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CarBrandOutModel model = new Gson().fromJson(result.toString(), CarBrandOutModel.class);
+                if (model.getCode() == 200) {
+                    mCarBrandModelList.addAll(model.getData());
+                } else if (model.getCode() == 10000){
+                    SPUtils.put(SellerDetialActivity.this, "UserToken", "");
+                    Toast.makeText(SellerDetialActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerDetialActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerDetialActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
-                mRefreshLayout.autoRefresh();
-            }
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.head_left:
+                finish();
+                break;
+            case R.id.seller_detial_ll:
+                Intent intent = new Intent(SellerDetialActivity.this, SellerDesActivity.class);
+                intent.putExtra("SellerDetialModel", new Gson().toJson(mSellerDetialModel));
+                startActivity(intent);
+                break;
+            case R.id.merchart_tel_ll:
+                if (mSellerDetialModel != null) {
+                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mSellerDetialModel.getPhone()));
+                    intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    this.startActivity(intent1);
+                }
+                break;
         }
     }
 }

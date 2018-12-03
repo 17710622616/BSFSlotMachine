@@ -1,6 +1,8 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -54,9 +57,9 @@ import java.util.List;
  * Created by John on 25/11/2018.
  */
 
-public class SecondCarDetailActivity extends AppCompatActivity  implements View.OnClickListener{
+public class SecondCarDetailActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView nameTv, priceTv, pageViewTv, publishTimeTv, countryTv, seriesTv, noTv, typeTv, colorTv, gearsTv, firstTimeTv, idTv;
-    private TextView periodValidityTv, brandTv, styleTv, mileageTv, exhaustTv,releaseDateTv, dscriptionTv,configInfoTv, stateRepiarTv, insideBodyTv, testConclusionTv, telTv;
+    private TextView periodValidityTv, brandTv, styleTv, mileageTv, exhaustTv, releaseDateTv, dscriptionTv, configInfoTv, stateRepiarTv, insideBodyTv, testConclusionTv, telTv;
     private AppBarLayout appbar;
     private Toolbar articalToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -71,10 +74,11 @@ public class SecondCarDetailActivity extends AppCompatActivity  implements View.
     //private ImageView mSubmitDialogIv;
     private OSSClient oss;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.img_loading_list).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarUtil.setColor(this,getResources().getColor(R.color.colorAlpha));
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.colorAlpha));
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
@@ -156,20 +160,21 @@ public class SecondCarDetailActivity extends AppCompatActivity  implements View.
         params.setBodyContent(urlJson);
         String uri = params.getUri();
         params.setConnectTimeout(30 * 1000);
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 SecondCarDetialOutModel model = new Gson().fromJson(result.toString(), SecondCarDetialOutModel.class);
                 if (model.getCode() == 200) {
                     mSecondCarDetialModel = model.getData();
                     refreshUI();
-                } else if (model.getCode() == 10000){
+                } else if (model.getCode() == 10000) {
                     SPUtils.put(SecondCarDetailActivity.this, "UserToken", "");
-                    Toast.makeText(SecondCarDetailActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SecondCarDetailActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(SecondCarDetailActivity.this, String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
+
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
@@ -179,10 +184,12 @@ public class SecondCarDetailActivity extends AppCompatActivity  implements View.
                     Toast.makeText(SecondCarDetailActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
             }
+
             //主动调用取消请求的回调方法
             @Override
             public void onCancelled(CancelledException cex) {
             }
+
             @Override
             public void onFinished() {
             }
@@ -193,22 +200,22 @@ public class SecondCarDetailActivity extends AppCompatActivity  implements View.
         nameTv.setText(mSecondCarDetialModel.getCarBrand() + " " + mSecondCarDetialModel.getCarSeries() + " " + mSecondCarDetialModel.getCarStyle());
         priceTv.setText(String.valueOf(mSecondCarDetialModel.getCarPrices()) + "萬");
         pageViewTv.setText("瀏覽量：" + String.valueOf(mSecondCarDetialModel.getPageView()));
-        publishTimeTv.setText("發佈日期：" +BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
+        publishTimeTv.setText("發佈日期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
         countryTv.setText("出  廠  國：" + String.valueOf(mSecondCarDetialModel.getCountryOfOrigin()));
-        seriesTv.setText("車        系：" +String.valueOf(mSecondCarDetialModel.getCarSeries()));
+        seriesTv.setText("車        系：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         noTv.setText("車        牌：" + String.valueOf(mSecondCarDetialModel.getCarNo()));
         typeTv.setText("汽車類型：" + String.valueOf(mSecondCarDetialModel.getType()));
         colorTv.setText("顏        色：" + String.valueOf(mSecondCarDetialModel.getCarColor()));
-        gearsTv.setText("排        擋：" +String.valueOf(mSecondCarDetialModel.getCarGears()));
-        firstTimeTv.setText("落地時間：" +BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
-        idTv.setText("編        號：" +String.valueOf(mSecondCarDetialModel.getId()));
-        periodValidityTv.setText("有  效  期：" +BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getPeriodValidity())));
-        brandTv.setText("品        牌：" +String.valueOf(mSecondCarDetialModel.getCarBrand()));
-        styleTv.setText("車        型：" +String.valueOf(mSecondCarDetialModel.getCarStyle()));
+        gearsTv.setText("排        擋：" + String.valueOf(mSecondCarDetialModel.getCarGears()));
+        firstTimeTv.setText("落地時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
+        idTv.setText("編        號：" + String.valueOf(mSecondCarDetialModel.getId()));
+        periodValidityTv.setText("有  效  期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getPeriodValidity())));
+        brandTv.setText("品        牌：" + String.valueOf(mSecondCarDetialModel.getCarBrand()));
+        styleTv.setText("車        型：" + String.valueOf(mSecondCarDetialModel.getCarStyle()));
         mileageTv.setText("行         程：" + String.valueOf(mSecondCarDetialModel.getDriverMileage()) + "萬公里");
-        exhaustTv.setText("排         量：" +String.valueOf(mSecondCarDetialModel.getCarSeries()) + "C.C.");
-        releaseDateTv.setText("出廠時間：" +String.valueOf(BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getReleaseDate()))));
-        dscriptionTv.setText("汽車狀況：" +String.valueOf(mSecondCarDetialModel.getCarDescription()));
+        exhaustTv.setText("排         量：" + String.valueOf(mSecondCarDetialModel.getCarSeries()) + "C.C.");
+        releaseDateTv.setText("出廠時間：" + String.valueOf(BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getReleaseDate()))));
+        dscriptionTv.setText("汽車狀況：" + String.valueOf(mSecondCarDetialModel.getCarDescription()));
         configInfoTv.setText(String.valueOf(mSecondCarDetialModel.getConfigInfo()));
         stateRepiarTv.setText(String.valueOf(mSecondCarDetialModel.getStateOfRepiar()));
         insideBodyTv.setText(String.valueOf(mSecondCarDetialModel.getInsideBody()));
@@ -271,8 +278,18 @@ public class SecondCarDetailActivity extends AppCompatActivity  implements View.
         switch (view.getId()) {
             case R.id.second_car_detial_tel_tv:
                 if (mSecondCarDetialModel != null) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + mSecondCarDetialModel.getTel()));
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mSecondCarDetialModel.getTel()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     this.startActivity(intent);
                 }
                 break;

@@ -93,7 +93,7 @@ public class SmartOrderRefreshAdapter extends RecyclerView.Adapter<SmartOrderRef
                 break;
         }
         holder.item_order_no.setText("訂單編號：" +list.get(position).getOrderNo());
-        holder.item_order_money.setText("訂單金額：" + String.valueOf(list.get(position).getTotalAmount()));
+        holder.item_order_money.setText("支付金額：" + String.valueOf(list.get(position).getPayAmount()));
         switch (list.get(position).getOrderStatus()) {
             case 1: // 待支付
                 holder.item_order_status.setText("訂單狀態：待支付");

@@ -10,24 +10,29 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondHandCarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SellerDetialActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarServiceAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartHotSellerRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarWashMerchantOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.HotSellerOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.SideShowModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -47,6 +52,7 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.net.SocketTimeoutException;
@@ -64,7 +70,12 @@ public class CarServiceFragment extends BaseFragment {
     private RefreshLayout mRefreshLayout;
     private NoScrollGridView mGv;
     private RecyclerView mLv;
+    private ViewPager mViewPager;
 
+    // 輪播圖圖片集合
+    private List<ImageView> imgList;
+    // 輪播圖適配器
+    private CollapsingAdapter mCollapsingAdapter;
     //
     private CarServiceAdapter mCarServiceAdapter;
     //定位都要通过LocationManager这个类实现
@@ -79,6 +90,8 @@ public class CarServiceFragment extends BaseFragment {
     private long totolCarCount = 0;
     private List<HotSellerOutModel.HotSellerModel.DataBean> mHotSellerList;
     private SmartHotSellerRefreshAdapter mSmartHotSellerRefreshAdapter;
+    private ImageOptions options1 = new ImageOptions.Builder().setSize(0, 0).setPlaceholderScaleType(ImageView.ScaleType.FIT_XY).setImageScaleType(ImageView.ScaleType.FIT_XY).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +142,7 @@ public class CarServiceFragment extends BaseFragment {
     public void initView() {
         headView = carServiceView.findViewById(R.id.car_service_head);
         mRefreshLayout = (RefreshLayout) carServiceView.findViewById(R.id.car_service_srl);
+        mViewPager = carServiceView.findViewById(R.id.car_service_vp);
         mGv = carServiceView.findViewById(R.id.car_service_gv);
         mLv = carServiceView.findViewById(R.id.car_service_lv);
 
@@ -204,6 +218,10 @@ public class CarServiceFragment extends BaseFragment {
         headView.setTitle("汽車服務");
 
         // 初始化橫幅
+        imgList = new ArrayList<>();
+        mCollapsingAdapter = new CollapsingAdapter(imgList);
+        mViewPager.setAdapter(mCollapsingAdapter);
+        callNetGetAd();
 
         // 初始化車輛服務的菜單GridView
         mCarServiceAdapter = new CarServiceAdapter(getActivity());
@@ -214,7 +232,9 @@ public class CarServiceFragment extends BaseFragment {
         mSmartHotSellerRefreshAdapter.setOnItemClickListenr(new SmartHotSellerRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                Intent intent = new Intent(getActivity(), SellerDetialActivity.class);
+                intent.putExtra("sellerId", mHotSellerList.get(position).getId());
+                startActivity(intent);
             }
         });
 
@@ -225,6 +245,62 @@ public class CarServiceFragment extends BaseFragment {
         mLv.setAdapter(mSmartHotSellerRefreshAdapter);
 
         mRefreshLayout.autoRefresh();
+    }
+
+    private void callNetGetAd() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_SECONDE_CAR_SIDESHOW);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("type",3);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                SideShowModel model = new Gson().fromJson(result.toString(), SideShowModel.class);
+                if (model.getCode() ==200) {
+                    for (int i = 0; i < model.getData().size(); i ++) {
+                        ImageView iv = new ImageView(getActivity());
+                        iv.setBackgroundColor(getResources().getColor(R.color.colorMineGray));
+                        iv.setImageResource(R.mipmap.img_loading_list);
+                        //AliyunOSSUtils.downloadImg(entry.getValue(), oss, iv, this, R.mipmap.load_img_fail);
+                        x.image().bind(iv, model.getData().get(i).getPic(), options1);
+                        imgList.add(iv);
+                        mCollapsingAdapter.notifyDataSetChanged();
+                    }
+                } else if (model.getCode() == 10000){
+                    SPUtils.put(getActivity(), "UserToken", "");
+                    Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(),  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(getActivity(), "請求超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                mSmartHotSellerRefreshAdapter.refreshListView(mHotSellerList);
+                mRefreshLayout.finishRefresh();
+                mRefreshLayout.finishLoadmore();
+            }
+        });
     }
 
     private void callNetGetRecommend() {

@@ -29,7 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.CourseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SlotMachineListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -138,7 +140,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     public void initData() {//2
         headView.setTitle("停車");
         headView.setLeft(R.mipmap.search, this);
-        headView.setRight(R.mipmap.wallet, this);
+        headView.setRightText("教程", this);
         loadIv.setBackgroundResource(R.drawable.load_anim);
         animationDrawable = (AnimationDrawable) loadIv.getBackground();
         animationDrawable.start();
@@ -155,12 +157,8 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
                 break;
-            case R.id.head_right:
-                if (BSSMCommonUtils.isLoginNow(getActivity())) {
-                    getActivity().startActivity(new Intent(getActivity(), WalletActivity.class));
-                } else {
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }
+            case R.id.head_right_tv:
+                getActivity().startActivity(new Intent(getActivity(), CourseActivity.class));
                 break;
             case R.id.go_parling_ll:
                 if (mLastLocation != null && mAddress != null) {

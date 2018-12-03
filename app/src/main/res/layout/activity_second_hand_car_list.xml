@@ -294,7 +294,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/seekbar_parking"
+                        android:src="@mipmap/publish_car"
                         android:layout_gravity="center_vertical"/>
                     <TextView
                         android:id="@+id/publish_car_tv"
@@ -309,7 +309,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/sure_order"
+                        android:src="@mipmap/my_car_list"
                         android:layout_gravity="center_vertical"/>
                     <TextView
                         android:id="@+id/car_list_tv"

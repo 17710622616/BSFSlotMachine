@@ -1,10 +1,13 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -177,12 +180,20 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.merchart_tel_ll:
                 if (merchatSetModel != null) {
-                    // 撥打商家電話
-                    // 使用系统的电话拨号服务，必须去声明权限，在AndroidManifest.xml中进行声明
-                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + merchatSetModel.getSeller().getPhone()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    this.startActivity(intent);
-                }
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + merchatSetModel.getSeller().getPhone()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        this.startActivity(intent);
+                    }
                 break;
             case R.id.merchart_address_ll:
 

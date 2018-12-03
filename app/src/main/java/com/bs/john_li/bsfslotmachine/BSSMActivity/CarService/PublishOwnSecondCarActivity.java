@@ -124,7 +124,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         deliveryTimeLL = findViewById(R.id.publish_own_second_car_delivery_time_ll);
         configInfoLL = findViewById(R.id.publish_own_second_car_config_info_ll);
         repiarStatrLL = findViewById(R.id.publish_own_second_car_repiar_statr_ll);
-        insideBodyLL = findViewById(R.id.publish_own_second_car_repiar_statr_ll);
+        insideBodyLL = findViewById(R.id.publish_own_second_car_inside_body_ll);
         testConclusionLL = findViewById(R.id.publish_own_second_car_test_conclusion_ll);
 
         brandTv = findViewById(R.id.publish_own_second_car_brand_tv);
@@ -735,7 +735,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.publish_own_second_car_inside_body_tv:
+            /*case R.id.publish_own_second_car_inside_body_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -761,7 +761,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
+                break;*/
             case R.id.publish_own_second_car_inside_body_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
@@ -776,7 +776,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                                     public void onClick(View view) {
                                         if (editText.getText().toString().length()> 0) {
                                             mSubmitSecondCarModel.setInsideBody(editText.getText().toString());
-                                            testConclusionTv.setText(mSubmitSecondCarModel.getInsideBody());
+                                            insideBodyTv.setText(mSubmitSecondCarModel.getInsideBody());
                                             baseNiceDialog.dismiss();
                                         } else {
                                             Toast.makeText(PublishOwnSecondCarActivity.this, "請填寫車身內部信息", Toast.LENGTH_LONG).show();
@@ -985,7 +985,11 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
             jsonObj.put("carSeries",mSubmitSecondCarModel.getCarSeries());
             jsonObj.put("firstRegisterationTime",mSubmitSecondCarModel.getFirstRegisterationTime());
             jsonObj.put("driverMileage",mSubmitSecondCarModel.getDriverMileage());
-            jsonObj.put("carGears",mSubmitSecondCarModel.getCarGears());
+            if (mSubmitSecondCarModel.getCarGears().equals("手動")) {
+                jsonObj.put("carGears", 1);
+            } else {
+                jsonObj.put("carGears", 0);
+            }
             jsonObj.put("carImg",cover);
             jsonObj.put("carPrices",mSubmitSecondCarModel.getCarPrices());
             jsonObj.put("tel",mSubmitSecondCarModel.getTel());

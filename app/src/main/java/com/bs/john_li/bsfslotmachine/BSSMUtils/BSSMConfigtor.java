@@ -48,7 +48,7 @@ public class BSSMConfigtor {
     public final static String SHARESDK_APP_SECRET = "e3860e99759647b3ad5e17b2a5c09de6";
 
     // 正式的域名地址
-    public final static String BASE_URL = "https://www.easydev.top/parkingman-web/";
+    public final static String BASE_URL = "https://www.bosoftmacao.cn/parkingman-web/";
     // 正式的IP地址
     //public final static String BASE_URL = "http://120.77.84.40/parkingman-web/";
     // 測試的IP地址
@@ -156,6 +156,8 @@ public class BSSMConfigtor {
     public static final String CHECK_VERSION= "AppVersion/selectAppVersion";
     //提交意見反饋的接口
     public static final String SUBMIT_OPINION= "feedback/submit?token=";
+    // 教程的接口
+    public final static String GET_COURSE_WEB = "systemProfile/teach";
     /*-------------------------------------------------汽車服務-----------------------------------------------------------------------------------------*/
     //商家列表的接口
     public static final String GET_SELLER_LIST= "seller/getSellerList";
@@ -191,4 +193,6 @@ public class BSSMConfigtor {
     public static final String SUBMIT_OLD_CAR = "sellerCar/addCar?token=";
     //獲取汽車詳情的接口
     public static final String GET_CAR_DETIAL = "sellerCar/carDetial ";
+    //獲取商家詳情的接口
+    public static final String GET_SELLER_DETIAL = "seller/sellerDetial ";
 }

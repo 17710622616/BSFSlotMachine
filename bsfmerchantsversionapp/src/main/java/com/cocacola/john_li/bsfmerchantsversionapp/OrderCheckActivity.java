@@ -82,8 +82,8 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
         }
 
         qrcodeReturnModel = new Gson().fromJson(getIntent().getStringExtra("scanReturnStr"), QrcodeReturnModel.class);
-        orderNoTv.setText(qrcodeReturnModel.getOrderNo());
-        orderNoTv.setText(qrcodeReturnModel.getCouponCode());
+        orderNoTv.setText("訂單編號：" + qrcodeReturnModel.getOrderNo());
+        couponNoTv.setText("券        碼：" + qrcodeReturnModel.getCouponCode());
         callNetGetOrderDetial();
     }
 
