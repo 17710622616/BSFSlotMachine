@@ -149,7 +149,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toRightOf="@id/cwod_coupon_iv"/>
 
-                <com.cocacola.john_li.bsfmerchantsversionapp.BSFView.NoScrollListView
+                <com.bs.john_li.bsfmerchantsversionapp.BSFView.NoScrollListView
                     android:id="@+id/cwod_coupon_lv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

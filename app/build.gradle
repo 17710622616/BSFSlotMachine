@@ -34,6 +34,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -80,4 +85,6 @@ dependencies {
     compile files('libs/alipaySdk-20180601.jar')
     compile 'net.danlew:android.joda:2.9.5'
     compile 'com.google.zxing:core:3.3.0'
+    compile files('libs/jcore-android-1.2.6.jar')
+    compile files('libs/jpush-android-3.1.7.jar')
 }

@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="com.google.android.gms.maps.SupportMapFragment"
-            tools:context="com.cocacola.john_li.googlemaptest.BSSMFragment.MainFragment"/>
+            tools:context="com.bs.john_li.googlemaptest.BSSMFragment.MainFragment"/>
         <TextView
             android:id="@+id/location_address"
             android:layout_width="match_parent"

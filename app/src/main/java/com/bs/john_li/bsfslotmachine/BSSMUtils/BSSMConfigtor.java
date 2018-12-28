@@ -192,7 +192,7 @@ public class BSSMConfigtor {
     //提交二手車的接口
     public static final String SUBMIT_OLD_CAR = "sellerCar/addCar?token=";
     //獲取汽車詳情的接口
-    public static final String GET_CAR_DETIAL = "sellerCar/carDetial ";
+    public static final String GET_CAR_DETIAL = "sellerCar/carDetial";
     //獲取商家詳情的接口
-    public static final String GET_SELLER_DETIAL = "seller/sellerDetial ";
+    public static final String GET_SELLER_DETIAL = "seller/sellerDetial";
 }

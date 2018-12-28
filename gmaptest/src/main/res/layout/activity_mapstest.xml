@@ -20,7 +20,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.cocacola.john_li.gmaptest.MapsActivity" />
+        tools:context="com.bs.john_li.gmaptest.MapsActivity" />
     <!--<com.google.android.gms.maps.MapView
         android:id="@+id/mapview"
         android:layout_height="match_parent"

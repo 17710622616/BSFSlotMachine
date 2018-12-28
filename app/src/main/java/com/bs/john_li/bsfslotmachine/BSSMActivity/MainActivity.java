@@ -53,6 +53,10 @@ import org.xutils.x;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.Set;
+
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
 
 /**
  * Created by John_Li on 27/7/2017.
@@ -117,7 +121,27 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         cacheFragment = new ParkingFragment();
         traslation.add(R.id.main_containor,cacheFragment,ParkingFragment.TAG);
         traslation.commit();
+
+        // 註冊極光別名
+        String alias = "user";
+        //给极光推送设置标签和别名
+        JPushInterface.setAlias(this, alias, tagAliasCallback);
     }
+
+    //极光服务器设置别名是否成功的回调
+    private final TagAliasCallback tagAliasCallback = new TagAliasCallback() {
+        @Override
+        public void gotResult(int code, String alias, Set<String> tagSet) {
+            switch (code) {
+                case 0:
+                    Toast.makeText(MainActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onResume() {

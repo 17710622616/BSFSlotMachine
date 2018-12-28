@@ -273,20 +273,26 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                             popMenu.dismiss();
                                         }
                                     });
-                                    popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                    //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                    View windowContentViewRoot = contentView;
+                                    int windowPos[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot);
+                                    int xOff = 20;// 可以自己调整偏移
+                                    windowPos[0] -= xOff;
+                                    popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos[0], windowPos[1]);
                                 } else {
                                     callNetGetCarBrand();
                                 }
                                 break;
                             case 1:
                                 LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
-                                popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                View contentView0 = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView0, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
                                 popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                                ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                                ListView lv = contentView0.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list = new ArrayList<>();
                                 list.add("私家車");
                                 list.add("客貨車");
@@ -311,7 +317,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot0 = contentView0;
+                                int windowPos0[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot0);
+                                int xOff0 = 20;// 可以自己调整偏移
+                                windowPos0[0] -= xOff0;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos0[0], windowPos0[1]);
                                 break;
                             case 2:
                                 LayoutInflater inflater1 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -346,7 +358,14 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot1 = contentView1;
+                                int windowPos1[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot1);
+                                int xOff1 = 20;// 可以自己调整偏移
+                                windowPos1[0] -= xOff1;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos1[0], windowPos1[1]);
+
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
                                 break;
                             case 3:
                                 LayoutInflater inflater2 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -387,7 +406,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot2 = contentView2;
+                                int windowPos2[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot2);
+                                int xOff2 = 20;// 可以自己调整偏移
+                                windowPos2[0] -= xOff2;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos2[0], windowPos2[1]);
                                 break;
                             case 4:
                                 LayoutInflater inflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -427,7 +452,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot3 = contentView3;
+                                int windowPos3[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot3);
+                                int xOff3 = 20;// 可以自己调整偏移
+                                windowPos3[0] -= xOff3;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos3[0], windowPos3[1]);
                                 break;
                             case 5:
                                 LayoutInflater inflater4 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -462,7 +493,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot4 = contentView4;
+                                int windowPos4[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot4);
+                                int xOff4 = 20;// 可以自己调整偏移
+                                windowPos4[0] -= xOff4;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos4[0], windowPos4[1]);
                                 break;
                         }
                     }
@@ -564,9 +601,10 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             secondCarSellerList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (secondCarSellerList.size() > 0) {
+                    if (mSideShowList.size() > 0) {
                         Intent intent = new Intent(SecondHandCarListActivity.this, SellerDetialActivity.class);
-                        intent.putExtra("sellerId", String.valueOf(secondCarSellerList.get(finalI).getId()));
+                        String.valueOf(secondCarSellerList.get(finalI).getId());
+                        intent.putExtra("sellerId", String.valueOf(mSideShowList.get(finalI).getSellerId()));
                         startActivity(intent);
                     }
                 }

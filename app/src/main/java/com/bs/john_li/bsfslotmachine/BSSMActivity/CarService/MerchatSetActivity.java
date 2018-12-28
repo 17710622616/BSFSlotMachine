@@ -1,13 +1,20 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -19,14 +26,21 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.MerchartSetAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMAdapter.SecondCarOptionListAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarBrandOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.MerchatSetOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.PlaceCarWashOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +51,7 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +68,10 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
     private ProgressDialog dialog;
 
     private int merchatId;
+    //定位都要通过LocationManager这个类实现
+    private LocationManager locationManager;
+    private Location mLocation;
+    private String provider;
     private MerchartSetAdapter merchartSetAdapter;
     private MerchatSetOutModel.MerchatSetModel merchatSetModel;
     private List<MerchatSetOutModel.MerchatSetModel.SellerChargeBean> setList;
@@ -107,6 +126,37 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
         callNetGetMerchatData();
         //
         dialog = new ProgressDialog(this);
+    }
+
+    private void getLocation() {
+        //获取定位服务
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //获取当前可用的位置控制器
+        List<String> list = locationManager.getProviders(true);
+
+        if (list.contains(LocationManager.GPS_PROVIDER)) {
+            //是否为GPS位置控制器
+            provider = LocationManager.GPS_PROVIDER;
+        } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+            //是否为网络位置控制器
+            provider = LocationManager.NETWORK_PROVIDER;
+
+        } else {
+            Toast.makeText(this, "请检查网络或GPS是否打开",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLocation = locationManager.getLastKnownLocation(provider);
     }
 
     private void callNetGetMerchatData() {
@@ -196,7 +246,38 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
                     }
                 break;
             case R.id.merchart_address_ll:
-
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_car_brand_list)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                ListView lv = viewHolder.getView(R.id.dialog_car_brand_lv);
+                                final List<String> list = new ArrayList<String>();
+                                list.add("百度地圖");
+                                list.add("高德地圖");
+                                list.add("谷歌地圖");
+                                lv.setAdapter(new SecondCarOptionListAdapter(MerchatSetActivity.this, list));
+                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        switch (i) {
+                                            case 0:
+                                                BSSMCommonUtils.openBaiduMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                            case 1:
+                                                BSSMCommonUtils.openGaodeMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                            case 2:
+                                                BSSMCommonUtils.openGoogleMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                        }
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
                 break;
             case R.id.submit_ms_order:
                 int id = 0;

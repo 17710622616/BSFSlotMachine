@@ -7,6 +7,8 @@ import com.mob.MobSDK;
 
 import org.xutils.x;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * Created by John on 12/9/2017.
  */
@@ -17,6 +19,7 @@ public class BSSMApplication extends MultiDexApplication {
         super.onCreate();
         // 初始化xutils
         x.Ext.init(this);
+        JPushInterface.init(this);
         // 初始化sharesdk
         //MobSDK.init(this, BSSMConfigtor.SHARESDK_APP_KEY, BSSMConfigtor.SHARESDK_APP_SECRET);
         //CrashHandler crashHandler = CrashHandler.getInstance();

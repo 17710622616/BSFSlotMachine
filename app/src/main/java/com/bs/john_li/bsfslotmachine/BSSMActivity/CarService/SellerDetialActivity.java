@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -69,7 +70,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
     private LinearLayout sellerDetialLL;
 
     // 商家ID
-    private long sellerId;
+    private String sellerId;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
@@ -114,7 +115,6 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
         mTabLayout.addTab(mTabLayout.newTab().setText("傳動"));
         mTabLayout.addTab(mTabLayout.newTab().setText("年份"));
         mTabLayout.addTab(mTabLayout.newTab().setText("價格"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("全部"));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             headView.setHeadHight();
         }
@@ -165,7 +165,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void initData() {
-        sellerId = getIntent().getIntExtra("sellerId", -1);
+        sellerId = getIntent().getStringExtra("sellerId");
         headView.setLeft(this);
         headView.setTitle("商家詳情");
 
@@ -174,7 +174,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
         mRequestSecondCarModel.setCarType(-1);
         mRequestSecondCarModel.setStartPrice(-1);
         mRequestSecondCarModel.setEndPrice(-1);
-        mRequestSecondCarModel.setSellerId((int) sellerId);
+        mRequestSecondCarModel.setSellerId(Integer.parseInt(sellerId));
         mCarBrandModelList = new ArrayList<>();
         mSecondCarList = new ArrayList<>();
         mSmartSecondCarListRefreshAdapter = new SmartSecondCarListRefreshAdapter(this, mSecondCarList, AliyunOSSUtils.initOSS(this));
@@ -252,20 +252,26 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                             popMenu.dismiss();
                                         }
                                     });
-                                    popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                    //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                    View windowContentViewRoot = contentView;
+                                    int windowPos[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot);
+                                    int xOff = 20;// 可以自己调整偏移
+                                    windowPos[0] -= xOff;
+                                    popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos[0], windowPos[1]);
                                 } else {
                                     callNetGetCarBrand();
                                 }
                                 break;
                             case 1:
                                 LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View contentView = inflater.inflate(R.layout.pop_second_car_option_list, null);
-                                popMenu = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
+                                View contentView0 = inflater.inflate(R.layout.pop_second_car_option_list, null);
+                                popMenu = new PopupWindow(contentView0, LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
                                 popMenu.setOutsideTouchable(false);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                                ListView lv = contentView.findViewById(R.id.pop_second_car_option_lv);
+                                ListView lv = contentView0.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list = new ArrayList<>();
                                 list.add("私家車");
                                 list.add("客貨車");
@@ -290,7 +296,13 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot0 = contentView0;
+                                int windowPos0[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot0);
+                                int xOff0 = 20;// 可以自己调整偏移
+                                windowPos0[0] -= xOff0;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos0[0], windowPos0[1]);
                                 break;
                             case 2:
                                 LayoutInflater inflater1 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -325,7 +337,13 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot1 = contentView1;
+                                int windowPos1[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot1);
+                                int xOff1 = 20;// 可以自己调整偏移
+                                windowPos1[0] -= xOff1;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos1[0], windowPos1[1]);
                                 break;
                             case 3:
                                 LayoutInflater inflater2 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -366,7 +384,13 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot2 = contentView2;
+                                int windowPos2[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot2);
+                                int xOff2 = 20;// 可以自己调整偏移
+                                windowPos2[0] -= xOff2;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos2[0], windowPos2[1]);
                                 break;
                             case 4:
                                 LayoutInflater inflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -406,42 +430,13 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                         popMenu.dismiss();
                                     }
                                 });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
-                                break;
-                            case 5:
-                                LayoutInflater inflater4 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View contentView4 = inflater4.inflate(R.layout.pop_second_car_option_list, null);
-                                popMenu = new PopupWindow(contentView4, LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                                popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
-                                //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                                ListView lv4 = contentView4.findViewById(R.id.pop_second_car_option_lv);
-                                final ArrayList<String> list4 = new ArrayList<>();
-                                list4.add("全部");
-                                list4.add("商家");
-                                list4.add("個人");
-                                SecondCarOptionListAdapter adapter4 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list4);
-                                lv4.setAdapter(adapter4);
-                                lv4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        switch (position) {
-                                            case 0:
-                                                mRequestSecondCarModel.setIfperson(0);
-                                                break;
-                                            case 1:
-                                                mRequestSecondCarModel.setIfperson(1);
-                                                break;
-                                            case 2:
-                                                mRequestSecondCarModel.setIfperson(2);
-                                                break;
-                                        }
-                                        mRefreshLayout.autoRefresh();
-                                        popMenu.dismiss();
-                                    }
-                                });
-                                popMenu.showAsDropDown(mTabLayout, 0, 0);
+                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
+
+                                View windowContentViewRoot3 = contentView3;
+                                int windowPos3[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot3);
+                                int xOff3= 20;// 可以自己调整偏移
+                                windowPos3[0] -= xOff3;
+                                popMenu.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos3[0], windowPos3[1]);
                                 break;
                         }
                     }
@@ -554,7 +549,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("id", sellerId);
+            jsonObj.put("id", Integer.parseInt(sellerId));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -29,6 +29,11 @@ import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.Set;
+
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
+
 /**
  * 登錄界面
  * Created by John on 11/9/2017.
@@ -132,7 +137,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     /**
          * 登錄
          */
-    private void doLogin(String username, String pw) {
+    private void doLogin(final String username, String pw) {
         dialog = new ProgressDialog(this);
         dialog.setTitle("提示");
         dialog.setMessage("正在登錄中......");
@@ -159,6 +164,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
                 if (model.getCode().equals("200")) {
                     SPUtils.put(LoginActivity.this, "UserToken", model.getData().toString());
+                    // 註冊極光別名
+                    String alias = "user" + username;
+                    //给极光推送设置标签和别名
+                    JPushInterface.setAlias(LoginActivity.this, alias, tagAliasCallback);
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                     //setResult(BSSMConfigtor.LOGIN_FOR_RESULT);
                     getUserInfo(model.getData().toString());
@@ -187,6 +196,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             }
         });
     }
+
+
+    //极光服务器设置别名是否成功的回调
+    private final TagAliasCallback tagAliasCallback = new TagAliasCallback() {
+        @Override
+        public void gotResult(int code, String alias, Set<String> tagSet) {
+            switch (code) {
+                case 0:
+                    Toast.makeText(LoginActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(LoginActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     /**
      * 獲取用戶信息

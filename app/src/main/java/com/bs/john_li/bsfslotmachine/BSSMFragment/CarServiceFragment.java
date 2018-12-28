@@ -230,7 +230,7 @@ public class CarServiceFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), SellerDetialActivity.class);
-                intent.putExtra("sellerId", mHotSellerList.get(position).getId());
+                intent.putExtra("sellerId", String.valueOf(mHotSellerList.get(position).getId()));
                 startActivity(intent);
             }
         });

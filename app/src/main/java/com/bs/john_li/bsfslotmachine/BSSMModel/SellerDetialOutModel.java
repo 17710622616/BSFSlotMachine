@@ -77,7 +77,7 @@ public class SellerDetialOutModel {
         private int status;
         private String acount;
         private String password;
-        private int longitude;
+        private double longitude;
         private double latitude;
         private String address;
         private String phone;
@@ -190,11 +190,11 @@ public class SellerDetialOutModel {
             this.password = password;
         }
 
-        public int getLongitude() {
+        public double getLongitude() {
             return longitude;
         }
 
-        public void setLongitude(int longitude) {
+        public void setLongitude(double longitude) {
             this.longitude = longitude;
         }
 

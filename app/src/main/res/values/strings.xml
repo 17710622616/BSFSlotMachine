@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">掌泊寶</string>
     <string name="company_name">澳門博軟科技有限公司</string>
@@ -78,4 +79,18 @@
         <!--AIzaSyCphFFTlfQyajGEeEL72K0l50mVJyGc77g-->
         AIzaSyBlPIwqyBxcArm9zudxctVzle5DMb48rn0
     </string>
+
+    <string name="hello">Hello World, JPush!</string>
+    <string name="tag_hint">Tag can be number, alphabet, underscore, Chinese. Use , to split many tags.</string>
+    <string name="alias_hint">Alias can be number, alphabet, underscore, Chinese.</string>
+    <string name="mobilenumber_hint">The phone number can only start with a "+" or a number,other can only contain "-" and Numbers</string>
+    <string name="style_hint">style should be number</string>
+    <string name="error_style_empty">style cannot be empty</string>
+    <string name="error_alias_empty">alias cannot be empty</string>
+    <string name="error_tag_empty">tag cannot be empty</string>
+    <string name="error_tag_gs_empty">Invalid format</string>
+    <string name="mobilenumber_empty_guide">will clear last set phone number</string>
+    <string name="error_network">Failed to init due to network exception.</string>
+    <string name="logining">Running in background. Please see log.</string>
+    <string name="setting_su">Succeed to set</string>
 </resources>
