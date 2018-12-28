@@ -297,44 +297,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.mine_recommend:
                 startActivity(new Intent(getActivity(), ShareActivity.class));
-
-                String fileName = "IMG_5002.PNG";
-                String dirPath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures").getPath();
-                File filesDir = getActivity().getExternalFilesDir(null);
-                //存到本地的绝对路径
-                final String filePath = dirPath + "/" + fileName;
-                File file = new File(filePath);
-                //如果不存在
-                if (!file.exists()) {
-                    File dirFile = new File(dirPath);
-                    if (dirFile.exists()) {
-                        //创建
-                        dirFile.mkdirs();
-                    }
-                    RequestParams entity = new RequestParams("https://test-pic-666.oss-cn-hongkong.aliyuncs.com/" + fileName);
-                    entity.setSaveFilePath(filePath);
-                    x.http().get(entity, new Callback.CommonCallback<File>() {
-                        @Override
-                        public void onSuccess(File result) {
-                            //BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
-                        }
-
-                        @Override
-                        public void onError(Throwable ex, boolean isOnCallback) {
-                        }
-
-                        @Override
-                        public void onCancelled(CancelledException cex) {
-                        }
-
-                        @Override
-                        public void onFinished() {
-                            BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
-                        }
-                    });
-                } else {
-                    BSSMCommonUtils.openShare(getActivity(), "掌泊寶", "http://www.bsmaco.icoc.bz/", "掌泊寶官網", filePath);
-                }
                 break;
             case R.id.mine_opinion:
                 getActivity().startActivity(new Intent(getActivity(), OpinionActivity.class));

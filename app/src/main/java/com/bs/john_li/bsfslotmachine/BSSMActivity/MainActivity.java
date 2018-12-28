@@ -432,6 +432,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
                 m_progressDlg.dismiss();
             }
 
+            @RequiresApi(api = 26)
             @Override
             public void onSuccess(File arg0) {
                 Log.i("tag", "下载成功的时候执行"+Thread.currentThread().getName());
@@ -463,6 +464,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     /**
      * 下載完成關閉進度條
      */
+    @RequiresApi(api = 26)
     private void down() {
         m_progressDlg.dismiss();
         //update();
@@ -475,6 +477,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
      * @param mContext
      * @param fileUri
      */
+    @RequiresApi(api = 26)
     public void openAPKFile(Activity mContext, String fileUri) {
         //DataEmbeddingUtil.dataEmbeddingAPPUpdate(fileUri);
         // 核心是下面几句代码
