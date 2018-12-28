@@ -158,6 +158,8 @@ public class BSSMConfigtor {
     public static final String SUBMIT_OPINION= "feedback/submit?token=";
     // 教程的接口
     public final static String GET_COURSE_WEB = "systemProfile/teach";
+    // 分享的接口
+    public final static String GET_SHARE_WEB = "share/index?token=";
     /*-------------------------------------------------汽車服務-----------------------------------------------------------------------------------------*/
     //商家列表的接口
     public static final String GET_SELLER_LIST= "seller/getSellerList";

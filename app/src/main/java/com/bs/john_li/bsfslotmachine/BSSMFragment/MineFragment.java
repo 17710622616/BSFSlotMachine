@@ -23,6 +23,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.OpinionActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.PersonalSettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ServiceActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ShareActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
@@ -295,6 +296,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.mine_recommend:
+                startActivity(new Intent(getActivity(), ShareActivity.class));
+
                 String fileName = "IMG_5002.PNG";
                 String dirPath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "BSSMPictures").getPath();
                 File filesDir = getActivity().getExternalFilesDir(null);
