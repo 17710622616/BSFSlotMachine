@@ -47,15 +47,12 @@ public class OwnCarListFragment extends LazyLoadFragment {
 
     private List<OwnCarListOutModel.DataBeanX.OwnCarListModel> carModelList;
     private SmartOwnCarListRefreshAdapter mSmartOwnCarListRefreshAdapter;
-    //private CarListAdapter mCarListAdapter;
     // 每頁加載數量
     private int pageSize = 10;
     // 頁數
     private int pageNo = 1;
     // 車輛總數
     private long totolCarCount;
-    // 修改的位置
-    private int updatePosition = 0;
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
         super.onCreateViewLazy(savedInstanceState);
@@ -136,7 +133,6 @@ public class OwnCarListFragment extends LazyLoadFragment {
         });
         mRefreshLayout.autoRefresh();
     }
-
 
     /**
      * 獲取車輛列表

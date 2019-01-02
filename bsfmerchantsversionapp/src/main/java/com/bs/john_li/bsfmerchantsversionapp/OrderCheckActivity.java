@@ -162,7 +162,7 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
                     try {
                         String printDetial = null;
                         if (mSellerOrderDetialModel != null) {
-                            printDetial = "訂單內容\n" + "訂單編號：" + qrcodeReturnModel.getOrderNo()  + "\n套餐名稱：" + mSellerOrderDetialModel.getChargeRemark()+ "\n券      碼：" + qrcodeReturnModel.getCouponCode() + "\n支付金額：" + mSellerOrderDetialModel.getPayAmount() + "\n折扣金額：" + mSellerOrderDetialModel.getMoneyBack() + "\n創建時間：" + BSFCommonUtils.stampToDate(String.valueOf(mSellerOrderDetialModel.getCreateTime()))+ "\n\n\n\n\n";
+                            printDetial = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + mSellerOrderDetialModel.getSellerName() + "\n訂單編號：" + qrcodeReturnModel.getOrderNo()  + "\n套餐名稱：" + mSellerOrderDetialModel.getChargeRemark()+ "\n券      碼：" + qrcodeReturnModel.getCouponCode() + "\n支付金額：" + mSellerOrderDetialModel.getPayAmount() + "\n折扣金額：" + mSellerOrderDetialModel.getMoneyBack() + "\n創建時間：" + BSFCommonUtils.stampToDate(String.valueOf(mSellerOrderDetialModel.getCreateTime()))+ "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t掌泊寶平台"+ "\n\n";
                         } else {
                             printDetial = "訂單內容\n" + "訂單編號：" + qrcodeReturnModel.getOrderNo() + "\n券        碼：" + qrcodeReturnModel.getCouponCode()+ "\n\n\n\n\n";
                         }
