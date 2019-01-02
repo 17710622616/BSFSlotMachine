@@ -77,6 +77,17 @@
                     android:layout_marginTop="5dp"
                     android:layout_below="@id/second_car_detial_name_tv"/>
 
+                <CheckBox
+                    android:id="@+id/second_car_detial_collection_cb"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:button="@null"
+                    android:scaleType="fitXY"
+                    android:background="@drawable/selector_favorite"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="8dp"/>
+
                 <TextView
                     android:id="@+id/second_car_detial_page_view_tv"
                     android:layout_width="wrap_content"
@@ -85,8 +96,9 @@
                     android:textColor="@color/colorDrakGray"
                     android:textSize="13sp"
                     android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_below="@+id/second_car_detial_collection_cb" />
             </RelativeLayout>
 
             <LinearLayout
@@ -187,14 +199,16 @@
                         android:textColor="@color/colorBlack"
                         android:textSize="13sp"
                         android:padding="5dp"/>
+
                     <TextView
                         android:id="@+id/second_car_detial_brand_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="5dp"
                         android:text="品        牌：BMW"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
-                        android:padding="5dp"/>
+                        android:textSize="13sp" />
+
                     <TextView
                         android:id="@+id/second_car_detial_car_style_tv"
                         android:layout_width="match_parent"

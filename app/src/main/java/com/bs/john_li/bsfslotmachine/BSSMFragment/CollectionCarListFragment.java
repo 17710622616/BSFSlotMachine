@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondCarDetailActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OwnCarListOutModel;
@@ -60,9 +61,9 @@ public class CollectionCarListFragment extends LazyLoadFragment {
     }
 
     private void initView() {
-        mRecycleView = (RecyclerView) findViewById(R.id.own_carlist_lv);
-        mRefreshLayout = (RefreshLayout) findViewById(R.id.own_car_list_expand_swipe);
-        noCarLL = (LinearLayout) findViewById(R.id.no_own_car_ll);
+        mRecycleView = (RecyclerView) findViewById(R.id.collect_carlist_lv);
+        mRefreshLayout = (RefreshLayout) findViewById(R.id.collect_car_list_expand_swipe);
+        noCarLL = (LinearLayout) findViewById(R.id.no_collect_car_ll);
 
         mRefreshLayout.setEnableAutoLoadmore(false);//是否启用列表惯性滑动到底部时自动加载更多
         mRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
@@ -125,7 +126,9 @@ public class CollectionCarListFragment extends LazyLoadFragment {
         mSmartOwnCarListRefreshAdapter.setOnItemClickListenr(new SmartOwnCarListRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                Intent intent = new Intent(getActivity(), SecondCarDetailActivity.class);
+                intent.putExtra("seoncdeCarId", String.valueOf(carModelList.get(position).getId()));
+                startActivity(intent);
             }
         });
         mRefreshLayout.autoRefresh();

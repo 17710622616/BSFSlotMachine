@@ -19,13 +19,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
+import com.bs.john_li.bsfslotmachine.BSSMModel.ArticalLikeOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonBOModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.ContentsListModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.HotCarOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SecondCarDetialOutModel;
@@ -67,6 +72,7 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
     private CollapsingAdapter mCollapsingAdapter;
     private NestedScrollView mNestedScrollView;
     private CustomExpandableListView contentsLv;
+    private CheckBox collectionCb;
 
     private String id;
     private List<ImageView> imgList;
@@ -120,10 +126,29 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         insideBodyTv = (TextView) findViewById(R.id.second_car_detial_inside_body_tv);
         testConclusionTv = (TextView) findViewById(R.id.second_car_detial_test_conclusion_tv);
         telTv = (TextView) findViewById(R.id.second_car_detial_tel_tv);
+        collectionCb = (CheckBox) findViewById(R.id.second_car_detial_collection_cb);
+        // 默認取消觸發事件，等待獲取完收藏狀態再開啟
+        //collectionCb.setEnabled(false);
+        collectionCb.setFocusable(true);
+        collectionCb.setFocusableInTouchMode(true);
+        collectionCb.requestFocus();
     }
 
     public void setListener() {
         telTv.setOnClickListener(this);
+
+        collectionCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("")) {
+                    callNetSubmitLike(isChecked);
+                } else {
+                    Toast.makeText(SecondCarDetailActivity.this, R.string.not_login, Toast.LENGTH_LONG);
+                    startActivity(new Intent(SecondCarDetailActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        });
     }
 
     public void initData() {
@@ -134,8 +159,6 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         // toolbar
         setSupportActionBar(articalToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //  設置標題
-        //mCollapsingToolbarLayout.setTitle(mContentsModel.getTitle());
         // 頭部的圖片列表
         imgList = new ArrayList<>();
 
@@ -147,12 +170,12 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
      * 獲取車輛詳情
      */
     private void callNetGetCarDetial() {
-
         RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_DETIAL);
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("id", id);
+            jsonObj.put("token", SPUtils.get(this, "UserToken", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -220,6 +243,16 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         stateRepiarTv.setText(String.valueOf(mSecondCarDetialModel.getStateOfRepiar()));
         insideBodyTv.setText(String.valueOf(mSecondCarDetialModel.getInsideBody()));
         testConclusionTv.setText(String.valueOf(mSecondCarDetialModel.getTestConclusion()));
+        //  設置標題
+        mCollapsingToolbarLayout.setTitle(mSecondCarDetialModel.getCarBrand());
+        int iscollection = mSecondCarDetialModel.getIfCollection();
+        if (mSecondCarDetialModel.getIfCollection() == 1) {
+            collectionCb.setChecked(true);
+        } else {
+            collectionCb.setChecked(false);
+        }
+
+        collectionCb.setEnabled(true);
 
 
         // 如果有圖片則顯示，無則不設置
@@ -263,12 +296,90 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
     }
 
 
+    /**
+     * 点赞及取消点赞
+     * @param isChecked
+     */
+    private void callNetSubmitLike(final boolean isChecked) {
+        RequestParams params = null;
+        if (isChecked) {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.COLLECTION_CAR + SPUtils.get(this, "UserToken", ""));
+        } else {
+            params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.UNCOLLECTION_CAR + SPUtils.get(this, "UserToken", ""));
+        }
+
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("sellerCarId", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonBOModel model = new Gson().fromJson(result.toString(), CommonBOModel.class);
+                if (model.getCode() == 200) {
+                    if (isChecked) {
+                        if (model.isData()) {
+                            Toast.makeText(SecondCarDetailActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SecondCarDetailActivity.this, "收藏失敗", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (model.isData()) {
+                            Toast.makeText(SecondCarDetailActivity.this, "取消收藏成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SecondCarDetailActivity.this, "取消收藏失敗", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    if (isChecked) {
+                        Toast.makeText(SecondCarDetailActivity.this, "收藏失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SecondCarDetailActivity.this, "取消收藏失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    if (isChecked) {
+                        Toast.makeText(SecondCarDetailActivity.this, "收藏超時，請重試！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SecondCarDetailActivity.this, "取消收藏超時，請重試！", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if (isChecked) {
+                        Toast.makeText(SecondCarDetailActivity.this, "收藏失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SecondCarDetailActivity.this, "取消收藏失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
+
         }
         return true;
     }

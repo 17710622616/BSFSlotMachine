@@ -103,6 +103,15 @@ public class SecondCarDetialOutModel {
         private int userId;
         private int ifDelete;
         private int status;
+        private int ifCollection;
+
+        public int getIfCollection() {
+            return ifCollection;
+        }
+
+        public void setIfCollection(int ifCollection) {
+            this.ifCollection = ifCollection;
+        }
 
         public int getId() {
             return id;

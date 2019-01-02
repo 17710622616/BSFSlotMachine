@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.OwnCarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondCarDetailActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOwnCarListRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OwnCarListOutModel;
@@ -128,7 +129,9 @@ public class OwnCarListFragment extends LazyLoadFragment {
         mSmartOwnCarListRefreshAdapter.setOnItemClickListenr(new SmartOwnCarListRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                Intent intent = new Intent(getActivity(), SecondCarDetailActivity.class);
+                intent.putExtra("seoncdeCarId", String.valueOf(carModelList.get(position).getId()));
+                startActivity(intent);
             }
         });
         mRefreshLayout.autoRefresh();

@@ -251,7 +251,7 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
                         .setConvertListener(new ViewConvertListener() {
                             @Override
                             protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                ListView lv = viewHolder.getView(R.id.dialog_car_brand_lv);
+                                ListView lv = viewHolder.getView(R.id.dialog_map_lv);
                                 final List<String> list = new ArrayList<String>();
                                 list.add("百度地圖");
                                 list.add("高德地圖");

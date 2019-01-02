@@ -116,7 +116,7 @@ public class AllCWOrderFragment extends LazyLoadFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), OrderDetialActivity.class);
-                intent.putExtra("orderM", new Gson().toJson(orderList.get(position)));
+                intent.putExtra("orderModel", new Gson().toJson(orderList.get(position)));
                 startActivity(intent);
             }
         });
