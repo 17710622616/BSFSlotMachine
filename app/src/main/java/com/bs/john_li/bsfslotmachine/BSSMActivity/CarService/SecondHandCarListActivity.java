@@ -43,6 +43,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FullyLinearLayoutManager;
 import com.bs.john_li.bsfslotmachine.R;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.google.gson.Gson;
 import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
@@ -205,6 +208,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
         mCarBrandModelList = new ArrayList<>();
         mRequestSecondCarModel = new RequestSecondCarModel();
         mRequestSecondCarModel.setCarGears(-1);
+        mRequestSecondCarModel.setCarBrand("全部");
         mRequestSecondCarModel.setCarType(-1);
         mRequestSecondCarModel.setStartPrice(-1);
         mRequestSecondCarModel.setEndPrice(-1);
@@ -294,6 +298,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv = contentView0.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list = new ArrayList<>();
+                                list.add("全部");
                                 list.add("私家車");
                                 list.add("客貨車");
                                 list.add("貨車");
@@ -312,7 +317,11 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        mRequestSecondCarModel.setType(list.get(position));
+                                        if (position == 0) {
+                                            mRequestSecondCarModel.setType(null);
+                                        } else {
+                                            mRequestSecondCarModel.setType(list.get(position));
+                                        }
                                         mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
@@ -377,6 +386,7 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv2 = contentView2.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list2 = new ArrayList<>();
+                                list2.add("全部");
                                 list2.add("2018");
                                 list2.add("2017");
                                 list2.add("2016");
@@ -401,7 +411,11 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
+                                        if (position == 0) {
+                                            mRequestSecondCarModel.setYear(0);
+                                        } else {
+                                            mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
+                                        }
                                         mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
@@ -416,44 +430,27 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 break;
                             case 4:
                                 LayoutInflater inflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View contentView3 = inflater3.inflate(R.layout.pop_second_car_option_list, null);
-                                popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                View contentView3 = inflater3.inflate(R.layout.dialog_car_choose_money, null);
+                                popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
                                 popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                                ListView lv3 = contentView3.findViewById(R.id.pop_second_car_option_lv);
-                                final ArrayList<String> list3 = new ArrayList<>();
-                                list3.add("0-5W");
-                                list3.add("6-10");
-                                list3.add("11-15");
-                                list3.add("16-20");
-                                list3.add("20-30");
-                                list3.add("30-50");
-                                list3.add("50-100");
-                                list3.add("100以上");
-                                SecondCarOptionListAdapter adapter3 = new SecondCarOptionListAdapter(SecondHandCarListActivity.this, list3);
-                                lv3.setAdapter(adapter3);
-                                lv3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                CrystalRangeSeekbar sb = contentView3.findViewById(R.id.car_choose_sb);
+                                sb.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                                     @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        switch (position) {
-                                            case 0:
-                                                mRequestSecondCarModel.setCarGears(-1);
-                                                break;
-                                            case 1:
-                                                mRequestSecondCarModel.setCarGears(0);
-                                                break;
-                                            case 2:
-                                                mRequestSecondCarModel.setCarGears(1);
-                                                break;
-                                        }
-                                        mRefreshLayout.autoRefresh();
-                                        popMenu.dismiss();
+                                    public void valueChanged(Number minValue, Number maxValue) {
+                                        /*tvMin.setText(String.valueOf(minValue));
+                                        tvMax.setText(String.valueOf(maxValue));*/
                                     }
                                 });
-                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
 
+                                // set final value listener
+                                sb.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+                                    @Override
+                                    public void finalValue(Number minValue, Number maxValue) {
+                                        Log.d("CRS=>", String.valueOf(minValue) + " : " + String.valueOf(maxValue));
+                                    }
+                                });
                                 View windowContentViewRoot3 = contentView3;
                                 int windowPos3[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot3);
                                 int xOff3 = 20;// 可以自己调整偏移
@@ -526,7 +523,12 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             public void onSuccess(String result) {
                 CarBrandOutModel model = new Gson().fromJson(result.toString(), CarBrandOutModel.class);
                 if (model.getCode() == 200) {
+                    CarBrandOutModel.CarBrandModel allModel = new CarBrandOutModel.CarBrandModel();
+                    allModel.setId(-1);
+                    allModel.setName("全部");
+                    allModel.setEngName("All");
                     mCarBrandModelList.addAll(model.getData());
+                    mCarBrandModelList.add(0, allModel);
                 } else if (model.getCode() == 10000){
                     SPUtils.put(SecondHandCarListActivity.this, "UserToken", "");
                     Toast.makeText(SecondHandCarListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
@@ -747,10 +749,13 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("carType", mRequestSecondCarModel.getCarType());
             }
-            if (mRequestSecondCarModel.getCarBrand() != null) {
+            if (!mRequestSecondCarModel.getCarBrand().equals("全部")) {
                 jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
             }
             if (mRequestSecondCarModel.getCarType() != -1) {
+                jsonObj.put("carType", mRequestSecondCarModel.getType());
+            }
+            if (mRequestSecondCarModel.getType() != null) {
                 jsonObj.put("type", mRequestSecondCarModel.getCarType());
             }
             if (mRequestSecondCarModel.getYear() != 0) {

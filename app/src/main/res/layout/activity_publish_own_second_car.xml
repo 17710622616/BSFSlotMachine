@@ -105,7 +105,7 @@
                     android:textColor="@color/colorDrakGray"/>
             </LinearLayout>
 
-            <View
+            <!--<View
                 style="@style/UnderLineTextView"/>
             <LinearLayout
                 android:id="@+id/publish_own_second_car_style_ll"
@@ -129,7 +129,7 @@
                     android:text="請選擇車型"
                     android:textSize="16sp"
                     android:textColor="@color/colorDrakGray"/>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <View
                 style="@style/UnderLineTextView"/>
@@ -367,7 +367,7 @@
                     android:textColor="@color/colorDrakGray"/>
             </LinearLayout>
 
-            <View
+            <!--<View
                 style="@style/UnderLineTextView"/>
             <LinearLayout
                 android:id="@+id/publish_own_second_car_country_ll"
@@ -391,9 +391,9 @@
                     android:text="請填寫出廠國家"
                     android:textSize="16sp"
                     android:textColor="@color/colorDrakGray"/>
-            </LinearLayout>
+            </LinearLayout>-->
 
-            <View
+            <!--<View
                 style="@style/UnderLineTextView"/>
             <LinearLayout
                 android:id="@+id/publish_own_second_car_delivery_time_ll"
@@ -417,8 +417,34 @@
                     android:text="請選擇出廠時間"
                     android:textSize="16sp"
                     android:textColor="@color/colorDrakGray"/>
-            </LinearLayout>
+            </LinearLayout>-->
 
+            <View
+                style="@style/UnderLineTextView"/>
+            <LinearLayout
+                android:id="@+id/publish_own_second_car_remark_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="@color/colorWight">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="備註"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBlack"/>
+
+                <TextView
+                    android:id="@+id/publish_own_second_car_remark_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="請填寫備註"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorDrakGray"/>
+            </LinearLayout>
+<!--
             <View
                 style="@style/UnderLineTextView"/>
             <LinearLayout
@@ -521,7 +547,7 @@
                     android:text="請填寫試駕結論"
                     android:textSize="16sp"
                     android:textColor="@color/colorDrakGray"/>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <View
                 style="@style/UnderLineTextView"/>

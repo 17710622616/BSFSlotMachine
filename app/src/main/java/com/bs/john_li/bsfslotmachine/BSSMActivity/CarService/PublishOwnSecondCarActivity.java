@@ -77,8 +77,8 @@ import java.util.List;
 public class PublishOwnSecondCarActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
     private RadioGroup mCarTypeRg, mGearsRg;
-    private LinearLayout brandLL, seriesLL, styleLL,firstTimeLL,miealgeLL,priceLL,telLL,desLL,colorLL,modelLL,exhaustLL,countryLL,deliveryTimeLL,configInfoLL,repiarStatrLL,insideBodyLL,testConclusionLL;
-    private TextView brandTv,seriesTv,styleTv,firstTimeLLTv,miealgeTv,priceTv,telTv,desTv,colorTv,modelTv,exhaustTv,countryTv,deliveryTimeTv,configInfoTv,repiarStatrTv,insideBodyTv,testConclusionTv;
+    private LinearLayout brandLL, seriesLL, styleLL,firstTimeLL,miealgeLL,priceLL,telLL,desLL,colorLL,modelLL,exhaustLL,countryLL,deliveryTimeLL, remarkLL;
+    private TextView brandTv,seriesTv,styleTv,firstTimeLLTv,miealgeTv,priceTv,telTv,desTv,colorTv,modelTv,exhaustTv,countryTv,deliveryTimeTv, remarkTv;
 
     private SubmitSecondCarModel mSubmitSecondCarModel;
     private List<CarBrandOutModel.CarBrandModel> mCarBrandModelList;
@@ -110,7 +110,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         mCarTypeRg = findViewById(R.id.publish_own_second_car_type_rg);
         brandLL = findViewById(R.id.publish_own_second_car_brand_ll);
         seriesLL = findViewById(R.id.publish_own_second_car_series_ll);
-        styleLL = findViewById(R.id.publish_own_second_car_style_ll);
+        //styleLL = findViewById(R.id.publish_own_second_car_style_ll);
         firstTimeLL = findViewById(R.id.publish_own_second_car_first_time_ll);
         miealgeLL = findViewById(R.id.publish_own_second_car_miealge_ll);
         mGearsRg = findViewById(R.id.publish_own_second_car_gears_rg);
@@ -120,16 +120,13 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         colorLL = findViewById(R.id.publish_own_second_car_color_ll);
         modelLL = findViewById(R.id.publish_own_second_car_model_ll);
         exhaustLL = findViewById(R.id.publish_own_second_car_exhaust_ll);
-        countryLL = findViewById(R.id.publish_own_second_car_country_ll);
-        deliveryTimeLL = findViewById(R.id.publish_own_second_car_delivery_time_ll);
-        configInfoLL = findViewById(R.id.publish_own_second_car_config_info_ll);
-        repiarStatrLL = findViewById(R.id.publish_own_second_car_repiar_statr_ll);
-        insideBodyLL = findViewById(R.id.publish_own_second_car_inside_body_ll);
-        testConclusionLL = findViewById(R.id.publish_own_second_car_test_conclusion_ll);
+        //countryLL = findViewById(R.id.publish_own_second_car_country_ll);
+        //deliveryTimeLL = findViewById(R.id.publish_own_second_car_delivery_time_ll);
+        remarkLL = findViewById(R.id.publish_own_second_car_remark_ll);
 
         brandTv = findViewById(R.id.publish_own_second_car_brand_tv);
         seriesTv = findViewById(R.id.publish_own_second_car_series_tv);
-        styleTv = findViewById(R.id.publish_own_second_car_style_tv);
+        //styleTv = findViewById(R.id.publish_own_second_car_style_tv);
         firstTimeLLTv = findViewById(R.id.publish_own_second_car_first_time_tv);
         miealgeTv = findViewById(R.id.publish_own_second_car_miealge_tv);
         priceTv = findViewById(R.id.publish_own_second_car_price_tv);
@@ -138,12 +135,9 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         colorTv = findViewById(R.id.publish_own_second_car_color_tv);
         modelTv = findViewById(R.id.publish_own_second_car_model_tv);
         exhaustTv = findViewById(R.id.publish_own_second_car_exhaust_tv);
-        countryTv = findViewById(R.id.publish_own_second_car_country_tv);
-        deliveryTimeTv = findViewById(R.id.publish_own_second_car_delivery_time_tv);
-        configInfoTv = findViewById(R.id.publish_own_second_car_config_info_tv);
-        repiarStatrTv = findViewById(R.id.publish_own_second_car_repiar_statr_tv);
-        insideBodyTv = findViewById(R.id.publish_own_second_car_inside_body_tv);
-        testConclusionTv = findViewById(R.id.publish_own_second_car_test_conclusion_tv);
+        //countryTv = findViewById(R.id.publish_own_second_car_country_tv);
+        //deliveryTimeTv = findViewById(R.id.publish_own_second_car_delivery_time_tv);
+        remarkTv = findViewById(R.id.publish_own_second_car_remark_tv);
 
 
         photoGv = findViewById(R.id.publish_forum_gv);
@@ -156,7 +150,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
     public void setListener() {
         brandLL.setOnClickListener(this);
         seriesLL.setOnClickListener(this);
-        styleLL.setOnClickListener(this);
+        //styleLL.setOnClickListener(this);
         firstTimeLL.setOnClickListener(this);
         miealgeLL.setOnClickListener(this);
         priceLL.setOnClickListener(this);
@@ -165,12 +159,9 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         colorLL.setOnClickListener(this);
         modelLL.setOnClickListener(this);
         exhaustLL.setOnClickListener(this);
-        countryLL.setOnClickListener(this);
-        deliveryTimeLL.setOnClickListener(this);
-        configInfoLL.setOnClickListener(this);
-        repiarStatrLL.setOnClickListener(this);
-        insideBodyLL.setOnClickListener(this);
-        testConclusionLL.setOnClickListener(this);
+        //countryLL.setOnClickListener(this);
+        //deliveryTimeLL.setOnClickListener(this);
+        remarkLL.setOnClickListener(this);
 
         mCarTypeRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -296,15 +287,8 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                 dialog.setMessage("提交車輛中......");
                 dialog.setCancelable(false);
                 dialog.show();
-                String s = mSubmitSecondCarModel.getCarType() + "/" + mSubmitSecondCarModel.getCarBrand()
-                        + "/" + mSubmitSecondCarModel.getCarSeries() + "/" + mSubmitSecondCarModel.getType()
-                        + "/" + mSubmitSecondCarModel.getCarStyle() + "/" + mSubmitSecondCarModel.getFirstRegisterationTime()
-                        + "/" + mSubmitSecondCarModel.getDriverMileage() + "/" + mSubmitSecondCarModel.getCarGears()
-                        + "/" + mSubmitSecondCarModel.getCarPrices()  + "/" + mSubmitSecondCarModel.getTel()
-                        + "/" + mSubmitSecondCarModel.getCarDescription()  ;
                 if (mSubmitSecondCarModel.getCarType() != -1 && mSubmitSecondCarModel.getCarBrand() != null
-                        && mSubmitSecondCarModel.getCarSeries() != null && mSubmitSecondCarModel.getType() != null
-                        && mSubmitSecondCarModel.getCarStyle() != null && mSubmitSecondCarModel.getFirstRegisterationTime() != null
+                        && mSubmitSecondCarModel.getCarSeries() != null && mSubmitSecondCarModel.getType() != null && mSubmitSecondCarModel.getFirstRegisterationTime() != null
                         && mSubmitSecondCarModel.getDriverMileage() != null && mSubmitSecondCarModel.getCarGears() != null
                         && mSubmitSecondCarModel.getCarPrices() != null && mSubmitSecondCarModel.getTel() != null
                         && mSubmitSecondCarModel.getCarDescription() != null) {
@@ -369,7 +353,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.publish_own_second_car_style_ll:
+            /*case R.id.publish_own_second_car_style_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -394,7 +378,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
+                break;*/
             case R.id.publish_own_second_car_first_time_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_time_picker)
@@ -505,23 +489,30 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                 break;
             case R.id.publish_own_second_car_des_ll:
                 NiceDialog.init()
-                        .setLayoutId(R.layout.dialog_car_edit)
+                        .setLayoutId(R.layout.dialog_car_brand_list)
                         .setConvertListener(new ViewConvertListener() {
                             @Override
                             protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                final EditText editText = viewHolder.getView(R.id.car_edit);
-                                editText.setHint("請填寫車輛狀態");
-                                BSSMCommonUtils.showKeyboard(editText);
-                                viewHolder.setOnClickListener(R.id.car_edit_submit, new View.OnClickListener() {
+                                ListView lv = viewHolder.getView(R.id.dialog_car_brand_lv);
+                                final List<String> list = new ArrayList<String>();
+                                list.add("全新");
+                                list.add("9.5成新");
+                                list.add("9成新");
+                                list.add("8.5成新");
+                                list.add("8成新");
+                                list.add("7成新");
+                                list.add("6成新");
+                                list.add("5成新");
+                                list.add("4成新");
+                                list.add("3成新");
+                                list.add("3成新以下");
+                                lv.setAdapter(new SecondCarOptionListAdapter(PublishOwnSecondCarActivity.this, list));
+                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
-                                    public void onClick(View view) {
-                                        if (editText.getText().toString().length()> 0) {
-                                            mSubmitSecondCarModel.setCarDescription(editText.getText().toString());
-                                            desTv.setText(mSubmitSecondCarModel.getCarDescription());
-                                            baseNiceDialog.dismiss();
-                                        } else {
-                                            Toast.makeText(PublishOwnSecondCarActivity.this, "請填寫車輛狀態", Toast.LENGTH_LONG).show();
-                                        }
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        mSubmitSecondCarModel.setCarDescription(list.get(i));
+                                        desTv.setText(mSubmitSecondCarModel.getCarDescription());
+                                        baseNiceDialog.dismiss();
                                     }
                                 });
                             }
@@ -625,7 +616,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.publish_own_second_car_country_ll:
+           /* case R.id.publish_own_second_car_country_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -650,8 +641,8 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
-            case R.id.publish_own_second_car_delivery_time_ll:
+                break;*/
+            /*case R.id.publish_own_second_car_delivery_time_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_time_picker)
                         .setConvertListener(new ViewConvertListener() {
@@ -682,8 +673,8 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
-            case R.id.publish_own_second_car_config_info_ll:
+                break;*/
+            case R.id.publish_own_second_car_remark_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -697,10 +688,10 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                                     public void onClick(View view) {
                                         if (editText.getText().toString().length()> 0) {
                                             mSubmitSecondCarModel.setConfigInfo(editText.getText().toString());
-                                            configInfoTv.setText(mSubmitSecondCarModel.getConfigInfo());
+                                            remarkTv.setText(mSubmitSecondCarModel.getConfigInfo());
                                             baseNiceDialog.dismiss();
                                         } else {
-                                            Toast.makeText(PublishOwnSecondCarActivity.this, "請選擇配置信息", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(PublishOwnSecondCarActivity.this, "請選擇備註信息", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
@@ -709,7 +700,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            case R.id.publish_own_second_car_repiar_statr_ll:
+            /*case R.id.publish_own_second_car_repiar_statr_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -735,7 +726,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
                 break;
-            /*case R.id.publish_own_second_car_inside_body_ll:
+            case R.id.publish_own_second_car_inside_body_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
                         .setConvertListener(new ViewConvertListener() {
@@ -761,7 +752,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;*/
+                break;
             case R.id.publish_own_second_car_inside_body_ll:
                 NiceDialog.init()
                         .setLayoutId(R.layout.dialog_car_edit)
@@ -813,7 +804,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
                         })
                         .setShowBottom(true)
                         .show(getSupportFragmentManager());
-                break;
+                break;*/
         }
     }
 
@@ -979,7 +970,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
         params.setAsJsonContent(true);
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put("carNo","MO6593");
+            jsonObj.put("carNo","MX6666");
             jsonObj.put("carType",mSubmitSecondCarModel.getCarType());
             jsonObj.put("carBrand",mSubmitSecondCarModel.getCarBrand());
             jsonObj.put("carSeries",mSubmitSecondCarModel.getCarSeries());
@@ -998,14 +989,11 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
             jsonObj.put("carColor",mSubmitSecondCarModel.getCarColor());
             jsonObj.put("type",mSubmitSecondCarModel.getType());
             jsonObj.put("exhaust",mSubmitSecondCarModel.getExhaust());
-            jsonObj.put("countryOfOrigin",mSubmitSecondCarModel.getCountryOfOrigin());
-            jsonObj.put("deliveryTime",mSubmitSecondCarModel.getDeliveryTime());
+            //jsonObj.put("countryOfOrigin",mSubmitSecondCarModel.getCountryOfOrigin());
+            //jsonObj.put("deliveryTime",mSubmitSecondCarModel.getDeliveryTime());
             jsonObj.put("releaseDate", BSSMCommonUtils.getTimeNoW());
             jsonObj.put("periodValidity", BSSMCommonUtils.getHalfYearTime());
             jsonObj.put("configInfo",mSubmitSecondCarModel.getConfigInfo());
-            jsonObj.put("stateOfRepiar",mSubmitSecondCarModel.getStateOfRepiar());
-            jsonObj.put("insideBody",mSubmitSecondCarModel.getInsideBody());
-            jsonObj.put("testConclusion",mSubmitSecondCarModel.getTestConclusion());
         } catch (JSONException e) {
             e.printStackTrace();
         }

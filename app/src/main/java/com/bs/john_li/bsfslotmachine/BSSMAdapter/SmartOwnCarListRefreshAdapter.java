@@ -34,6 +34,7 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -88,7 +89,10 @@ public class SmartOwnCarListRefreshAdapter extends RecyclerView.Adapter<SmartOwn
         holder.item_second_car_money.setTextSize(20);
         holder.item_second_car_popularity_values.setVisibility(View.VISIBLE);
         holder.item_second_car_popularity_values.setText("人氣值：" + carList.get(position).getPageView());
-        x.image().bind(holder.item_second_car_iv, carList.get(position).getCarImg(), options);
+        List<String> result = Arrays.asList(carList.get(position).getCarImg().split(","));
+        if (result.size() > 0) {
+            x.image().bind(holder.item_second_car_iv, result.get(0), options);
+        }
         holder.itemView.setTag(position);
     }
 

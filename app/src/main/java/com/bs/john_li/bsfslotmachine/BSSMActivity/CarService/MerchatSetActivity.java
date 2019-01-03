@@ -1,6 +1,7 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,9 +12,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +40,7 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.android.gms.appindexing.Thing;
 import com.google.gson.Gson;
 import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
@@ -214,84 +219,11 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
         nameTv.setText(merchatSetModel.getSeller().getSellerName());
         businessHoursTv.setText(merchatSetModel.getSeller().getSellerDes());
         soldTv.setText("已售" + merchatSetModel.getSeller().getOrderCount());
-        addressTv.setText(merchatSetModel.getSeller().getAddress());
+        addressTv.setText("地址：" + merchatSetModel.getSeller().getAddress());
         merchartSetAdapter.refreshListView(setList);
 
         if (setList.size() > 0) {
             merchartSetAdapter.select(0);
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.head_left:
-                finish();
-                break;
-            case R.id.merchart_tel_ll:
-                if (merchatSetModel != null) {
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + merchatSetModel.getSeller().getPhone()));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
-                        }
-                        this.startActivity(intent);
-                    }
-                break;
-            case R.id.merchart_address_ll:
-                NiceDialog.init()
-                        .setLayoutId(R.layout.dialog_car_brand_list)
-                        .setConvertListener(new ViewConvertListener() {
-                            @Override
-                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                ListView lv = viewHolder.getView(R.id.dialog_map_lv);
-                                final List<String> list = new ArrayList<String>();
-                                list.add("百度地圖");
-                                list.add("高德地圖");
-                                list.add("谷歌地圖");
-                                lv.setAdapter(new SecondCarOptionListAdapter(MerchatSetActivity.this, list));
-                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                        switch (i) {
-                                            case 0:
-                                                BSSMCommonUtils.openBaiduMap(MerchatSetActivity.this, 22.203822, 113.546757);
-                                                break;
-                                            case 1:
-                                                BSSMCommonUtils.openGaodeMap(MerchatSetActivity.this, 22.203822, 113.546757);
-                                                break;
-                                            case 2:
-                                                BSSMCommonUtils.openGoogleMap(MerchatSetActivity.this, 22.203822, 113.546757);
-                                                break;
-                                        }
-                                        baseNiceDialog.dismiss();
-                                    }
-                                });
-                            }
-                        })
-                        .setShowBottom(true)
-                        .show(getSupportFragmentManager());
-                break;
-            case R.id.submit_ms_order:
-                int id = 0;
-                for (int i = 0; i< setList.size(); i++) {
-                    if (setList.get(i).isSelected()) {
-                        id = setList.get(i).getId();
-                    }
-                }
-                if (id > 0) {
-                    sunbitMerchartOrder(id);
-                } else {
-                    Toast.makeText(this, "請選擇購買的套餐！", Toast.LENGTH_SHORT).show();
-                }
-                break;
         }
     }
 
@@ -359,5 +291,152 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
 
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.head_left:
+                finish();
+                break;
+            case R.id.merchart_tel_ll:
+                if (merchatSetModel != null) {
+                    startCallPhone(merchatSetModel.getSeller().getPhone()
+                    );
+                }
+                break;
+            case R.id.merchart_address_ll:
+                NiceDialog.init()
+                        .setLayoutId(R.layout.dialog_map_list)
+                        .setConvertListener(new ViewConvertListener() {
+                            @Override
+                            protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                ListView lv = viewHolder.getView(R.id.dialog_map_lv);
+                                final List<String> list = new ArrayList<String>();
+                                list.add("百度地圖");
+                                list.add("高德地圖");
+                                list.add("谷歌地圖");
+                                lv.setAdapter(new SecondCarOptionListAdapter(MerchatSetActivity.this, list));
+                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        switch (i) {
+                                            case 0:
+                                                BSSMCommonUtils.openBaiduMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                            case 1:
+                                                BSSMCommonUtils.openGaodeMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                            case 2:
+                                                BSSMCommonUtils.openGoogleMap(MerchatSetActivity.this, 22.203822, 113.546757);
+                                                break;
+                                        }
+                                        baseNiceDialog.dismiss();
+                                    }
+                                });
+                            }
+                        })
+                        .setShowBottom(true)
+                        .show(getSupportFragmentManager());
+                break;
+            case R.id.submit_ms_order:
+                int id = 0;
+                for (int i = 0; i< setList.size(); i++) {
+                    if (setList.get(i).isSelected()) {
+                        id = setList.get(i).getId();
+                    }
+                }
+                if (id > 0) {
+                    sunbitMerchartOrder(id);
+                } else {
+                    Toast.makeText(this, "請選擇購買的套餐！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private String phoneNumber;
+    /**
+     * 打电话
+     *
+     * @param phoneNumber
+     */
+    protected void startCallPhone(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        //判断Android版本是否大于23
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+
+            if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                return;
+            } else {
+                callPhone(phoneNumber);
+            }
+        } else {
+            callPhone(phoneNumber);
+            // 检查是否获得了权限（Android6.0运行时权限）
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                // 没有获得授权，申请授权
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) this,
+                        Manifest.permission.CALL_PHONE)) {
+                    // 返回值：
+//                          如果app之前请求过该权限,被用户拒绝, 这个方法就会返回true.
+//                          如果用户之前拒绝权限的时候勾选了对话框中”Don’t ask again”的选项,那么这个方法会返回false.
+//                          如果设备策略禁止应用拥有这条权限, 这个方法也返回false.
+                    // 弹窗需要解释为何需要该权限，再次请求授权
+                    Toast.makeText(this, "您未授權，請先授權！", Toast.LENGTH_LONG).show();
+
+                    // 帮跳转到该应用的设置界面，让用户手动授权
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    // 不需要解释为何需要该权限，直接请求授权
+                    ActivityCompat.requestPermissions((Activity) this,
+                            new String[]{Manifest.permission.CALL_PHONE}, 1);
+                }
+            } else {
+                // 已经获得授权，可以打电话
+                callPhone(phoneNumber);
+            }
+        }
+
+    }
+
+    private void callPhone(String phoneNumber) {
+        // 拨号：激活系统的拨号组件 -- 直接拨打电话
+        //Intent intent = new Intent(); // 意图对象：动作 + 数据
+        //intent.setAction(Intent.ACTION_CALL); // 设置动作
+        //Uri data = Uri.parse("tel:" + phoneNumber); // 设置数据
+        //intent.setData(data);
+        //startActivity(intent); // 激活Activity组件
+
+
+//打开拨号界面，填充输入手机号码，让用户自主的选择
+        Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+phoneNumber));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    // 处理权限申请的回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 授权成功，继续打电话
+                    callPhone(this.phoneNumber);
+                } else {
+                    // 授权失败！
+                    Toast.makeText(this, "授权失败！", Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
+
     }
 }

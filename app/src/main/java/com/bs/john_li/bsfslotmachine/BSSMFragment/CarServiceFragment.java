@@ -83,7 +83,7 @@ public class CarServiceFragment extends BaseFragment {
     private Location mLocation;
     private String provider;
     // 每頁加載數量
-    private int pageSize = 10;
+    private int pageSize = 5;
     // 頁數
     private int pageNo = 1;
     // 車輛總數

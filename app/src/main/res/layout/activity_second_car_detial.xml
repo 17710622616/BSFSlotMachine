@@ -118,23 +118,23 @@
                         android:layout_height="wrap_content"
                         android:text="發佈日期：2018-11-15"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
-                    <TextView
+                    <!--<TextView
                         android:id="@+id/second_car_detial_country_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="出  廠  國：德國"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
-                        android:padding="5dp"/>
+                        android:textSize="15sp"
+                        android:padding="5dp"/>-->
                     <TextView
                         android:id="@+id/second_car_detial_car_series_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="車        系：3 Series"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_car_no_tv"
@@ -142,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:text="車        牌：ML----"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_type_tv"
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:text="汽車類型：中型車"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_color_tv"
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:text="顏        色：紅色"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_gears_tv"
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:text="排        擋：自動"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_first_time_tv"
@@ -174,7 +174,7 @@
                         android:layout_height="wrap_content"
                         android:text="落地時間：2018-11-15"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                 </LinearLayout>
 
@@ -189,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:text="編        號：100"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_period_validity_tv"
@@ -197,7 +197,7 @@
                         android:layout_height="wrap_content"
                         android:text="有  效  期：2018-11-15"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
 
                     <TextView
@@ -207,7 +207,7 @@
                         android:padding="5dp"
                         android:text="品        牌：BMW"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/second_car_detial_car_style_tv"
@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:text="車        型：320i(E90)"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_driver_mileage_tv"
@@ -223,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:text="行        程：39000"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                     <TextView
                         android:id="@+id/second_car_detial_exhaust_tv"
@@ -231,23 +231,23 @@
                         android:layout_height="wrap_content"
                         android:text="排         量：2000"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
-                    <TextView
+                   <!-- <TextView
                         android:id="@+id/second_car_detial_release_date_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="出廠時間：2018-11-15"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
-                        android:padding="5dp"/>
+                        android:textSize="15sp"
+                        android:padding="5dp"/>-->
                     <TextView
                         android:id="@+id/second_car_detial_dscription_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="汽車狀況：九成新"
                         android:textColor="@color/colorBlack"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:padding="5dp"/>
                 </LinearLayout>
             </LinearLayout>
@@ -255,69 +255,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="配置信息"
+                android:text="備註"
                 android:textColor="@color/colorBlack"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:layout_marginRight="5dp"
                 android:background="@color/colorWight"/>
             <TextView
-                android:id="@+id/second_car_detial_config_info_tv"
+                android:id="@+id/second_car_detial_remark_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="無"
                 android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="維修狀況"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:id="@+id/second_car_detial_state_repiar_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="無"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="車身內部"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:id="@+id/second_car_detial_inside_body_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="無"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="試駕結論"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
-                android:layout_marginRight="5dp"
-                android:background="@color/colorWight"/>
-            <TextView
-                android:id="@+id/second_car_detial_test_conclusion_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="無"
-                android:textColor="@color/colorBlack"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:layout_marginRight="5dp"
                 android:background="@color/colorWight"/>
 
@@ -327,7 +276,7 @@
                 android:layout_height="wrap_content"
                 android:text="電話咨詢"
                 android:textColor="@color/colorWight"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:gravity="center"
                 android:layout_margin="5dp"
                 android:padding="8dp"

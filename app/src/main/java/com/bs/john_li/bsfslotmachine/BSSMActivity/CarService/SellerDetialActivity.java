@@ -1,15 +1,18 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,7 +75,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
     // 商家ID
     private String sellerId;
     // 每頁加載數量
-    private int pageSize = 10;
+    private int pageSize = 5;
     // 頁數
     private int pageNo = 1;
     // 車輛總數
@@ -171,6 +174,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
 
         mRequestSecondCarModel = new RequestSecondCarModel();
         mRequestSecondCarModel.setCarGears(-1);
+        mRequestSecondCarModel.setCarBrand("全部");
         mRequestSecondCarModel.setCarType(-1);
         mRequestSecondCarModel.setStartPrice(-1);
         mRequestSecondCarModel.setEndPrice(-1);
@@ -247,7 +251,11 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
+                                            if (position == 0) {
+                                                mRequestSecondCarModel.setCarBrand(null);
+                                            } else {
+                                                mRequestSecondCarModel.setCarBrand(mCarBrandModelList.get(position).getName());
+                                            }
                                             mRefreshLayout.autoRefresh();
                                             popMenu.dismiss();
                                         }
@@ -273,6 +281,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv = contentView0.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list = new ArrayList<>();
+                                list.add("全部");
                                 list.add("私家車");
                                 list.add("客貨車");
                                 list.add("貨車");
@@ -291,7 +300,11 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        mRequestSecondCarModel.setType(list.get(position));
+                                        if (position == 0) {
+                                            mRequestSecondCarModel.setType(null);
+                                        } else {
+                                            mRequestSecondCarModel.setType(list.get(position));
+                                        }
                                         mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
@@ -355,6 +368,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv2 = contentView2.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list2 = new ArrayList<>();
+                                list2.add("全部");
                                 list2.add("2018");
                                 list2.add("2017");
                                 list2.add("2016");
@@ -379,7 +393,11 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
+                                        if (position == 0) {
+                                            mRequestSecondCarModel.setYear(0);
+                                        } else {
+                                            mRequestSecondCarModel.setYear(Integer.parseInt(list2.get(position)));
+                                        }
                                         mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
@@ -402,6 +420,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 ListView lv3 = contentView3.findViewById(R.id.pop_second_car_option_lv);
                                 final ArrayList<String> list3 = new ArrayList<>();
+                                list3.add("全部");
                                 list3.add("0-5W");
                                 list3.add("6-10");
                                 list3.add("11-15");
@@ -469,15 +488,15 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
             jsonObj.put("pageSize", pageSize);
             jsonObj.put("pageNo", pageNo);
             if (mRequestSecondCarModel.getSellerId() != -1) {
-                jsonObj.put("sellerid", mRequestSecondCarModel.getSellerId());
+                jsonObj.put("sellerId", mRequestSecondCarModel.getSellerId());
             }
-            if (mRequestSecondCarModel.getCarBrand() != null) {
+            if (!mRequestSecondCarModel.getCarBrand().equals("全部")) {
                 jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
             }
             if (mRequestSecondCarModel.getCarType() != -1) {
-                jsonObj.put("carType", mRequestSecondCarModel.getCarType());
+                jsonObj.put("carType", mRequestSecondCarModel.getType());
             }
-            if (mRequestSecondCarModel.getCarType() != -1) {
+            if (mRequestSecondCarModel.getType() != null) {
                 jsonObj.put("type", mRequestSecondCarModel.getCarType());
             }
             if (mRequestSecondCarModel.getYear() != 0) {
@@ -609,7 +628,12 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
             public void onSuccess(String result) {
                 CarBrandOutModel model = new Gson().fromJson(result.toString(), CarBrandOutModel.class);
                 if (model.getCode() == 200) {
+                    CarBrandOutModel.CarBrandModel allModel = new CarBrandOutModel.CarBrandModel();
+                    allModel.setId(-1);
+                    allModel.setName("全部");
+                    allModel.setEngName("All");
                     mCarBrandModelList.addAll(model.getData());
+                    mCarBrandModelList.add(0, allModel);
                 } else if (model.getCode() == 10000){
                     SPUtils.put(SellerDetialActivity.this, "UserToken", "");
                     Toast.makeText(SellerDetialActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
@@ -649,21 +673,94 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.merchart_tel_ll:
                 if (mSellerDetialModel != null) {
-                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mSellerDetialModel.getPhone()));
-                    intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
-                    this.startActivity(intent1);
+                    startCallPhone(mSellerDetialModel.getPhone());
                 }
                 break;
         }
+    }
+
+    private String phoneNumber;
+    /**
+     * 打电话
+     *
+     * @param phoneNumber
+     */
+    protected void startCallPhone(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        //判断Android版本是否大于23
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+
+            if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                return;
+            } else {
+                callPhone(phoneNumber);
+            }
+        } else {
+            callPhone(phoneNumber);
+            // 检查是否获得了权限（Android6.0运行时权限）
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                // 没有获得授权，申请授权
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) this,
+                        Manifest.permission.CALL_PHONE)) {
+                    // 返回值：
+//                          如果app之前请求过该权限,被用户拒绝, 这个方法就会返回true.
+//                          如果用户之前拒绝权限的时候勾选了对话框中”Don’t ask again”的选项,那么这个方法会返回false.
+//                          如果设备策略禁止应用拥有这条权限, 这个方法也返回false.
+                    // 弹窗需要解释为何需要该权限，再次请求授权
+                    Toast.makeText(this, "您未授權，請先授權！", Toast.LENGTH_LONG).show();
+
+                    // 帮跳转到该应用的设置界面，让用户手动授权
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    // 不需要解释为何需要该权限，直接请求授权
+                    ActivityCompat.requestPermissions((Activity) this,
+                            new String[]{Manifest.permission.CALL_PHONE}, 1);
+                }
+            } else {
+                // 已经获得授权，可以打电话
+                callPhone(phoneNumber);
+            }
+        }
+
+    }
+
+    private void callPhone(String phoneNumber) {
+        // 拨号：激活系统的拨号组件 -- 直接拨打电话
+        //Intent intent = new Intent(); // 意图对象：动作 + 数据
+        //intent.setAction(Intent.ACTION_CALL); // 设置动作
+        //Uri data = Uri.parse("tel:" + phoneNumber); // 设置数据
+        //intent.setData(data);
+        //startActivity(intent); // 激活Activity组件
+
+
+//打开拨号界面，填充输入手机号码，让用户自主的选择
+        Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+phoneNumber));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    // 处理权限申请的回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 授权成功，继续打电话
+                    callPhone(this.phoneNumber);
+                } else {
+                    // 授权失败！
+                    Toast.makeText(this, "授权失败！", Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
+
     }
 }

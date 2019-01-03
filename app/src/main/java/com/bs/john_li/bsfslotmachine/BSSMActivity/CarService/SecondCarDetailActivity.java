@@ -1,16 +1,19 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.CarService;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -63,8 +66,8 @@ import java.util.List;
  */
 
 public class SecondCarDetailActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView nameTv, priceTv, pageViewTv, publishTimeTv, countryTv, seriesTv, noTv, typeTv, colorTv, gearsTv, firstTimeTv, idTv;
-    private TextView periodValidityTv, brandTv, styleTv, mileageTv, exhaustTv, releaseDateTv, dscriptionTv, configInfoTv, stateRepiarTv, insideBodyTv, testConclusionTv, telTv;
+    private TextView nameTv, priceTv, pageViewTv, publishTimeTv, seriesTv, noTv, typeTv, colorTv, gearsTv, firstTimeTv, idTv;
+    private TextView periodValidityTv, brandTv, styleTv, mileageTv, exhaustTv, dscriptionTv, remarkTv, telTv;
     private AppBarLayout appbar;
     private Toolbar articalToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -78,6 +81,8 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
     private List<ImageView> imgList;
     private SecondCarDetialOutModel.SecondCarDetialModel mSecondCarDetialModel;
     //private ImageView mSubmitDialogIv;
+    // 是否是第一次初始化點讚狀態
+    private boolean isInitIsLikeStatus = false;
     private OSSClient oss;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.img_loading_list).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
@@ -106,7 +111,6 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         priceTv = (TextView) findViewById(R.id.second_car_detial_price_tv);
         pageViewTv = (TextView) findViewById(R.id.second_car_detial_page_view_tv);
         publishTimeTv = (TextView) findViewById(R.id.second_car_detial_publish_time_tv);
-        countryTv = (TextView) findViewById(R.id.second_car_detial_country_tv);
         seriesTv = (TextView) findViewById(R.id.second_car_detial_car_series_tv);
         noTv = (TextView) findViewById(R.id.second_car_detial_car_no_tv);
         typeTv = (TextView) findViewById(R.id.second_car_detial_type_tv);
@@ -119,16 +123,12 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         styleTv = (TextView) findViewById(R.id.second_car_detial_car_style_tv);
         mileageTv = (TextView) findViewById(R.id.second_car_detial_driver_mileage_tv);
         exhaustTv = (TextView) findViewById(R.id.second_car_detial_exhaust_tv);
-        releaseDateTv = (TextView) findViewById(R.id.second_car_detial_release_date_tv);
         dscriptionTv = (TextView) findViewById(R.id.second_car_detial_dscription_tv);
-        configInfoTv = (TextView) findViewById(R.id.second_car_detial_config_info_tv);
-        stateRepiarTv = (TextView) findViewById(R.id.second_car_detial_state_repiar_tv);
-        insideBodyTv = (TextView) findViewById(R.id.second_car_detial_inside_body_tv);
-        testConclusionTv = (TextView) findViewById(R.id.second_car_detial_test_conclusion_tv);
+        remarkTv = (TextView) findViewById(R.id.second_car_detial_remark_tv);
         telTv = (TextView) findViewById(R.id.second_car_detial_tel_tv);
         collectionCb = (CheckBox) findViewById(R.id.second_car_detial_collection_cb);
         // 默認取消觸發事件，等待獲取完收藏狀態再開啟
-        //collectionCb.setEnabled(false);
+        collectionCb.setEnabled(false);
         collectionCb.setFocusable(true);
         collectionCb.setFocusableInTouchMode(true);
         collectionCb.requestFocus();
@@ -140,12 +140,16 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         collectionCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("")) {
-                    callNetSubmitLike(isChecked);
-                } else {
-                    Toast.makeText(SecondCarDetailActivity.this, R.string.not_login, Toast.LENGTH_LONG);
-                    startActivity(new Intent(SecondCarDetailActivity.this, LoginActivity.class));
-                    finish();
+                if (isInitIsLikeStatus) {   // 當是第一次點讚時取消點讚操作
+                    isInitIsLikeStatus = false;
+                } else {    // 當不是第一次點讚操作時判定為點讚或取消點讚
+                    if (!String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("null") && !String.valueOf(SPUtils.get(SecondCarDetailActivity.this, "UserToken", "")).equals("")) {
+                        callNetSubmitLike(isChecked);
+                    } else {
+                        Toast.makeText(SecondCarDetailActivity.this, R.string.not_login, Toast.LENGTH_LONG);
+                        startActivity(new Intent(SecondCarDetailActivity.this, LoginActivity.class));
+                        finish();
+                    }
                 }
             }
         });
@@ -220,39 +224,38 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
     }
 
     private void refreshUI() {
-        nameTv.setText(mSecondCarDetialModel.getCarBrand() + " " + mSecondCarDetialModel.getCarSeries() + " " + mSecondCarDetialModel.getCarStyle());
+        nameTv.setText(mSecondCarDetialModel.getCarBrand() + " " + mSecondCarDetialModel.getCarSeries());
         priceTv.setText(String.valueOf(mSecondCarDetialModel.getCarPrices()) + "萬");
         pageViewTv.setText("瀏覽量：" + String.valueOf(mSecondCarDetialModel.getPageView()));
         publishTimeTv.setText("發佈日期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
-        countryTv.setText("出  廠  國：" + String.valueOf(mSecondCarDetialModel.getCountryOfOrigin()));
         seriesTv.setText("車        系：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         noTv.setText("車        牌：" + String.valueOf(mSecondCarDetialModel.getCarNo()));
         typeTv.setText("汽車類型：" + String.valueOf(mSecondCarDetialModel.getType()));
         colorTv.setText("顏        色：" + String.valueOf(mSecondCarDetialModel.getCarColor()));
-        gearsTv.setText("排        擋：" + String.valueOf(mSecondCarDetialModel.getCarGears()));
+        if (mSecondCarDetialModel.getCarGears() == 0) {
+            gearsTv.setText("排        擋：手動擋");
+        } else {
+            gearsTv.setText("排        擋：自動擋");
+        }
         firstTimeTv.setText("落地時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
         idTv.setText("編        號：" + String.valueOf(mSecondCarDetialModel.getId()));
         periodValidityTv.setText("有  效  期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getPeriodValidity())));
         brandTv.setText("品        牌：" + String.valueOf(mSecondCarDetialModel.getCarBrand()));
-        styleTv.setText("車        型：" + String.valueOf(mSecondCarDetialModel.getCarStyle()));
+        styleTv.setText("車        型：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         mileageTv.setText("行         程：" + String.valueOf(mSecondCarDetialModel.getDriverMileage()) + "萬公里");
         exhaustTv.setText("排         量：" + String.valueOf(mSecondCarDetialModel.getCarSeries()) + "C.C.");
-        releaseDateTv.setText("出廠時間：" + String.valueOf(BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getReleaseDate()))));
         dscriptionTv.setText("汽車狀況：" + String.valueOf(mSecondCarDetialModel.getCarDescription()));
-        configInfoTv.setText(String.valueOf(mSecondCarDetialModel.getConfigInfo()));
-        stateRepiarTv.setText(String.valueOf(mSecondCarDetialModel.getStateOfRepiar()));
-        insideBodyTv.setText(String.valueOf(mSecondCarDetialModel.getInsideBody()));
-        testConclusionTv.setText(String.valueOf(mSecondCarDetialModel.getTestConclusion()));
+        remarkTv.setText(String.valueOf(mSecondCarDetialModel.getConfigInfo()) + "," + String.valueOf(mSecondCarDetialModel.getStateOfRepiar()) + "," + String.valueOf(mSecondCarDetialModel.getInsideBody()) + "," + String.valueOf(mSecondCarDetialModel.getTestConclusion()));
         //  設置標題
         mCollapsingToolbarLayout.setTitle(mSecondCarDetialModel.getCarBrand());
-        int iscollection = mSecondCarDetialModel.getIfCollection();
         if (mSecondCarDetialModel.getIfCollection() == 1) {
+            isInitIsLikeStatus = true;
             collectionCb.setChecked(true);
         } else {
             collectionCb.setChecked(false);
         }
-
         collectionCb.setEnabled(true);
+
 
 
         // 如果有圖片則顯示，無則不設置
@@ -389,21 +392,94 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         switch (view.getId()) {
             case R.id.second_car_detial_tel_tv:
                 if (mSecondCarDetialModel != null) {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mSecondCarDetialModel.getTel()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
-                    this.startActivity(intent);
+                    startCallPhone(mSecondCarDetialModel.getTel());
                 }
                 break;
         }
+    }
+
+    private String phoneNumber;
+    /**
+     * 打电话
+     *
+     * @param phoneNumber
+     */
+    protected void startCallPhone(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        //判断Android版本是否大于23
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+
+            if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                return;
+            } else {
+                callPhone(phoneNumber);
+            }
+        } else {
+            callPhone(phoneNumber);
+            // 检查是否获得了权限（Android6.0运行时权限）
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                // 没有获得授权，申请授权
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) this,
+                        Manifest.permission.CALL_PHONE)) {
+                    // 返回值：
+//                          如果app之前请求过该权限,被用户拒绝, 这个方法就会返回true.
+//                          如果用户之前拒绝权限的时候勾选了对话框中”Don’t ask again”的选项,那么这个方法会返回false.
+//                          如果设备策略禁止应用拥有这条权限, 这个方法也返回false.
+                    // 弹窗需要解释为何需要该权限，再次请求授权
+                    Toast.makeText(this, "您未授權，請先授權！", Toast.LENGTH_LONG).show();
+
+                    // 帮跳转到该应用的设置界面，让用户手动授权
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    // 不需要解释为何需要该权限，直接请求授权
+                    ActivityCompat.requestPermissions((Activity) this,
+                            new String[]{Manifest.permission.CALL_PHONE}, 1);
+                }
+            } else {
+                // 已经获得授权，可以打电话
+                callPhone(phoneNumber);
+            }
+        }
+
+    }
+
+    private void callPhone(String phoneNumber) {
+        // 拨号：激活系统的拨号组件 -- 直接拨打电话
+        //Intent intent = new Intent(); // 意图对象：动作 + 数据
+        //intent.setAction(Intent.ACTION_CALL); // 设置动作
+        //Uri data = Uri.parse("tel:" + phoneNumber); // 设置数据
+        //intent.setData(data);
+        //startActivity(intent); // 激活Activity组件
+
+
+//打开拨号界面，填充输入手机号码，让用户自主的选择
+        Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+phoneNumber));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    // 处理权限申请的回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 授权成功，继续打电话
+                    callPhone(this.phoneNumber);
+                } else {
+                    // 授权失败！
+                    Toast.makeText(this, "授权失败！", Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
+
     }
 }

@@ -57,6 +57,6 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <include layout="@layout/layout_go_parking" />
+        <include layout="@layout/layout_go_parking"/>
     </FrameLayout>
 </LinearLayout>
