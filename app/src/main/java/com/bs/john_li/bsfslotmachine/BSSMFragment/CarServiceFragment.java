@@ -11,26 +11,22 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarPartsSetListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondHandCarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SellerDetialActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarServiceAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartHotSellerRefreshAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CarWashMerchantOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.HotSellerOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SideShowModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
@@ -40,7 +36,6 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FullyLinearLayoutManager;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
-import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollListView;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -169,7 +164,7 @@ public class CarServiceFragment extends BaseFragment {
                         getActivity().startActivity(new Intent(getActivity(), SecondHandCarListActivity.class));
                         break;
                     case 2:
-                        Toast.makeText(getActivity(), "暫未開放，敬請期待！", Toast.LENGTH_SHORT).show();
+                        getActivity().startActivity(new Intent(getActivity(), CarPartsSetListActivity.class));
                         break;
                     case 3:
                         getActivity().startActivity(new Intent(getActivity(), CarWashOrderListActivity.class));

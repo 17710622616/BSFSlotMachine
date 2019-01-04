@@ -5,9 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWight"
-    android:paddingLeft="20dp">
+    android:layout_margin="10dp">
     <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
         android:id="@+id/car_choose_sb"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:min_value="0"
+        app:max_value="1000"
+        app:steps="10"
+        app:left_thumb_image="@mipmap/seekbar_parking1"
+        app:right_thumb_image="@mipmap/seekbar_parking1"
+        app:left_thumb_color_pressed="@color/colorPrimary"
+        app:right_thumb_color_pressed="@color/colorPrimary"
+        app:bar_color="@color/colorPrimary"
+        app:bar_highlight_color="@color/colorPrimary"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/car_choose_min_money"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0萬"
+            android:textColor="@color/colorPrimary"/>
+        <TextView
+            android:id="@+id/car_choose_max_money"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="1000萬"
+            android:textColor="@color/colorPrimary"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/car_choose_money_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="確定"
+        android:textSize="18sp"
+        android:textColor="@color/colorWight"
+        android:gravity="center"
+        android:padding="5dp"
+        android:background="@drawable/shape_btn_bg"/>
 </LinearLayout>

@@ -203,4 +203,8 @@ public class BSSMConfigtor {
     public static final String GET_CAR_DETIAL = "sellerCar/carDetial";
     //獲取商家詳情的接口
     public static final String GET_SELLER_DETIAL = "seller/sellerDetial";
+    //獲取商家汽車零件列表的接口
+    public static final String GET_SELLER_PARTS = "sellerParts/partslList";
+    //獲取商家汽車零件套餐詳情的接口
+    public static final String GET_PARTS_SET_DETIAL = "sellerParts/partsDetial";
 }

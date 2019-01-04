@@ -40,6 +40,9 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.FullyLinearLayoutManager;
 import com.bs.john_li.bsfslotmachine.R;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -418,38 +421,34 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 popMenu.setFocusable(true);
                                 popMenu.setOutsideTouchable(false);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
-                                ListView lv3 = contentView3.findViewById(R.id.pop_second_car_option_lv);
-                                final ArrayList<String> list3 = new ArrayList<>();
-                                list3.add("全部");
-                                list3.add("0-5W");
-                                list3.add("6-10");
-                                list3.add("11-15");
-                                list3.add("16-20");
-                                list3.add("20-30");
-                                list3.add("30-50");
-                                list3.add("50-100");
-                                list3.add("100以上");
-                                SecondCarOptionListAdapter adapter3 = new SecondCarOptionListAdapter(SellerDetialActivity.this, list3);
-                                lv3.setAdapter(adapter3);
-                                lv3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                CrystalRangeSeekbar sb = contentView3.findViewById(R.id.car_choose_sb);
+                                final TextView minTv = contentView3.findViewById(R.id.car_choose_min_money);
+                                final TextView maxTv = contentView3.findViewById(R.id.car_choose_max_money);
+                                TextView submitTv = contentView3.findViewById(R.id.car_choose_money_submit);
+                                sb.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                                     @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        switch (position) {
-                                            case 0:
-                                                mRequestSecondCarModel.setCarGears(-1);
-                                                break;
-                                            case 1:
-                                                mRequestSecondCarModel.setCarGears(0);
-                                                break;
-                                            case 2:
-                                                mRequestSecondCarModel.setCarGears(1);
-                                                break;
-                                        }
+                                    public void valueChanged(Number minValue, Number maxValue) {
+                                        minTv.setText(String.valueOf(minValue) + "萬");
+                                        maxTv.setText(String.valueOf(maxValue) + "萬");
+                                    }
+                                });
+
+                                // set final value listener
+                                sb.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+                                    @Override
+                                    public void finalValue(Number minValue, Number maxValue) {
+                                        mRequestSecondCarModel.setStartPrice(minValue.doubleValue());
+                                        mRequestSecondCarModel.setEndPrice(maxValue.doubleValue());
+                                    }
+                                });
+
+                                submitTv.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
                                         mRefreshLayout.autoRefresh();
                                         popMenu.dismiss();
                                     }
                                 });
-                                //popMenu.showAsDropDown(mTabLayout, 0, 0);
 
                                 View windowContentViewRoot3 = contentView3;
                                 int windowPos3[] = BSSMCommonUtils.calculatePopWindowPos(view, windowContentViewRoot3);

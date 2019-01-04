@@ -436,11 +436,14 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 CrystalRangeSeekbar sb = contentView3.findViewById(R.id.car_choose_sb);
+                                final TextView minTv = contentView3.findViewById(R.id.car_choose_min_money);
+                                final TextView maxTv = contentView3.findViewById(R.id.car_choose_max_money);
+                                TextView submitTv = contentView3.findViewById(R.id.car_choose_money_submit);
                                 sb.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
                                     @Override
                                     public void valueChanged(Number minValue, Number maxValue) {
-                                        /*tvMin.setText(String.valueOf(minValue));
-                                        tvMax.setText(String.valueOf(maxValue));*/
+                                        minTv.setText(String.valueOf(minValue) + "萬");
+                                        maxTv.setText(String.valueOf(maxValue) + "萬");
                                     }
                                 });
 
@@ -448,7 +451,16 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                                 sb.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
                                     @Override
                                     public void finalValue(Number minValue, Number maxValue) {
-                                        Log.d("CRS=>", String.valueOf(minValue) + " : " + String.valueOf(maxValue));
+                                        mRequestSecondCarModel.setStartPrice(minValue.doubleValue());
+                                        mRequestSecondCarModel.setEndPrice(maxValue.doubleValue());
+                                    }
+                                });
+
+                                submitTv.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mRefreshLayout.autoRefresh();
+                                        popMenu.dismiss();
                                     }
                                 });
                                 View windowContentViewRoot3 = contentView3;

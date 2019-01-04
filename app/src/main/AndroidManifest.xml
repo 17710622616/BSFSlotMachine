@@ -104,6 +104,9 @@
         <activity android:name=".BSSMActivity.Parking.ChooseOrderTimeActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.MerchatSetActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.CarPartsSetListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.SellerCarPartsSetListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.CarPartSetDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.SecondHandCarListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashOrderListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashOrderDetialActivity" android:screenOrientation="portrait"/>
