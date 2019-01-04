@@ -89,7 +89,7 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
         priceTv = (TextView) findViewById(R.id.car_part_set_price_tv);
         marketPriceTv = (TextView) findViewById(R.id.car_part_set_market_price_tv);
         desTv = (TextView) findViewById(R.id.car_part_set_des);
-        priceTv.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+        marketPriceTv.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
     }
 
     public void setListener() {
