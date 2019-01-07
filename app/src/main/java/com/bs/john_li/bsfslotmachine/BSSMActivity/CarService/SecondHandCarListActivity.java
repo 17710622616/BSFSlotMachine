@@ -761,8 +761,10 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("carType", mRequestSecondCarModel.getCarType());
             }
-            if (!mRequestSecondCarModel.getCarBrand().equals("全部")) {
-                jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
+            if (mRequestSecondCarModel.getCarBrand() != null) {
+                if(!mRequestSecondCarModel.getCarBrand().equals("全部")) {
+                    jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
+                }
             }
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("carType", mRequestSecondCarModel.getType());

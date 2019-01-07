@@ -415,11 +415,10 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
                                 break;
                             case 4:
                                 LayoutInflater inflater3 = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View contentView3 = inflater3.inflate(R.layout.pop_second_car_option_list, null);
-                                popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                                View contentView3 = inflater3.inflate(R.layout.dialog_car_choose_money, null);
+                                popMenu = new PopupWindow(contentView3, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                 popMenu.setFocusable(true);
-                                popMenu.setOutsideTouchable(false);
+                                popMenu.setOutsideTouchable(true);
                                 //popMenu.setAnimationStyle(R.style.AnimTopMiddle);
                                 CrystalRangeSeekbar sb = contentView3.findViewById(R.id.car_choose_sb);
                                 final TextView minTv = contentView3.findViewById(R.id.car_choose_min_money);
@@ -489,8 +488,10 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
             if (mRequestSecondCarModel.getSellerId() != -1) {
                 jsonObj.put("sellerId", mRequestSecondCarModel.getSellerId());
             }
-            if (!mRequestSecondCarModel.getCarBrand().equals("全部")) {
-                jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
+            if (mRequestSecondCarModel.getCarBrand() != null) {
+                if(!mRequestSecondCarModel.getCarBrand().equals("全部")) {
+                    jsonObj.put("carBrand",mRequestSecondCarModel.getCarBrand());
+                }
             }
             if (mRequestSecondCarModel.getCarType() != -1) {
                 jsonObj.put("carType", mRequestSecondCarModel.getType());

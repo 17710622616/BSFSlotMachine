@@ -82,7 +82,7 @@ public class SmartOwnCarListRefreshAdapter extends RecyclerView.Adapter<SmartOwn
 
     @Override
     public void onBindViewHolder(SmartOwnCarListRefreshAdapter.SmartRefreshViewHolder holder, int position) {
-        holder.item_second_car_brand.setText(carList.get(position).getCarBrand() + " " + carList.get(position).getCarSeries() + " " + carList.get(position).getCarStyle());
+        holder.item_second_car_brand.setText(carList.get(position).getCarBrand() + " " + carList.get(position).getCarSeries());
         holder.item_second_car_year.setText(BSSMCommonUtils.stampToDate(String.valueOf(carList.get(position).getFirstRegisterationTime())) + "年/");
         holder.item_second_car_mileage.setText(carList.get(position).getDriverMileage() + "萬公里");
         holder.item_second_car_money.setText("MOP" + carList.get(position).getCarPrices() + "萬");

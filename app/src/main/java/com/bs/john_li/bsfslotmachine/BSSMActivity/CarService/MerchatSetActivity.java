@@ -224,6 +224,7 @@ public class MerchatSetActivity extends BaseActivity implements View.OnClickList
 
         if (setList.size() > 0) {
             merchartSetAdapter.select(0);
+            orderAmountTv.setText("MOP" + setList.get(0).getCostPrice());
         }
     }
 

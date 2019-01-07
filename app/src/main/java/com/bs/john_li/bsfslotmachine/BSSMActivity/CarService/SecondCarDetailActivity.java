@@ -227,7 +227,7 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         nameTv.setText(mSecondCarDetialModel.getCarBrand() + " " + mSecondCarDetialModel.getCarSeries());
         priceTv.setText(String.valueOf(mSecondCarDetialModel.getCarPrices()) + "萬");
         pageViewTv.setText("瀏覽量：" + String.valueOf(mSecondCarDetialModel.getPageView()));
-        publishTimeTv.setText("發佈日期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
+        publishTimeTv.setText("發佈日期：" + BSSMCommonUtils.stampToDateTime(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
         seriesTv.setText("車        系：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         noTv.setText("車        牌：" + String.valueOf(mSecondCarDetialModel.getCarNo()));
         typeTv.setText("汽車類型：" + String.valueOf(mSecondCarDetialModel.getType()));
@@ -237,9 +237,9 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         } else {
             gearsTv.setText("排        擋：自動擋");
         }
-        firstTimeTv.setText("落地時間：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
+        firstTimeTv.setText("落地時間：" + BSSMCommonUtils.stampToDateTime(String.valueOf(mSecondCarDetialModel.getFirstRegisterationTime())));
         idTv.setText("編        號：" + String.valueOf(mSecondCarDetialModel.getId()));
-        periodValidityTv.setText("有  效  期：" + BSSMCommonUtils.stampToDate(String.valueOf(mSecondCarDetialModel.getPeriodValidity())));
+        periodValidityTv.setText("有  效  期：" + BSSMCommonUtils.stampToDateTime(String.valueOf(mSecondCarDetialModel.getPeriodValidity())));
         brandTv.setText("品        牌：" + String.valueOf(mSecondCarDetialModel.getCarBrand()));
         styleTv.setText("車        型：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         mileageTv.setText("行         程：" + String.valueOf(mSecondCarDetialModel.getDriverMileage()) + "萬公里");

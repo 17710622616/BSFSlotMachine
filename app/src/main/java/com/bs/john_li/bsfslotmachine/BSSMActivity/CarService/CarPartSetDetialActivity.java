@@ -20,12 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.OSSClient;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarPartSetOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarPartsOrderOutModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
+import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
 
@@ -47,7 +52,7 @@ import java.util.List;
  */
 
 public class CarPartSetDetialActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView nameTv, priceTv, marketPriceTv, desTv;
+    private TextView nameTv, priceTv, marketPriceTv, desTv, submitTv;
     private AppBarLayout appbar;
     private Toolbar articalToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -90,9 +95,11 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
         marketPriceTv = (TextView) findViewById(R.id.car_part_set_market_price_tv);
         desTv = (TextView) findViewById(R.id.car_part_set_des);
         marketPriceTv.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+        submitTv = (TextView) findViewById(R.id.car_part_set_submit);
     }
 
     public void setListener() {
+        submitTv.setOnClickListener(this);
     }
 
     public void initData() {
@@ -215,13 +222,65 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
             case android.R.id.home:
                 finish();
                 break;
-
         }
         return true;
     }
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.car_part_set_submit:
+                final LoadDialog loadDialog = new LoadDialog(this, false, "提交中......");
+                loadDialog.show();
+                RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.SUBMIT_PARTS_ORDER + SPUtils.get(this, "UserToken", ""));
+                params.setAsJsonContent(true);
+                JSONObject jsonObj = new JSONObject();
+                try {
+                    jsonObj.put("partId","");
+                    jsonObj.put("remark", "");
+                    jsonObj.put("num", "");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                params.setBodyContent(jsonObj.toString());
+                String uri = params.getUri();
+                x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        CarPartsOrderOutModel model = new Gson().fromJson(result.toString(), CarPartsOrderOutModel.class);
+                        if (model.getCode() == 200) {
+                            Intent intent = new Intent(CarPartSetDetialActivity.this, PaymentAcvtivity.class);
+                            intent.putExtra("startWay", 1);   // parkingOrder
+                            intent.putExtra("orderNo", model.getData().getOrderNo());
+                            intent.putExtra("amount", model.getData().getAmount());
+                            intent.putExtra("createTime", model.getData().getCreateTime());
+                            intent.putExtra("exchange", model.getData().getExchange());
+                            intent.putExtra("exchangeAmountPay", model.getData().getExchangeAmountPay());
+                            startActivityForResult(intent, 3);
+                        } else if (model.getCode() == 10000) {
+                            SPUtils.put(CarPartSetDetialActivity.this, "UserToken", "");
+                            startActivityForResult(new Intent(CarPartSetDetialActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        } else {
+                            Toast.makeText(CarPartSetDetialActivity.this, "訂單提交失敗," + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(CarPartSetDetialActivity.this, "訂單提交失敗╮(╯▽╰)╭請重新提交", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+                        loadDialog.dismiss();
+                    }
+                });
+                break;
+        }
     }
 }

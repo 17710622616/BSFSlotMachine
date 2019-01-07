@@ -207,4 +207,6 @@ public class BSSMConfigtor {
     public static final String GET_SELLER_PARTS = "sellerParts/partslList";
     //獲取商家汽車零件套餐詳情的接口
     public static final String GET_PARTS_SET_DETIAL = "sellerParts/partsDetial";
+    //创建汽车零件订单的接口
+    public static final String SUBMIT_PARTS_ORDER = "sellerOrder/createPartsOrder?token=";
 }
