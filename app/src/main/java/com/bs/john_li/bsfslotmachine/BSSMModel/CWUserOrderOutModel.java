@@ -109,11 +109,29 @@ public class CWUserOrderOutModel {
             private long updateTime;
             private String synTradeNo;
             private String asynTradeNo;
+            private int orderType;
+            private int type;
             private String currency;
-            private String exchange;
             private double exchangeAmountPay;
             private String sellerLogo;
             private String sellerName;
+            private String exchange;
+
+            public int getOrderType() {
+                return orderType;
+            }
+
+            public void setOrderType(int orderType) {
+                this.orderType = orderType;
+            }
+
+            public int getType() {
+                return type;
+            }
+
+            public void setType(int type) {
+                this.type = type;
+            }
 
             public int getId() {
                 return id;

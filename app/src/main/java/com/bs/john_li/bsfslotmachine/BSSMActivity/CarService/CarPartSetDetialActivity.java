@@ -236,9 +236,8 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
                 params.setAsJsonContent(true);
                 JSONObject jsonObj = new JSONObject();
                 try {
-                    jsonObj.put("partId","");
-                    jsonObj.put("remark", "");
-                    jsonObj.put("num", "");
+                    jsonObj.put("partId",id);
+                    jsonObj.put("num", 1);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -250,7 +249,7 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
                         CarPartsOrderOutModel model = new Gson().fromJson(result.toString(), CarPartsOrderOutModel.class);
                         if (model.getCode() == 200) {
                             Intent intent = new Intent(CarPartSetDetialActivity.this, PaymentAcvtivity.class);
-                            intent.putExtra("startWay", 1);   // parkingOrder
+                            intent.putExtra("startWay", 5);   // parkingOrder
                             intent.putExtra("orderNo", model.getData().getOrderNo());
                             intent.putExtra("amount", model.getData().getAmount());
                             intent.putExtra("createTime", model.getData().getCreateTime());
@@ -281,6 +280,18 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
                     }
                 });
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode){
+                case 3:
+                    finish();
+                    break;
+            }
         }
     }
 }

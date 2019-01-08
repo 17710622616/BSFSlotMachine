@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     public void initData() {
         fm = getSupportFragmentManager();
         FragmentTransaction traslation = fm.beginTransaction();
-        cacheFragment = new ParkingFragment();
-        traslation.add(R.id.main_containor,cacheFragment,ParkingFragment.TAG);
+        cacheFragment = new CarServiceFragment();
+        traslation.add(R.id.main_containor,cacheFragment,CarServiceFragment.TAG);
         traslation.commit();
 
         // 註冊極光別名

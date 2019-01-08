@@ -92,7 +92,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
     // 订单总金额
     private double totalAmount;
     private String orderTime;
-    private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單, 4洗車訂單
+    private int startWay = 0; // 1是停車訂單。2是會員充值訂單。3是錢包充值訂單, 4洗車訂單，5汽车零件订单
     // 汇率换算后的金额
     private String mExchangeAmountPay;
     // 支付金額
@@ -379,7 +379,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      */
     private void callNetGetAlipayOrderInfo() {
         RequestParams params = null;
-        if (startWay == 4) {
+        if (startWay == 4 || startWay == 5) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_ALIPAY_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
         } else {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_APLIPAY_ORDER_INFO + SPUtils.get(this, "UserToken", ""));
@@ -458,7 +458,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      */
     private void callNetGetWechatPrepayId() {
         RequestParams params = null;
-        if (startWay == 4) {
+        if (startWay == 4 || startWay == 5) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
         } else {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WECHAT_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
@@ -642,7 +642,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      */
     private void callNetSubmitPayment(String enterPw, final BaseNiceDialog dialog, final FaceView pay_faceview, final LinearLayout payingLL, final TextView pay_status_tv) {
         RequestParams params = null;
-        if (startWay == 4) {
+        if (startWay == 4 || startWay == 5) {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_CW_WALLET_PAY_PRE_PAY_ID + SPUtils.get(this, "UserToken", ""));
         } else {
             params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.POST_WALLET_PAY + SPUtils.get(this, "UserToken", ""));
@@ -774,7 +774,7 @@ public class PaymentAcvtivity extends BaseActivity implements View.OnClickListen
      * 訂單支付成功
      */
     private void orderPaySuccess() {
-        if (startWay != 4) {
+        if (startWay != 4 && startWay != 5) {
             startActivity(new Intent(this, HistoryOrderActivity.class));
         } else {
             startActivity(new Intent(this, CarWashOrderListActivity.class));

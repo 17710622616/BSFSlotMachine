@@ -58,6 +58,8 @@ public class SmartCWOrderRefreshAdapter extends RecyclerView.Adapter<SmartCWOrde
         vh.item_cworder_expiration_time = (TextView) view.findViewById(R.id.item_cworder_expiration_time);
         vh.item_cworder_price = (TextView) view.findViewById(R.id.item_cworder_price);
         vh.item_cworder_status = (TextView) view.findViewById(R.id.item_cworder_status);
+        vh.item_cworder_type = (TextView) view.findViewById(R.id.item_cworder_type);
+        vh.item_cworder_ordertype = (TextView) view.findViewById(R.id.item_cworder_ordertype);
         view.setOnClickListener(this);
         return vh;
     }
@@ -94,6 +96,25 @@ public class SmartCWOrderRefreshAdapter extends RecyclerView.Adapter<SmartCWOrde
                 holder.item_cworder_status.setText("訂單狀態：已取消");
                 break;
         }
+
+        switch (list.get(position).getType()) {
+            case 0: // 洗車訂單
+                holder.item_cworder_type.setText("訂單類型：洗車訂單");
+                break;
+            case 1: // 汽車零件訂單
+                holder.item_cworder_type.setText("訂單類型：汽車零件訂單");
+                break;
+        }
+
+        switch (list.get(position).getOrderType()) {
+            case 0: // 正常購買
+                holder.item_cworder_ordertype.setVisibility(View.GONE);
+                break;
+            case 1: // 系統贈送
+                holder.item_cworder_ordertype.setVisibility(View.VISIBLE);
+                holder.item_cworder_ordertype.setText("訂單類別：系統贈送");
+                break;
+        }
         holder.itemView.setTag(position);
     }
 
@@ -115,6 +136,8 @@ public class SmartCWOrderRefreshAdapter extends RecyclerView.Adapter<SmartCWOrde
         public TextView item_cworder_expiration_time;
         public TextView item_cworder_price;
         public TextView item_cworder_status;
+        public TextView item_cworder_type;
+        public TextView item_cworder_ordertype;
         public SmartRefreshViewHolder(View view){
             super(view);
         }
