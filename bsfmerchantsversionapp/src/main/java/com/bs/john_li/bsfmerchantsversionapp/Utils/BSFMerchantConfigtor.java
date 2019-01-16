@@ -29,4 +29,8 @@ public class BSFMerchantConfigtor {
     public final static String SELLER_SET_LIST = "sellerCharge/sellerChargeList";
     // 商家添加套餐
     public final static String SELLER_ADD_SET = "sellerCharge/addSellerCharge";
+    // 商家提交套餐審核
+    public final static String SELLER_SUBMIT_SET = "sellerCharge/applyPush";
+    // 商家APP版本更新
+    public final static String CHECK_VERSION = "AppVersion/selectSellerVersion";
 }

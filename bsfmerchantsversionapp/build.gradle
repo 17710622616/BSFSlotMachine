@@ -9,10 +9,10 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -20,6 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -28,6 +29,19 @@ android {
             aidl.srcDirs = ['src/main/aidl']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                //这里修改apk文件名
+                def fileName = "MerchantSide.apk"
+                //def fileName = outputFile.name.replace("app", "${rootProject.ext.appName}-${releaseTime()}-${defaultConfig.versionCode}-${defaultConfig.versionName}")
+
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }
@@ -44,7 +58,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile files('libs/core-3.3.0.jar')
     compile 'com.sunmi:printerlibrary:1.0.4'
-    compile 'com.google.zxing:core:3.2.1'
     compile 'org.xutils:xutils:3.5.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.aliyun.dpa:oss-android-sdk:2.4.5'

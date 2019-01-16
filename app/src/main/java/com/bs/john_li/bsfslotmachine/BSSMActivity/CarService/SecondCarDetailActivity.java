@@ -243,7 +243,7 @@ public class SecondCarDetailActivity extends AppCompatActivity implements View.O
         brandTv.setText("品        牌：" + String.valueOf(mSecondCarDetialModel.getCarBrand()));
         styleTv.setText("車        型：" + String.valueOf(mSecondCarDetialModel.getCarSeries()));
         mileageTv.setText("行         程：" + String.valueOf(mSecondCarDetialModel.getDriverMileage()) + "萬公里");
-        exhaustTv.setText("排         量：" + String.valueOf(mSecondCarDetialModel.getCarSeries()) + "C.C.");
+        exhaustTv.setText("排         量：" + String.valueOf(mSecondCarDetialModel.getExhaust()) + "C.C.");
         dscriptionTv.setText("汽車狀況：" + String.valueOf(mSecondCarDetialModel.getCarDescription()));
         remarkTv.setText(String.valueOf(mSecondCarDetialModel.getConfigInfo()) + "," + String.valueOf(mSecondCarDetialModel.getStateOfRepiar()) + "," + String.valueOf(mSecondCarDetialModel.getInsideBody()) + "," + String.valueOf(mSecondCarDetialModel.getTestConclusion()));
         //  設置標題

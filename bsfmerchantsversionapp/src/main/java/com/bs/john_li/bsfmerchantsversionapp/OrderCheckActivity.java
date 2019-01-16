@@ -37,7 +37,11 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by John on 18/11/2018.
@@ -45,10 +49,13 @@ import org.xutils.x;
 
 public class OrderCheckActivity extends FragmentActivity implements View.OnClickListener{
     private QrcodeReturnModel qrcodeReturnModel;
-    private ImageView leftIv;
-    private TextView orderNoTv, couponNoTv, checkOrderTv;
+    private ImageView leftIv, orderIv;
+    private TextView nameTv, sellerNameTv, statusTv, priceTv, createTimeTv, orderNoTv, couponNoTv, checkOrderTv;
 
     private SellerOrderDetialOutModel.DataBean.SellerOrderBean mSellerOrderDetialModel;
+    private SellerOrderDetialOutModel.DataBean.SellerBean mSellerBeanModel;
+    private List<SellerOrderDetialOutModel.DataBean.CouponListBean> mCouponListBeanList;
+    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading_list).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +67,12 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
 
     private void initView() {
         leftIv = findViewById(R.id.order_check_left_iv);
+        orderIv = findViewById(R.id.order_iv);
+        nameTv = findViewById(R.id.order_name_tv);
+        sellerNameTv = findViewById(R.id.order_seller_name_tv);
+        statusTv = findViewById(R.id.order_status_tv);
+        priceTv = findViewById(R.id.order_check_price);
+        createTimeTv = findViewById(R.id.order_check_createtime);
         orderNoTv = findViewById(R.id.order_check_orderno);
         couponNoTv = findViewById(R.id.order_check_couponno);
         checkOrderTv = findViewById(R.id.check_order_tv);
@@ -78,6 +91,7 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
             e.printStackTrace();
         }
 
+        mCouponListBeanList = new ArrayList<>();
         qrcodeReturnModel = new Gson().fromJson(getIntent().getStringExtra("scanReturnStr"), QrcodeReturnModel.class);
         orderNoTv.setText("訂單編號：" + qrcodeReturnModel.getOrderNo());
         couponNoTv.setText("券        碼：" + qrcodeReturnModel.getCouponCode());
@@ -115,6 +129,14 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
                 SellerOrderDetialOutModel model = new Gson().fromJson(result.toString(), SellerOrderDetialOutModel.class);
                 if (model.getCode() == 200) {
                     mSellerOrderDetialModel = model.getData().getSellerOrder();
+                    mSellerBeanModel = model.getData().getSeller();
+                    mCouponListBeanList = model.getData().getCouponList();
+                    x.image().bind(orderIv, mSellerOrderDetialModel.getSellerLogo(), options);
+                    nameTv.setText(mSellerOrderDetialModel.getChargeRemark());
+                    sellerNameTv.setText(mSellerOrderDetialModel.getSellerName());
+                    statusTv.setText("訂單狀態：" + mSellerOrderDetialModel.getOrderStatus());
+                    priceTv.setText("支付金額：MOP" + mSellerOrderDetialModel.getPayAmount());
+                    createTimeTv.setText("創建時間：" + BSFCommonUtils.stampToDate(String.valueOf(mSellerOrderDetialModel.getCreateTime())));
                 } else {
                     Toast.makeText(OrderCheckActivity.this, "獲取訂單詳情失敗！" + String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
@@ -162,7 +184,31 @@ public class OrderCheckActivity extends FragmentActivity implements View.OnClick
                     try {
                         String printDetial = null;
                         if (mSellerOrderDetialModel != null) {
-                            printDetial = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + mSellerOrderDetialModel.getSellerName() + "\n訂單編號：" + qrcodeReturnModel.getOrderNo()  + "\n套餐名稱：" + mSellerOrderDetialModel.getChargeRemark()+ "\n券      碼：" + qrcodeReturnModel.getCouponCode() + "\n支付金額：" + mSellerOrderDetialModel.getPayAmount() + "\n折扣金額：" + mSellerOrderDetialModel.getMoneyBack() + "\n創建時間：" + BSFCommonUtils.stampToDate(String.valueOf(mSellerOrderDetialModel.getCreateTime()))+ "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t掌泊寶平台"+ "\n\n";
+                            String payWay = "餘額支付";
+                            switch (mSellerOrderDetialModel.getPayType()) {
+                                case 1:
+                                    payWay = "餘額支付";
+                                    break;
+                                case 2:
+                                    payWay = "微信";
+                                    break;
+                                case 3:
+                                    payWay = "支付寶";
+                                    break;
+                            }
+                            printDetial = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + mSellerOrderDetialModel.getSellerName()
+                                    + "\n————————————————————————————————"
+                                    + "\n訂單編號：" + qrcodeReturnModel.getOrderNo()
+                                    + "\n套餐名稱：" + mSellerOrderDetialModel.getChargeRemark()
+                                    + "\n商家地址：" + mSellerBeanModel.getAddress()
+                                    + "\n券     碼：" + qrcodeReturnModel.getCouponCode()
+                                    + "\n支付金額：" + mSellerOrderDetialModel.getPayAmount()
+                                    + "\n支付方式：" + payWay
+                                    + "\n創建時間：" + BSFCommonUtils.stampToDate(String.valueOf(mSellerOrderDetialModel.getCreateTime()))
+                                    + "\n————————————————————————————————"
+                                    + "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t掌泊寶平台"
+                                    + "\n\t\t\t\t\t\t\t\t\t\t\t謝謝惠顧，歡迎再次光臨！"
+                                    + "\n\n";
                         } else {
                             printDetial = "訂單內容\n" + "訂單編號：" + qrcodeReturnModel.getOrderNo() + "\n券        碼：" + qrcodeReturnModel.getCouponCode()+ "\n\n\n\n\n";
                         }

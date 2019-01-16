@@ -1,9 +1,11 @@
 package com.bs.john_li.bsfmerchantsversionapp.Utils;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -91,6 +93,39 @@ public class BSFCommonUtils {
             Toast.makeText(c, "您還未登錄，請先登錄！", Toast.LENGTH_SHORT).show();
             return false;
         }
+    }
+
+
+    /**
+     * 获取软件版本号
+     * @param context
+     * @return
+     */
+    public static int getVerCode(Context context) {
+        int verCode = -1;
+        try {
+            //注意："com.example.try_downloadfile_progress"对应AndroidManifest.xml里的package="……"部分
+            verCode = context.getPackageManager().getPackageInfo(
+                    "com.bs.john_li.bsfmerchantsversionapp", 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("msg",e.getMessage());
+        }
+        return verCode;
+    }
+    /**
+     * 获取版本名称
+     * @param context
+     * @return
+     */
+    public static String getVerName(Context context) {
+        String verName = "";
+        try {
+            verName = context.getPackageManager().getPackageInfo(
+                    "com.bs.john_li.bsfmerchantsversionapp", 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("msg",e.getMessage());
+        }
+        return verName;
     }
 
     /**

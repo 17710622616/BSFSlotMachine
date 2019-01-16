@@ -24,6 +24,14 @@
         android:padding="5dp"/>
 
     <TextView
+        android:id="@+id/item_seller_set_submit_audit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="提交審核"
+        android:padding="5dp"/>
+
+    <TextView
         android:id="@+id/item_seller_set_expiration_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

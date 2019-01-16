@@ -58,6 +58,7 @@ public class SmartSellerSetListRefreshAdapter extends RecyclerView.Adapter<Smart
         vh.item_seller_set_cost_price = (TextView) view.findViewById(R.id.item_seller_set_cost_price);
         vh.item_seller_set_des = (TextView) view.findViewById(R.id.item_seller_set_des);
         vh.item_seller_set_status = (TextView) view.findViewById(R.id.item_seller_set_status);
+        vh.item_seller_set_submit_audit = (TextView) view.findViewById(R.id.item_seller_set_submit_audit);
         view.setOnClickListener(this);
         return vh;
     }
@@ -72,18 +73,23 @@ public class SmartSellerSetListRefreshAdapter extends RecyclerView.Adapter<Smart
         holder.item_seller_set_des.setText("介       紹：" + String.valueOf(list.get(position).getDescription()));
         switch (list.get(position).getStatus()) {
             case 0: // 待支付
+                holder.item_seller_set_submit_audit.setVisibility(View.GONE);
                 holder.item_seller_set_status.setText("審核狀態：創建中");
                 break;
             case 1: // 支付中
+                holder.item_seller_set_submit_audit.setVisibility(View.GONE);
                 holder.item_seller_set_status.setText("訂單狀態：審核中");
                 break;
             case 2: // 已支付
+                holder.item_seller_set_submit_audit.setVisibility(View.GONE);
                 holder.item_seller_set_status.setText("訂單狀態：審核通過");
                 break;
             case 3: // 已完成
+                holder.item_seller_set_submit_audit.setVisibility(View.GONE);
                 holder.item_seller_set_status.setText("訂單狀態：審核失敗");
                 break;
         }
+        holder.item_seller_set_des.setOnClickListener(this);
         holder.itemView.setTag(position);
     }
 
@@ -107,6 +113,7 @@ public class SmartSellerSetListRefreshAdapter extends RecyclerView.Adapter<Smart
         public TextView item_seller_set_market_price;
         public TextView item_seller_set_cost_price;
         public TextView item_seller_set_status;
+        public TextView item_seller_set_submit_audit;
         public SmartRefreshViewHolder(View view){
             super(view);
         }

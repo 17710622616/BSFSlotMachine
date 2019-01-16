@@ -40,10 +40,78 @@
         android:orientation="vertical"
         android:layout_margin="5dp"
         android:background="#ffffff">
-        <TextView
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="訂單編號："
+            android:background="@color/colorWight"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/order_iv"
+                android:layout_width="110dp"
+                android:layout_height="87dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:scaleType="fitXY" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/order_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="套餐名稱"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/order_seller_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="商家名稱"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/order_status_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="訂單狀態"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            style="@style/UnderLineTextView"/>
+
+        <TextView
+            android:id="@+id/order_check_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="支付金額："
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:padding="5dp"/>
+
+        <View
+            style="@style/UnderLineTextView"/>
+
+        <TextView
+            android:id="@+id/order_check_createtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="創建時間："
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
             android:padding="5dp"/>
@@ -55,18 +123,7 @@
             android:id="@+id/order_check_orderno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/colorBlack"
-            android:textSize="16sp"
-            android:padding="5dp"/>
-
-        <View
-            style="@style/UnderLineTextView"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="洗車券碼："
+            android:text="訂單編號："
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
             android:padding="5dp"/>
@@ -78,9 +135,9 @@
             android:id="@+id/order_check_couponno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="洗車券碼："
             android:textColor="@color/colorBlack"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:padding="5dp"/>
     </LinearLayout>
 

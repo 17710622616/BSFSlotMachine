@@ -1,5 +1,7 @@
 package com.bs.john_li.bsfmerchantsversionapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfmerchantsversionapp.Adapter.SmartSellerSetListRefreshAdapter;
+import com.bs.john_li.bsfmerchantsversionapp.Model.CommonModel;
 import com.bs.john_li.bsfmerchantsversionapp.Model.SellerSetOutModel;
 import com.bs.john_li.bsfmerchantsversionapp.Utils.AliyunOSSUtils;
 import com.bs.john_li.bsfmerchantsversionapp.Utils.BSFCommonUtils;
@@ -116,13 +119,88 @@ public class SellerSetListActivity extends FragmentActivity implements View.OnCl
 
         mSmartSellerSetListRefreshAdapter.setOnItemClickListenr(new SmartSellerSetListRefreshAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                /*Intent intent = new Intent(SellerSetListActivity.this, OrderDetialActivity.class);
-                intent.putExtra("orderModel", new Gson().toJson(orderList.get(position)));
-                startActivity(intent);*/
+            public void onItemClick(View view, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SellerSetListActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("是否提交審核套餐");
+                //点击对话框以外的区域是否让对话框消失
+                builder.setCancelable(true);
+                //设置正面按钮
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callNetSubmitSet(position);
+                        dialog.dismiss();
+                    }
+                });
+                //设置中立按钮
+                builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                //显示对话框
+                dialog.show();
             }
         });
         mRefreshLayout.autoRefresh();
+    }
+
+    private void callNetSubmitSet(int position) {
+        RequestParams params = new RequestParams(BSFMerchantConfigtor.BASE_URL + BSFMerchantConfigtor.SELLER_SUBMIT_SET);
+        params.setAsJsonContent(true);
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("id", orderList.get(position).getId());
+            jsonObj.put("sellerToken", SPUtils.get(SellerSetListActivity.this.getApplicationContext(), "SellerUserToken", ""));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String urlJson = jsonObj.toString();
+        params.setBodyContent(urlJson);
+        String uri = params.getUri();
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonModel model = new Gson().fromJson(result.toString(), CommonModel.class);
+                if (model.getCode() == 200) {
+                    Toast.makeText(SellerSetListActivity.this, "提交審核成功！", Toast.LENGTH_SHORT).show();
+                    mRefreshLayout.autoRefresh();
+                } else if (model.getCode() == 10000){
+                    SPUtils.put(SellerSetListActivity.this, "SellerUserToken", "");
+                    Toast.makeText(SellerSetListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerSetListActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                if (ex instanceof SocketTimeoutException) {
+                    Toast.makeText(SellerSetListActivity.this, "請求超時，請重試！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SellerSetListActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                if (orderList.size() > 0) {
+                    noOrderLL.setVisibility(View.GONE);
+                } else {
+                    noOrderLL.setVisibility(View.VISIBLE);
+                }
+                mSmartSellerSetListRefreshAdapter.refreshListView(orderList);
+                mRefreshLayout.finishRefresh();
+                mRefreshLayout.finishLoadmore();
+            }
+        });
     }
 
 
