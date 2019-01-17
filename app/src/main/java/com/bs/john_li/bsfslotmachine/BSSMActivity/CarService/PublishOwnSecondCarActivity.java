@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -88,7 +89,7 @@ public class PublishOwnSecondCarActivity extends BaseActivity implements View.On
     public static final int TAKE_PHOTO_FROM_ALBUM = 2;
     private File dir; //圖片文件夾路徑
     private File file;  //照片文件
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setFailureDrawableId(R.mipmap.car_sample).build();
+    private ImageOptions options = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.FIT_CENTER).setFailureDrawableId(R.mipmap.car_sample).build();
     private List<String> imgUrlList;
     private NoScrollGridView photoGv;
     private PhotoAdapter mPhotoAdapter;

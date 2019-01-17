@@ -602,9 +602,11 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 @Override
                 public void onClick(View v) {
                     if (mHotCarModelList.size() > 0) {
-                        Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
-                        intent.putExtra("seoncdeCarId", String.valueOf(mHotCarModelList.get(finalI).getId()));
-                        startActivity(intent);
+                        if (finalI < mHotCarModelList.size()) {
+                            Intent intent = new Intent(SecondHandCarListActivity.this, SecondCarDetailActivity.class);
+                            intent.putExtra("seoncdeCarId", String.valueOf(mHotCarModelList.get(finalI).getId()));
+                            startActivity(intent);
+                        }
                     }
                 }
             });
@@ -616,10 +618,12 @@ public class SecondHandCarListActivity extends BaseActivity implements View.OnCl
                 @Override
                 public void onClick(View v) {
                     if (mSideShowList.size() > 0) {
-                        Intent intent = new Intent(SecondHandCarListActivity.this, SellerDetialActivity.class);
-                        String.valueOf(secondCarSellerList.get(finalI).getId());
-                        intent.putExtra("sellerId", String.valueOf(mSideShowList.get(finalI).getSellerId()));
-                        startActivity(intent);
+                        if (finalI < mSideShowList.size()) {
+                            Intent intent = new Intent(SecondHandCarListActivity.this, SellerDetialActivity.class);
+                            String.valueOf(secondCarSellerList.get(finalI).getId());
+                            intent.putExtra("sellerId", String.valueOf(mSideShowList.get(finalI).getSellerId()));
+                            startActivity(intent);
+                        }
                     }
                 }
             });

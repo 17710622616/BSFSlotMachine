@@ -94,7 +94,7 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
     //
     private SmartSecondCarListRefreshAdapter mSmartSecondCarListRefreshAdapter;
     //private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
-    private ImageOptions options1 = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.FIT_XY).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
+    private ImageOptions options1 = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.CENTER_CROP).setImageScaleType(ImageView.ScaleType.FIT_XY).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

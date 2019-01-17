@@ -132,7 +132,12 @@ public class CarWashOrderDetialActivity extends BaseActivity implements View.OnC
     public void initData() {
         mCWUserOrderModel = new Gson().fromJson(getIntent().getStringExtra("CWOrderModel"), CWUserOrderOutModel.DataBeanX.CWUserOrderModel.class);
         headView.setLeft(this);
-        headView.setTitle("洗車訂單");
+        int type = mCWUserOrderModel.getType();
+        if (mCWUserOrderModel.getType() == 0) {
+            headView.setTitle("洗車訂單");
+        } else {
+            headView.setTitle("零件訂單");
+        }
         if (mCWUserOrderModel.getOrderStatus() == 1) {
             headView.setRightText("支付", this);
         }

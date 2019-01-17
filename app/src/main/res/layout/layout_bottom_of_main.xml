@@ -77,7 +77,7 @@
             android:gravity="center"
             android:text="停車"
             android:textSize="10sp"
-            android:textColor="@color/colorSkyBlue"
+            android:textColor="@color/colorDrakGray"
             android:drawableTop="@drawable/selector_parking"/>
 
         <RadioButton
@@ -90,7 +90,7 @@
             android:drawableTop="@drawable/selector_forum"
             android:gravity="center"
             android:text="汽車服務"
-            android:textColor="@color/colorDrakGray"
+            android:textColor="@color/colorSkyBlue"
             android:textSize="10sp"
             android:checked="true"/>
 

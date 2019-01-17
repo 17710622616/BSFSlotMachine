@@ -32,7 +32,7 @@ public class SmartHotSellerRefreshAdapter extends RecyclerView.Adapter<SmartHotS
     private LayoutInflater mInflater;
     private LruCache<String ,BitmapDrawable> mMemoryCache;
     private OnItemClickListener mOnitemClickListener = null;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
+    private ImageOptions options = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.FIT_CENTER).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     public SmartHotSellerRefreshAdapter(Context context, List<HotSellerOutModel.HotSellerModel.DataBean> list, OSSClient oss) {
         this.list = list;

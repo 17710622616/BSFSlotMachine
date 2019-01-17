@@ -42,7 +42,7 @@ public class SellerDesActivity extends BaseActivity implements View.OnClickListe
 
     // 商家详情
     private SellerDetialOutModel.SellerDetialModel mSellerDetialModel;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
+    private ImageOptions options = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -67,7 +67,7 @@ public class CarPartSetDetialActivity extends AppCompatActivity implements View.
     // 是否是第一次初始化點讚狀態
     private boolean isInitIsLikeStatus = false;
     private OSSClient oss;
-    private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.img_loading_list).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
+    private ImageOptions options = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.FIT_CENTER).setLoadingDrawableId(R.mipmap.img_loading_list).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

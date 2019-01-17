@@ -97,7 +97,7 @@ public class CarWashOrderListActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void initData() {
-        historyHead.setTitle("洗車訂單列表");
+        historyHead.setTitle("服務訂單列表");
         historyHead.setLeft(this);
 
         mTabLayout.addTab(mTabLayout.newTab().setText(sTitle[0]));

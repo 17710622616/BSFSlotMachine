@@ -204,10 +204,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         public void gotResult(int code, String alias, Set<String> tagSet) {
             switch (code) {
                 case 0:
-                    Toast.makeText(LoginActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
