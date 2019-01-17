@@ -33,7 +33,7 @@ public class AliyunOSSUtils {
      *  初始化一个OssService用来上传
      * @param context
      */
-    public static OSSClient initOSS(Context context) {
+    public static OSSClient initOSS(Context context, String endPoint) {
         //负责所有的界面更新
         OSSClient oss;
         OSSCredentialProvider credentialProvider;
@@ -50,7 +50,7 @@ public class AliyunOSSUtils {
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(context.getApplicationContext(), BSFMerchantConfigtor.END_POINT, credentialProvider, conf);
+        oss = new OSSClient(context.getApplicationContext(), endPoint, credentialProvider, conf);
         return oss;
     }
 

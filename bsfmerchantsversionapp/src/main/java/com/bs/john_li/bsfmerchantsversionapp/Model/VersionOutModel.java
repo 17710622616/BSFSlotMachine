@@ -9,7 +9,7 @@ public class VersionOutModel {
     /**
      * code : 200
      * msg :
-     * data : {"id":1,"appName":"parkingman","version":"1.0.1","rdUrl":"www.qq.com","createTime":1514819607000,"updateTime":1514819607000,"ext":"123131"}
+     * data : {"id":2,"appName":"1.0.0","version":"1","rdUrl":"http://parkingman-common.oss-cn-shenzhen.aliyuncs.com/APK/Merchant/MerchantSide.apk","createTime":1547697150000,"updateTime":1547697150000,"ext":"1.0.1"}
      */
 
     private int code;
@@ -42,13 +42,13 @@ public class VersionOutModel {
 
     public static class DataBean {
         /**
-         * id : 1
-         * appName : parkingman
-         * version : 1.0.1
-         * rdUrl : www.qq.com
-         * createTime : 1514819607000
-         * updateTime : 1514819607000
-         * ext : 123131
+         * id : 2
+         * appName : 1.0.0
+         * version : 1
+         * rdUrl : http://parkingman-common.oss-cn-shenzhen.aliyuncs.com/APK/Merchant/MerchantSide.apk
+         * createTime : 1547697150000
+         * updateTime : 1547697150000
+         * ext : 1.0.1
          */
 
         private int id;

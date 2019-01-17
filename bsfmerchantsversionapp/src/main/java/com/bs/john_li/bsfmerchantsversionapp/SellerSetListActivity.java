@@ -113,7 +113,7 @@ public class SellerSetListActivity extends FragmentActivity implements View.OnCl
 
     private void initData() {
         orderList = new ArrayList<>();
-        mSmartSellerSetListRefreshAdapter = new SmartSellerSetListRefreshAdapter(SellerSetListActivity.this, orderList, AliyunOSSUtils.initOSS(SellerSetListActivity.this));
+        mSmartSellerSetListRefreshAdapter = new SmartSellerSetListRefreshAdapter(SellerSetListActivity.this, orderList, AliyunOSSUtils.initOSS(SellerSetListActivity.this,BSFMerchantConfigtor.END_POINT));
         mRecycleView.setLayoutManager(new LinearLayoutManager(SellerSetListActivity.this));
         mRecycleView.setAdapter(mSmartSellerSetListRefreshAdapter);
 

@@ -105,8 +105,7 @@ public class BSFCommonUtils {
         int verCode = -1;
         try {
             //注意："com.example.try_downloadfile_progress"对应AndroidManifest.xml里的package="……"部分
-            verCode = context.getPackageManager().getPackageInfo(
-                    "com.bs.john_li.bsfmerchantsversionapp", 0).versionCode;
+            verCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("msg",e.getMessage());
         }
@@ -120,8 +119,7 @@ public class BSFCommonUtils {
     public static String getVerName(Context context) {
         String verName = "";
         try {
-            verName = context.getPackageManager().getPackageInfo(
-                    "com.bs.john_li.bsfmerchantsversionapp", 0).versionName;
+            verName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("msg",e.getMessage());
         }

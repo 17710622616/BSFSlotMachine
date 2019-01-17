@@ -108,7 +108,7 @@ public class CWOrderCancelledFragment extends LazyLoadFragment {
 
     private void initData() {
         orderList = new ArrayList<>();
-        mSmartOrderRefreshAdapter = new SmartCWOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity()));
+        mSmartOrderRefreshAdapter = new SmartCWOrderRefreshAdapter(getActivity(), orderList, AliyunOSSUtils.initOSS(getActivity(),BSFMerchantConfigtor.END_POINT));
         mRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycleView.setAdapter(mSmartOrderRefreshAdapter);
 

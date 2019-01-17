@@ -2,12 +2,18 @@ package com.bs.john_li.bsfmerchantsversionapp;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -77,10 +83,25 @@ public class MainActivity extends AppCompatActivity {
     private String m_newApkUrl;//新的apk下载地址
     private String m_appNameStr; //下载到本地要给这个APP命的名字
     private String m_versionRemark; //新版本的備註
-    private Callback.Cancelable cancelable;// 短點續傳的回調
     private ProgressDialog m_progressDlg;
-    //负责所有的界面更新
-    private OSSClient oss;
+    long downloadTaskID;                //下载任务的唯一编号标示
+    DownloadManager downloadManager;
+
+    private IntentFilter intentFilter;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //销毁Activity时取消注册广播监听器；
+        unregisterReceiver(receiver);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,8 +184,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         mGv.setAdapter(new MyMenuAdapter(this));
-        // 初始化OSS
-        oss = AliyunOSSUtils.initOSS(this);
     }
 
     @Override
@@ -233,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         m_progressDlg.setCancelable(false);
         m_progressDlg.setCanceledOnTouchOutside(false);
         m_progressDlg.show();
-        m_appNameStr = "掌泊寶.apk";
+        m_appNameStr = "掌泊寶商家端.apk";
         RequestParams params = new RequestParams(BSFMerchantConfigtor.BASE_URL + BSFMerchantConfigtor.CHECK_VERSION);
         String url = params.getUri();
         params.setConnectTimeout(30 * 1000);
@@ -300,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
                                 // 点击"取消"按钮之后退出程序
-                                System.exit(0);
+                                //System.exit(0);
                             }
                         }).create();// 创建
 
@@ -323,145 +342,42 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private long mediaLength;
-    private long readSize;
-    private String localUrl;
-    private void downFile(String m_newApkUrl) {
-        // 開始下載
-        initProgressDialog();
-        // 构造下载文件请求。
-        GetObjectRequest get = new GetObjectRequest(BSFMerchantConfigtor.BucketName, "MerchantSide.apk");
-
-        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
-            @Override
-            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
-                // 请求成功。
-                InputStream inputStream = result.getObjectContent();
-                // 请求成功回调
-                Log.d("Content-Length", "" + result.getContentLength());
-                //拿到输入流和文件长度
-                inputStream = result.getObjectContent();
-                mediaLength = result.getContentLength();
-                byte[] buffer = new byte[2*2048];
-                int len;
-                FileOutputStream out = null;
-//              long lastReadSize = 0;
-                //建立本地缓存路径，视频缓存到这个目录
-                localUrl = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/BSSMPictures/" + m_appNameStr;
-                Log.d("localUrl: " , localUrl);
-                File cacheFile = new File(localUrl);
-                if (!cacheFile.exists()) {
-                    cacheFile.getParentFile().mkdirs();
-                    try {
-                        cacheFile.createNewFile();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                readSize = cacheFile.length();
-                try {
-                    //将缓存的视频转换为流
-                    out = new FileOutputStream(cacheFile, true);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                if (mediaLength == -1) {
-                    return;
-                }
-                mHandler1.sendEmptyMessage(VIDEO_STATE_UPDATE);
-                try {
-                    while ((len = inputStream.read(buffer)) != -1) {
-                        // 处理下载的数据
-                        try{
-                            out.write(buffer, 0, len);
-                            readSize += len;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    mHandler1.sendEmptyMessage(CACHE_VIDEO_END);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                    if (inputStream != null) {
-                        try {
-                            inputStream.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                }
-            }
-
-            @Override
-            // GetObject请求成功，将返回GetObjectResult，其持有一个输入流的实例。返回的输入流，请自行处理。
-            public void onFailure(GetObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                // 请求异常。
-                if (clientExcepion != null) {
-                    // 本地异常，如网络异常等。
-                    clientExcepion.printStackTrace();
-                }
-                if (serviceException != null) {
-                    // 服务异常。
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
-                }
-                Toast.makeText(MainActivity.this, "下載新版本失敗！", Toast.LENGTH_SHORT).show();
-                m_progressDlg.dismiss();
-            }
-        });
-    }
-
-    private final static int VIDEO_STATE_UPDATE = 0;
-    private final static int CACHE_VIDEO_END = 3;
-
-    private final Handler mHandler1 = new Handler() {
+    //重写广播的接收事件相应
+    BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = 26)
         @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case VIDEO_STATE_UPDATE:
-                    double cachepercent = readSize * 100.00 / mediaLength * 1.0;
-                    String s = String.format("已下載: [%.2f%%]", cachepercent);
-//              }
-                    //缓存到达100%时开始播放
-                    /*if(cachepercent==100.0||cachepercent==100.00){
-                        mVideoView.setVideoPath(localUrl);
-                        mVideoView.start();
-                        String s1 = String.format("已缓存: [%.2f%%]", cachepercent);
-                        tvcache.setText(s1);
-                        return;
-                    }*/
-                    m_progressDlg.setMessage(s);
-                    mHandler.sendEmptyMessageDelayed(VIDEO_STATE_UPDATE, 1000);
-                    break;
-
-                case CACHE_VIDEO_END:
-                    down();
-                    break;
+        public void onReceive(Context context, Intent intent) {
+            //只把用户在该Activity中新建的下载任务筛选出来，仅限一个
+            //如果是多个还得把downloadTaskID保存到一个List当中再进行筛选
+            DownloadManager.Query query = new DownloadManager.Query();
+            query.setFilterById(downloadTaskID);
+            Cursor cursor = downloadManager.query(query);
+            if (cursor.moveToNext() && DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                //获得下载文件存储的本地路径
+                String localFileName = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
+                //接下来要进行的操作可自行定义
+                //可以根据文件类型进行打开，编辑操作等
+                openAPKFile(MainActivity.this, localFileName);
             }
-            super.handleMessage(msg);
         }
     };
 
-    /**
-     * 下載完成關閉進度條
-     */
-    @RequiresApi(api = 26)
-    private void down() {
-        m_progressDlg.dismiss();
-        //update();
-        openAPKFile(this, new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/BSSMPictures", m_appNameStr).getPath());
+    private void downFile(String m_newApkUrl) {
+        ApplicationInfo applicationInfo = null;
+        try {
+            applicationInfo = getPackageManager().getApplicationInfo("com.android.providers.downloads", 0);
+
+            //当系统Downloader可用时才进行下载操作
+            if (applicationInfo.enabled) {
+                downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(m_newApkUrl));
+                downloadTaskID = downloadManager.enqueue(request);
+            } else {
+                Toast.makeText(this, "系统下载工具不可用", Toast.LENGTH_SHORT).show();
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -503,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 //DataEmbeddingUtil.dataEmbeddingAPPUpdate(e.toString());
                 //CommonUtils.makeEventToast(MyApplication.getContext(), MyApplication.getContext().getString(R.string.download_hint), false);
-                Toast.makeText(MainActivity.this, "版本更新失敗，您亦可以嘗試去Google Play搜索(掌泊寶)更新最新版，謝謝！", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "版本更新失敗，請聯繫掌泊寶工作人員，謝謝！", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -527,27 +443,6 @@ public class MainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/BSSMPictures", m_appNameStr)), "application/vnd.android.package-archive");
         this.startActivity(intent);
-    }
-
-    /*初始化短點續傳的对话框*/
-    private void initProgressDialog() {
-        //创建进度条对话框
-        m_progressDlg = new ProgressDialog(this);
-        //设置标题
-        m_progressDlg.setTitle("下載安裝包");
-        //设置信息
-        m_progressDlg.setMessage("玩命下載中...");
-        //设置显示的格式
-        m_progressDlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        //设置按钮
-        m_progressDlg.setButton(ProgressDialog.BUTTON_NEGATIVE, "暫停",new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //点击取消正在下载的操作
-                cancelable.cancel();
-            }});
-
-        m_progressDlg.show();
     }
 
     SunmiPrinterService sunmiPrinterService = new SunmiPrinterService() {

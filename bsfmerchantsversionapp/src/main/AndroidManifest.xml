@@ -14,7 +14,7 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <application android:allowBackup="true" android:icon="@mipmap/ic_launcher"
+    <application android:allowBackup="true" android:icon="@mipmap/merchant_version_logo"
         android:label="@string/app_name" android:roundIcon="@mipmap/merchant_version_logo"
         android:supportsRtl="true" android:theme="@style/AppTheme"
         android:name="com.bs.john_li.bsfmerchantsversionapp.Utils.BSFMerchantsApp">
@@ -31,6 +31,18 @@
         <activity android:name="com.bs.john_li.bsfmerchantsversionapp.SellerOrderListActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.bs.john_li.bsfmerchantsversionapp.SellerSetListActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.bs.john_li.bsfmerchantsversionapp.SellerAddSetActivity" android:screenOrientation="portrait"/>
+
+
+        <receiver
+            android:name=".InitApkBroadCastReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

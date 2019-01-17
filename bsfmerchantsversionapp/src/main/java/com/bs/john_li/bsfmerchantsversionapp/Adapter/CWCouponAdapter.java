@@ -58,14 +58,14 @@ public class CWCouponAdapter extends BaseAdapter {
         holder.cw_coupon_num_tv.setText("券號：" + list.get(i).getCouponCode());
         if (list.get(i).getStatus() == 1) {
             holder.cw_coupon_num_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.cw_coupon_num_iv.setVisibility(View.GONE);
+        } else {
+            holder.cw_coupon_num_tv.setVisibility(View.GONE);
         }
         return convertView;
     }
 
     class ViewHolder {
         public TextView cw_coupon_num_tv;
-        public ImageView cw_coupon_num_iv;
     }
 
     public void refreshListView(List<SellerOrderDetialOutModel.DataBean.CouponListBean> newList){
