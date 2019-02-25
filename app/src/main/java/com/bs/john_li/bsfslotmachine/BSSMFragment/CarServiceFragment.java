@@ -19,11 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.AdvertiseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarPartsSetListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashOrderListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SecondHandCarListActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.SellerDetialActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.CourseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarServiceAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CollapsingAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartHotSellerRefreshAdapter;
@@ -224,9 +226,21 @@ public class CarServiceFragment extends BaseFragment {
         mSmartHotSellerRefreshAdapter.setOnItemClickListenr(new SmartHotSellerRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), SellerDetialActivity.class);
-                intent.putExtra("sellerId", String.valueOf(mHotSellerList.get(position).getId()));
-                startActivity(intent);
+                if (mHotSellerList.get(position).getUrl() != null) {
+                    if (!mHotSellerList.get(position).equals("")) {
+                        Intent intent = new Intent(getActivity(), AdvertiseActivity.class);
+                        intent.putExtra("advertiseUrl", mHotSellerList.get(position).getUrl());
+                        getActivity().startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(getActivity(), SellerDetialActivity.class);
+                        intent.putExtra("sellerId", String.valueOf(mHotSellerList.get(position).getId()));
+                        startActivity(intent);
+                    }
+                } else {
+                    Intent intent = new Intent(getActivity(), SellerDetialActivity.class);
+                    intent.putExtra("sellerId", String.valueOf(mHotSellerList.get(position).getId()));
+                    startActivity(intent);
+                }
             }
         });
 
@@ -255,7 +269,7 @@ public class CarServiceFragment extends BaseFragment {
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                SideShowModel model = new Gson().fromJson(result.toString(), SideShowModel.class);
+                final SideShowModel model = new Gson().fromJson(result.toString(), SideShowModel.class);
                 if (model.getCode() ==200) {
                     for (int i = 0; i < model.getData().size(); i ++) {
                         ImageView iv = new ImageView(getActivity());
@@ -263,6 +277,19 @@ public class CarServiceFragment extends BaseFragment {
                         iv.setImageResource(R.mipmap.img_loading_list);
                         //AliyunOSSUtils.downloadImg(entry.getValue(), oss, iv, this, R.mipmap.load_img_fail);
                         x.image().bind(iv, model.getData().get(i).getPic(), options1);
+                        if (model.getData().get(i).getUrl() != null){
+                            if (!model.getData().get(i).getUrl().equals("")) {
+                                final int j = i;
+                                iv.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(getActivity(), AdvertiseActivity.class);
+                                        intent.putExtra("advertiseUrl", model.getData().get(j).getUrl());
+                                        getActivity().startActivity(intent);
+                                    }
+                                });
+                            }
+                        }
                         imgList.add(iv);
                         mCollapsingAdapter.notifyDataSetChanged();
                     }

@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -91,6 +93,10 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
     private SellerDetialOutModel.SellerDetialModel mSellerDetialModel;
     // 請求列表的類
     private RequestSecondCarModel mRequestSecondCarModel;
+    //定位都要通过LocationManager这个类实现
+    private LocationManager locationManager;
+    private Location mLocation;
+    private String provider;
     //
     private SmartSecondCarListRefreshAdapter mSmartSecondCarListRefreshAdapter;
     //private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setImageScaleType(ImageView.ScaleType.CENTER_CROP).setLoadingDrawableId(R.mipmap.second_ad).setFailureDrawableId(R.mipmap.second_ad).build();
@@ -100,9 +106,41 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_detial);
+        getLocation();
         initView();
         setListener();
         initData();
+    }
+
+    private void getLocation() {
+        //获取定位服务
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //获取当前可用的位置控制器
+        List<String> list = locationManager.getProviders(true);
+
+        if (list.contains(LocationManager.GPS_PROVIDER)) {
+            //是否为GPS位置控制器
+            provider = LocationManager.GPS_PROVIDER;
+        } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+            //是否为网络位置控制器
+            provider = LocationManager.NETWORK_PROVIDER;
+
+        } else {
+            Toast.makeText(this, "请检查网络或GPS是否打开",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLocation = locationManager.getLastKnownLocation(provider);
     }
 
     @Override
@@ -569,6 +607,13 @@ public class SellerDetialActivity extends BaseActivity implements View.OnClickLi
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("id", Integer.parseInt(sellerId));
+            if (mLocation != null) {
+                jsonObj.put("longitude",mLocation.getLongitude());
+                jsonObj.put("latitude",mLocation.getLatitude());
+            } else {
+                jsonObj.put("longitude","113.548331");
+                jsonObj.put("latitude","22.205702");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
