@@ -1,77 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="10dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/colorWight"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView
-                android:id="@+id/item_discount_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="MOP$10.0"
-                android:textSize="30sp"
-                android:textColor="@color/colorLoginOutRed"/>
-            <TextView
-                android:id="@+id/item_discount_condition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_horizontal"
-                android:text="滿MOP$20.0可用"
-                android:textSize="16sp"
-                android:textColor="@color/colorDrakGray"/>
-        </LinearLayout>
+        android:layout_margin="5dp"
+        android:background="@drawable/shape_radius"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="20dp">
 
-            <TextView
-                android:id="@+id/item_discount_type"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:text="MOP"
+                        android:textColor="@color/colorLoginOutRed"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/item_discount_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorLoginOutRed"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/item_discount_condition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="滿MOP$20.0可用"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_discount_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="會員充值紅包"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/item_discount_expire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="到期時間:2017/10/05"
+                    android:textColor="@color/colorDrakGray"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="邀請代金券"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="20sp" />
+                android:layout_gravity="center_vertical">
+                <TextView
+                    android:id="@+id/item_discount_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_red_radius"
+                    android:padding="5dp"
+                    android:text="去使用"
+                    android:textColor="@color/colorWight" />
 
-            <TextView
-                android:id="@+id/item_discount_expire"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text="2017/10/05到期"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/item_discount_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="限用號碼：65****31"
-                android:textColor="@color/colorDrakGray"
-                android:textSize="16sp" />
+                <ImageView
+                    android:id="@+id/item_discount_overdue"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/overdue"/>
+            </FrameLayout>
         </LinearLayout>
+
+        <View style="@style/UnderLineTextView" />
+
+        <TextView
+            android:id="@+id/item_discount_limiting_condition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="10dp"
+            android:text="限會員充值訂單可用"
+            android:textColor="@color/colorDrakGray" />
     </LinearLayout>
-    <ImageView
-        android:id="@+id/new_discount_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/new_discount"/>
-</FrameLayout>
+</LinearLayout>

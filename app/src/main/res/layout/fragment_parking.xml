@@ -57,6 +57,14 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/tutorial_iv"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center_vertical|right"
+            android:src="@mipmap/tutorial"/>
+
         <include layout="@layout/layout_go_parking"/>
     </FrameLayout>
 </LinearLayout>

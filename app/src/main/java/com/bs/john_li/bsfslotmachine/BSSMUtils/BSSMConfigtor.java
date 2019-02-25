@@ -152,6 +152,10 @@ public class BSSMConfigtor {
     public final static String ARTICAL_UNLIKE = "content/unlike?";
     // 獲取訂單列表
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
+    // 獲取首頁贈送優惠券
+    public final static String GET_GIVE_COUPON = "coupon/giveCoupon?token=";
+    // 獲取優惠券列表
+    public final static String GET_DISCOUNT_LIST = "coupon/listByPage?token=";
     //軟件版本號對比地址
     public static final String CHECK_VERSION= "AppVersion/selectAppVersion";
     //提交意見反饋的接口

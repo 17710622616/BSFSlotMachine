@@ -36,6 +36,8 @@ import com.bs.john_li.bsfslotmachine.BSSMFragment.CarServiceFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ForumFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.MineFragment;
 import com.bs.john_li.bsfslotmachine.BSSMFragment.ParkingFragment;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.GiveCouponOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.VersionOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
@@ -43,7 +45,13 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.StatusBarUtil;
 import com.bs.john_li.bsfslotmachine.R;
 import com.google.gson.Gson;
+import com.othershe.nicedialog.BaseNiceDialog;
+import com.othershe.nicedialog.NiceDialog;
+import com.othershe.nicedialog.ViewConvertListener;
+import com.othershe.nicedialog.ViewHolder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.common.task.PriorityExecutor;
 import org.xutils.http.HttpMethod;
@@ -53,6 +61,7 @@ import org.xutils.x;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
@@ -122,6 +131,10 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         traslation.add(R.id.main_containor,cacheFragment,CarServiceFragment.TAG);
         traslation.commit();
 
+        // 獲取首頁贈送優惠券
+        if (BSSMCommonUtils.isLoginNow(this)) {
+            callNetGetCouponFree();
+        }
         // 註冊極光別名
         String alias = "user";
         //给极光推送设置标签和别名
@@ -298,6 +311,51 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void callNetGetCouponFree() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_GIVE_COUPON + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                GiveCouponOutModel model = new Gson().fromJson(result.toString(), GiveCouponOutModel.class);
+                if (model.getCode() ==200) {
+                    NiceDialog.init()
+                            .setLayoutId(R.layout.dialog_give_coupon)
+                            .setConvertListener(new ViewConvertListener() {
+                                @Override
+                                protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                    viewHolder.setOnClickListener(R.id.give_coupon_cancel, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            baseNiceDialog.dismiss();
+                                        }
+                                    });
+                                }
+                            })
+                            .setWidth(300)
+                            .setOutCancel(false)
+                            .show(getSupportFragmentManager());
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                }
+            }
+            //请求异常后的回调方法
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(MainActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+            }
+            //主动调用取消请求的回调方法
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     /**

@@ -46,7 +46,6 @@ public class DiscountAdapter extends BaseAdapter {
             holder = new ViewHolder();
             contentView = inflater.inflate(R.layout.item_discount, null);
             holder.moneyTv = contentView.findViewById(R.id.item_discount_money);
-            holder.newDiscountIv = contentView.findViewById(R.id.new_discount_iv);
             contentView.setTag(holder);
         } else {
             holder = (ViewHolder) contentView.getTag();

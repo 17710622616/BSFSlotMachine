@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.CarService.CarWashActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.GuoJiangLongActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ShareActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.CourseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.SearchSlotMachineActivity;
@@ -70,6 +71,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     private LinearLayout loadLL;
     private ImageView loadIv;
     private ImageView loadFailIv;
+    private ImageView tutorialIv;
     private TextView loadTv;
     private TextView mTvAddress;
     private LinearLayout goCarWashLL;
@@ -106,6 +108,7 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void initView() {
         headView = (BSSMHeadView) parkingView.findViewById(R.id.parking_head);
+        tutorialIv = parkingView.findViewById(R.id.tutorial_iv);
         loadLL = parkingView.findViewById(R.id.parking_load_ll);
         loadIv = parkingView.findViewById(R.id.parking_load_iv);
         loadFailIv = parkingView.findViewById(R.id.parking_load_fail);
@@ -138,13 +141,14 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
         goParlingLL.setOnClickListener(this);
         goCarWashLL.setOnClickListener(this);
         loadLL.setOnClickListener(null);
+        tutorialIv.setOnClickListener(this);
     }
 
     @Override
     public void initData() {//2
         headView.setTitle("停車");
         headView.setLeft(R.mipmap.search, this);
-        headView.setRightText("教程", this);
+        headView.setRightText("分享有獎", this);
         loadIv.setBackgroundResource(R.drawable.load_anim);
         animationDrawable = (AnimationDrawable) loadIv.getBackground();
         animationDrawable.start();
@@ -162,6 +166,9 @@ public class ParkingFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.head_right_tv:
+                getActivity().startActivity(new Intent(getActivity(), ShareActivity.class));
+                break;
+            case R.id.tutorial_iv:
                 getActivity().startActivity(new Intent(getActivity(), CourseActivity.class));
                 break;
             case R.id.go_parling_ll:

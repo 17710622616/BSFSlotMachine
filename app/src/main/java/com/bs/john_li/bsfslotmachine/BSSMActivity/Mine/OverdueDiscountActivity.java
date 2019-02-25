@@ -8,17 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.DiscountAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartDiscountRefreshAdapter;
-import com.bs.john_li.bsfslotmachine.BSSMAdapter.SmartOrderRefreshAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.DiscountOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.UserOrderOutModel;
-import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
@@ -41,11 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 優惠券
- * Created by John_Li on 5/8/2017.
+ * Created by John_Li on 25/2/2019.
  */
 
-public class DiscountActivity extends BaseActivity implements View.OnClickListener{
+public class OverdueDiscountActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView discount_head;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
@@ -89,10 +83,10 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
             public void onRefresh(RefreshLayout refreshlayout) {
                 discountList.clear();
                 pageNo = 1;
-                if (BSSMCommonUtils.isLoginNow(DiscountActivity.this)) {
+                if (BSSMCommonUtils.isLoginNow(OverdueDiscountActivity.this)) {
                     callNetGetActiveDiscountList();
                 } else {
-                    startActivityForResult(new Intent(DiscountActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(OverdueDiscountActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                 }
             }
         });
@@ -101,15 +95,15 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
             public void onLoadmore(RefreshLayout refreshlayout) {
                 //和最大的数据比较
                 if (pageSize * (pageNo) > totolCarCount){
-                    Toast.makeText(DiscountActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OverdueDiscountActivity.this, "沒有更多數據了誒~", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadmore();
                 } else {
                     pageNo ++;
-                    if (BSSMCommonUtils.isLoginNow(DiscountActivity.this)) {
+                    if (BSSMCommonUtils.isLoginNow(OverdueDiscountActivity.this)) {
                         callNetGetActiveDiscountList();
                     } else {
-                        startActivityForResult(new Intent(DiscountActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                        startActivityForResult(new Intent(OverdueDiscountActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
                     }
                 }
             }
@@ -120,12 +114,11 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void initData() {
-        discount_head.setTitle("優惠券");
+        discount_head.setTitle("過期紅包");
         discount_head.setLeft(this);
-        discount_head.setRightText("過期紅包", this);
 
         discountList = new ArrayList<>();
-        mSmartDiscountRefreshAdapter = new SmartDiscountRefreshAdapter(this, discountList,0);
+        mSmartDiscountRefreshAdapter = new SmartDiscountRefreshAdapter(this, discountList, 1);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartDiscountRefreshAdapter);
 
@@ -149,7 +142,7 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
             jsonObj.put("pageSize",pageSize);
             jsonObj.put("pageNo",pageNo);
             jsonObj.put("type",0);
-            jsonObj.put("status",0);
+            jsonObj.put("status",1);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -166,19 +159,19 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
                     List<DiscountOutModel.DataBeanX.DiscountModel> discountModelsFromNet = model.getData().getData();
                     discountList.addAll(discountModelsFromNet);
                 } else if (model.getCode() == 10000){
-                    SPUtils.put(DiscountActivity.this, "UserToken", "");
-                    Toast.makeText(DiscountActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    SPUtils.put(OverdueDiscountActivity.this, "UserToken", "");
+                    Toast.makeText(OverdueDiscountActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(DiscountActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OverdueDiscountActivity.this,  String.valueOf(model.getMsg()), Toast.LENGTH_SHORT).show();
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (ex instanceof SocketTimeoutException) {
-                    Toast.makeText(DiscountActivity.this, "請求超時，請重試！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OverdueDiscountActivity.this, "請求超時，請重試！", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(DiscountActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OverdueDiscountActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
                 }
             }
             //主动调用取消请求的回调方法
@@ -216,9 +209,6 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
         switch (view.getId()){
             case R.id.head_left:
                 finish();
-                break;
-            case R.id.head_right_tv:
-                startActivity(new Intent(this, OverdueDiscountActivity.class));
                 break;
             case R.id.discount_recommend:
                 startActivity(new Intent(this, ShareActivity.class));

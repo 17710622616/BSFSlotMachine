@@ -271,12 +271,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.mine_discount_ll:
-                /*if (BSSMCommonUtils.isLoginNow(getActivity())) {
+                if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), DiscountActivity.class));
                 } else {
                     startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                }*/
-                Toast.makeText(getActivity(), getResources().getString(R.string.not_open), Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.mine_integral_ll:
                 Toast.makeText(getActivity(),getResources().getString(R.string.not_open),Toast.LENGTH_SHORT).show();
