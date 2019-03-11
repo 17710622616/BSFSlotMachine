@@ -231,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="10dp"
-                android:text="(非會員訂單，每個鐘收取5蚊代入服務費)"
+                android:text="(非會員訂單，每個鐘收取4蚊代入服務費)"
                 android:textSize="12sp"
                 android:textColor="@color/colorBlack"
                 android:gravity="center"

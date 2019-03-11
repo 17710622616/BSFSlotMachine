@@ -27,6 +27,14 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:background="#fff" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="點擊車輛右邊圓形會員標誌按鈕可去充值界面"
+                android:textSize="16sp"
+                android:textColor="@color/colorWight"
+                android:padding="5dp"
+                android:background="@color/aplahOrenge"/>
             <LinearLayout
                 android:id="@+id/no_car_ll"
                 android:layout_width="match_parent"

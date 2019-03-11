@@ -30,6 +30,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/mine_discount_tv"
             style="@style/MineItemPropertyValueTV"
             android:textColor="@color/colorMineOringe"
             android:text="0張"/>

@@ -84,7 +84,7 @@ public class DiscountOutModel {
             private int couponId;
             private String couponName;
             private int couponValue;
-            private int minAmount;
+            private double minAmount;
             private String dayUseStartTime;
             private String dayUseEndTime;
             private long useStartTime;
@@ -93,6 +93,15 @@ public class DiscountOutModel {
             private String remark;
             private String remark2;
             private int status;
+            private int ifVip;
+
+            public int getIfVip() {
+                return ifVip;
+            }
+
+            public void setIfVip(int ifVip) {
+                this.ifVip = ifVip;
+            }
 
             public int getCouponId() {
                 return couponId;
@@ -118,11 +127,11 @@ public class DiscountOutModel {
                 this.couponValue = couponValue;
             }
 
-            public int getMinAmount() {
+            public double getMinAmount() {
                 return minAmount;
             }
 
-            public void setMinAmount(int minAmount) {
+            public void setMinAmount(double minAmount) {
                 this.minAmount = minAmount;
             }
 

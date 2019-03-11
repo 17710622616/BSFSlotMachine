@@ -193,6 +193,38 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/parking_order_coupon_ll"
+                android:layout_marginTop="1dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingLeft="8dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:background="@color/colorWight">
+                <TextView
+                    android:id="@+id/parking_order_coupon_tv"
+                    style="@style/MineItemTextView"
+                    android:text="紅包：暫無可用紅包" />
+
+                <TextView
+                    android:id="@+id/parking_order_share_tv"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="分享領紅包"
+                    android:textColor="@color/colorWight"
+                    android:textSize="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="3dp"
+                    android:background="@drawable/shape_coupon_bg"/>
+
+                <ImageView
+                    style="@style/MineItemImageNext"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/parking_order_machineno_ll"
                 android:layout_marginTop="1dp"
                 style="@style/ParkingOrderItemLinearLayout">

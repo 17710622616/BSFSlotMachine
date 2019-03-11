@@ -56,6 +56,8 @@ public class BSSMConfigtor {
     // 測試的IP地址
     //public final static String BASE_URL = "http://47.94.254.169:8080/parkingman-web/";
     // 獲取驗證碼
+    public final static String GET_SPLASH = "indexBanner/index";
+    // 獲取驗證碼
     public final static String GET_VERIFICATION_CODE = "reg/getVerifyCode";
     // 用戶登錄的API
     public final static String USER_LOGIN = "user/login";
@@ -154,6 +156,8 @@ public class BSSMConfigtor {
     public final static String GET_ORDER_LIST = "order/getUserOrderList?token=";
     // 獲取首頁贈送優惠券
     public final static String GET_GIVE_COUPON = "coupon/giveCoupon?token=";
+    // 獲取用戶可用優惠券數量
+    public final static String GET_USE_COUPON_NUMBER = "coupon/couponCount?token=";
     // 獲取優惠券列表
     public final static String GET_DISCOUNT_LIST = "coupon/listByPage?token=";
     //軟件版本號對比地址

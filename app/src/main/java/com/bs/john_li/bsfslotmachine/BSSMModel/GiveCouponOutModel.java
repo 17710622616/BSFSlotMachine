@@ -60,8 +60,8 @@ public class GiveCouponOutModel {
         private int minAmount;
         private String dayUseStartTime;
         private String dayUseEndTime;
-        private int useStartTime;
-        private int useEndTime;
+        private long useStartTime;
+        private long useEndTime;
         private int type;
         private String remark;
         private int status;
@@ -115,19 +115,19 @@ public class GiveCouponOutModel {
             this.dayUseEndTime = dayUseEndTime;
         }
 
-        public int getUseStartTime() {
+        public long getUseStartTime() {
             return useStartTime;
         }
 
-        public void setUseStartTime(int useStartTime) {
+        public void setUseStartTime(long useStartTime) {
             this.useStartTime = useStartTime;
         }
 
-        public int getUseEndTime() {
+        public long getUseEndTime() {
             return useEndTime;
         }
 
-        public void setUseEndTime(int useEndTime) {
+        public void setUseEndTime(long useEndTime) {
             this.useEndTime = useEndTime;
         }
 

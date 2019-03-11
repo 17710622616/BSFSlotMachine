@@ -119,6 +119,7 @@
         <activity android:name=".BSSMActivity.CarService.SellerDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.CourseActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.ShareActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.ChooseDiscountActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->

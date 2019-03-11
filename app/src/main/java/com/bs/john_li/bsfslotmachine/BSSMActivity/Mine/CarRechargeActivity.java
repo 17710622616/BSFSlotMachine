@@ -9,6 +9,7 @@ import android.support.v4.widget.TextViewCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,11 +18,14 @@ import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.ParkingOrderActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Parking.PaymentAcvtivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.CarRechargeWayListAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarRechargeWayListModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.DiscountOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMCommonUtils;
@@ -51,12 +55,14 @@ import java.util.List;
 
 public class CarRechargeActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv, carExpandTimeTv, submitTv;
+    private TextView carNoTv, carModelTv, carStyleTv, carBrandTv, carTypeTv, carExpandTimeTv, submitTv, couponTv, shareTv;
     private ImageView carIv;
     private RadioGroup rechargeWayRg;
     private RadioButton dayRb, monthRb, quarterlyRb, sixMonthRb, yearRb;
+    private LinearLayout coupon_ll;
 
     private long memberChargeId;
+    private DiscountOutModel.DataBeanX.DiscountModel mDiscountModel;
     private CarModel.CarCountAndListModel.CarInsideModel mCarInsideModel;
     private List<CarRechargeWayListModel.CarRechargeWayModel> mCarRechargeWayModelList;
     private ImageOptions options = new ImageOptions.Builder().setSize(0, 0).setLoadingDrawableId(R.mipmap.img_loading).setFailureDrawableId(R.mipmap.load_img_fail_list).build();
@@ -80,6 +86,9 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         carExpandTimeTv = findViewById(R.id.recharge_car_expandtime);
         submitTv = findViewById(R.id.recharge_car_submit);
         carIv = findViewById(R.id.recharge_car_iv);
+        couponTv = findViewById(R.id.recharge_car_coupon_tv);
+        shareTv = findViewById(R.id.recharge_car_share_tv);
+        coupon_ll = findViewById(R.id.recharge_car_coupon_ll);
         rechargeWayRg = findViewById(R.id.recharge_car_rg);
         dayRb = findViewById(R.id.one_day_rb);
         monthRb = findViewById(R.id.one_month_rb);
@@ -171,6 +180,8 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
         }
         // 獲取充值方式
         getRechargeWay();
+        // 獲取優惠券列表
+        callNetGetCouponList();
     }
 
     @Override
@@ -232,6 +243,61 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
+     * 獲取優惠券列表
+     */
+    private void callNetGetCouponList() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USE_COUPON_NUMBER + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonJieModel model = new Gson().fromJson(result.toString(), CommonJieModel.class);
+                if (model.getCode() == 200) {
+                    if (Integer.parseInt(model.getData()) == 0) {
+                        shareTv.setVisibility(View.VISIBLE);
+                        couponTv.setText("紅包：暫無可用紅包");
+                        coupon_ll.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(CarRechargeActivity.this, ShareActivity.class));
+                            }
+                        });
+                    } else {
+                        shareTv.setVisibility(View.GONE);
+                        couponTv.setText("紅包：" + model.getData() + "個可用紅包");
+                        coupon_ll.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // 打開可用紅包列表
+                                Intent intent = new Intent(CarRechargeActivity.this, ChooseDiscountActivity.class);
+                                intent.putExtra("orderModey", "350");
+                                intent.putExtra("orderType", "MemberPrepaidOrder");
+                                intent.putExtra("CarInsideModel", new Gson().toJson(mCarInsideModel));
+                                startActivityForResult(intent, 7);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    /**
      *提交車輛充值訂單
      */
     private void submitRechargeOrder(final LoadDialog loadDialog) {
@@ -242,6 +308,9 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
             try {
                 jsonObj.put("memberChargeId",memberChargeId);
                 jsonObj.put("carId",mCarInsideModel.getId());
+                if (mDiscountModel != null) {
+                    jsonObj.put("couponId",mDiscountModel.getCouponId());
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -299,6 +368,10 @@ public class CarRechargeActivity extends BaseActivity implements View.OnClickLis
                 case 1:
                     setResult(RESULT_OK);
                     finish();
+                    break;
+                case 7: // 選擇優惠券
+                    mDiscountModel = new Gson().fromJson(data.getStringExtra("couponModel"), DiscountOutModel.DataBeanX.DiscountModel.class);
+                    couponTv.setText("紅包：-MOP" + mDiscountModel.getCouponValue());
                     break;
             }
         }

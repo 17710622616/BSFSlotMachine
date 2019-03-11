@@ -100,6 +100,38 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/recharge_car_coupon_ll"
+        android:layout_marginTop="1dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:paddingLeft="8dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:background="@color/colorWight">
+        <TextView
+            android:id="@+id/recharge_car_coupon_tv"
+            style="@style/MineItemTextView"
+            android:text="紅包：暫無可用紅包" />
+
+        <TextView
+            android:id="@+id/recharge_car_share_tv"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="分享領紅包"
+            android:textColor="@color/colorWight"
+            android:textSize="10sp"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="3dp"
+            android:background="@drawable/shape_coupon_bg"/>
+
+        <ImageView
+            style="@style/MineItemImageNext"/>
+    </LinearLayout>
+
     <RadioGroup
         android:id="@+id/recharge_car_rg"
         android:layout_width="match_parent"
@@ -113,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="日費:35"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#F45428"
             android:padding="10dp"
             android:layout_margin="5dp"
@@ -125,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="月费:350"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#F45428"
             android:padding="10dp"
             android:layout_margin="5dp"
@@ -136,7 +168,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="季度费:1050(350*3)返现52.5即5%"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#F45428"
             android:padding="10dp"
             android:layout_margin="5dp"
@@ -147,7 +179,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="半年费:2100(350*6)返现210即10%"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#F45428"
             android:padding="10dp"
             android:layout_margin="5dp"
@@ -158,7 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="年费:4200(350*12)返现840即20%"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#F45428"
             android:padding="10dp"
             android:layout_margin="5dp"

@@ -28,7 +28,7 @@
         android:id="@+id/splash_iv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@mipmap/wellcome"
+        android:src="@mipmap/splash"
         android:scaleType="fitXY"/>
 
 </LinearLayout>

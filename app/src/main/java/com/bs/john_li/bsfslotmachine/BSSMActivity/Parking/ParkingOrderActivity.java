@@ -1,13 +1,9 @@
 package com.bs.john_li.bsfslotmachine.BSSMActivity.Parking;
 
 import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -23,14 +18,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -44,11 +36,12 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.BaseActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.LoginActivity;
-import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.CarListActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ChooseDiscountActivity;
+import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ShareActivity;
 import com.bs.john_li.bsfslotmachine.BSSMAdapter.PhotoAdapter;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CarModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
-import com.bs.john_li.bsfslotmachine.BSSMModel.MaxAmountModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
+import com.bs.john_li.bsfslotmachine.BSSMModel.DiscountOutModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.OrderModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.RatesModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.SlotMachineListOutsideModel;
@@ -64,16 +57,12 @@ import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.BSSMView.LoadDialog;
 import com.bs.john_li.bsfslotmachine.BSSMView.NoScrollGridView;
 import com.bs.john_li.bsfslotmachine.R;
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.othershe.nicedialog.BaseNiceDialog;
 import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +73,6 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -99,9 +87,9 @@ import java.util.List;
 
 public class ParkingOrderActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView headView;
-    private LinearLayout carManageLL, startTimeLL, endTimeLL, orderMoneyLL, orderRemarkLL, orderAreaLL, machinenoUnknowLL, orderColorLL, orderPhotoLL;
+    private LinearLayout carManageLL, startTimeLL, endTimeLL, orderMoneyLL, orderCouponLL, orderRemarkLL, orderAreaLL, machinenoUnknowLL, orderColorLL, orderPhotoLL;
     private RelativeLayout carManageRL;
-    public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, machinenoUnknowTv, remarkTv, areaTv, startTimeTv, endTimeTv, submitTv,meterColorTv, orderAmountTv;
+    public TextView warmPromptTv, carManagetv, carBrandTv, carTypeTv, carNumTv, orderLocationTv, orderMoneyTv, orderCouponTv, machinenoUnknowTv, remarkTv, areaTv, startTimeTv, endTimeTv, submitTv,meterColorTv, orderMoneyDiscountTv, orderAmountTv, orderShareTv;
     private ImageView carRecargeIv, parkingIv;
     public NoScrollGridView photoGv;
 
@@ -113,6 +101,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
     private CarModel.CarCountAndListModel.CarInsideModel mCarInsideModel;
     private List<TestCarListModel.CarModel> carInsideModelList;
     private SlotMachineListOutsideModel.SlotMachineListModel.SlotMachineModel mSlotMachineModel;
+    private DiscountOutModel.DataBeanX.DiscountModel mDiscountModel;
     public SlotOrderModel mSlotOrderModel;//已知咪錶的訂單
     public SlotUnknowOrderModel mSlotUnknowOrderModel;  // 未知咪錶拍照時記得用saveinstans保存，完成之後還需把原來的數據擺回界面
     private PhotoAdapter mPhotoAdapter;
@@ -147,6 +136,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         startTimeLL = findViewById(R.id.parking_order_starttime_ll);
         endTimeLL = findViewById(R.id.parking_order_endtime_ll);
         orderMoneyLL = findViewById(R.id.parking_order_money_ll);
+        orderCouponLL = findViewById(R.id.parking_order_coupon_ll);
         orderRemarkLL = findViewById(R.id.parking_order_remark_ll);
         orderAreaLL = findViewById(R.id.parking_order_area_ll);
         orderColorLL = findViewById(R.id.parking_order_color_ll);
@@ -160,6 +150,8 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         carRecargeIv = findViewById(R.id.parking_order_car_recharge);
         orderLocationTv = findViewById(R.id.parking_order_location_tv);
         orderMoneyTv = findViewById(R.id.parking_order_money_tv);
+        orderCouponTv = findViewById(R.id.parking_order_coupon_tv);
+        orderMoneyDiscountTv = findViewById(R.id.parking_order_discounts_tv);
         remarkTv = findViewById(R.id.parking_order_remark_tv);
         areaTv = findViewById(R.id.parking_order_area_tv);
         machinenoUnknowTv = findViewById(R.id.parking_order_machineno_tv);
@@ -169,6 +161,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         endTimeTv = findViewById(R.id.parking_order_endtime_tv);
         orderAmountTv = findViewById(R.id.parking_order_amount_tv);
         submitTv = findViewById(R.id.parking_order_submit);
+        orderShareTv = findViewById(R.id.parking_order_share_tv);
         parkingIv = findViewById(R.id.parking_iv);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             headView.setHeadHight();
@@ -240,6 +233,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         carInsideModelList = new ArrayList<>();
         // 判断车辆是否选择车辆
         //isChooseCar();
+        callNetGetCouponList();
         // 現在時間
         String startTime = (BSSMCommonUtils.getHour() + 1) + ":" + BSSMCommonUtils.getMinute() + ":00";
         String startTimeForDay = BSSMCommonUtils.getYear() + "-" + BSSMCommonUtils.getMonth() + "-" + BSSMCommonUtils.getDayOfMonth() + " " + startTime;
@@ -317,7 +311,7 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             endTimeTv.setText("結束投幣時間[預計" + mSlotUnknowOrderModel.getEndSlotTime() + "]");
             orderMoneyTv.setText("總金額：MOP" + mSlotUnknowOrderModel.getSlotAmount());
             orderAmountTv.setText("金額：MOP" + mSlotUnknowOrderModel.getSlotAmount());
-            machinenoUnknowTv.setText("咪錶編號：" + mSlotUnknowOrderModel.getRemark().substring(5, 10));
+            machinenoUnknowTv.setText("咪錶編號：" + mSlotUnknowOrderModel.getRemark().substring(0, 5));
             refreshCarChoosed();
         } else if (way.equals(BSSMConfigtor.SLOT_MACHINE_EXIST)){   //咪錶存在，無子列表
             /*warmPromptTv.setVisibility(View.GONE);
@@ -381,6 +375,65 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * 獲取優惠券列表
+     */
+    private void callNetGetCouponList() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USE_COUPON_NUMBER + SPUtils.get(this, "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonJieModel model = new Gson().fromJson(result.toString(), CommonJieModel.class);
+                if (model.getCode() == 200) {
+                    if (Integer.parseInt(model.getData()) == 0) {
+                        orderShareTv.setVisibility(View.VISIBLE);
+                        orderCouponTv.setText("紅包：暫無可用紅包");
+                        orderCouponLL.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(ParkingOrderActivity.this, ShareActivity.class));
+                            }
+                        });
+                    } else {
+                        orderShareTv.setVisibility(View.GONE);
+                        orderCouponTv.setText("紅包：" + model.getData() + "個可用紅包");
+                        orderCouponLL.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // 打開可用紅包列表
+                                Intent intent = new Intent(ParkingOrderActivity.this, ChooseDiscountActivity.class);
+                                if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在，提交未知訂單
+                                    intent.putExtra("orderModey", mSlotUnknowOrderModel.getSlotAmount());
+                                } else {
+                                    intent.putExtra("orderModey", mSlotOrderModel.getSlotAmount());
+                                }
+                                intent.putExtra("orderType", "smOrder");
+                                intent.putExtra("CarInsideModel", new Gson().toJson(mCarInsideModel));
+                                startActivityForResult(intent, 7);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
     @Override
     public void onClick(View view) {
         if (BSSMCommonUtils.isFastDoubleClick()) {
@@ -393,12 +446,6 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.parking_order_car_manage_ll:
                 // 选择车辆
-                /*Intent updateCarIntent = new Intent(this, ChooseCarActivity.class);
-                if (carInsideModelList.size() > 0) {  // 有已充值的車輛，默認選擇是第一個車輛，點擊修改選擇車輛
-                    updateCarIntent.putExtra("carList", new Gson().toJson(carInsideModelList));
-                } else {    // 沒有已充值的車輛，點擊添加車輛
-
-                }*/
                 Intent intent = new Intent(this, ChooseCarActivity.class);
                 intent.putExtra("way", "ORDER_CHOOSE_CAR");
                 startActivityForResult(intent, 6);
@@ -586,6 +633,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             jsonObj.put("startSlotTime",mSlotUnknowOrderModel.getStartSlotTime());
             jsonObj.put("endSlotTime",mSlotUnknowOrderModel.getEndSlotTime());
             jsonObj.put("remark", "咪錶編號：" + mSlotUnknowOrderModel.getUnknowMachineno() + "，地址：" + mSlotUnknowOrderModel.getRemark());
+            if (mDiscountModel != null) {
+                jsonObj.put("couponId", mDiscountModel.getCouponId());
+            }
             //jsonObj.put("imgUrls", BSSMCommonUtils.getJSONArrayByList(BSSMCommonUtils.deleteDirName(imgUrlList)));
             List<String> cachList = new ArrayList();
             for (int i = 0; i < imgUrlList.size(); i++) {
@@ -654,6 +704,9 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
             jsonObj.put("endSlotTime",mSlotOrderModel.getEndSlotTime());
             jsonObj.put("remark",mSlotOrderModel.getRemark());
             jsonObj.put("parkingSpace",mSlotOrderModel.getParkingSpace());
+            if (mDiscountModel != null) {
+                jsonObj.put("couponId", mDiscountModel.getCouponId());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -697,207 +750,10 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-
-    /**
-     * 判断是否选择车辆
-     */
-    /*private void isChooseCar() {
-        if (BSSMCommonUtils.isLoginNow(ParkingOrderActivity.this)) {
-            callNetGetCarList();
-        } else {
-            startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-        }
-    }*/
-
-    /**
-     * 獲取已充值車輛列表
-     */
-    /*private void callNetGetCarList() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_CAR_LIST_RECHARGE + SPUtils.get(this, "UserToken", ""));
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        TestCarListModel model = new Gson().fromJson(result.toString(), TestCarListModel.class);
-                        if (model.getCode() == 200) {
-                            carInsideModelList.clear();
-                            for (TestCarListModel.CarModel carModel : model.getData()) {
-                                if (carModel.getImgUrl() == null) {
-                                    carModel.setImgUrl("objectNam1");
-                                }
-                                if (carModel.getModelForCar() == null) {
-                                    carModel.setModelForCar("");
-                                }
-                                if (carModel.getCarBrand() == null) {
-                                    carModel.setCarBrand("");
-                                }
-                                if (carModel.getCarStyle() == null) {
-                                    carModel.setCarStyle("");
-                                }
-                                carInsideModelList.add(carModel);
-                            }
-                        } else if (model.getCode() == 10000) {
-                            SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
-                            startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                        } else {
-                            Toast.makeText(ParkingOrderActivity.this, "車輛獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        Toast.makeText(ParkingOrderActivity.this, "車輛獲取失敗╮(╯▽╰)╭", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onCancelled(CancelledException cex) {
-
-                    }
-
-                    @Override
-                    public void onFinished() {
-                        refreshCarChoosed();
-                    }
-                });
-    }*/
-
-    /**
-     * 获取已知咪表的最大金额
-     * @param machineNo
-     */
-    /*private void callNetGetMaxAmount(String machineNo) {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_BY_SLOT_MACHINE);
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("machineNo", machineNo);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        params.setBodyContent(jsonObj.toString());
-        String uri = params.getUri();
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
-                if (model.getCode() == 200) {
-                    amountLimit = model.getData().getAmountLimit();
-                    mSlotOrderModel.setSlotAmount(String.valueOf(amountLimit));
-                    orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
-                    orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotOrderModel.getSlotAmount()));
-                } else if (model.getCode() == 10000) {
-                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
-                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                } else {
-                    Toast.makeText(ParkingOrderActivity.this, model.getMsg().toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }*/
-
-    /**
-     * 咪錶不存在時獲取最大金額
-     */
-    /*private void callNetGetMaxAmountSMNotExist() {
-        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_MAX_AMOUNT_SLOT_MACHINE_UNKOWN);
-        params.setAsJsonContent(true);
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("carType", 1);//carInsideModelList.get(0).getIfPerson()
-            jsonObj.put("pillarColor", mSlotUnknowOrderModel.getPillarColor());
-            jsonObj.put("areaCode", mSlotUnknowOrderModel.getAreaCode());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        params.setBodyContent(jsonObj.toString());
-        String uri = params.getUri();
-        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MaxAmountModel model = new Gson().fromJson(result.toString(), MaxAmountModel.class);
-                amountLimit = 0;
-                if (model.getCode() == 200) {
-                    amountLimit = model.getData().getAmountLimit();
-                } else if (model.getCode() == 10000) {
-                    SPUtils.put(ParkingOrderActivity.this, "UserToken", "");
-                    startActivityForResult(new Intent(ParkingOrderActivity.this, LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
-                } else {
-                    Toast.makeText(ParkingOrderActivity.this, "未查詢到對應的收費標準，請檢查車輛、地區及柱色是否選擇正確！", Toast.LENGTH_LONG).show();
-                }
-                mSlotUnknowOrderModel.setSlotAmount(String.valueOf(amountLimit));
-                orderMoneyTv.setText("投幣金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
-                orderAmountTv.setText("金額：MOP" + String.valueOf(mSlotUnknowOrderModel.getSlotAmount()));
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(ParkingOrderActivity.this, R.string.no_net, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }*/
-
     /**
      * 刷新車輛信息
      */
     private void refreshCarChoosed() {
-        /*if (carInsideModelList.size() > 0) {
-            carManagetv.setText("車輛管理");
-            carManageRL.setVisibility(View.VISIBLE);
-            //carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
-            switch (carInsideModelList.get(0).getIfPerson()) {
-                case 1:
-                    carTypeTv.setText("車     型：輕重型電單車");
-                    break;
-                case 2:
-                    carTypeTv.setText("車     型：輕型汽車");
-                    break;
-                case 3:
-                    carTypeTv.setText("車     型：重型汽車");
-                    break;
-            }
-            carNumTv.setText("車牌號：" + carInsideModelList.get(0).getCarNo());
-            //AliyunOSSUtils.downloadImg(carInsideModelList.get(0).getImgUrl(), AliyunOSSUtils.initOSS(this), parkingIv, this, R.mipmap.load_img_fail_list);
-            x.image().bind(parkingIv, carInsideModelList.get(0).getImgUrl(), options);
-
-            if (carInsideModelList.get(0).getIfPay() == 0) {
-                carRecargeIv.setImageResource(R.mipmap.recharge);
-            } else {
-                carRecargeIv.setImageResource(R.mipmap.member);
-            }
-
-            if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) { // 咪錶不存在
-                mSlotUnknowOrderModel.setCarId(String.valueOf(carInsideModelList.get(0).getId()));
-                mSlotUnknowOrderModel.setCarType(carInsideModelList.get(0).getIfPerson());
-            } else {    // 咪錶存在
-                mSlotOrderModel.setCarId(carInsideModelList.get(0).getId());
-            }
-        } else {
-            carManagetv.setText("未選擇車輛，請先選擇車輛");
-            carManageRL.setVisibility(View.GONE);
-        }*/
         carManagetv.setText("車輛管理");
         carManageRL.setVisibility(View.VISIBLE);
         //carBrandTv.setText("品牌：" + carInsideModelList.get(0).getCarBrand());
@@ -1442,19 +1298,17 @@ public class ParkingOrderActivity extends BaseActivity implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case 7: // 選擇優惠券
+                    mDiscountModel = new Gson().fromJson(data.getStringExtra("couponModel"), DiscountOutModel.DataBeanX.DiscountModel.class);
+                    orderCouponTv.setText("紅包：-MOP" + mDiscountModel.getCouponValue());
+                    orderMoneyDiscountTv.setText("|已優惠：" + mDiscountModel.getCouponValue() + ".00");
+                    if (way.equals(BSSMConfigtor.SLOT_MACHINE_NOT_EXIST)) {
+                        orderAmountTv.setText("金額：MOP" + (Double.parseDouble(mSlotUnknowOrderModel.getSlotAmount()) - (double)mDiscountModel.getCouponValue()));
+                    } else {
+                        orderAmountTv.setText("金額：MOP" + (Double.parseDouble(mSlotOrderModel.getSlotAmount()) - (double)mDiscountModel.getCouponValue()));
+                    }
+                    break;
                 case 6: // 選擇車輛
-                    /*TestCarListModel.CarModel carModel = new Gson().fromJson(data.getStringExtra("carModel"), TestCarListModel.CarModel.class);
-                    int position = -1;
-                    for (int i = 0; i < carInsideModelList.size(); i ++) {
-                        if (carInsideModelList.get(i).getCarNo().equals(carModel.getCarNo())) {
-                            position = i;
-                        }
-                    }
-                    // 置顶车辆
-                    if (position != -1) {
-                        carInsideModelList.remove(position);
-                    }
-                    carInsideModelList.add(0, carModel);*/
                     mCarInsideModel = new Gson().fromJson(data.getStringExtra("carModel"), CarModel.CarCountAndListModel.CarInsideModel.class);
                     refreshCarChoosed();
                     // 重新計算金額

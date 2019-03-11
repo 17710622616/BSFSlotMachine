@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ServiceActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.SettingActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.ShareActivity;
 import com.bs.john_li.bsfslotmachine.BSSMActivity.Mine.WalletActivity;
+import com.bs.john_li.bsfslotmachine.BSSMModel.CommonJieModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.CommonModel;
 import com.bs.john_li.bsfslotmachine.BSSMModel.UserInfoOutsideModel;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.AliyunOSSUtils;
@@ -33,6 +35,8 @@ import com.bs.john_li.bsfslotmachine.BSSMUtils.BSSMConfigtor;
 import com.bs.john_li.bsfslotmachine.BSSMUtils.SPUtils;
 import com.bs.john_li.bsfslotmachine.BSSMView.BSSMHeadView;
 import com.bs.john_li.bsfslotmachine.R;
+import com.google.android.gms.common.api.Result;
+import com.google.firebase.database.Transaction;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -63,7 +67,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private BSSMHeadView mineHeadView;
     private RefreshLayout mRefreshLayout;
     private LinearLayout personalLL,walletLL,discountLL,integralLL,historyLL, myCarLL,shareLL,opinionLL,serverLL,gjlLL;
-    private TextView balanceTv, nickNameTv, phoneTv;
+    private TextView balanceTv, discountTv, nickNameTv, phoneTv;
     private ImageView headIv;
 
     private UserInfoOutsideModel.UserInfoModel mUserInfoModel;
@@ -99,6 +103,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         serverLL = mineView.findViewById(R.id.mine_server);
         gjlLL = mineView.findViewById(R.id.mine_guojianglong);
         balanceTv = mineView.findViewById(R.id.mine_wallet_balance);
+        discountTv = mineView.findViewById(R.id.mine_discount_tv);
         nickNameTv = mineView.findViewById(R.id.mine_nickname);
         phoneTv = mineView.findViewById(R.id.mine_info_phone);
         headIv = mineView.findViewById(R.id.personal_setting_head_iv);
@@ -177,6 +182,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         if (!userToken.equals("")){
             if (!userInfoJson.equals("")){
                 callNetGetWalletBalance();
+                callNetGetCouponList();
                 mUserInfoModel = new Gson().fromJson(userInfoJson, UserInfoOutsideModel.UserInfoModel.class);
                 nickNameTv.setText(mUserInfoModel.getNickname());
                 phoneTv.setText(BSSMCommonUtils.change3to6ByStar(mUserInfoModel.getMobile()));
@@ -245,6 +251,41 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         });
     }
 
+    /**
+     * 獲取優惠券列表
+     */
+    private void callNetGetCouponList() {
+        RequestParams params = new RequestParams(BSSMConfigtor.BASE_URL + BSSMConfigtor.GET_USE_COUPON_NUMBER + SPUtils.get(getActivity(), "UserToken", ""));
+        params.setAsJsonContent(true);
+        params.setConnectTimeout(30 * 1000);
+        x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                CommonJieModel model = new Gson().fromJson(result.toString(), CommonJieModel.class);
+                if (model.getCode() == 200) {
+                    if (Integer.parseInt(model.getData()) != 0) {
+                        discountTv.setText(model.getData() + "張");
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("","");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -274,7 +315,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 if (BSSMCommonUtils.isLoginNow(getActivity())) {
                     getActivity().startActivity(new Intent(getActivity(), DiscountActivity.class));
                 } else {
-                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), BSSMConfigtor.LOGIN_FOR_RQUEST);
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), 10001);
                 }
                 break;
             case R.id.mine_integral_ll:

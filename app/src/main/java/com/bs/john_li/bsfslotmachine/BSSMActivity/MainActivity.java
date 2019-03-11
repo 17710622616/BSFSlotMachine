@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bs.john_li.bsfslotmachine.BSSMFragment.CarServiceFragment;
@@ -320,32 +321,52 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         x.http().request(HttpMethod.POST ,params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                GiveCouponOutModel model = new Gson().fromJson(result.toString(), GiveCouponOutModel.class);
+                final GiveCouponOutModel model = new Gson().fromJson(result.toString(), GiveCouponOutModel.class);
                 if (model.getCode() ==200) {
-                    NiceDialog.init()
-                            .setLayoutId(R.layout.dialog_give_coupon)
-                            .setConvertListener(new ViewConvertListener() {
-                                @Override
-                                protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
-                                    viewHolder.setOnClickListener(R.id.give_coupon_cancel, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            baseNiceDialog.dismiss();
-                                        }
-                                    });
-                                }
-                            })
-                            .setWidth(300)
-                            .setOutCancel(false)
-                            .show(getSupportFragmentManager());
-                } else {
-                    Toast.makeText(MainActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
+                    if (model.getData() != null) {
+                        NiceDialog.init()
+                                .setLayoutId(R.layout.dialog_give_coupon)
+                                .setConvertListener(new ViewConvertListener() {
+                                    @Override
+                                    protected void convertView(ViewHolder viewHolder, final BaseNiceDialog baseNiceDialog) {
+                                        TextView titleTv = viewHolder.getView(R.id.give_coupon_title);
+                                        TextView valueTv = viewHolder.getView(R.id.give_coupon_money);
+                                        TextView conditionTv = viewHolder.getView(R.id.give_coupon_condition);
+                                        TextView expireTv = viewHolder.getView(R.id.give_coupon_expire);
+                                        TextView typeTv = viewHolder.getView(R.id.give_coupon_type);
+
+                                        titleTv.setText("送您" + model.getData().getCouponValue() + "蚊紅包");
+                                        valueTv.setText(String.valueOf(model.getData().getCouponValue()));
+                                        conditionTv.setText("滿MOP" + String.valueOf(model.getData().getMinAmount()) + "可用");
+                                        expireTv.setText("過期時間：" + BSSMCommonUtils.stampToDate(String.valueOf(model.getData().getUseEndTime())));
+                                        typeTv.setText(model.getData().getCouponName());
+                                        viewHolder.setOnClickListener(R.id.give_coupon_cancel, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                baseNiceDialog.dismiss();
+                                            }
+                                        });
+                                        viewHolder.setOnClickListener(R.id.give_coupon_go, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                park_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+                                                forum_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                                                mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+                                                switchPages(ParkingFragment.class,ParkingFragment.TAG);
+                                                baseNiceDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                })
+                                .setWidth(300)
+                                .setOutCancel(false)
+                                .show(getSupportFragmentManager());
+                    }
                 }
             }
             //请求异常后的回调方法
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(MainActivity.this, getString(R.string.no_net), Toast.LENGTH_SHORT).show();
             }
             //主动调用取消请求的回调方法
             @Override
@@ -454,7 +475,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         if(m_newVerCode.equals("-1")) {
             //Toast.makeText(MainActivity.this, "獲取版本號失敗，請重試！", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(MainActivity.this, "當前版本:"+verName+" Code:"+verCode+",已經是最新版本!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, "當前版本:"+verName+" Code:"+verCode+",已經是最新版本!", Toast.LENGTH_SHORT).show();
         }
     }
 
