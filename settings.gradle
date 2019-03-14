@@ -1,1 +1,1 @@
-include ':app', ':gmaptest', ':googlemaptest', ':bsfmerchantsversionapp'
+include ':app', ':gmaptest', ':googlemaptest', ':bsfmerchantsversionapp', ':designateddriver'

@@ -51,6 +51,8 @@ import com.othershe.nicedialog.NiceDialog;
 import com.othershe.nicedialog.ViewConvertListener;
 import com.othershe.nicedialog.ViewHolder;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -140,6 +142,19 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         String alias = "user";
         //给极光推送设置标签和别名
         JPushInterface.setAlias(this, alias, tagAliasCallback);
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe
+    public void onEvent(String msg){
+        if (msg.equals("DISCOUNT")) {
+            park_rb.setChecked(true);
+            park_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
+            forum_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+            mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
+            switchPages(ParkingFragment.class,ParkingFragment.TAG);
+        }
     }
 
     //极光服务器设置别名是否成功的回调
@@ -148,10 +163,10 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         public void gotResult(int code, String alias, Set<String> tagSet) {
             switch (code) {
                 case 0:
-                    Toast.makeText(MainActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "设置别名成功", Toast.LENGTH_SHORT).show();
                     break;
                 default:
-                    Toast.makeText(MainActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "设置别名失败", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -160,6 +175,12 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -349,10 +370,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
                                         viewHolder.setOnClickListener(R.id.give_coupon_go, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                park_rb.setTextColor(getResources().getColor(R.color.colorSkyBlue));
-                                                forum_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
-                                                mine_rb.setTextColor(getResources().getColor(R.color.colorDrakGray));
-                                                switchPages(ParkingFragment.class,ParkingFragment.TAG);
+                                                park_rb.setChecked(true);
                                                 baseNiceDialog.dismiss();
                                             }
                                         });

@@ -29,6 +29,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -229,5 +230,7 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void couponGoClick(View view) {
         finish();
+        //EventBus.getDefault().post("DISCOUNT");
     }
+
 }
