@@ -17,7 +17,8 @@
         android:textSize="18sp"
         android:text="名稱"
         android:textColor="@color/colorBlack"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:singleLine="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
