@@ -99,7 +99,8 @@
                     android:background="@drawable/shape_red_radius"
                     android:padding="5dp"
                     android:text="去使用"
-                    android:textColor="@color/colorWight" />
+                    android:textColor="@color/colorWight"
+                    android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/item_discount_overdue"

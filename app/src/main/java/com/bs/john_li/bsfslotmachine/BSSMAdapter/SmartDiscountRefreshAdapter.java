@@ -32,14 +32,12 @@ public class SmartDiscountRefreshAdapter extends RecyclerView.Adapter<SmartDisco
     private List<DiscountOutModel.DataBeanX.DiscountModel> list;
     private final Context mContext;
     private LayoutInflater mInflater;
-    private CouponGoCallBack mCouponGoCallBack = null;
     private int type;   // 0：可用， 1：過期紅包
     private SmartDiscountRefreshAdapter.OnItemClickListener mOnitemClickListener = null;
     public SmartDiscountRefreshAdapter(Context context, List<DiscountOutModel.DataBeanX.DiscountModel> list, int type) {
         this.list = list;
         mContext = context;
         mInflater = LayoutInflater.from(context);
-        mCouponGoCallBack = (DiscountActivity)mContext;
         this.type = type;
     }
     @Override
@@ -65,7 +63,7 @@ public class SmartDiscountRefreshAdapter extends RecyclerView.Adapter<SmartDisco
         holder.item_discount_limiting_condition.setText(String.valueOf(list.get(position).getRemark2()));
         holder.item_discount_expire.setText("到期時間：" + BSSMCommonUtils.stampToDate(String.valueOf(list.get(position).getUseEndTime())));
         if (type == 0) {
-            holder.item_discount_go.setVisibility(View.VISIBLE);
+            holder.item_discount_go.setVisibility(View.GONE);
             holder.item_discount_overdue.setVisibility(View.GONE);
         } else {
             holder.item_discount_go.setVisibility(View.GONE);
@@ -84,14 +82,9 @@ public class SmartDiscountRefreshAdapter extends RecyclerView.Adapter<SmartDisco
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.item_discount_go:
-                mCouponGoCallBack.couponGoClick(v);
-                break;
+        if (mOnitemClickListener != null) {
+            mOnitemClickListener.onItemClick(v, (int)v.getTag());
         }
-    }
-
-    public void setOnItemClickListenr(SmartCWOrderRefreshAdapter.OnItemClickListener listenr) {
     }
 
     public void setOnItemClickListenr(OnItemClickListener onItemClickListener) {
@@ -113,13 +106,6 @@ public class SmartDiscountRefreshAdapter extends RecyclerView.Adapter<SmartDisco
         public SmartRefreshViewHolder(View view){
             super(view);
         }
-    }
-
-    /**
-     * 充值圖片點擊接口
-     */
-    public interface CouponGoCallBack {
-        void couponGoClick(View view);
     }
 
     public void refreshListView(List<DiscountOutModel.DataBeanX.DiscountModel> newList) {

@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/BSFSlotMachine.iml" filepath="$PROJECT_DIR$/BSFSlotMachine.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bsfmerchantsversionapp/bsfmerchantsversionapp.iml" filepath="$PROJECT_DIR$/bsfmerchantsversionapp/bsfmerchantsversionapp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/designateddriver/designateddriver.iml" filepath="$PROJECT_DIR$/designateddriver/designateddriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/gmaptest/gmaptest.iml" filepath="$PROJECT_DIR$/gmaptest/gmaptest.iml" />
       <module fileurl="file://$PROJECT_DIR$/googlemaptest/googlemaptest.iml" filepath="$PROJECT_DIR$/googlemaptest/googlemaptest.iml" />
     </modules>

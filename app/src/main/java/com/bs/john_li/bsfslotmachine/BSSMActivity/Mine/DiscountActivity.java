@@ -46,7 +46,7 @@ import java.util.List;
  * Created by John_Li on 5/8/2017.
  */
 
-public class DiscountActivity extends BaseActivity implements View.OnClickListener, SmartDiscountRefreshAdapter.CouponGoCallBack{
+public class DiscountActivity extends BaseActivity implements View.OnClickListener{
     private BSSMHeadView discount_head;
     private RefreshLayout mRefreshLayout;
     private RecyclerView mRecycleView;
@@ -130,11 +130,11 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mSmartDiscountRefreshAdapter);
 
-        /*mSmartDiscountRefreshAdapter.setOnItemClickListenr(new SmartOrderRefreshAdapter.OnItemClickListener() {
+        mSmartDiscountRefreshAdapter.setOnItemClickListenr(new SmartDiscountRefreshAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
             }
-        });*/
+        });
         mRefreshLayout.autoRefresh();
     }
 
@@ -226,11 +226,4 @@ public class DiscountActivity extends BaseActivity implements View.OnClickListen
                 break;
         }
     }
-
-    @Override
-    public void couponGoClick(View view) {
-        finish();
-        //EventBus.getDefault().post("DISCOUNT");
-    }
-
 }

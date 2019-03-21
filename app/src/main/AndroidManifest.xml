@@ -79,12 +79,16 @@
         <activity android:name=".BSSMActivity.Mine.HistoryOrderActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.CarListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.ChooseCarActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Parking.CourseActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.OpinionActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.GuoJiangLongActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.SlotMachineListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.SlotMachineChildListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.SearchSlotMachineActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Parking.ParkingOrderActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Parking.SearchSlotMachineListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Parking.CreditCardActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Parking.ChooseOrderTimeActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.AddCarActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Forum.PublishForumActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Forum.CommentsListActivity" android:screenOrientation="portrait"/>
@@ -93,7 +97,6 @@
         <activity android:name=".BSSMActivity.Forum.ArticleDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.CarRechargeActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Forum.OwnArticalListACtivty" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Parking.SearchSlotMachineListActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.OrderDetialActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.ForgetPwActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.AboutUsActivity" android:screenOrientation="portrait"/>
@@ -101,8 +104,8 @@
         <activity android:name=".BSSMActivity.Mine.ServiceActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.RegisterFQAActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.Mine.WithDrawalDeitalActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Parking.CreditCardActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Parking.ChooseOrderTimeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.ShareActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.Mine.ChooseDiscountActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarWashActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.MerchatSetActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.CarPartsSetListActivity" android:screenOrientation="portrait"/>
@@ -117,9 +120,7 @@
         <activity android:name=".BSSMActivity.CarService.SecondCarDetailActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.SellerDesActivity" android:screenOrientation="portrait"/>
         <activity android:name=".BSSMActivity.CarService.SellerDetialActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Parking.CourseActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Mine.ShareActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BSSMActivity.Mine.ChooseDiscountActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BSSMActivity.CarService.GenerationDrivingActivity" android:screenOrientation="portrait"/>
 
 
         <!-- ShareSDK的activity -->
